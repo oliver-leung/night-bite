@@ -1,1 +1,1 @@
-# Night Bite
+# Night Bite - SOYA Studios
