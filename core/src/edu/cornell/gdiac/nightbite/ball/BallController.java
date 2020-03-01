@@ -116,11 +116,11 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
+
+        ball.setIX(InputController.getInstance().getHorizontal());
+        ball.setIY(InputController.getInstance().getVertical());
         if (InputController.getInstance().didBoost()) {
-            ball.setBoost();
-        } else {
-            ball.setIX(InputController.getInstance().getHorizontal());
-            ball.setIY(InputController.getInstance().getVertical());
+            ball.setBoostImpulse(InputController.getInstance().getHorizontal(), InputController.getInstance().getVertical());
         }
         ball.applyImpulse();
     }

@@ -14,23 +14,20 @@ public class BallModel extends BoxObstacle {
     /** The restitution of this ball */
     private static final float DEFAULT_RESTITUTION = 0.4f;
     /** The thrust factor to convert player input into thrust */
-    private static final float DEFAULT_THRUST = 20.0f;
+    private static final float DEFAULT_THRUST = 15.0f;
     /** The impulse for the character boost */
-    private static final float BOOST_IMP = 30.0f;
+    private static final float BOOST_IMP = 200.0f;
     /** The amount to slow the character down */
-    private static final float MOTION_DAMPING = 20f;
-
-    /** Cache object for transforming the force according the object angle */
-    public Affine2 affineCache = new Affine2();
-    /** Cache for internal force calculations */
-    private Vector2 forceCache = new Vector2();
+    private static final float MOTION_DAMPING = 15f;
 
     /** The force to apply to this rocket */
     private Vector2 impulse;
+    private Vector2 boost;
 
     public BallModel(float x, float y, float width, float height) {
         super(x,y,width,height);
         impulse = new Vector2();
+        boost = new Vector2();
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
@@ -50,13 +47,8 @@ public class BallModel extends BoxObstacle {
             return;
         }
 
-        body.applyLinearImpulse(impulse.scl(getThrust()), getPosition(), true);
-
-        // Orient the force with rotation.
-        // affineCache.setToRotationRad(getAngle());
-        // affineCache.applyTo(force);
-
-        // getBody().applyForce(getForce(), getPosition(), true);
+        body.applyLinearImpulse(impulse.nor().scl(getThrust()).add(boost.nor().scl(BOOST_IMP)), getPosition(), true);
+        boost.setZero();
     }
 
     public Vector2 getImpulse() { return impulse; }
@@ -69,9 +61,10 @@ public class BallModel extends BoxObstacle {
 
     public float getDamping() { return MOTION_DAMPING; }
 
-    public void setBoost() {
-        forceCache.set(0, BOOST_IMP);
-        body.applyLinearImpulse(forceCache,getPosition(),true);
+    public void setBoostImpulse(float hori, float vert) {
+        boost.x = hori;
+        boost.y = vert;
+
     }
 }
 
