@@ -66,6 +66,8 @@ public abstract class Obstacle {
 	/** A cache value for when the user wants to access the drawing scale */
 	protected Vector2 scaleCache = new Vector2();
 
+	public boolean draw = true;
+
 
 	/// BodyDef Methods
 	/**
