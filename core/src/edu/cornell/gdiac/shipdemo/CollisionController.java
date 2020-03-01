@@ -116,25 +116,25 @@ public class CollisionController {
     /**
      * Wrap the ship's position around the bounds of the window.
      *
-     * @param ship   They player's ship which may have collided
+     * @param player They player's ship which may have collided
      * @param bounds The rectangular bounds of the playing field
      */
-    public void wrapAroundBounds(Ship ship, Rectangle bounds) {
+    public void wrapAroundBounds(Player player, Rectangle bounds) {
         //Ensure the ship doesn't go out of view. Wrap around walls.
-        Vector2 pos = ship.getPosition();
+        Vector2 pos = player.getPosition();
 
-        if (ship.getPosition().x <= bounds.x) {
+        if (player.getPosition().x <= bounds.x) {
             pos.x += bounds.width;
-        } else if (ship.getPosition().x >= bounds.width) {
+        } else if (player.getPosition().x >= bounds.width) {
             pos.x -= bounds.width;
         }
 
-        if (ship.getPosition().y <= bounds.y) {
+        if (player.getPosition().y <= bounds.y) {
             pos.y += bounds.height;
-        } else if (ship.getPosition().y >= bounds.height) {
+        } else if (player.getPosition().y >= bounds.height) {
             pos.y -= bounds.height;
         }
 
-        ship.setPosition(pos);
+        player.setPosition(pos);
     }
 }

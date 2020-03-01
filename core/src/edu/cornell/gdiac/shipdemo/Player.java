@@ -36,7 +36,7 @@ import edu.cornell.gdiac.util.FilmStrip;
  * is because all ships share the same image file, and it would waste
  * memory to load the same image file for each ship.
  */
-public class Ship implements Entity {
+public class Player implements Entity {
 	// Ship Frame Sprite numbers
 	/**
 	 * The frame number for the tightest bank for a left turn
@@ -128,17 +128,17 @@ public class Ship implements Entity {
 	 * @param ang  The initial angle of rotation
 	 * @param size The diameter of the ship
 	 */
-	public Ship(float x, float y, float ang, int size) {
+	public Player(float x, float y, float ang, int size) {
 		// Set the position of this ship.
-        this.pos = new Vector2(x,y);
-        this.ang = ang;
+		this.pos = new Vector2(x, y);
+		this.ang = ang;
 
-        // We start at rest.
-        vel = new Vector2();
-        dang = 0.0f;
-        mass = 1.0f;
+		// We start at rest.
+		vel = new Vector2();
+		dang = 0.0f;
+		mass = 1.0f;
 
-        // Currently no target sited.
+		// Currently no target sited.
         tofs = new Vector2();
         refire = 0;
 
@@ -420,11 +420,11 @@ public class Ship implements Entity {
 		if (shipSprite != null) {
 			shipSprite.setFrame(frame);
 		}
-    }
+	}
 
 	/**
 	 * Aim the target reticule at the opponent
-	 *
+	 * <p>
 	 * The target reticule always shows the location of our opponent.  In order
 	 * to place it we need to know where our opponent is.  This method is
 	 * called by the game engine to let us know the location of our
@@ -432,13 +432,13 @@ public class Ship implements Entity {
 	 *
 	 * @param other The opponent
 	 */
-    public void acquireTarget(Ship other) {
-        // Calculate vector to 2nd ship
-        tofs.set(other.pos).sub(this.pos);  // tofs = other.pos - this.pos (and not a reference to other.pos)
+	public void acquireTarget(Player other) {
+		// Calculate vector to 2nd ship
+		tofs.set(other.pos).sub(this.pos);  // tofs = other.pos - this.pos (and not a reference to other.pos)
 
-        // Scale it so we can draw it.
-        tofs.nor();
-        tofs.scl(TARGET_DIST); 
+		// Scale it so we can draw it.
+		tofs.nor();
+		tofs.scl(TARGET_DIST);
     }
 
 	/**

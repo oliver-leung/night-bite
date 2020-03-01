@@ -148,11 +148,17 @@ public class GameMode implements ModeController {
     /** Handle collision and physics (CONTROLLER CLASS) */
     protected CollisionController physicsController;
 
-	/** Location and animation information for blue ship (MODEL CLASS) */
-	protected Ship shipBlue;
-	/** Location and animation information for red ship (MODEL CLASS) */
-	protected Ship shipRed;
-	/** Shared memory pool for photons. (MODEL CLASS) */
+	/**
+	 * Location and animation information for blue ship (MODEL CLASS)
+	 */
+	protected Player playerBlue;
+	/**
+	 * Location and animation information for red ship (MODEL CLASS)
+	 */
+	protected Player playerRed;
+	/**
+	 * Shared memory pool for photons. (MODEL CLASS)
+	 */
 	protected PhotonQueue photons;
 
 	/** Store the bounds to enforce the playing region */	
@@ -171,27 +177,27 @@ public class GameMode implements ModeController {
 		// Initialize the photons.
 		photons = new PhotonQueue();
 		photons.setTexture(photonTexture);
-		bounds = new Rectangle(0,0,width,height);
-		
+		bounds = new Rectangle(0, 0, width, height);
+
 		// Create the two ships and place them across from each other.
 		// There are a lot of magic numbers here, but we only use them once.
-        
-        // RED PLAYER
-		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 81);
-		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-		shipRed.setTargetTexture(targetTexture);
-		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
-		
-        // BLUE PLAYER
-		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 200);
-		shipBlue.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-		shipBlue.setTargetTexture(targetTexture);
-		shipBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
+
+		// RED PLAYER
+		playerRed = new Player(width * (1.0f / 3.0f), height * (1.0f / 2.0f), 0, 81);
+		playerRed.setFilmStrip(new FilmStrip(shipTexture, SHIP_ROWS, SHIP_COLS, SHIP_SIZE));
+		playerRed.setTargetTexture(targetTexture);
+		playerRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
+
+		// BLUE PLAYER
+		playerBlue = new Player(width * (2.0f / 3.0f), height * (1.0f / 2.0f), 180, 200);
+		playerBlue.setFilmStrip(new FilmStrip(shipTexture, SHIP_ROWS, SHIP_COLS, SHIP_SIZE));
+		playerBlue.setTargetTexture(targetTexture);
+		playerBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
 
 		// Create the input controllers.
-		redController  = new InputController(1);
+		redController = new InputController(1);
 		blueController = new InputController(0);
-        physicsController = new CollisionController();
+		physicsController = new CollisionController();
 	}
 
 	/** 
@@ -206,36 +212,36 @@ public class GameMode implements ModeController {
 	@Override
 	public void update() {
 		// Read the keyboard for each controller.
-		redController.readInput ();
-		blueController.readInput ();
+		redController.readInput();
+		blueController.readInput();
 
 		// Move the photons forward, and add new ones if necessary.
 		//photons.move (width,height);
-		if (redController.didPressFire() && firePhoton(shipRed, photons)) {
+		if (redController.didPressFire() && firePhoton(playerRed, photons)) {
 			redSound.play();
 		}
-		if (blueController.didPressFire() && firePhoton(shipBlue, photons)) {
-            blueSound.stop();
-            blueSound.play();
-        }
+		if (blueController.didPressFire() && firePhoton(playerBlue, photons)) {
+			blueSound.stop();
+			blueSound.play();
+		}
 
 		// Move the ships forward (ignoring collisions)
-		shipRed.move(redController.getForward(), redController.getTurn());
-		shipBlue.move(blueController.getForward(), blueController.getTurn());
+		playerRed.move(redController.getForward(), redController.getTurn());
+		playerBlue.move(blueController.getForward(), blueController.getTurn());
 		photons.move(bounds);
 
 		// Change the target position.
-		shipRed.acquireTarget(shipBlue);
-		shipBlue.acquireTarget(shipRed);
+		playerRed.acquireTarget(playerBlue);
+		playerBlue.acquireTarget(playerRed);
 
 		// This call handles BOTH ships.
-		physicsController.checkForCollision(shipBlue, shipRed);
+		physicsController.checkForCollision(playerBlue, playerRed);
 		for (int i = photons.head; i <= photons.tail; i++) {
-			physicsController.checkForCollision(shipBlue, photons.queue[i]);
-			physicsController.checkForCollision(shipRed, photons.queue[i]);
+			physicsController.checkForCollision(playerBlue, photons.queue[i]);
+			physicsController.checkForCollision(playerRed, photons.queue[i]);
 		}
-		physicsController.wrapAroundBounds(shipBlue, bounds);
-		physicsController.wrapAroundBounds(shipRed, bounds);
+		physicsController.wrapAroundBounds(playerBlue, bounds);
+		physicsController.wrapAroundBounds(playerRed, bounds);
 	}
 
 	/**
@@ -255,17 +261,17 @@ public class GameMode implements ModeController {
 
 		// First drawing pass (ships + shadows)
 		if (redController.getVisible()) {
-			shipRed.drawShip(canvas);
+			playerRed.drawShip(canvas);
 		}
 		if (blueController.getVisible()) {
-			shipBlue.drawShip(canvas);        // Draw Red and Blue ships
+			playerBlue.drawShip(canvas);        // Draw Red and Blue ships
 		}
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		if (blueController.getVisible() && redController.getVisible()) {
-			shipBlue.drawTarget(canvas);  // Draw target
-			shipRed.drawTarget(canvas);   // Draw target
+			playerBlue.drawTarget(canvas);  // Draw target
+			playerRed.drawTarget(canvas);   // Draw target
 		}
 		photons.draw(canvas);         // Draw Photons
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
@@ -289,24 +295,24 @@ public class GameMode implements ModeController {
 	 * @param height The height of the game window
 	 */
 	public void resize(int width, int height) {
-		bounds.set(0,0,width,height);
+		bounds.set(0, 0, width, height);
 	}
-	
+
 	/**
- 	 * Fires a photon from the ship, adding it to the PhotonQueue.
- 	 * 
- 	 * This is not inside either PhotonQueue or Ship because it is a relationship
- 	 * between to objects.  As we will see in class, we do not want to code binary
- 	 * relationships that way (because it increases dependencies).
- 	 *
- 	 * @param ship  	Ship firing the photon
- 	 * @param photons 	PhotonQueue for allocation
- 	 */
-	private boolean firePhoton(Ship ship, PhotonQueue photons) {
+	 * Fires a photon from the ship, adding it to the PhotonQueue.
+	 * <p>
+	 * This is not inside either PhotonQueue or Ship because it is a relationship
+	 * between to objects.  As we will see in class, we do not want to code binary
+	 * relationships that way (because it increases dependencies).
+	 *
+	 * @param player  Ship firing the photon
+	 * @param photons PhotonQueue for allocation
+	 */
+	private boolean firePhoton(Player player, PhotonQueue photons) {
 		// Only process if enough time has passed since last.
-		if (ship.canFireWeapon()) {
-			photons.addPhoton(ship.getPosition(), ship.getVelocity(), ship.getAngle(), ship.getColor());
-			ship.reloadWeapon();
+		if (player.canFireWeapon()) {
+			photons.addPhoton(player.getPosition(), player.getVelocity(), player.getAngle(), player.getColor());
+			player.reloadWeapon();
 			return true;
 		}
 		return false;
