@@ -14,11 +14,11 @@ public class BallModel extends BoxObstacle {
     /** The restitution of this ball */
     private static final float DEFAULT_RESTITUTION = 0.4f;
     /** The thrust factor to convert player input into thrust */
-    private static final float DEFAULT_THRUST = 35.0f;
+    private static final float DEFAULT_THRUST = 20.0f;
     /** The impulse for the character boost */
     private static final float BOOST_IMP = 30.0f;
     /** The amount to slow the character down */
-    private static final float MOTION_DAMPING = 15.0f;
+    private static final float MOTION_DAMPING = 20f;
 
     /** Cache object for transforming the force according the object angle */
     public Affine2 affineCache = new Affine2();
@@ -26,11 +26,11 @@ public class BallModel extends BoxObstacle {
     private Vector2 forceCache = new Vector2();
 
     /** The force to apply to this rocket */
-    private Vector2 force;
+    private Vector2 impulse;
 
     public BallModel(float x, float y, float width, float height) {
         super(x,y,width,height);
-        force = new Vector2();
+        impulse = new Vector2();
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
@@ -38,35 +38,32 @@ public class BallModel extends BoxObstacle {
     }
 
     public boolean activatePhysics(World world) {
-        return super.activatePhysics(world);
+        boolean ret = super.activatePhysics(world);
+        if (! ret) { return false; }
+        body.setLinearDamping(getDamping());
+        body.setFixedRotation(true);
+        return true;
     }
 
-    public void applyForce() {
+    public void applyImpulse() {
         if (!isActive()) {
             return;
         }
 
-        if (getForce().x == 0f) {
-            forceCache.set(-getDamping()*getVX(), 0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-        if (getForce().y == 0f) {
-            forceCache.set(0, -getDamping()*getVY());
-            body.applyForce(forceCache,getPosition(),true);
-        }
+        body.applyLinearImpulse(impulse.scl(getThrust()), getPosition(), true);
 
         // Orient the force with rotation.
-        affineCache.setToRotationRad(getAngle());
-        affineCache.applyTo(force);
+        // affineCache.setToRotationRad(getAngle());
+        // affineCache.applyTo(force);
 
-        getBody().applyForce(getForce(), getPosition(), true);
+        // getBody().applyForce(getForce(), getPosition(), true);
     }
 
-    public Vector2 getForce() { return force; }
+    public Vector2 getImpulse() { return impulse; }
 
-    public void setFX(float value) { force.x = value; }
+    public void setIX(float value) { impulse.x = value; }
 
-    public void setFY(float value) { force.y = value; }
+    public void setIY(float value) { impulse.y = value; }
 
     public float getThrust() { return DEFAULT_THRUST; }
 

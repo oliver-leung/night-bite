@@ -25,9 +25,11 @@ public class BallController extends WorldController implements ContactListener {
     /** Density of objects */
     private static final float BASIC_DENSITY   = 0.0f;
     /** Friction of objects */
-    private static final float BASIC_FRICTION  = 0.1f;
+    private static final float BASIC_FRICTION  = 1f;
     /** Collision restitution for all objects */
-    private static final float BASIC_RESTITUTION = 0.1f;
+    private static final float BASIC_RESTITUTION = 0f;
+
+    private static final float DAMPING = 0.3f;
 
     private static final float[] WALL3 = { 4.0f, 10.5f,  8.0f, 10.5f,
             8.0f,  9.5f,  4.0f,  9.5f};
@@ -117,16 +119,10 @@ public class BallController extends WorldController implements ContactListener {
         if (InputController.getInstance().didBoost()) {
             ball.setBoost();
         } else {
-            if (InputController.getInstance().getHorizontal() != 0.0f) {
-                ball.setFX(InputController.getInstance().getHorizontal() * ball.getThrust());
-            }
-            if (InputController.getInstance().getVertical() != 0.0f) {
-                ball.setFY(InputController.getInstance().getVertical() * ball.getThrust());
-            }
+            ball.setIX(InputController.getInstance().getHorizontal());
+            ball.setIY(InputController.getInstance().getVertical());
         }
-        ball.applyForce();
-        ball.setFX(0.0f);
-        ball.setFY(0.0f);
+        ball.applyImpulse();
     }
 
     public void beginContact(Contact contact) {}
