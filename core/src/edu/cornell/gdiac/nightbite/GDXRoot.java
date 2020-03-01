@@ -11,7 +11,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
- package edu.cornell.gdiac.physics;
+ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -23,7 +23,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import edu.cornell.gdiac.physics.ball.BallController;
+import edu.cornell.gdiac.nightbite.ball.BallController;
 import edu.cornell.gdiac.util.ScreenListener;
 //import edu.cornell.gdiac.physics.rocket.*;
 

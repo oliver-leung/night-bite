@@ -10,7 +10,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.physics.obstacle;
+package edu.cornell.gdiac.nightbite.obstacle;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import edu.cornell.gdiac.physics.GameCanvas;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 
 /**
  * Box-shaped model to support collisions.
@@ -33,26 +33,44 @@ public class CapsuleObstacle extends SimpleObstacle {
     public enum Orientation {
         /** A half-capsule with a rounded end at the top */
         TOP,
-        /** A full capsule with a rounded ends at the top and bottom */
-        VERTICAL,
-        /** A half-capsule with a rounded end at the bottom */
-        BOTTOM,
-        /** A half-capsule with a rounded end at the left */
-        LEFT,
-        /** A full capsule with a rounded ends at the left and right */
-        HORIZONTAL,
-        /** A half-capsule with a rounded end at the right */
-        RIGHT
-    };
-    
-	/** Shape information for this box */
+		/**
+		 * A full capsule with a rounded ends at the top and bottom
+		 */
+		VERTICAL,
+		/**
+		 * A half-capsule with a rounded end at the bottom
+		 */
+		BOTTOM,
+		/**
+		 * A half-capsule with a rounded end at the left
+		 */
+		LEFT,
+		/**
+		 * A full capsule with a rounded ends at the left and right
+		 */
+		HORIZONTAL,
+		/**
+		 * A half-capsule with a rounded end at the right
+		 */
+		RIGHT
+	}
+
+	/**
+	 * Shape information for this box
+	 */
 	protected PolygonShape shape;
-	/** Shape information for the end cap */
-    protected CircleShape end1;
-	/** Shape information for the end cap */
-    protected CircleShape end2;
-    /** Rectangle representation of capsule core for fast computation */
-    protected Rectangle center;
+	/**
+	 * Shape information for the end cap
+	 */
+	protected CircleShape end1;
+	/**
+	 * Shape information for the end cap
+	 */
+	protected CircleShape end2;
+	/**
+	 * Rectangle representation of capsule core for fast computation
+	 */
+	protected Rectangle center;
 
 	/** The width and height of the box */
 	private Vector2 dimension;

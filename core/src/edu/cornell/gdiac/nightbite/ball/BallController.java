@@ -1,14 +1,14 @@
-package edu.cornell.gdiac.physics.ball;
+package edu.cornell.gdiac.nightbite.ball;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import edu.cornell.gdiac.physics.InputController;
-import edu.cornell.gdiac.physics.WorldController;
-import edu.cornell.gdiac.physics.obstacle.Obstacle;
-import edu.cornell.gdiac.physics.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.nightbite.InputController;
+import edu.cornell.gdiac.nightbite.WorldController;
+import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 
 public class BallController extends WorldController implements ContactListener {
 

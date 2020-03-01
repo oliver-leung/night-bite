@@ -1,9 +1,9 @@
-package edu.cornell.gdiac.physics.ball;
+package edu.cornell.gdiac.nightbite.ball;
 
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
 public class BallModel extends BoxObstacle {
 
@@ -38,10 +38,7 @@ public class BallModel extends BoxObstacle {
     }
 
     public boolean activatePhysics(World world) {
-        if (!super.activatePhysics(world)) {
-            return false;
-        }
-        return true;
+        return super.activatePhysics(world);
     }
 
     public void applyForce() {

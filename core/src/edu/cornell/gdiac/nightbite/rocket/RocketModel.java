@@ -11,14 +11,14 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.physics.rocket;
+package edu.cornell.gdiac.nightbite.rocket;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.physics.GameCanvas;
-import edu.cornell.gdiac.physics.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 /**
@@ -28,26 +28,40 @@ import edu.cornell.gdiac.util.FilmStrip;
  * no other subclasses that we might loop through.
  */
 public class RocketModel extends BoxObstacle {
-    /**
-     * Enumeration to identify the rocket afterburner
-     */
-    public enum Burner {
-        /** The main afterburner */
-        MAIN,
-        /** The left side thruster */
-        LEFT,
-        /** The right side thruster */
-        RIGHT
-    };
-	
+	/**
+	 * Enumeration to identify the rocket afterburner
+	 */
+	public enum Burner {
+		/**
+		 * The main afterburner
+		 */
+		MAIN,
+		/**
+		 * The left side thruster
+		 */
+		LEFT,
+		/**
+		 * The right side thruster
+		 */
+		RIGHT
+	}
+
 	// Default physics values
-	/** The density of this rocket */
-	private static final float DEFAULT_DENSITY  =  1.0f;
-	/** The friction of this rocket */
+	/**
+	 * The density of this rocket
+	 */
+	private static final float DEFAULT_DENSITY = 1.0f;
+	/**
+	 * The friction of this rocket
+	 */
 	private static final float DEFAULT_FRICTION = 0.1f;
-	/** The restitution of this rocket */
+	/**
+	 * The restitution of this rocket
+	 */
 	private static final float DEFAULT_RESTITUTION = 0.4f;
-	/** The thrust factor to convert player input into thrust */
+	/**
+	 * The thrust factor to convert player input into thrust
+	 */
 	private static final float DEFAULT_THRUST = 30.0f;
 	/** The number of frames for the afterburner */
 	public static final int FIRE_FRAMES = 4;

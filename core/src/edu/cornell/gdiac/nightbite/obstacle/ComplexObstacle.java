@@ -14,13 +14,13 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.physics.obstacle;
+package edu.cornell.gdiac.nightbite.obstacle;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.physics.GameCanvas;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 
 /**
  * Composite model class to support collisions.
