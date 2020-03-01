@@ -165,7 +165,6 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
-        if (! itemActive) { removeItem(); }
         if (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0) {
             ballA.setWalk();
         } else {
@@ -203,6 +202,8 @@ public class BallController extends WorldController implements ContactListener {
         if (!itemActive && ! ballA.item && !ballB.item) {
             addItem(ITEM_POS);
         }
+
+        if (! itemActive) { removeItem(); }
         ballA.cooldown();
         ballB.cooldown();
     }
