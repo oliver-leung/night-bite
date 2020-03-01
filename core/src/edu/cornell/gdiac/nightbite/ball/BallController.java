@@ -17,8 +17,10 @@ public class BallController extends WorldController implements ContactListener {
 
     /** Reference to the ball texture */
     private static final String BALL_TEXTURE = "ball/ballSprite.png";
+    private static final String BALLITEM_TEXTURE = "ball/ballItem.png";
     /** Texture assets for the ball */
     private TextureRegion ballTexture;
+    private TextureRegion ballItemTexture;
     private TextureRegion itemTexture;
 
     /** The initial ball position */
@@ -44,6 +46,8 @@ public class BallController extends WorldController implements ContactListener {
     public void preLoadContent(AssetManager manager) {
         manager.load(BALL_TEXTURE, Texture.class);
         assets.add(BALL_TEXTURE);
+        manager.load(BALLITEM_TEXTURE, Texture.class);
+        assets.add(BALLITEM_TEXTURE);
         manager.load("item/item.png", Texture.class);
         assets.add("item/item.png");
         super.preLoadContent(manager);
@@ -51,8 +55,9 @@ public class BallController extends WorldController implements ContactListener {
 
     public void loadContent(AssetManager manager) {
         ballTexture = createTexture(manager,BALL_TEXTURE,false);
-        super.loadContent(manager);
+        ballItemTexture = createTexture(manager, BALLITEM_TEXTURE, false);
         itemTexture = createTexture(manager, "item/item.png", false);
+        super.loadContent(manager);
     }
 
     public BallController() {
@@ -162,6 +167,7 @@ public class BallController extends WorldController implements ContactListener {
         if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
             if (b instanceof BallModel) {
                 ((BallModel) b).item = true;
+                ((BallModel) b).setTexture(ballItemTexture);
                 itemActive = false;
             }
         }
