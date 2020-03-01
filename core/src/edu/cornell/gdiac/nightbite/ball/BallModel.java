@@ -160,6 +160,8 @@ public class BallModel extends BoxObstacle {
             isAlive = true;
             draw = true;
         }
+
+        setLinearVelocity(Vector2.Zero);
     }
 
     public void setWalk() {
