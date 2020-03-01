@@ -12,7 +12,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.nightbite.obstacle;
+package edu.cornell.gdiac.physics.obstacle;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,7 +21,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
-import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.physics.GameCanvas;
 
 /**
  * Selection tool to move and drag physics obstacles
@@ -245,7 +245,7 @@ public class ObstacleSelector implements QueryCallback  {
      *
      * @return the Obstacle selected (if any)
      */
-    public Obstacle getObstacle() {   
+    public Obstacle getObstacle() {
     	if (selection != null) {
         	Object data = selection.getBody().getUserData();
         	try {

@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.nightbite.ball;
+package edu.cornell.gdiac.physics.ball;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
