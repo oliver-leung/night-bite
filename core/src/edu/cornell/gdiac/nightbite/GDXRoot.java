@@ -2,22 +2,29 @@
  * GDXRoot.java
  *
  * This is the primary class file for running the game.  It is the "static main" of
- * LibGDX; it must extend ApplicationAdapter to work properly. 
- *
- * We prefer to keep this class fairly lightweight.  We want the ModeControllers to
- * do the hard work.  This class should just schedule the ModeControllers and allow
- * the player to switch between them. We will see more on this in a later lab. 
+ * LibGDX.  In the first lab, we extended ApplicationAdapter.  In previous lab
+ * we extended Game.  This is because of a weird graphical artifact that we do not
+ * understand.  Transparencies (in 3D only) is failing when we use ApplicationAdapter. 
+ * There must be some undocumented OpenGL code in setScreen.
  *
  * Author: Walker M. White
- * Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
- * LibGDX version, 1/16/2015
+ * Based on original PhysicsDemo Lab by Don Holden, 2007
+ * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.nightbite;
+ package edu.cornell.gdiac.nightbite;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import edu.cornell.gdiac.physics.ball.BallController;
+//import edu.cornell.gdiac.physics.rocket.*;
 
 /**
  * Root class for a LibGDX.  
@@ -27,108 +34,124 @@ import com.badlogic.gdx.graphics.GL20;
  * those classes are unique to each platform, while this class is the same across all 
  * plaforms. In addition, this functions as the root class all intents and purposes, 
  * and you would draw it as a root class in an architecture specification.  
- *
- * All of the methods of ApplicationAdapter are extremely important.  You should study
- * how each one is used.
  */
-public class GDXRoot extends ApplicationAdapter {
+public class GDXRoot extends Game implements ScreenListener {
 	/** AssetManager to load game assets (textures, sounds, etc.) */
-	AssetManager manager;
-	
+	private AssetManager manager;
 	/** Drawing context to display graphics (VIEW CLASS) */
-	GameCanvas  canvas;
+	private GameCanvas canvas; 
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
-	LoadingMode loading;
+	private LoadingMode loading;
 	/** Player mode for the the game proper (CONTROLLER CLASS) */
-	GameMode    playing;
-	/** Polymorphic reference to the active player mode */
-	ModeController controller;
-
-	/**
-	 * Creates a new game application root
-	 */
-	public GDXRoot() {}
+	private int current;
+	/** List of all WorldControllers */
+	private WorldController[] controllers;
 	
+	/**
+	 * Creates a new game from the configuration settings.
+	 *
+	 * This method configures the asset manager, but does not load any assets
+	 * or assign any screen.
+	 */
+	public GDXRoot() {
+		// Start loading with the asset manager
+		manager = new AssetManager();
+		
+		// Add font support to the asset manager
+		FileHandleResolver resolver = new InternalFileHandleResolver();
+		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+	}
+
 	/** 
 	 * Called when the Application is first created.
 	 * 
-	 * This method should always initialize the drawing context and begin asset loading.
+	 * This is method immediately loads assets for the loading screen, and prepares
+	 * the asynchronous loader for all other assets.
 	 */
-	@Override
-	public void create () {
-		// Create the drawing context
+	public void create() {
 		canvas  = new GameCanvas();
+		loading = new LoadingMode(canvas,manager,1);
 		
-		// Start loading with the asset manager
-		manager = new AssetManager();
-		loading = new LoadingMode(manager,1);
-		playing = null; // No game just yet
-		GameMode.PreLoadContent(manager); // Load game assets statically.
-		System.out.println(Gdx.gl20);
-		System.out.println(Gdx.gl30);
-		// Make the loading screen the active player mode
-		controller = loading;
-	}
-	
-	/**
-	 * Called when the Application should render itself.
-	 *
-	 * In class we will talk about breaking the game loop into two parts: the update
-	 * and the draw part.  In LibGDX, these are lumped together into a single step:
-	 * render().  We do not like this organization, so we have split this up for the
-	 * ModeControllers.  In particular, it allows us to add special code in between
-	 * update() and draw().
-	 */
-	@Override
-	public void render () {
-		if (loading != null && loading.isReady()) {
-			loading.dispose();
-			loading = null;
-			GameMode.LoadContent(manager);
-			controller = new GameMode(canvas.getWidth(),canvas.getHeight());
+		// Initialize the three game worlds
+		controllers = new WorldController[1];
+		controllers[0] = new BallController();
+		for(int ii = 0; ii < controllers.length; ii++) {
+			controllers[ii].preLoadContent(manager);
 		}
-		
-		// Update the game state
-		controller.update();
-		
-		// Draw the game
-		Gdx.gl.glClearColor(0.39f, 0.58f, 0.93f, 1.0f);  // Homage to the XNA years
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		canvas.begin();
-		controller.draw(canvas);
-		canvas.end();
+		current = 0;
+		loading.setScreenListener(this);
+		setScreen(loading);
 	}
-	
-	/**
-	 * Called when the Application is destroyed.
+
+	/** 
+	 * Called when the Application is destroyed. 
 	 *
-	 * It is your responsibility to dispose of all assets when this happened.  Relying
-	 * on Java garbage collection is NOT GOOD ENOUGH.  If you loaded any assets, you 
-	 * must unload them.
+	 * This is preceded by a call to pause().
 	 */
-	@Override
 	public void dispose() {
-		GameMode.UnloadContent(manager);
+		// Call dispose on our children
+		setScreen(null);
+		for(int ii = 0; ii < controllers.length; ii++) {
+			controllers[ii].unloadContent(manager);
+			controllers[ii].dispose();
+		}
+
+		canvas.dispose();
+		canvas = null;
+	
+		// Unload all of the resources
 		manager.clear();
 		manager.dispose();
-		manager = null;
+		super.dispose();
 	}
 	
 	/**
-	 * Called when the Application is resized.
-	 * 
-	 * This can happen at any point during a non-paused state but will never happen 
-	 * before a call to create()
+	 * Called when the Application is resized. 
 	 *
-	 * @param width The window width
-	 * @param height The window height
-	 */	 
-	@Override
+	 * This can happen at any point during a non-paused state but will never happen 
+	 * before a call to create().
+	 *
+	 * @param width  The new width in pixels
+	 * @param height The new height in pixels
+	 */
 	public void resize(int width, int height) {
-		if (controller != null) {
-			controller.resize(width,height);
-		}
-		// Canvas knows the size, but not that it changed
 		canvas.resize();
+		super.resize(width,height);
 	}
+	
+	/**
+	 * The given screen has made a request to exit its player mode.
+	 *
+	 * The value exitCode can be used to implement menu options.
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
+	public void exitScreen(Screen screen, int exitCode) {
+		if (screen == loading) {
+			for(int ii = 0; ii < controllers.length; ii++) {
+				controllers[ii].loadContent(manager);
+				controllers[ii].setScreenListener(this);
+				controllers[ii].setCanvas(canvas);
+			}
+			controllers[current].reset();
+			setScreen(controllers[current]);
+			
+			loading.dispose();
+			loading = null;
+		} else if (exitCode == WorldController.EXIT_NEXT) {
+			current = (current+1) % controllers.length;
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_PREV) {
+			current = (current+controllers.length-1) % controllers.length;
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_QUIT) {
+			// We quit the main application
+			Gdx.app.exit();
+		}
+	}
+
 }

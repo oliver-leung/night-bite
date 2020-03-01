@@ -15,12 +15,17 @@
  * This player mode provides a basic loading screen.  While you could adapt it for
  * between level loading, it is currently designed for loading all assets at the 
  * start of the game.
+ *
+ * Author: Walker M. White
+ * Based on original PhysicsDemo Lab by Don Holden, 2007
+ * LibGDX version, 2/6/2015
  */
-
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -30,13 +35,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
  * Class that provides a loading screen for the state of the game.
  *
- * You DO NOT need to understand this class for the first lab.  We will talk about this
+ * You still DO NOT need to understand this class for this lab.  We will talk about this
  * class much later in the course.  This class provides a basic template for a loading
  * screen to be used at the start of the game or between levels.  Feel free to adopt
  * this to your needs.
@@ -46,8 +50,12 @@ import com.badlogic.gdx.math.Vector3;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class LoadingMode implements ModeController, InputProcessor, ControllerListener {
+public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	// Textures necessary to support the loading screen 
+	private static final String BACKGROUND_FILE = "shared/loading.png";
+	private static final String PROGRESS_FILE = "shared/progressbar.png";
+	private static final String PLAY_BTN_FILE = "shared/play.png";
+	
 	/** Background texture for start-up */
 	private Texture background;
 	/** Play button to display when done */
@@ -71,34 +79,22 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 
 	/** Default budget for asset loader (do nothing but load 60 fps) */
 	private static int DEFAULT_BUDGET = 15;
-	
-	// Asset Files
-	/** The play button for when loading is done */
-	private static String TEXTURE_PLAY_BUTTON = "images/play.png";
-	/** The background screen for loading */
-	private static String TEXTURE_LOADING_SCREEN = "images/loading.png";	
-	/** The texture atlas for the progress bar */
-	private static String TEXTURE_PROGRESS_BAR = "images/progressbar.png";
-
-	// Asset Dimensions
-	/** Standard width that the assets were designed for */
-	private static int STANDARD_WIDTH  = 1280;
-	/** Standard height that the assets were designed for */
-	private static int STANDARD_HEIGHT = 720;
-	/** Width of the screen to be used for the loading bar */
-	private static float BAR_WIDTH_RATIO  = 0.5f;
-	/** Ratio from the bottom for the height */
-	private static float BAR_HEIGHT_RATIO = 0.18f;	
-	/** Additional scaling factor for play button */
-	private static float PLAY_BUTTON_RATIO = 0.75f;
-	
-	// Texture atlas dimensions
+	/** Standard window size (for scaling) */
+	private static int STANDARD_WIDTH  = 800;
+	/** Standard window height (for scaling) */
+	private static int STANDARD_HEIGHT = 700;
+	/** Ratio of the bar width to the screen */
+	private static float BAR_WIDTH_RATIO  = 0.66f;
+	/** Ration of the bar height to the screen */
+	private static float BAR_HEIGHT_RATIO = 0.25f;	
 	/** Height of the progress bar */
 	private static int PROGRESS_HEIGHT = 30;
 	/** Width of the rounded cap on left or right */
 	private static int PROGRESS_CAP    = 15;
 	/** Width of the middle portion in texture atlas */
 	private static int PROGRESS_MIDDLE = 200;
+	/** Amount to scale the play button */
+	private static float BUTTON_SCALE  = 0.75f;
 	
 	/** Start button for XBox controller on Windows */
 	private static int WINDOWS_START = 7;
@@ -107,6 +103,10 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 
 	/** AssetManager to be loading in the background */
 	private AssetManager manager;
+	/** Reference to GameCanvas created by the root */
+	private GameCanvas canvas;
+	/** Listener that will update the player mode when we are done */
+	private ScreenListener listener;
 
 	/** The width of the progress bar */	
 	private int width;
@@ -127,6 +127,8 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	private int   budget;
 	/** Support for the X-Box start button in place of play button */
 	private int   startButton;
+	/** Whether or not this player mode is still active */
+	private boolean active;
 
 	/**
 	 * Returns the budget for the asset loader.
@@ -164,16 +166,16 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	public boolean isReady() {
 		return pressState == 2;
 	}
-
+	
 	/**
 	 * Creates a LoadingMode with the default budget, size and position.
 	 *
 	 * @param manager The AssetManager to load in the background
 	 */
-	public LoadingMode(AssetManager manager) {
-		this(manager,DEFAULT_BUDGET);
+	public LoadingMode(GameCanvas canvas, AssetManager manager) {
+		this(canvas, manager,DEFAULT_BUDGET);
 	}
-		
+
 	/**
 	 * Creates a LoadingMode with the default size and position.
 	 *
@@ -185,23 +187,24 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	 * @param manager The AssetManager to load in the background
 	 * @param millis The loading budget in milliseconds
 	 */
-	public LoadingMode(AssetManager manager, int millis) {
+	public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
 		this.manager = manager;
+		this.canvas  = canvas;
 		budget = millis;
 		
-		// Waiting on these values until we see the canvas
-		width   = -1;
-		centerY = -1;
-		centerX = -1;
-		heightY = -1;
-		scale   = -1.0f;
+		// Compute the dimensions from the canvas
+		resize(canvas.getWidth(),canvas.getHeight());
 
 		// Load the next two images immediately.
 		playButton = null;
-		background = new Texture(TEXTURE_LOADING_SCREEN);
-		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		statusBar  = new Texture(TEXTURE_PROGRESS_BAR);
+		background = new Texture(BACKGROUND_FILE);
+		statusBar  = new Texture(PROGRESS_FILE);
 		
+		// No progress so far.		
+		progress   = 0;
+		pressState = 0;
+		active = false;
+
 		// Break up the status bar texture into regions
 		statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP,PROGRESS_HEIGHT);
 		statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,0,PROGRESS_CAP,PROGRESS_HEIGHT);
@@ -212,76 +215,27 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 		statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,offset,PROGRESS_CAP,PROGRESS_HEIGHT);
 		statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
 
-		// No progress so far.		
-		progress   = 0;
-		pressState = 0;
-		
 		startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 		Gdx.input.setInputProcessor(this);
 		// Let ANY connected controller start the game.
 		for(Controller controller : Controllers.getControllers()) {
 			controller.addListener(this);
 		}
-	}
-	
-	/** 
-	 * Read user input, calculate physics, and update the models.
-	 *
-	 * This method is HALF of the basic game loop.  Every graphics frame 
-	 * calls the method update() and the method draw().  The method update()
-	 * contains all of the calculations for updating the world, such as
-	 * checking for collisions, gathering input, and playing audio.  It
-	 * should not contain any calls for drawing to the screen.
-	 *
-	 * In the case of the loading screen, all this does is load assets.
-	 */
-	@Override
-	public void update() {
-		if (playButton == null) {
-			manager.update(budget);
-			this.progress = manager.getProgress();
-			if (progress >= 1.0f) {
-				this.progress = 1.0f;
-				playButton = new Texture( TEXTURE_PLAY_BUTTON );
-				playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-			}
-		}
+		active = true;
 	}
 	
 	/**
-	 * Draw the game on the provided GameCanvas
-	 *
-	 * There should be no code in this method that alters the game state.  All 
-	 * assignments should be to local variables or cache fields only.
-	 *
-	 * In the case of the loading screen, this draws the progress bar.
-	 *
-	 * @param canvas The drawing context
+	 * Called when this screen should release all resources.
 	 */
-	@Override
-	public void draw(GameCanvas canvas) {
-		// If this is the first time drawing, get info from the canvas.
-		if (width == -1) {
-			resize(canvas.getWidth(),canvas.getHeight());
-		}
-		
-		canvas.drawOverlay(background, true);
-		if (playButton == null) {
-			drawProgress(canvas);
-		} else {
-			Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
-						centerX, centerY, 0, scale*PLAY_BUTTON_RATIO, scale*PLAY_BUTTON_RATIO);
-		}
-	}
-	
-	/**
-	 * Dispose of all (non-static) resources allocated to this mode.
-	 *
-	 * As our textures are not static this time, we actually have to do something.
-	 */
-	@Override
 	public void dispose() {
+		 statusBkgLeft = null;
+		 statusBkgRight = null;
+		 statusBkgMiddle = null;
+
+		 statusFrgLeft = null;
+		 statusFrgRight = null;
+		 statusFrgMiddle = null;
+
 		 background.dispose();
 		 statusBar.dispose();
 		 background = null;
@@ -290,6 +244,47 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 			 playButton.dispose();
 			 playButton = null;
 		 }
+	}
+	
+	/**
+	 * Update the status of this player mode.
+	 *
+	 * We prefer to separate update and draw from one another as separate methods, instead
+	 * of using the single render() method that LibGDX does.  We will talk about why we
+	 * prefer this in lecture.
+	 *
+	 * @param delta Number of seconds since last animation frame
+	 */
+	private void update(float delta) {
+		if (playButton == null) {
+			manager.update(budget);
+			this.progress = manager.getProgress();
+			if (progress >= 1.0f) {
+				this.progress = 1.0f;
+				playButton = new Texture(PLAY_BTN_FILE);
+				playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			}
+		}
+	}
+
+	/**
+	 * Draw the status of this player mode.
+	 *
+	 * We prefer to separate update and draw from one another as separate methods, instead
+	 * of using the single render() method that LibGDX does.  We will talk about why we
+	 * prefer this in lecture.
+	 */
+	private void draw() {
+		canvas.begin();
+		canvas.draw(background, 0, 0);
+		if (playButton == null) {
+			drawProgress(canvas);
+		} else {
+			Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
+			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
+						centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+		}
+		canvas.end();
 	}
 	
 	/**
@@ -302,48 +297,49 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	 * @param canvas The drawing context
 	 */	
 	private void drawProgress(GameCanvas canvas) {	
-		// In practice I would do this with affine transforms, but that would make Exercise 4 harder.
-		Affine2 transf  = new Affine2();
+		canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 
-		transf.setToTranslation(centerX-width/2, centerY);
-		transf.scale(scale,scale);
-		canvas.draw(statusBkgLeft,Color.WHITE, transf);
-
-		transf.setToTranslation(centerX+width/2-scale*PROGRESS_CAP, centerY);
-		transf.scale(scale,scale);
-		canvas.draw(statusBkgRight, Color.WHITE, transf);
-
-		transf.setToTranslation(centerX-width/2+scale*PROGRESS_CAP, centerY);
-		transf.scale((width-2*scale*PROGRESS_CAP)/((float)PROGRESS_MIDDLE), scale);
-		canvas.draw(statusBkgMiddle, Color.WHITE, transf);
-
-		transf.setToTranslation(centerX-width/2, centerY);
-		transf.scale(scale,scale);
-		canvas.draw(statusFrgLeft, Color.WHITE, transf);
-
+		canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 		if (progress > 0) {
-			float span = progress*(width-2*scale*PROGRESS_CAP);
-			transf.setToTranslation(centerX-width/2+scale*PROGRESS_CAP+span, centerY);
-			transf.scale(scale,scale);
-			canvas.draw(statusFrgRight, Color.WHITE, transf);
-
-			transf.setToTranslation(centerX-width/2+scale*PROGRESS_CAP, centerY);
-			transf.scale(span/((float)PROGRESS_MIDDLE),scale);
-			canvas.draw(statusFrgMiddle, Color.WHITE, transf);
+			float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+			canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
 		} else {
-			transf.setToTranslation(centerX-width/2+scale*PROGRESS_CAP, centerY);
-			transf.scale(scale,scale);
-			canvas.draw(statusFrgRight, Color.WHITE, transf);
+			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 		}
 	}
-	
+
+	// ADDITIONAL SCREEN METHODS
 	/**
-	 * Resize the window for this player mode to the given dimensions.
+	 * Called when the Screen should render itself.
 	 *
-	 * This method is unsupported in the loading screen.
+	 * We defer to the other methods update() and draw().  However, it is VERY important
+	 * that we only quit AFTER a draw.
 	 *
-	 * @param width The width of the game window
-	 * @param height The height of the game window
+	 * @param delta Number of seconds since last animation frame
+	 */
+	public void render(float delta) {
+		if (active) {
+			update(delta);
+			draw();
+
+			// We are are ready, notify our listener
+			if (isReady() && listener != null) {
+				listener.exitScreen(this, 0);
+			}
+		}
+	}
+
+	/**
+	 * Called when the Screen is resized. 
+	 *
+	 * This can happen at any point during a non-paused state but will never happen 
+	 * before a call to show().
+	 *
+	 * @param width  The new width in pixels
+	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
 		// Compute the drawing scale
@@ -357,6 +353,52 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 		heightY = height;
 	}
 
+	/**
+	 * Called when the Screen is paused.
+	 * 
+	 * This is usually when it's not active or visible on screen. An Application is 
+	 * also paused before it is destroyed.
+	 */
+	public void pause() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Called when the Screen is resumed from a paused state.
+	 *
+	 * This is usually when it regains focus.
+	 */
+	public void resume() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	/**
+	 * Called when this screen becomes the current screen for a Game.
+	 */
+	public void show() {
+		// Useless if called in outside animation loop
+		active = true;
+	}
+
+	/**
+	 * Called when this screen is no longer the current screen for a Game.
+	 */
+	public void hide() {
+		// Useless if called in outside animation loop
+		active = false;
+	}
+	
+	/**
+	 * Sets the ScreenListener for this mode
+	 *
+	 * The ScreenListener will respond to requests to quit.
+	 */
+	public void setScreenListener(ScreenListener listener) {
+		this.listener = listener;
+	}
+	
 	// PROCESSING PLAYER INPUT
 	/** 
 	 * Called when the screen was touched or a mouse button was pressed.
@@ -378,8 +420,9 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 		// Flip to match graphics coordinates
 		screenY = heightY-screenY;
 		
+		// TODO: Fix scaling
 		// Play button is a circle.
-		float radius = scale*playButton.getWidth()/2.0f;
+		float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
 		float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
 		if (dist < radius*radius) {
 			pressState = 1;
@@ -459,7 +502,7 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	/** 
 	 * Called when a key is typed (UNSUPPORTED)
 	 *
-	 * @param character	the key typed
+	 * @param keycode the key typed
 	 * @return whether to hand the event to other listeners. 
 	 */
 	public boolean keyTyped(char character) { 
@@ -467,12 +510,18 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	}
 
 	/** 
-	 * Called when a key is released (UNSUPPORTED)
+	 * Called when a key is released.
+	 * 
+	 * We allow key commands to start the game this time.
 	 *
 	 * @param keycode the key released
 	 * @return whether to hand the event to other listeners. 
 	 */	
 	public boolean keyUp(int keycode) { 
+		if (keycode == Input.Keys.N || keycode == Input.Keys.P) {
+			pressState = 2;
+			return false;			
+		}
 		return true; 
 	}
 	
@@ -595,5 +644,5 @@ public class LoadingMode implements ModeController, InputProcessor, ControllerLi
 	public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
 		return true;
 	}
-	
+
 }
