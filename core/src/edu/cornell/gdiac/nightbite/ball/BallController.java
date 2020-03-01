@@ -219,14 +219,30 @@ public class BallController extends WorldController implements ContactListener {
             return;
         }
 
+        if (b instanceof HoleModel) {
+            if (a instanceof BallModel) {
+                ((BallModel) a).setAlive(false);
+                ((BallModel) a).draw = false;
+            }
+            return;
+        }
+
         if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
             if (b instanceof BallModel) {
-                System.out.println("yeet");
                 ((BallModel) b).item = true;
                 ((BallModel) b).setTexture(ballItemTexture);
                 itemActive = false;
             }
         }
+
+        if (b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
+            if (a instanceof BallModel) {
+                ((BallModel) a).item = true;
+                ((BallModel) a).setTexture(ballItemTexture);
+                itemActive = false;
+            }
+        }
+
         if (b instanceof HomeModel) {
             HomeModel bHome = (HomeModel) b;
             if (a instanceof BallModel && ((BallModel) a).getTeam().equals(bHome.getTeam())) {
@@ -272,13 +288,11 @@ public class BallController extends WorldController implements ContactListener {
 
     private void removeItem() {
         item.draw = false;
-        System.out.println("yeetx");
         item.setActive(false);
     }
 
     private void addItem(Vector2 position) {
         item.draw = true;
-        System.out.println("yeetw");
         itemActive = true;
         item.setActive(true);
         item.setPosition(position);
