@@ -132,6 +132,7 @@ public class BallController extends WorldController implements ContactListener {
         item.setDrawScale(scale);
         item.setTexture(itemTexture);
         item.setName("item");
+        item.setSensor(true);
         addObject(item);
 
         // add ball
@@ -190,13 +191,18 @@ public class BallController extends WorldController implements ContactListener {
         ballB.applyImpulse();
 
         if (!ballA.isAlive()) {
+            addItem(ITEM_POS);
             ballA.respawn();
         }
         if (!ballB.isAlive()) {
-            ballB.respawn();
+            addItem(ITEM_POS);
         }
         ballA.setActive(ballA.isAlive());
         ballB.setActive(ballB.isAlive());
+
+        if (!itemActive && ! ballA.item && !ballB.item) {
+            addItem(ITEM_POS);
+        }
         ballA.cooldown();
         ballB.cooldown();
     }
@@ -270,8 +276,9 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     private void addItem(Vector2 position) {
-        item.draw = false;
-        item.setActive(false);
+        item.draw = true;
+        itemActive = true;
+        item.setActive(true);
         item.setPosition(position);
     }
 

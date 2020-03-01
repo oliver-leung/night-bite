@@ -161,6 +161,7 @@ public class BallModel extends BoxObstacle {
             isAlive = true;
             draw = true;
         }
+        item = false;
 
         setLinearVelocity(Vector2.Zero);
     }
