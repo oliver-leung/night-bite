@@ -39,6 +39,14 @@ public class BallModel extends BoxObstacle {
      */
     private static final float MOTION_DAMPING = 15f;
 
+    private static final int BOOST_FRAMES = 20;
+
+    private static final int COOLDOWN_FRAMES = 60;
+
+    public MoveState state;
+    private int boosting;
+    private int cooldown;
+
     /**
      * Cache object for transforming the force according the object angle
      */
@@ -62,6 +70,8 @@ public class BallModel extends BoxObstacle {
         super(x, y, width, height);
         impulse = new Vector2();
         boost = new Vector2();
+        cooldown = 0;
+        boosting = 0;
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
@@ -104,6 +114,10 @@ public class BallModel extends BoxObstacle {
     }
 
     public void setBoostImpulse(float hori, float vert) {
+        if (cooldown > 0) { return; }
+        state = MoveState.RUN;
+        boosting = BOOST_FRAMES;
+        cooldown = COOLDOWN_FRAMES;
         boost.x = hori;
         boost.y = vert;
 
@@ -127,6 +141,21 @@ public class BallModel extends BoxObstacle {
             isAlive = true;
             draw = true;
         }
+    }
+
+    public void setWalk() {
+        if (boosting > 0) { return; }
+        state = MoveState.WALK;
+    }
+
+    public void setStatic() {
+        if (boosting > 0) { return; }
+        state = MoveState.STATIC;
+    }
+
+    public void cooldown() {
+        cooldown = Math.max(0, cooldown - 1);
+        boosting = Math.max(0, boosting - 1);
     }
 }
 

@@ -147,6 +147,11 @@ public class BallController extends WorldController implements ContactListener {
 
     public void update(float dt) {
         if (! itemActive) { removeItem(); }
+        if (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0) {
+            ballA.setWalk();
+        } else {
+            ballA.setStatic();
+        }
         ballA.setIX(InputController.getInstance().getHorizontalA());
         ballA.setIY(InputController.getInstance().getVerticalA());
         if (InputController.getInstance().didBoostA()) {
@@ -154,6 +159,11 @@ public class BallController extends WorldController implements ContactListener {
         }
         ballA.applyImpulse();
 
+        if (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0) {
+            ballB.setWalk();
+        }else {
+            ballB.setStatic();
+        }
         ballB.setIX(InputController.getInstance().getHorizontalB());
         ballB.setIY(InputController.getInstance().getVerticalB());
         if (InputController.getInstance().didBoostB()) {
@@ -169,6 +179,8 @@ public class BallController extends WorldController implements ContactListener {
         }
         ballA.setActive(ballA.isAlive());
         ballB.setActive(ballB.isAlive());
+        ballA.cooldown();
+        ballB.cooldown();
     }
 
     public void beginContact(Contact contact) {
