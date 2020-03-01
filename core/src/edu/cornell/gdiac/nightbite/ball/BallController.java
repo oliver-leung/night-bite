@@ -191,6 +191,7 @@ public class BallController extends WorldController implements ContactListener {
             }
         }
 
+
     }
 
     public void endContact(Contact contact) {
