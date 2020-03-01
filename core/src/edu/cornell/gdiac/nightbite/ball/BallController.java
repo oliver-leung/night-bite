@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.HoleModel;
-import edu.cornell.gdiac.nightbite.HomeModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
@@ -209,7 +208,6 @@ public class BallController extends WorldController implements ContactListener {
             if (b instanceof BallModel) {
                 ((BallModel) b).setAlive(false);
                 ((BallModel) b).draw = false;
-                ((BallModel) b).item = false;
             }
             return;
         }
