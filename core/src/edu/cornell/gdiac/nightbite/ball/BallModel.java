@@ -7,8 +7,17 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
 public class BallModel extends BoxObstacle {
 
-    /** The density of this ball */
-    private static final float DEFAULT_DENSITY  =  1.0f;
+    /**
+     * The density of this ball
+     */
+    private static final float DEFAULT_DENSITY = 1.0f;
+
+    public enum MoveState {
+        WALK,
+        RUN,
+        STATIC
+    }
+
     /**
      * The friction of this ball
      */
