@@ -23,10 +23,13 @@ public class BallController extends WorldController implements ContactListener {
     private TextureRegion ballItemTexture;
     private TextureRegion itemTexture;
 
-    /** The initial ball position */
+    /** Ball 1's position */
     private static Vector2 BALL_POS_1 = new Vector2(24, 4);
-    /** The initial ball position */
-    private static Vector2 BALL_POS_2 = new Vector2(14, 8);
+    /** Ball 2's position */
+    private static Vector2 BALL_POS_2 = new Vector2(6, 4);
+    /** Item's position */
+    private static Vector2 ITEM_POS = new Vector2(15, 12);
+
     /** Reference to the ball/player avatar */
     private BallModel ballA;
     /** Reference to the ball/player avatar */
@@ -125,7 +128,7 @@ public class BallController extends WorldController implements ContactListener {
         // add item
         float ddwidth  = itemTexture.getRegionWidth()/scale.x;
         float ddheight = itemTexture.getRegionHeight()/scale.y;
-        item = new BoxObstacle(2, 4, ddwidth, ddheight);
+        item = new BoxObstacle(ITEM_POS.x, ITEM_POS.y, ddwidth, ddheight);
         item.setDrawScale(scale);
         item.setTexture(itemTexture);
         item.setName("item");
@@ -169,19 +172,19 @@ public class BallController extends WorldController implements ContactListener {
         }
         ballA.setIX(InputController.getInstance().getHorizontalA());
         ballA.setIY(InputController.getInstance().getVerticalA());
-        if (InputController.getInstance().didBoostA()) {
+        if (InputController.getInstance().didBoostA() && (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0)) {
             ballA.setBoostImpulse(InputController.getInstance().getHorizontalA(), InputController.getInstance().getVerticalA());
         }
         ballA.applyImpulse();
 
         if (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0) {
             ballB.setWalk();
-        }else {
+        } else {
             ballB.setStatic();
         }
         ballB.setIX(InputController.getInstance().getHorizontalB());
         ballB.setIY(InputController.getInstance().getVerticalB());
-        if (InputController.getInstance().didBoostB()) {
+        if (InputController.getInstance().didBoostB() && (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0)) {
             ballB.setBoostImpulse(InputController.getInstance().getHorizontalB(), InputController.getInstance().getVerticalB());
         }
         ballB.applyImpulse();
@@ -230,6 +233,30 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void postSolve(Contact contact, ContactImpulse impulse) {
+        Object a = contact.getFixtureA().getBody().getUserData();
+        Object b = contact.getFixtureB().getBody().getUserData();
+        if (a instanceof BallModel && b instanceof BallModel) {
+            Vector2 flyDirection = null;
+            if (((BallModel) a).state == BallModel.MoveState.RUN &&
+                    (((BallModel) b).state == BallModel.MoveState.WALK || ((BallModel) b).state == BallModel.MoveState.STATIC)) {
+                flyDirection = ((BallModel) b).getLinearVelocity().nor();
+                ((BallModel) a).resetBoosting();
+                ((BallModel) b).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) b).getPosition(), true);
+            } else if (((BallModel) b).state == BallModel.MoveState.RUN &&
+                    (((BallModel) a).state == BallModel.MoveState.WALK || ((BallModel) a).state == BallModel.MoveState.STATIC)) {
+                flyDirection = ((BallModel) a).getLinearVelocity().nor();
+                ((BallModel) a).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) a).getPosition(), true);
+                ((BallModel) b).resetBoosting();
+            } else if (((BallModel) b).state == BallModel.MoveState.RUN &&
+                    (((BallModel) a).state == BallModel.MoveState.RUN)) {
+                flyDirection = ((BallModel) a).getLinearVelocity().nor();
+                ((BallModel) a).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) a).getPosition(), true);
+                flyDirection = ((BallModel) b).getLinearVelocity().nor();
+                ((BallModel) a).resetBoosting();
+                ((BallModel) b).resetBoosting();
+                ((BallModel) b).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) b).getPosition(), true);
+            }
+        }
     }
 
     public void preSolve(Contact contact, Manifold oldManifold) {
