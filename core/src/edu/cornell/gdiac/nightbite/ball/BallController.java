@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.HoleModel;
+import edu.cornell.gdiac.nightbite.HomeModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
@@ -190,11 +191,10 @@ public class BallController extends WorldController implements ContactListener {
         ballB.applyImpulse();
 
         if (!ballA.isAlive()) {
-            addItem(ITEM_POS);
             ballA.respawn();
         }
         if (!ballB.isAlive()) {
-            addItem(ITEM_POS);
+            ballB.respawn();
         }
         ballA.setActive(ballA.isAlive());
         ballB.setActive(ballB.isAlive());
@@ -220,6 +220,7 @@ public class BallController extends WorldController implements ContactListener {
 
         if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
             if (b instanceof BallModel) {
+                System.out.println("yeet");
                 ((BallModel) b).item = true;
                 ((BallModel) b).setTexture(ballItemTexture);
                 itemActive = false;
@@ -270,11 +271,13 @@ public class BallController extends WorldController implements ContactListener {
 
     private void removeItem() {
         item.draw = false;
+        System.out.println("yeetx");
         item.setActive(false);
     }
 
     private void addItem(Vector2 position) {
         item.draw = true;
+        System.out.println("yeetw");
         itemActive = true;
         item.setActive(true);
         item.setPosition(position);
