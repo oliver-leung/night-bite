@@ -53,21 +53,19 @@ public class BallModel extends BoxObstacle {
     public Affine2 affineCache = new Affine2();
     private boolean isAlive = true;
     private int spawnCooldown;
-    /**
-     * Cache for internal force calculations
-     */
-    private Vector2 forceCache = new Vector2();
 
     /**
      * The force to apply to this rocket
      */
     private Vector2 impulse;
     private Vector2 boost;
+    private Vector2 home_loc;
 
     public boolean item;
 
     public BallModel(float x, float y, float width, float height) {
         super(x, y, width, height);
+        home_loc = new Vector2(x, y);
         impulse = new Vector2();
         boost = new Vector2();
         cooldown = 0;
@@ -120,7 +118,6 @@ public class BallModel extends BoxObstacle {
         cooldown = COOLDOWN_FRAMES;
         boost.x = hori;
         boost.y = vert;
-
     }
 
     public boolean isAlive() {
@@ -137,7 +134,7 @@ public class BallModel extends BoxObstacle {
         }
         spawnCooldown--;
         if (spawnCooldown == 0) {
-            setPosition(24, 4);
+            setPosition(home_loc);
             isAlive = true;
             draw = true;
         }

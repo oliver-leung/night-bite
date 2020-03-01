@@ -287,7 +287,6 @@ public class InputController {
 		// boost
 		boostPressedB = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
 
-
 		// Mouse results
 		crosshair.set(Gdx.input.getX(), Gdx.input.getY());
 		crosshair.scl(1/scale.x,-1/scale.y);
