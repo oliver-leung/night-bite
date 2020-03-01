@@ -6,6 +6,16 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 public class HomeModel extends BoxObstacle {
     private String team;
 
+    private int score;
+
+    public int getScore() {
+        return score;
+    }
+
+    public void incrementScore() {
+        score++;
+    }
+
     public HomeModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
         this.team = team;
