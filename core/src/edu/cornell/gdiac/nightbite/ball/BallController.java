@@ -209,6 +209,7 @@ public class BallController extends WorldController implements ContactListener {
             if (b instanceof BallModel) {
                 ((BallModel) b).setAlive(false);
                 ((BallModel) b).draw = false;
+                ((BallModel) b).item = false;
             }
             return;
         }
@@ -225,6 +226,7 @@ public class BallController extends WorldController implements ContactListener {
             if (a instanceof BallModel && ((BallModel) a).getTeam().equals(bHome.getTeam())) {
                 ((BallModel) a).item = false;
                 ((BallModel) a).setTexture(ballTexture);
+                bHome.incrementScore();
             }
         }
     }
