@@ -10,11 +10,11 @@
  * Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
  * LibGDX version, 1/3/2015
  */
-package edu.cornell.gdiac.shipdemo.desktop;
+package edu.cornell.gdiac.nightbite.desktop;
 
-import edu.cornell.gdiac.shipdemo.GDXRoot;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import edu.cornell.gdiac.nightbite.GDXRoot;
 
 /**
  * The main class of the game.

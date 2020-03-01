@@ -9,7 +9,7 @@
  * Based on original GameX Ship Demo by Rama C. Hoetzlein, 2002
  * LibGDX version, 1/16/2015
  */
-package edu.cornell.gdiac.shipdemo;
+package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
