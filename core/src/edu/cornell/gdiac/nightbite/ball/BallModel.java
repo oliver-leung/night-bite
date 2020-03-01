@@ -47,6 +47,8 @@ public class BallModel extends BoxObstacle {
     private Vector2 impulse;
     private Vector2 boost;
 
+    public boolean item;
+
     public BallModel(float x, float y, float width, float height) {
         super(x, y, width, height);
         impulse = new Vector2();
