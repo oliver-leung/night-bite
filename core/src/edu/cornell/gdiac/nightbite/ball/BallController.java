@@ -149,6 +149,7 @@ public class BallController extends WorldController implements ContactListener {
         if (!ball.isAlive()) {
             ball.respawn();
         }
+        ball.setActive(ball.isAlive());
     }
 
     public void beginContact(Contact contact) {
@@ -159,7 +160,6 @@ public class BallController extends WorldController implements ContactListener {
             if (b instanceof BallModel) {
                 ((BallModel) b).setAlive(false);
                 ((BallModel) b).draw = false;
-                ((BallModel) b).setActive(false);
             }
             return;
         }

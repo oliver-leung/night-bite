@@ -8,7 +8,6 @@ public class HoleModel extends PolygonObstacle {
     public HoleModel(float[] points, float x, float y) {
         super(points, x, y);
         setBodyType(BodyDef.BodyType.StaticBody);
-
     }
 
     public boolean activatePhysics(World world) {

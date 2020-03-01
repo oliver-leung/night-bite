@@ -117,7 +117,6 @@ public class BallModel extends BoxObstacle {
             setPosition(24, 4);
             isAlive = true;
             draw = true;
-            setActive(true);
         }
     }
 }
