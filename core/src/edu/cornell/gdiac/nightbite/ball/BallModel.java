@@ -9,23 +9,46 @@ public class BallModel extends BoxObstacle {
 
     /** The density of this ball */
     private static final float DEFAULT_DENSITY  =  1.0f;
-    /** The friction of this ball */
+    /**
+     * The friction of this ball
+     */
     private static final float DEFAULT_FRICTION = 0.1f;
-    /** The restitution of this ball */
+    /**
+     * The restitution of this ball
+     */
     private static final float DEFAULT_RESTITUTION = 0.4f;
-    /** The thrust factor to convert player input into thrust */
+    /**
+     * The thrust factor to convert player input into thrust
+     */
     private static final float DEFAULT_THRUST = 15.0f;
-    /** The impulse for the character boost */
+    /**
+     * The impulse for the character boost
+     */
     private static final float BOOST_IMP = 200.0f;
-    /** The amount to slow the character down */
+    /**
+     * The amount to slow the character down
+     */
     private static final float MOTION_DAMPING = 15f;
 
-    /** The force to apply to this rocket */
+    /**
+     * Cache object for transforming the force according the object angle
+     */
+    public Affine2 affineCache = new Affine2();
+    private boolean isAlive = true;
+    private int spawnCooldown;
+    /**
+     * Cache for internal force calculations
+     */
+    private Vector2 forceCache = new Vector2();
+
+    /**
+     * The force to apply to this rocket
+     */
     private Vector2 impulse;
     private Vector2 boost;
 
     public BallModel(float x, float y, float width, float height) {
-        super(x,y,width,height);
+        super(x, y, width, height);
         impulse = new Vector2();
         boost = new Vector2();
         setDensity(DEFAULT_DENSITY);
@@ -53,18 +76,46 @@ public class BallModel extends BoxObstacle {
 
     public Vector2 getImpulse() { return impulse; }
 
-    public void setIX(float value) { impulse.x = value; }
+    public void setIX(float value) {
+        impulse.x = value;
+    }
 
-    public void setIY(float value) { impulse.y = value; }
+    public void setIY(float value) {
+        impulse.y = value;
+    }
 
-    public float getThrust() { return DEFAULT_THRUST; }
+    public float getThrust() {
+        return DEFAULT_THRUST;
+    }
 
-    public float getDamping() { return MOTION_DAMPING; }
+    public float getDamping() {
+        return MOTION_DAMPING;
+    }
 
     public void setBoostImpulse(float hori, float vert) {
         boost.x = hori;
         boost.y = vert;
 
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
+    public void respawn() {
+        if (spawnCooldown == 0) {
+            spawnCooldown = 60;
+        }
+        spawnCooldown--;
+        if (spawnCooldown == 0) {
+            setPosition(24, 4);
+            isAlive = true;
+            draw = true;
+        }
     }
 }
 

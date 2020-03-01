@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import edu.cornell.gdiac.nightbite.HoleModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
@@ -96,14 +97,13 @@ public class BallController extends WorldController implements ContactListener {
         addObject(obj);
 
         // add an obstacle
-        obj = new PolygonObstacle(WALL3, 20, 0);
+        obj = new HoleModel(WALL3, 20, 0);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
         obj.setDensity(BASIC_DENSITY);
         obj.setFriction(BASIC_FRICTION);
         obj.setRestitution(BASIC_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(earthTile);
-        obj.setName("wall3");
         addObject(obj);
 
         // add ball
@@ -123,14 +123,28 @@ public class BallController extends WorldController implements ContactListener {
             ball.setBoostImpulse(InputController.getInstance().getHorizontal(), InputController.getInstance().getVertical());
         }
         ball.applyImpulse();
+
+        if (!ball.isAlive()) {
+            ball.respawn();
+        }
     }
 
-    public void beginContact(Contact contact) {}
+    public void beginContact(Contact contact) {
+        Object a = contact.getFixtureA().getBody().getUserData();
+        Object b = contact.getFixtureB().getBody().getUserData();
+        if (a instanceof HoleModel) {
+            ball.setAlive(false);
+            ball.draw = false;
+        }
+    }
 
-    public void endContact(Contact contact) {}
+    public void endContact(Contact contact) {
+    }
 
-    public void postSolve(Contact contact, ContactImpulse impulse) {}
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+    }
 
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+    }
 
 }
