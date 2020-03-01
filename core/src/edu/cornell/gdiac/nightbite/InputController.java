@@ -51,34 +51,30 @@ public class InputController {
 	/** Whether the reset button was pressed. */
 	private boolean resetPressed;
 	private boolean resetPrevious;
-	/** Whether the button to advanced worlds was pressed. */
-	private boolean nextPressed;
-	private boolean nextPrevious;
-	/** Whether the button to step back worlds was pressed. */
-	private boolean prevPressed;
-	private boolean prevPrevious;
-	/** Whether the primary action button was pressed. */
-	private boolean primePressed;
-	private boolean primePrevious;
-	/** Whether the secondary action button was pressed. */
-	private boolean secondPressed;
-	private boolean secondPrevious;
-	/** Whether the teritiary action button was pressed. */
-	private boolean tertiaryPressed;
 	/** Whether the debug toggle was pressed. */
 	private boolean debugPressed;
 	private boolean debugPrevious;
 	/** Whether the exit button was pressed. */
 	private boolean exitPressed;
 	private boolean exitPrevious;
-	
+
+	// for player A // will refactor next week loool
 	/** How much did we move horizontally? */
-	private float horizontal;
+	private float horizontalA;
 	/** How much did we move vertically? */
-	private float vertical;
+	private float verticalA;
 	/** Whether the boost button was pressed. */
-	private boolean boostPressed;
-	private boolean boostPrevious;
+	private boolean boostPressedA;
+	private boolean boostPreviousA;
+
+	// for player B
+	/** How much did we move horizontally? */
+	private float horizontalB;
+	/** How much did we move vertically? */
+	private float verticalB;
+	/** Whether the boost button was pressed. */
+	private boolean boostPressedB;
+	private boolean boostPreviousB;
 
 	/** The crosshair position (for raddoll) */
 	private Vector2 crosshair;
@@ -91,104 +87,47 @@ public class InputController {
 	XBox360Controller xbox;
 	
 	/**
-	 * Returns the amount of sideways movement. 
+	 * Returns the amount of sideways movement.
 	 *
 	 * -1 = left, 1 = right, 0 = still
 	 *
-	 * @return the amount of sideways movement. 
+	 * @return the amount of sideways movement.
 	 */
-	public float getHorizontal() {
-		return horizontal;
-	}
-	
+	public float getHorizontalA() { return horizontalA; }
+
 	/**
-	 * Returns the amount of vertical movement. 
+	 * Returns the amount of vertical movement.
 	 *
 	 * -1 = down, 1 = up, 0 = still
 	 *
-	 * @return the amount of vertical movement. 
+	 * @return the amount of vertical movement.
 	 */
-	public float getVertical() {
-		return vertical;
-	}
-	
-	/**
-	 * Returns the current position of the crosshairs on the screen.
-	 *
-	 * This value does not return the actual reference to the crosshairs position.
-	 * That way this method can be called multiple times without any fair that 
-	 * the position has been corrupted.  However, it does return the same object
-	 * each time.  So if you modify the object, the object will be reset in a
-	 * subsequent call to this getter.
-	 *
-	 * @return the current position of the crosshairs on the screen.
-	 */
-	public Vector2 getCrossHair() {
-		return crosscache.set(crosshair);
-	}
+	public float getVerticalA() { return verticalA; }
 
 	/**
-	 * Returns true if the primary action button was pressed.
+	 * Returns the amount of sideways movement.
 	 *
-	 * This is a one-press button. It only returns true at the moment it was
-	 * pressed, and returns false at any frame afterwards.
+	 * -1 = left, 1 = right, 0 = still
 	 *
-	 * @return true if the primary action button was pressed.
+	 * @return the amount of sideways movement.
 	 */
-	public boolean didPrimary() {
-		return primePressed && !primePrevious;
-	}
+	public float getHorizontalB() { return horizontalB; }
 
 	/**
-	 * Returns true if the secondary action button was pressed.
+	 * Returns the amount of vertical movement.
 	 *
-	 * This is a one-press button. It only returns true at the moment it was
-	 * pressed, and returns false at any frame afterwards.
+	 * -1 = down, 1 = up, 0 = still
 	 *
-	 * @return true if the secondary action button was pressed.
+	 * @return the amount of vertical movement.
 	 */
-	public boolean didSecondary() {
-		return secondPressed && !secondPrevious;
-	}
-
-	/**
-	 * Returns true if the tertiary action button was pressed.
-	 *
-	 * This is a sustained button. It will returns true as long as the player
-	 * holds it down.
-	 *
-	 * @return true if the secondary action button was pressed.
-	 */
-	public boolean didTertiary() {
-		return tertiaryPressed;
-	}
+	public float getVerticalB() { return verticalB; }
 
 	/**
 	 * Returns true if the reset button was pressed.
 	 *
 	 * @return true if the reset button was pressed.
 	 */
-	public boolean didReset() {
-		return resetPressed && !resetPrevious;
-	}
-
-	/**
-	 * Returns true if the player wants to go to the next level.
-	 *
-	 * @return true if the player wants to go to the next level.
-	 */
-	public boolean didAdvance() {
-		return nextPressed && !nextPrevious;
-	}
-	
-	/**
-	 * Returns true if the player wants to go to the previous level.
-	 *
-	 * @return true if the player wants to go to the previous level.
-	 */
-	public boolean didRetreat() {
-		return prevPressed && !prevPrevious;
-	}
+	public boolean didReset() { return resetPressed && !resetPrevious; }
 	
 	/**
 	 * Returns true if the player wants to go toggle the debug mode.
@@ -208,8 +147,12 @@ public class InputController {
 		return exitPressed && !exitPrevious;
 	}
 
-	public boolean didBoost() {
-		return boostPressed && !boostPrevious;
+	public boolean didBoostA() {
+		return boostPressedA && !boostPreviousA;
+	}
+
+	public boolean didBoostB() {
+		return boostPressedB && !boostPreviousB;
 	}
 	
 	/**
@@ -238,14 +181,11 @@ public class InputController {
 	public void readInput(Rectangle bounds, Vector2 scale) {
 		// Copy state from last animation frame
 		// Helps us ignore buttons that are held down
-		primePrevious  = primePressed;
-		secondPrevious = secondPressed;
 		resetPrevious  = resetPressed;
 		debugPrevious  = debugPressed;
 		exitPrevious = exitPressed;
-		nextPrevious = nextPressed;
-		prevPrevious = prevPressed;
-		boostPrevious = boostPressed;
+		boostPreviousA = boostPressedA;
+		boostPreviousB = boostPressedB;
 		
 		// Check to see if a GamePad is connected
 		if (xbox.isConnected()) {
@@ -269,18 +209,13 @@ public class InputController {
 	private void readGamepad(Rectangle bounds, Vector2 scale) {
 		resetPressed = xbox.getStart();
 		exitPressed  = xbox.getBack();
-		nextPressed  = xbox.getRB();
-		prevPressed  = xbox.getLB();
-		primePressed = xbox.getA();
 		debugPressed  = xbox.getY();
 
 		// Increase animation frame, but only if trying to move
-		horizontal = xbox.getLeftX();
-		vertical   = xbox.getLeftY();
-		secondPressed = xbox.getRightTrigger() > 0.6f;
-		
+		horizontalA = xbox.getLeftX();
+		verticalA   = xbox.getLeftY();
+
 		// Move the crosshairs with the right stick.
-		tertiaryPressed = xbox.getA();
 		crosscache.set(xbox.getLeftX(), xbox.getLeftY());
 		if (crosscache.len2() > GP_THRESHOLD) {
 			momentum += GP_ACCELERATE;
@@ -306,35 +241,54 @@ public class InputController {
 	private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
 		// Give priority to gamepad results
 		resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
-		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
-		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
-		nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
+		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
 		exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-		
+
+		// FOR PLAYER A
+
 		// Directional controls
-		horizontal = (secondary ? horizontal : 0.0f);
+		horizontalA = (secondary ? horizontalA : 0.0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			horizontal += 1.0f;
+			horizontalA += 1.0f;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			horizontal -= 1.0f;
+			horizontalA -= 1.0f;
 		}
 		
-		vertical = (secondary ? vertical : 0.0f);
+		verticalA = (secondary ? verticalA : 0.0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			vertical += 1.0f;
+			verticalA += 1.0f;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			vertical -= 1.0f;
+			verticalA -= 1.0f;
 		}
 
 		// boost
-		boostPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
-		
+		boostPressedA = Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+
+		// FOR PLAYER B
+		// Directional controls
+		horizontalB = (secondary ? horizontalB : 0.0f);
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			horizontalB += 1.0f;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			horizontalB -= 1.0f;
+		}
+
+		verticalB = (secondary ? verticalB : 0.0f);
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			verticalB += 1.0f;
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			verticalB -= 1.0f;
+		}
+
+		// boost
+		boostPressedB = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+
+
 		// Mouse results
-        tertiaryPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
 		crosshair.set(Gdx.input.getX(), Gdx.input.getY());
 		crosshair.scl(1/scale.x,-1/scale.y);
 		crosshair.y += bounds.height;

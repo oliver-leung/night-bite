@@ -23,9 +23,13 @@ public class BallController extends WorldController implements ContactListener {
     private TextureRegion itemTexture;
 
     /** The initial ball position */
-    private static Vector2 BALL_POS = new Vector2(24, 4);
+    private static Vector2 BALL_POS_1 = new Vector2(24, 4);
+    /** The initial ball position */
+    private static Vector2 BALL_POS_2 = new Vector2(14, 8);
     /** Reference to the ball/player avatar */
-    private BallModel ball;
+    private BallModel ballA;
+    /** Reference to the ball/player avatar */
+    private BallModel ballB;
 
     private BoxObstacle item;
     private boolean itemActive = true;
@@ -36,8 +40,6 @@ public class BallController extends WorldController implements ContactListener {
     private static final float BASIC_FRICTION  = 1f;
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0f;
-
-    private static final float DAMPING = 0.3f;
 
     private static final float[] WALL3 = { 4.0f, 10.5f,  8.0f, 10.5f,
             8.0f,  9.5f,  4.0f,  9.5f};
@@ -131,25 +133,42 @@ public class BallController extends WorldController implements ContactListener {
         // add ball
         float dwidth  = ballTexture.getRegionWidth()/scale.x;
         float dheight = ballTexture.getRegionHeight()/scale.y;
-        ball = new BallModel(BALL_POS.x, BALL_POS.y, dwidth, dheight);
-        ball.setDrawScale(scale);
-        ball.setTexture(ballTexture);
-        addObject(ball);
+        ballA = new BallModel(BALL_POS_1.x, BALL_POS_1.y, dwidth, dheight);
+        ballA.setDrawScale(scale);
+        ballA.setTexture(ballTexture);
+        addObject(ballA);
+
+        // add ball B
+        ballB = new BallModel(BALL_POS_2.x, BALL_POS_2.y, dwidth, dheight);
+        ballB.setDrawScale(scale);
+        ballB.setTexture(ballTexture);
+        addObject(ballB);
     }
 
     public void update(float dt) {
         if (! itemActive) { removeItem(); }
-        ball.setIX(InputController.getInstance().getHorizontal());
-        ball.setIY(InputController.getInstance().getVertical());
-        if (InputController.getInstance().didBoost()) {
-            ball.setBoostImpulse(InputController.getInstance().getHorizontal(), InputController.getInstance().getVertical());
+        ballA.setIX(InputController.getInstance().getHorizontalA());
+        ballA.setIY(InputController.getInstance().getVerticalA());
+        if (InputController.getInstance().didBoostA()) {
+            ballA.setBoostImpulse(InputController.getInstance().getHorizontalA(), InputController.getInstance().getVerticalA());
         }
-        ball.applyImpulse();
+        ballA.applyImpulse();
 
-        if (!ball.isAlive()) {
-            ball.respawn();
+        ballB.setIX(InputController.getInstance().getHorizontalB());
+        ballB.setIY(InputController.getInstance().getVerticalB());
+        if (InputController.getInstance().didBoostB()) {
+            ballB.setBoostImpulse(InputController.getInstance().getHorizontalB(), InputController.getInstance().getVerticalB());
         }
-        ball.setActive(ball.isAlive());
+        ballB.applyImpulse();
+
+        if (!ballA.isAlive()) {
+            ballA.respawn();
+        }
+        if (!ballB.isAlive()) {
+            ballB.respawn();
+        }
+        ballA.setActive(ballA.isAlive());
+        ballB.setActive(ballB.isAlive());
     }
 
     public void beginContact(Contact contact) {
@@ -171,9 +190,6 @@ public class BallController extends WorldController implements ContactListener {
                 itemActive = false;
             }
         }
-
-
-
 
     }
 
