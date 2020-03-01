@@ -190,11 +190,10 @@ public class BallController extends WorldController implements ContactListener {
         ballB.applyImpulse();
 
         if (!ballA.isAlive()) {
-            addItem(ITEM_POS);
             ballA.respawn();
         }
         if (!ballB.isAlive()) {
-            addItem(ITEM_POS);
+            ballB.respawn();
         }
         ballA.setActive(ballA.isAlive());
         ballB.setActive(ballB.isAlive());
@@ -216,13 +215,13 @@ public class BallController extends WorldController implements ContactListener {
             if (b instanceof BallModel) {
                 ((BallModel) b).setAlive(false);
                 ((BallModel) b).draw = false;
-                ((BallModel) b).item = false;
             }
             return;
         }
 
         if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
             if (b instanceof BallModel) {
+                System.out.println("yeet");
                 ((BallModel) b).item = true;
                 ((BallModel) b).setTexture(ballItemTexture);
                 itemActive = false;
@@ -273,11 +272,13 @@ public class BallController extends WorldController implements ContactListener {
 
     private void removeItem() {
         item.draw = false;
+        System.out.println("yeetx");
         item.setActive(false);
     }
 
     private void addItem(Vector2 position) {
         item.draw = true;
+        System.out.println("yeetw");
         itemActive = true;
         item.setActive(true);
         item.setPosition(position);
