@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.HoleModel;
+import edu.cornell.gdiac.nightbite.HomeModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
@@ -131,18 +132,32 @@ public class BallController extends WorldController implements ContactListener {
         addObject(item);
 
         // add ball
-        float dwidth  = ballTexture.getRegionWidth()/scale.x;
-        float dheight = ballTexture.getRegionHeight()/scale.y;
-        ballA = new BallModel(BALL_POS_1.x, BALL_POS_1.y, dwidth, dheight);
+        float dwidth = ballTexture.getRegionWidth() / scale.x;
+        float dheight = ballTexture.getRegionHeight() / scale.y;
+        ballA = new BallModel(BALL_POS_1.x, BALL_POS_1.y, dwidth, dheight, "a");
         ballA.setDrawScale(scale);
         ballA.setTexture(ballTexture);
         addObject(ballA);
 
+        // add ballA home
+        HomeModel obj1 = new HomeModel(ballA.getHome_loc().x, ballA.getHome_loc().y, 2.5f, 2.5f, "a");
+        obj1.setBodyType(BodyDef.BodyType.StaticBody);
+        obj1.setDrawScale(scale);
+        obj1.setTexture(earthTile);
+        addObject(obj1);
+
         // add ball B
-        ballB = new BallModel(BALL_POS_2.x, BALL_POS_2.y, dwidth, dheight);
+        ballB = new BallModel(BALL_POS_2.x, BALL_POS_2.y, dwidth, dheight, "b");
         ballB.setDrawScale(scale);
         ballB.setTexture(ballTexture);
         addObject(ballB);
+
+        // add ballB home
+        obj1 = new HomeModel(ballB.getHome_loc().x, ballB.getHome_loc().y, 2.5f, 2.5f, "b");
+        obj1.setBodyType(BodyDef.BodyType.StaticBody);
+        obj1.setDrawScale(scale);
+        obj1.setTexture(earthTile);
+        addObject(obj1);
     }
 
     public void update(float dt) {
@@ -202,8 +217,13 @@ public class BallController extends WorldController implements ContactListener {
                 itemActive = false;
             }
         }
-
-
+        if (b instanceof HomeModel) {
+            HomeModel bHome = (HomeModel) b;
+            if (a instanceof BallModel && ((BallModel) a).getTeam().equals(bHome.getTeam())) {
+                ((BallModel) a).item = false;
+                ((BallModel) a).setTexture(ballTexture);
+            }
+        }
     }
 
     public void endContact(Contact contact) {

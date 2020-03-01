@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.nightbite.ball;
 
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
@@ -59,11 +58,10 @@ public class BallModel extends BoxObstacle {
      */
     private Vector2 impulse;
     private Vector2 boost;
-    private Vector2 home_loc;
 
-    public boolean item;
+    private String team;
 
-    public BallModel(float x, float y, float width, float height) {
+    public BallModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
         home_loc = new Vector2(x, y);
         impulse = new Vector2();
@@ -74,11 +72,34 @@ public class BallModel extends BoxObstacle {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setName("ball");
+        this.team = team;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
+    }
+
+    public Vector2 getHome_loc() {
+        return home_loc;
+    }
+
+    private Vector2 home_loc;
+
+    public boolean item;
+
+    public void setHome_loc(Vector2 home_loc) {
+        this.home_loc = home_loc;
     }
 
     public boolean activatePhysics(World world) {
         boolean ret = super.activatePhysics(world);
-        if (! ret) { return false; }
+        if (!ret) {
+            return false;
+        }
         body.setLinearDamping(getDamping());
         body.setFixedRotation(true);
         return true;
