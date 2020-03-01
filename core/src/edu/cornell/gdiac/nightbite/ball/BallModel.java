@@ -134,7 +134,7 @@ public class BallModel extends BoxObstacle {
     }
 
     public void setBoostImpulse(float hori, float vert) {
-        if (cooldown > 0) { return; }
+        if (cooldown > 0 || item) { return; }
         state = MoveState.RUN;
         boosting = BOOST_FRAMES;
         cooldown = COOLDOWN_FRAMES;
