@@ -8,7 +8,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.HoleModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
+import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 
 public class BallController extends WorldController implements ContactListener {
@@ -17,11 +19,15 @@ public class BallController extends WorldController implements ContactListener {
     private static final String BALL_TEXTURE = "ball/ballSprite.png";
     /** Texture assets for the ball */
     private TextureRegion ballTexture;
+    private TextureRegion itemTexture;
 
     /** The initial ball position */
     private static Vector2 BALL_POS = new Vector2(24, 4);
     /** Reference to the ball/player avatar */
     private BallModel ball;
+
+    private BoxObstacle item;
+    private boolean itemActive = true;
 
     /** Density of objects */
     private static final float BASIC_DENSITY   = 0.0f;
@@ -38,12 +44,15 @@ public class BallController extends WorldController implements ContactListener {
     public void preLoadContent(AssetManager manager) {
         manager.load(BALL_TEXTURE, Texture.class);
         assets.add(BALL_TEXTURE);
+        manager.load("item/item.png", Texture.class);
+        assets.add("item/item.png");
         super.preLoadContent(manager);
     }
 
     public void loadContent(AssetManager manager) {
         ballTexture = createTexture(manager,BALL_TEXTURE,false);
         super.loadContent(manager);
+        itemTexture = createTexture(manager, "item/item.png", false);
     }
 
     public BallController() {
@@ -106,6 +115,15 @@ public class BallController extends WorldController implements ContactListener {
         obj.setTexture(earthTile);
         addObject(obj);
 
+        // add item
+        float ddwidth  = itemTexture.getRegionWidth()/scale.x;
+        float ddheight = itemTexture.getRegionHeight()/scale.y;
+        item = new BoxObstacle(2, 4, ddwidth, ddheight);
+        item.setDrawScale(scale);
+        item.setTexture(itemTexture);
+        item.setName("item");
+        addObject(item);
+
         // add ball
         float dwidth  = ballTexture.getRegionWidth()/scale.x;
         float dheight = ballTexture.getRegionHeight()/scale.y;
@@ -116,7 +134,7 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
-
+        if (! itemActive) { removeItem(); }
         ball.setIX(InputController.getInstance().getHorizontal());
         ball.setIY(InputController.getInstance().getVertical());
         if (InputController.getInstance().didBoost()) {
@@ -132,10 +150,25 @@ public class BallController extends WorldController implements ContactListener {
     public void beginContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
+
         if (a instanceof HoleModel) {
-            ball.setAlive(false);
-            ball.draw = false;
+            if (b instanceof BallModel) {
+                ((BallModel) b).setAlive(false);
+                ((BallModel) b).draw = false;
+            }
+            return;
         }
+
+        if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
+            if (b instanceof BallModel) {
+                ((BallModel) b).item = true;
+                itemActive = false;
+            }
+        }
+
+
+
+
     }
 
     public void endContact(Contact contact) {
@@ -146,5 +179,17 @@ public class BallController extends WorldController implements ContactListener {
 
     public void preSolve(Contact contact, Manifold oldManifold) {
     }
+
+    private void removeItem() {
+        item.draw = false;
+        item.setActive(false);
+    }
+
+    private void addItem(Vector2 position) {
+        item.draw = false;
+        item.setActive(false);
+        item.setPosition(position);
+    }
+
 
 }
