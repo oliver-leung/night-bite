@@ -8,9 +8,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.HoleModel;
 import edu.cornell.gdiac.nightbite.InputController;
 import edu.cornell.gdiac.nightbite.WorldController;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
-import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 
 public class BallController extends WorldController implements ContactListener {
@@ -117,7 +116,7 @@ public class BallController extends WorldController implements ContactListener {
         obj.setFriction(BASIC_FRICTION);
         obj.setRestitution(BASIC_RESTITUTION);
         obj.setDrawScale(scale);
-        obj.setTexture(earthTile);
+        obj.setTexture(goalTile);
         addObject(obj);
 
         // add item
@@ -160,6 +159,7 @@ public class BallController extends WorldController implements ContactListener {
             if (b instanceof BallModel) {
                 ((BallModel) b).setAlive(false);
                 ((BallModel) b).draw = false;
+                ((BallModel) b).setActive(false);
             }
             return;
         }
