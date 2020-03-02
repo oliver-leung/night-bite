@@ -191,6 +191,8 @@ public class InputController {
 		if (xbox.isConnected()) {
 			readGamepad(bounds, scale);
 			readKeyboard(bounds, scale, true); // Read as a back-up
+			System.out.println("H: " + horizontalA);
+			System.out.println("V: " + verticalA);
 		} else {
 			readKeyboard(bounds, scale, false);
 		}

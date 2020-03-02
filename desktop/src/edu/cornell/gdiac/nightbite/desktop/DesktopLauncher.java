@@ -35,9 +35,9 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		// These are the configuration attributes
-		config.width  = 1024;
+		config.width = 1024;
 		config.height = 576;
-		config.resizable  = false;
+		config.resizable = true;
 		config.foregroundFPS = 60;
 
 		// THERE IS NO FULLSCREEN SUPPORT FOR RETINA MACS...

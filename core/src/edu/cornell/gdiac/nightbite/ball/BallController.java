@@ -194,7 +194,7 @@ public class BallController extends WorldController implements ContactListener {
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
-        home.setName("home1");
+        home.setName("homeA");
         addObject(home);
 
         // Team B
@@ -202,7 +202,7 @@ public class BallController extends WorldController implements ContactListener {
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
-        obj.setName("home2");
+        home.setName("homeB");
         addObject(home);
     }
 
