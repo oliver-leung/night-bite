@@ -91,27 +91,27 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     private void populateLevel() {
+        // add an obstacle
+        BoxObstacle wall;
+        float ddwidth  = standTile.getRegionWidth()/scale.x;
+        float ddheight = standTile.getRegionHeight()/scale.y;
+        wall = new BoxObstacle(3, 3, ddwidth, ddheight);
+        wall.setDensity(BASIC_DENSITY);
+        wall.setBodyType(BodyDef.BodyType.StaticBody);
+        wall.setDrawScale(scale);
+        wall.setTexture(standTile);
+        wall.setName("wall1");
+        addObject(wall);
 
         // add an obstacle
         PolygonObstacle obj;
-        obj = new PolygonObstacle(WALL3, 0, 0);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(BASIC_DENSITY);
-        obj.setFriction(BASIC_FRICTION);
-        obj.setRestitution(BASIC_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(earthTile);
-        obj.setName("wall1");
-        addObject(obj);
-
-        // add an obstacle
         obj = new PolygonObstacle(WALL3, 10, -5);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
         obj.setDensity(BASIC_DENSITY);
         obj.setFriction(BASIC_FRICTION);
         obj.setRestitution(BASIC_RESTITUTION);
         obj.setDrawScale(scale);
-        obj.setTexture(earthTile);
+        obj.setTexture(standTile);
         obj.setName("wall2");
         addObject(obj);
 
@@ -126,8 +126,8 @@ public class BallController extends WorldController implements ContactListener {
         addObject(obj);
 
         // add item
-        float ddwidth  = itemTexture.getRegionWidth()/scale.x;
-        float ddheight = itemTexture.getRegionHeight()/scale.y;
+        ddwidth  = itemTexture.getRegionWidth()/scale.x;
+        ddheight = itemTexture.getRegionHeight()/scale.y;
         item = new BoxObstacle(ITEM_POS.x, ITEM_POS.y, ddwidth, ddheight);
         item.setDrawScale(scale);
         item.setTexture(itemTexture);
@@ -147,7 +147,7 @@ public class BallController extends WorldController implements ContactListener {
         HomeModel obj1 = new HomeModel(ballA.getHome_loc().x, ballA.getHome_loc().y, 2.5f, 2.5f, "a");
         obj1.setBodyType(BodyDef.BodyType.StaticBody);
         obj1.setDrawScale(scale);
-        obj1.setTexture(earthTile);
+        obj1.setTexture(standTile);
         addObject(obj1);
 
         // add ball B
@@ -160,7 +160,7 @@ public class BallController extends WorldController implements ContactListener {
         obj1 = new HomeModel(ballB.getHome_loc().x, ballB.getHome_loc().y, 2.5f, 2.5f, "b");
         obj1.setBodyType(BodyDef.BodyType.StaticBody);
         obj1.setDrawScale(scale);
-        obj1.setTexture(earthTile);
+        obj1.setTexture(standTile);
         addObject(obj1);
     }
 

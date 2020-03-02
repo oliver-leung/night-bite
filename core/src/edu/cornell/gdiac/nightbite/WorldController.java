@@ -69,7 +69,7 @@ public abstract class WorldController implements Screen {
 	
 	// Pathnames to shared assets
 	/** File to texture for walls and platforms */
-	private static String EARTH_FILE = "shared/earthtile.png";
+	private static String STAND_FILE = "shared/stand-border.png";
 	/** File to texture for the win door */
 	private static String GOAL_FILE = "shared/goaldoor.png";
 	/** Retro font for displaying messages */
@@ -77,7 +77,7 @@ public abstract class WorldController implements Screen {
 	private static int FONT_SIZE = 64;
 
 	/** The texture for walls and platforms */
-	protected TextureRegion earthTile;
+	protected TextureRegion standTile;
 	/** The texture for the exit condition */
 	protected TextureRegion goalTile;
 	/** The font for giving messages to the player */
@@ -100,8 +100,8 @@ public abstract class WorldController implements Screen {
 		
 		worldAssetState = AssetState.LOADING;
 		// Load the shared tiles.
-		manager.load(EARTH_FILE,Texture.class);
-		assets.add(EARTH_FILE);
+		manager.load(STAND_FILE,Texture.class);
+		assets.add(STAND_FILE);
 		manager.load(GOAL_FILE,Texture.class);
 		assets.add(GOAL_FILE);
 		
@@ -129,7 +129,7 @@ public abstract class WorldController implements Screen {
 		}
 		
 		// Allocate the tiles
-		earthTile = createTexture(manager,EARTH_FILE,true);
+		standTile = createTexture(manager,STAND_FILE,true);
 		goalTile  = createTexture(manager,GOAL_FILE,true);
 		
 		// Allocate the font
@@ -340,8 +340,6 @@ public abstract class WorldController implements Screen {
 	 * Returns the canvas associated with this controller
 	 *
 	 * The canvas is shared across all controllers
-	 *
-	 * @param the canvas associated with this controller
 	 */
 	public GameCanvas getCanvas() {
 		return canvas;
@@ -575,7 +573,7 @@ public abstract class WorldController implements Screen {
 	 *
 	 * The method draws all objects in the order that they were added.
 	 *
-	 * @param canvas The drawing context
+	 * @param delta
 	 */
 	public void draw(float delta) {
 		canvas.clear();
