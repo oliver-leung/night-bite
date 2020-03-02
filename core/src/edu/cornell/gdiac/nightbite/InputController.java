@@ -166,8 +166,8 @@ public class InputController {
 	 */
 	public InputController() { 
 		// If we have a game-pad for id, then use it.
-		xboxA = new XBox360Controller(0);
-		xboxB = new XBox360Controller(1);
+		xboxA = new XBox360Controller(1);
+		xboxB = new XBox360Controller(0);
 		crosshair = new Vector2();
 		crosscache = new Vector2();
 	}
