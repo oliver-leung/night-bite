@@ -5,9 +5,10 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
-public class BallModel extends BoxObstacle {
+public class BallModel extends CapsuleObstacle{
 
     /**
      * The density of this ball
@@ -88,6 +89,8 @@ public class BallModel extends BoxObstacle {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setName("ball");
+        setOrientation(Orientation.VERTICAL);
+
         this.team = team;
     }
 

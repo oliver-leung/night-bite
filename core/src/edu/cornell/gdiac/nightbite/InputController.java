@@ -31,6 +31,7 @@ public class InputController {
 	private static final float GP_ACCELERATE = 1.0f;
 	private static final float GP_MAX_SPEED  = 10.0f;
 	private static final float GP_THRESHOLD  = 0.01f;
+	private static final float DEADZONE = 0.3f;
 
 	/** The singleton instance of the input controller */
 	private static InputController theController = null;
@@ -84,8 +85,10 @@ public class InputController {
 	private float momentum;
 	
 	/** An X-Box controller (if it is connected) */
-	XBox360Controller xbox;
-	
+	XBox360Controller xboxA;
+
+	XBox360Controller xboxB;
+
 	/**
 	 * Returns the amount of sideways movement.
 	 *
@@ -163,7 +166,8 @@ public class InputController {
 	 */
 	public InputController() { 
 		// If we have a game-pad for id, then use it.
-		xbox = new XBox360Controller(0);
+		xboxA = new XBox360Controller(0);
+		xboxB = new XBox360Controller(1);
 		crosshair = new Vector2();
 		crosscache = new Vector2();
 	}
@@ -188,14 +192,20 @@ public class InputController {
 		boostPreviousB = boostPressedB;
 		
 		// Check to see if a GamePad is connected
-		if (xbox.isConnected()) {
-			readGamepad(bounds, scale);
-			readKeyboard(bounds, scale, true); // Read as a back-up
-			System.out.println("H: " + horizontalA);
-			System.out.println("V: " + verticalA);
+		if (xboxA.isConnected()) {
+			readGamepad(bounds, scale, 0);
+			readKeyboard(bounds, scale, true, 0); // Read as a back-up
 		} else {
-			readKeyboard(bounds, scale, false);
+			readKeyboard(bounds, scale, false, 0);
 		}
+
+		if (xboxB.isConnected()) {
+			readGamepad(bounds, scale, 1);
+			readKeyboard(bounds, scale, true, 1); // Read as a back-up
+		} else {
+			readKeyboard(bounds, scale, false, 1);
+		}
+
 	}
 
 	/**
@@ -208,26 +218,24 @@ public class InputController {
 	 * @param bounds The input bounds for the crosshair.  
 	 * @param scale  The drawing scale
 	 */
-	private void readGamepad(Rectangle bounds, Vector2 scale) {
-		resetPressed = xbox.getStart();
-		exitPressed  = xbox.getBack();
-		debugPressed  = xbox.getY();
+	private void readGamepad(Rectangle bounds, Vector2 scale, int device) {
+		if (device == 0) {
+			resetPressed = xboxA.getStart();
+			exitPressed  = xboxA.getBack();
+			debugPressed  = xboxA.getY();
+			boostPressedA = xboxA.getB();
 
-		// Increase animation frame, but only if trying to move
-		horizontalA = xbox.getLeftX();
-		verticalA   = xbox.getLeftY();
-
-		// Move the crosshairs with the right stick.
-		crosscache.set(xbox.getLeftX(), xbox.getLeftY());
-		if (crosscache.len2() > GP_THRESHOLD) {
-			momentum += GP_ACCELERATE;
-			momentum = Math.min(momentum, GP_MAX_SPEED);
-			crosscache.scl(momentum);
-			crosscache.scl(1/scale.x,1/scale.y);
-			crosshair.add(crosscache);
-		} else {
-			momentum = 0;
+			// Increase animation frame, but only if trying to move
+			horizontalA = xboxA.getLeftX();
+			verticalA   = xboxA.getLeftY();
 		}
+		else {
+			boostPressedB = xboxB.getB();
+
+			horizontalB = xboxB.getLeftX();
+			verticalB   = xboxB.getLeftY();
+		}
+
 		clampPosition(bounds);
 	}
 
@@ -240,59 +248,58 @@ public class InputController {
 	 *
 	 * @param secondary true if the keyboard should give priority to a gamepad
 	 */
-	private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
-		// Give priority to gamepad results
-		resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
-		exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+	private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary, int device) {
+		if (device == 0) {
+			// Give priority to gamepad results
+			resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
+			debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
+			exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
 
-		// FOR PLAYER A
+			// FOR PLAYER A
 
-		// Directional controls
-		horizontalA = (secondary ? horizontalA : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			horizontalA += 1.0f;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			horizontalA -= 1.0f;
-		}
-		
-		verticalA = (secondary ? verticalA : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			verticalA += 1.0f;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			verticalA -= 1.0f;
-		}
+			// Directional controls
+			horizontalA = (secondary && Math.abs(horizontalA) > DEADZONE ? horizontalA : 0.0f);
+			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+				horizontalA += 1.0f;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+				horizontalA -= 1.0f;
+			}
 
-		// boost
-		boostPressedA = Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+			verticalA = (secondary  && Math.abs(verticalA) > DEADZONE ? verticalA : 0.0f);
+			if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+				verticalA += 1.0f;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+				verticalA -= 1.0f;
+			}
 
-		// FOR PLAYER B
-		// Directional controls
-		horizontalB = (secondary ? horizontalB : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			horizontalB += 1.0f;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			horizontalB -= 1.0f;
-		}
+			// boost
+			boostPressedA = (secondary && boostPressedA) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
 
-		verticalB = (secondary ? verticalB : 0.0f);
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			verticalB += 1.0f;
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			verticalB -= 1.0f;
-		}
+		} else {
+			// FOR PLAYER B
+			// Directional controls
+			horizontalB = (secondary  && Math.abs(horizontalB) > DEADZONE ? horizontalB : 0.0f);
+			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+				horizontalB += 1.0f;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+				horizontalB -= 1.0f;
+			}
 
-		// boost
-		boostPressedB = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+			verticalB = (secondary && Math.abs(verticalB) > DEADZONE ? verticalB : 0.0f);
+			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+				verticalB += 1.0f;
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+				verticalB -= 1.0f;
+			}
 
-		// Mouse results
-		crosshair.set(Gdx.input.getX(), Gdx.input.getY());
-		crosshair.scl(1/scale.x,-1/scale.y);
-		crosshair.y += bounds.height;
+			// boost
+			boostPressedB = (secondary && boostPressedB) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+
+		}
 		clampPosition(bounds);
 	}
 	
