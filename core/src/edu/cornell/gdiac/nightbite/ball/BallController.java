@@ -15,14 +15,18 @@ import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 
 public class BallController extends WorldController implements ContactListener {
 
-    /** Reference to the ball texture */
-    private static final String BALL_TEXTURE = "ball/char2-f1.png";
+    /**
+     * Reference to the ball texture
+     */
+    private static final String PLAYER2_TEXTURE = "ball/char2-f1.png";
     private static final String PLAYER1_TEXTURE = "ball/char1.png";
     private static final String BALLITEM_TEXTURE = "ball/ballItem.png";
     private static final String ITEM_TEXTURE = "ball/fish.png";
 
-    /** Texture assets for the ball */
-    private TextureRegion ballTexture;
+    /**
+     * Texture assets for the ball
+     */
+    private TextureRegion player2texture;
     private TextureRegion player1Texture;
     private TextureRegion ballItemTexture;
     private TextureRegion itemTexture;
@@ -53,8 +57,8 @@ public class BallController extends WorldController implements ContactListener {
             8.0f,  9.5f,  4.0f,  9.5f};
 
     public void preLoadContent(AssetManager manager) {
-        manager.load(BALL_TEXTURE, Texture.class);
-        assets.add(BALL_TEXTURE);
+        manager.load(PLAYER2_TEXTURE, Texture.class);
+        assets.add(PLAYER2_TEXTURE);
         manager.load(PLAYER1_TEXTURE, Texture.class);
         assets.add(PLAYER1_TEXTURE);
         manager.load(BALLITEM_TEXTURE, Texture.class);
@@ -65,7 +69,7 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void loadContent(AssetManager manager) {
-        ballTexture = createTexture(manager,BALL_TEXTURE,false);
+        player2texture = createTexture(manager, PLAYER2_TEXTURE, false);
         player1Texture = createTexture(manager,PLAYER1_TEXTURE,false);
         ballItemTexture = createTexture(manager, BALLITEM_TEXTURE, false);
         itemTexture = createTexture(manager, ITEM_TEXTURE, false);
@@ -141,8 +145,8 @@ public class BallController extends WorldController implements ContactListener {
         addObject(item);
 
         // add player 1
-        float dwidth = ballTexture.getRegionWidth() / scale.x;
-        float dheight = ballTexture.getRegionHeight() / scale.y;
+        float dwidth = player2texture.getRegionWidth() / scale.x;
+        float dheight = player2texture.getRegionHeight() / scale.y;
         ballA = new BallModel(BALL_POS_1.x, BALL_POS_1.y, dwidth, dheight, "a");
         ballA.setDrawScale(scale);
         ballA.setTexture(player1Texture);
@@ -159,7 +163,7 @@ public class BallController extends WorldController implements ContactListener {
         // add player 2
         ballB = new BallModel(BALL_POS_2.x, BALL_POS_2.y, dwidth, dheight, "b");
         ballB.setDrawScale(scale);
-        ballB.setTexture(ballTexture);
+        ballB.setTexture(player2texture);
         addObject(ballB);
 
         // add player 2 home
@@ -257,7 +261,7 @@ public class BallController extends WorldController implements ContactListener {
                     bHome.incrementScore();
                 }
                 ((BallModel) a).item = false;
-                ((BallModel) a).setTexture(ballTexture);
+                ((BallModel) a).resetTexture();
             }
         }
 
@@ -268,7 +272,7 @@ public class BallController extends WorldController implements ContactListener {
                     bHome.incrementScore();
                 }
                 ((BallModel) b).item = false;
-                ((BallModel) b).setTexture(ballTexture);
+                ((BallModel) b).setTexture(player2texture);
             }
         }
     }

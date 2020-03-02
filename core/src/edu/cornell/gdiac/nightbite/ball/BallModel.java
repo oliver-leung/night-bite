@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.nightbite.ball;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -12,6 +13,11 @@ public class BallModel extends BoxObstacle {
      * The density of this ball
      */
     private static final float DEFAULT_DENSITY = 1.0f;
+    private TextureRegion defaultTexture;
+
+    public void resetTexture() {
+        texture = defaultTexture;
+    }
 
     public enum MoveState {
         WALK,
@@ -62,6 +68,14 @@ public class BallModel extends BoxObstacle {
     private Vector2 boost;
 
     private String team;
+
+    @Override
+    public void setTexture(TextureRegion value) {
+        if (defaultTexture == null) {
+            defaultTexture = value;
+        }
+        super.setTexture(value);
+    }
 
     public BallModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
