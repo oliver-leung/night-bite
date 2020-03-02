@@ -18,6 +18,8 @@ public class BallController extends WorldController implements ContactListener {
     /** Reference to the ball texture */
     private static final String BALL_TEXTURE = "ball/ballSprite.png";
     private static final String BALLITEM_TEXTURE = "ball/ballItem.png";
+    private static final String ITEM_TEXTURE = "ball/fish.png";
+
     /** Texture assets for the ball */
     private TextureRegion ballTexture;
     private TextureRegion ballItemTexture;
@@ -53,15 +55,15 @@ public class BallController extends WorldController implements ContactListener {
         assets.add(BALL_TEXTURE);
         manager.load(BALLITEM_TEXTURE, Texture.class);
         assets.add(BALLITEM_TEXTURE);
-        manager.load("item/item.png", Texture.class);
-        assets.add("item/item.png");
+        manager.load(ITEM_TEXTURE, Texture.class);
+        assets.add(ITEM_TEXTURE);
         super.preLoadContent(manager);
     }
 
     public void loadContent(AssetManager manager) {
         ballTexture = createTexture(manager,BALL_TEXTURE,false);
         ballItemTexture = createTexture(manager, BALLITEM_TEXTURE, false);
-        itemTexture = createTexture(manager, "item/item.png", false);
+        itemTexture = createTexture(manager, ITEM_TEXTURE, false);
         super.loadContent(manager);
     }
 
