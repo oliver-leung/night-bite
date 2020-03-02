@@ -151,7 +151,6 @@ public class BallController extends WorldController implements ContactListener {
         obj.setName("wall2");
         addObject(obj);
 
-        // add an obstacle
         BoxObstacle wall;
         float ddwidth  = standTile.getRegionWidth()/scale.x;
         float ddheight = standTile.getRegionHeight()/scale.y;
@@ -160,7 +159,7 @@ public class BallController extends WorldController implements ContactListener {
         wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
         wall.setTexture(standTile);
-        wall.setName("wall1");
+        wall.setName("wall3");
         addObject(wall);
 
         /** Add items */
@@ -207,104 +206,92 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
-        if (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0) {
+        /** Player 1 */
+        float p1_horizontal = InputController.getInstance().getHorizontalA();
+        float p1_vertical = InputController.getInstance().getVerticalA();
+        boolean p1_didBoost = InputController.getInstance().didBoostA();
+
+        // If player initiated movement, set moveState to WALK
+        if (p1_horizontal != 0 || p1_vertical != 0) {
             p1.setWalk();
         } else {
             p1.setStatic();
         }
-        p1.setIX(InputController.getInstance().getHorizontalA());
-        p1.setIY(InputController.getInstance().getVerticalA());
-        if (InputController.getInstance().didBoostA() && (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0)) {
-            p1.setBoostImpulse(InputController.getInstance().getHorizontalA(), InputController.getInstance().getVerticalA());
+        // Set player movement impulse
+        p1.setIX(p1_horizontal);
+        p1.setIY(p1_vertical);
+        // If player dashed whiled moving, set boost impulse
+        if (p1_didBoost && (p1_horizontal != 0 || p1_vertical != 0)) {
+            p1.setBoostImpulse(p1_horizontal, p1_vertical);
         }
         p1.applyImpulse();
 
-        if (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0) {
+        /** Player 2 */
+        float p2_horizontal = InputController.getInstance().getHorizontalB();
+        float p2_vertical = InputController.getInstance().getVerticalB();
+        boolean p2_didBoost = InputController.getInstance().didBoostB();
+
+        // If player initiated movement, set moveState to WALK
+        if (p2_horizontal!= 0 || p2_vertical != 0) {
             p2.setWalk();
         } else {
             p2.setStatic();
         }
-        p2.setIX(InputController.getInstance().getHorizontalB());
-        p2.setIY(InputController.getInstance().getVerticalB());
-        if (InputController.getInstance().didBoostB() && (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0)) {
-            p2.setBoostImpulse(InputController.getInstance().getHorizontalB(), InputController.getInstance().getVerticalB());
+        // Set player movement impulse
+        p2.setIX(p2_horizontal);
+        p2.setIY(p2_vertical);
+        // If player dashed whiled moving, set boost impulse
+        if (p2_didBoost && (p2_horizontal!= 0 || p2_vertical != 0)) {
+            p2.setBoostImpulse(p2_horizontal, p2_vertical);
         }
         p2.applyImpulse();
 
-        if (!p1.isAlive()) {
-            p1.respawn();
-        }
-        if (!p2.isAlive()) {
-            p2.respawn();
-        }
+        /** Play state */
+        if (!p1.isAlive()) { p1.respawn(); }
+        if (!p2.isAlive()) { p2.respawn(); }
         p1.setActive(p1.isAlive());
         p2.setActive(p2.isAlive());
 
-        if (!itemActive && ! p1.item && !p2.item) {
-            addItem(item_position);
-        }
+        /** Item */
+        if (!itemActive && ! p1.item && !p2.item) { addItem(item_position); }
+        if (!itemActive) { removeItem(); }
 
-        if (! itemActive) { removeItem(); }
+        /** Player cooldown */
         p1.cooldown();
         p2.cooldown();
+    }
+
+    public void handlePlayerToObjectContact(BallModel player, Object object) {
+        if (object instanceof HoleModel) { // Player-Hole
+            player.setAlive(false);
+            player.draw = false;
+        } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) { // Player-Item
+            player.item = true;
+            player.setTexture(ballItemTexture);
+            itemActive = false;
+        } else if (object instanceof HomeModel ) { // Player-Home
+            HomeModel homeObject = (HomeModel) object;
+            // If players went to their own home, drop off item and increment score
+            if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
+                homeObject.incrementScore();
+                player.item = false;
+                player.resetTexture();
+            }
+        }
     }
 
     public void beginContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
-        if (a instanceof HoleModel) {
-            if (b instanceof BallModel) {
-                ((BallModel) b).setAlive(false);
-                ((BallModel) b).draw = false;
-            }
-            return;
-        }
+        // TODO: Player-Player Contact
+        // if (a instanceof BallModel && b instanceof BallModel) { handlePlayerToPlayerContact(); return; }
 
-        if (b instanceof HoleModel) {
-            if (a instanceof BallModel) {
-                ((BallModel) a).setAlive(false);
-                ((BallModel) a).draw = false;
-            }
-            return;
-        }
-
-        if (a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
-            if (b instanceof BallModel) {
-                ((BallModel) b).item = true;
-                ((BallModel) b).setTexture(ballItemTexture);
-                itemActive = false;
-            }
-        }
-
-        if (b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
-            if (a instanceof BallModel) {
-                ((BallModel) a).item = true;
-                ((BallModel) a).setTexture(ballItemTexture);
-                itemActive = false;
-            }
-        }
-
-        if (b instanceof HomeModel) {
-            HomeModel bHome = (HomeModel) b;
-            if (a instanceof BallModel && ((BallModel) a).getTeam().equals(bHome.getTeam())) {
-                if (((BallModel) a).item) {
-                    bHome.incrementScore();
-                }
-                ((BallModel) a).item = false;
-                ((BallModel) a).resetTexture();
-            }
-        }
-
-        if (a instanceof HomeModel) {
-            HomeModel bHome = (HomeModel) a;
-            if (b instanceof BallModel && ((BallModel) b).getTeam().equals(bHome.getTeam())) {
-                if (((BallModel) b).item) {
-                    bHome.incrementScore();
-                }
-                ((BallModel) b).item = false;
-                ((BallModel) b).setTexture(player2Texture);
-            }
+        // Player-Object Contact
+        if (a instanceof BallModel) {
+            handlePlayerToObjectContact((BallModel) a, b);
+        } else if (b instanceof BallModel) {
+            handlePlayerToObjectContact((BallModel) b, a);
         }
     }
 

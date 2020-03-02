@@ -176,6 +176,7 @@ public class BallModel extends BoxObstacle {
             draw = true;
         }
         item = false;
+        resetTexture();
 
         setLinearVelocity(Vector2.Zero);
     }
