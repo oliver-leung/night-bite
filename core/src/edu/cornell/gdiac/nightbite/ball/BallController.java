@@ -16,7 +16,7 @@ import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 public class BallController extends WorldController implements ContactListener {
 
     /** Reference to the ball texture */
-    private static final String BALL_TEXTURE = "ball/ballSprite.png";
+    private static final String BALL_TEXTURE = "ball/char2-f1.png";
     private static final String BALLITEM_TEXTURE = "ball/ballItem.png";
     private static final String ITEM_TEXTURE = "ball/fish.png";
 
