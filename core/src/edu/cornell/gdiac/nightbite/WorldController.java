@@ -27,7 +27,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.ball.BallModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
@@ -50,38 +49,47 @@ import java.util.Iterator;
  * place nicely with the static assets.
  */
 public abstract class WorldController implements Screen {
-	
-	/** 
-	 * Tracks the asset state.  Otherwise subclasses will try to load assets 
-	 */
-	protected enum AssetState {
-		/** No assets loaded */
-		EMPTY,
-		/** Still loading assets */
-		LOADING,
-		/** Assets are complete */
-		COMPLETE
-	}
 
-	/** Track asset loading from all instances and subclasses */
-	protected AssetState worldAssetState = AssetState.EMPTY;
-	/** Track all loaded assets (for unloading purposes) */
-	protected Array<String> assets;
-	
-	// Pathnames to shared assets
-	/** File to texture for walls and platforms */
+	/**
+	 * Width of the game world in Box2d units
+	 */
+	protected static final float DEFAULT_WIDTH = 32.0f;
+	/**
+	 * Height of the game world in Box2d units
+	 */
+	protected static final float DEFAULT_HEIGHT = 18.0f;
+	/**
+	 * The default value of gravity (going down)
+	 */
+	protected static final float DEFAULT_GRAVITY = -4.9f;
+	/**
+	 * File to texture for walls and platforms
+	 */
 	private static String STAND_FILE = "shared/stand-border.png";
-	/** File to texture for the win door */
+
+	// Pathnames to shared assets
+	/**
+	 * File to texture for the win door
+	 */
 	private static String GOAL_FILE = "shared/goaldoor.png";
-	/** Retro font for displaying messages */
+	protected String winner;
+	/**
+	 * Retro font for displaying messages
+	 */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
 	private static int FONT_SIZE = 12;
 
-	/** The texture for walls and platforms */
+	/**
+	 * The texture for walls and platforms
+	 */
 	protected TextureRegion standTile;
-	/** The texture for the exit condition */
+	/**
+	 * The texture for the exit condition
+	 */
 	protected TextureRegion goalTile;
-	/** The font for giving messages to the player */
+	/**
+	 * The font for giving messages to the player
+	 */
 	protected BitmapFont displayFont;
 
 	/**
@@ -210,44 +218,94 @@ public abstract class WorldController implements Screen {
 	public static final int EXIT_QUIT = 0;
 	/** Exit code for advancing to next level */
 	public static final int EXIT_NEXT = 1;
-	/** Exit code for jumping back to previous level */
+	/**
+	 * Exit code for jumping back to previous level
+	 */
 	public static final int EXIT_PREV = 2;
-    /** How many frames after winning/losing do we continue? */
+	/**
+	 * How many frames after winning/losing do we continue?
+	 */
 	public static final int EXIT_COUNT = 120;
 
-	/** The amount of time for a physics engine step. */
-	public static final float WORLD_STEP = 1/60.0f;
-	/** Number of velocity iterations for the constrain solvers */
+	/**
+	 * The amount of time for a physics engine step.
+	 */
+	public static final float WORLD_STEP = 1 / 60.0f;
+	/**
+	 * Number of velocity iterations for the constrain solvers
+	 */
 	public static final int WORLD_VELOC = 6;
-	/** Number of position iterations for the constrain solvers */
+	/**
+	 * Number of position iterations for the constrain solvers
+	 */
 	public static final int WORLD_POSIT = 2;
-	
-	/** Width of the game world in Box2d units */
-	protected static final float DEFAULT_WIDTH  = 32.0f;
-	/** Height of the game world in Box2d units */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
-	/** The default value of gravity (going down) */
-	protected static final float DEFAULT_GRAVITY = -4.9f;
-	
-	/** Reference to the game canvas */
+	/**
+	 * All the objects in the world.
+	 */
+	protected PooledList<Obstacle> objects = new PooledList<>();
+	/**
+	 * Track asset loading from all instances and subclasses
+	 */
+	protected AssetState worldAssetState = AssetState.EMPTY;
+	/**
+	 * Track all loaded assets (for unloading purposes)
+	 */
+	protected Array<String> assets;
+	/**
+	 * Reference to the game canvas
+	 */
 	protected GameCanvas canvas;
-	/** All the objects in the world. */
-	protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
-	/** Queue for adding objects */
-	protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
-	/** Listener that will update the player mode when we are done */
+	/**
+	 * Queue for adding objects
+	 */
+	protected PooledList<Obstacle> addQueue = new PooledList<>();
+	/**
+	 * The Box2D world
+	 */
+	protected World world;
+	/**
+	 * The boundary of the world
+	 */
+	protected Rectangle bounds;
+	/**
+	 * Listener that will update the player mode when we are done
+	 */
 	private ScreenListener listener;
 
-	/** The Box2D world */
-	protected World world;
-	/** The boundary of the world */
-	protected Rectangle bounds;
-	/** The world scale */
+	/**
+	 * Creates a new game world
+	 * <p>
+	 * The game world is scaled so that the screen coordinates do not agree
+	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
+	 * world, not the screen.
+	 *
+	 * @param bounds  The game bounds in Box2d coordinates
+	 * @param gravity The gravitational force on this Box2d world
+	 */
+	protected WorldController(Rectangle bounds, Vector2 gravity) {
+		assets = new Array<>();
+		world = new World(gravity, false);
+		this.bounds = new Rectangle(bounds);
+		this.scale = new Vector2(1, 1);
+		complete = false;
+		failed = false;
+		debug = false;
+		active = false;
+		countdown = -1;
+	}
+
+	/**
+	 * The world scale
+	 */
 	protected Vector2 scale;
-	
-	/** Whether or not this is an active controller */
+
+	/**
+	 * Whether or not this is an active controller
+	 */
 	private boolean active;
-	/** Whether we have completed this level */
+	/**
+	 * Whether we have completed this level
+	 */
 	private boolean complete;
 	/** Whether we have failed at this world (and need a reset) */
 	private boolean failed;
@@ -368,8 +426,8 @@ public abstract class WorldController implements Screen {
 	 * world, not the screen.
 	 */
 	protected WorldController() {
-		this(new Rectangle(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT), 
-			 new Vector2(0,DEFAULT_GRAVITY));
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
+				new Vector2(0, DEFAULT_GRAVITY));
 	}
 
 	/**
@@ -379,34 +437,65 @@ public abstract class WorldController implements Screen {
 	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
 	 * world, not the screen.
 	 *
-	 * @param width  	The width in Box2d coordinates
-	 * @param height	The height in Box2d coordinates
-	 * @param gravity	The downward gravity
+	 * @param width    The width in Box2d coordinates
+	 * @param height    The height in Box2d coordinates
+	 * @param gravity    The downward gravity
 	 */
 	protected WorldController(float width, float height, float gravity) {
-		this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
+		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
 	}
 
 	/**
-	 * Creates a new game world
+	 * Draw the physics objects to the canvas
+	 * <p>
+	 * For simple worlds, this method is enough by itself.  It will need
+	 * to be overriden if the world needs fancy backgrounds or the like.
+	 * <p>
+	 * The method draws all objects in the order that they were added.
 	 *
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param bounds	The game bounds in Box2d coordinates
-	 * @param gravity	The gravitational force on this Box2d world
+	 * @param delta time from last frame
 	 */
-	protected WorldController(Rectangle bounds, Vector2 gravity) {
-		assets = new Array<String>();
-		world = new World(gravity,false);
-		this.bounds = new Rectangle(bounds);
-		this.scale = new Vector2(1,1);
-		complete = false;
-		failed = false;
-		debug  = false;
-		active = false;
-		countdown = -1;
+	public void draw(float delta) {
+		canvas.clear();
+
+		canvas.begin();
+		StringBuilder message1 = new StringBuilder("Player A score: ");
+		StringBuilder message2 = new StringBuilder("Player B score: ");
+
+		for (Obstacle obj : objects) {
+			if (obj.draw) {
+				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
+					message1.append(((HomeModel) obj).getScore());
+				} else if (obj instanceof HomeModel && obj.getName().equals("homeA")) {
+					message2.append(((HomeModel) obj).getScore());
+				}
+				obj.draw(canvas);
+			}
+		}
+		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
+		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
+		canvas.end();
+
+		if (debug) {
+			canvas.beginDebug();
+			for (Obstacle obj : objects) {
+				obj.drawDebug(canvas);
+			}
+			canvas.endDebug();
+		}
+
+		// Final message
+		if (complete && !failed) {
+			displayFont.setColor(Color.YELLOW);
+			canvas.begin(); // DO NOT SCALE
+			canvas.drawTextCentered(winner + "VICTORY!", displayFont, 0.0f);
+			canvas.end();
+		} else if (failed) {
+			displayFont.setColor(Color.RED);
+			canvas.begin(); // DO NOT SCALE
+			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+			canvas.end();
+		}
 	}
 	
 	/**
@@ -565,58 +654,17 @@ public abstract class WorldController implements Screen {
 			}
 		}
 	}
-	
-	/**
-	 * Draw the physics objects to the canvas
-	 *
-	 * For simple worlds, this method is enough by itself.  It will need
-	 * to be overriden if the world needs fancy backgrounds or the like.
-	 *
-	 * The method draws all objects in the order that they were added.
-	 *
-	 * @param delta
-	 */
-	public void draw(float delta) {
-		canvas.clear();
-		
-		canvas.begin();
-		String message1 = "Player A score: ";
-		String message2 = "Player B score: ";
 
-		for(Obstacle obj : objects) {
-			if (obj.draw) {
-				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
-					message1 += ((HomeModel) obj).getScore();
-				} else if (obj instanceof HomeModel && obj.getName().equals("homeA")) {
-					message2 += ((HomeModel) obj).getScore();
-				}
-				obj.draw(canvas);
-			}
-		}
-		canvas.drawText(message1, displayFont, 50.0f, canvas.getHeight()-6*5.0f);
-		canvas.drawText(message2, displayFont, canvas.getWidth()-200f, canvas.getHeight()-6*5.0f);
-		canvas.end();
-		
-		if (debug) {
-			canvas.beginDebug();
-			for(Obstacle obj : objects) {
-				obj.drawDebug(canvas);
-			}
-			canvas.endDebug();
-		}
-		
-		// Final message
-		if (complete && !failed) {
-			displayFont.setColor(Color.YELLOW);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-			canvas.end();
-		} else if (failed) {
-			displayFont.setColor(Color.RED);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-			canvas.end();
-		}
+	/**
+	 * Tracks the asset state.  Otherwise subclasses will try to load assets
+	 */
+	protected enum AssetState {
+		/** No assets loaded */
+		EMPTY,
+		/** Still loading assets */
+		LOADING,
+		/** Assets are complete */
+		COMPLETE
 	}
 	
 	/**
