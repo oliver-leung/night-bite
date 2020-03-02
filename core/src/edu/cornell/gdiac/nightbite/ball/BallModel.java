@@ -37,15 +37,15 @@ public class BallModel extends CapsuleObstacle{
     /**
      * The thrust factor to convert player input into thrust
      */
-    private static final float DEFAULT_THRUST = 15.0f;
+    private static final float DEFAULT_THRUST = 10.0f;
     /**
      * The impulse for the character boost
      */
-    private static final float BOOST_IMP = 170.0f;
+    private static final float BOOST_IMP = 100.0f;
     /**
      * The amount to slow the character down
      */
-    private static final float MOTION_DAMPING = 15f;
+    private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
 
