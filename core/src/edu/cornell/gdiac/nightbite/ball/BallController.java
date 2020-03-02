@@ -32,11 +32,11 @@ public class BallController extends WorldController implements ContactListener {
     private TextureRegion itemTexture;
 
     /** Ball 1's position */
-    private static Vector2 BALL_POS_1 = new Vector2(24, 4);
+    private static Vector2 BALL_POS_1 = new Vector2(26, 3);
     /** Ball 2's position */
-    private static Vector2 BALL_POS_2 = new Vector2(6, 4);
+    private static Vector2 BALL_POS_2 = new Vector2(6, 3);
     /** Item's position */
-    private static Vector2 ITEM_POS = new Vector2(15, 12);
+    private static Vector2 ITEM_POS = new Vector2(16, 12);
 
     /** Reference to the ball/player avatar */
     private BallModel ballA;
@@ -53,8 +53,10 @@ public class BallController extends WorldController implements ContactListener {
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0f;
 
-    private static final float[] WALL3 = { 4.0f, 10.5f,  8.0f, 10.5f,
-            8.0f,  9.5f,  4.0f,  9.5f};
+    private static final float[] WALL1 = { -2.0f, 10.5f, 2.0f, 10.5f,
+            2.0f,  9.5f,  -2.0f,  9.5f };
+    private static final float[] WALL2 = { -0.5f, 5.0f, 0.5f, 5.0f,
+            0.5f,  0.0f,  -0.5f,  0.0f };
 
     public void preLoadContent(AssetManager manager) {
         manager.load(PLAYER2_TEXTURE, Texture.class);
@@ -102,21 +104,40 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     private void populateLevel() {
-        // add an obstacle
-        BoxObstacle wall;
-        float ddwidth  = standTile.getRegionWidth()/scale.x;
-        float ddheight = standTile.getRegionHeight()/scale.y;
-        wall = new BoxObstacle(3, 3, ddwidth, ddheight);
-        wall.setDensity(BASIC_DENSITY);
-        wall.setBodyType(BodyDef.BodyType.StaticBody);
-        wall.setDrawScale(scale);
-        wall.setTexture(standTile);
-        wall.setName("wall1");
-        addObject(wall);
+
+        // adds a hole
+        PolygonObstacle obj;
+        obj = new HoleModel(WALL1, 16, 5);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(goalTile);
+        addObject(obj);
+
+        // adds a hole
+        obj = new HoleModel(WALL2, 2, 4);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(goalTile);
+        addObject(obj);
+
+        // adds a hole
+        obj = new HoleModel(WALL2, 30, 4);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(goalTile);
+        addObject(obj);
 
         // add an obstacle
-        PolygonObstacle obj;
-        obj = new PolygonObstacle(WALL3, 10, -5);
+        obj = new PolygonObstacle(WALL2, 9.5f, 8);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
         obj.setDensity(BASIC_DENSITY);
         obj.setFriction(BASIC_FRICTION);
@@ -127,14 +148,27 @@ public class BallController extends WorldController implements ContactListener {
         addObject(obj);
 
         // add an obstacle
-        obj = new HoleModel(WALL3, 20, 0);
+        obj = new PolygonObstacle(WALL2, 22.5f, 8);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
         obj.setDensity(BASIC_DENSITY);
         obj.setFriction(BASIC_FRICTION);
         obj.setRestitution(BASIC_RESTITUTION);
         obj.setDrawScale(scale);
-        obj.setTexture(goalTile);
+        obj.setTexture(standTile);
+        obj.setName("wall2");
         addObject(obj);
+
+        // add an obstacle
+        BoxObstacle wall;
+        float ddwidth  = standTile.getRegionWidth()/scale.x;
+        float ddheight = standTile.getRegionHeight()/scale.y;
+        wall = new BoxObstacle(16, 3, ddwidth, ddheight);
+        wall.setDensity(BASIC_DENSITY);
+        wall.setBodyType(BodyDef.BodyType.StaticBody);
+        wall.setDrawScale(scale);
+        wall.setTexture(standTile);
+        wall.setName("wall1");
+        addObject(wall);
 
         // add item
         item = new BoxObstacle(ITEM_POS.x, ITEM_POS.y, ddwidth, ddheight);
