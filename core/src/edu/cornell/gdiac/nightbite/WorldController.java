@@ -27,6 +27,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.ball.BallModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
@@ -74,7 +75,7 @@ public abstract class WorldController implements Screen {
 	private static String GOAL_FILE = "shared/goaldoor.png";
 	/** Retro font for displaying messages */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
-	private static int FONT_SIZE = 64;
+	private static int FONT_SIZE = 12;
 
 	/** The texture for walls and platforms */
 	protected TextureRegion earthTile;
@@ -581,11 +582,21 @@ public abstract class WorldController implements Screen {
 		canvas.clear();
 		
 		canvas.begin();
+		String message1 = "Player A score: ";
+		String message2 = "Player B score: ";
+
 		for(Obstacle obj : objects) {
 			if (obj.draw) {
+				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
+					message1 += ((HomeModel) obj).getScore();
+				} else if (obj instanceof HomeModel && obj.getName().equals("homeA")) {
+					message2 += ((HomeModel) obj).getScore();
+				}
 				obj.draw(canvas);
 			}
 		}
+		canvas.drawText(message1, displayFont, 50.0f, canvas.getHeight()-6*5.0f);
+		canvas.drawText(message2, displayFont, canvas.getWidth()-200f, canvas.getHeight()-6*5.0f);
 		canvas.end();
 		
 		if (debug) {

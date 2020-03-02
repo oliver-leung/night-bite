@@ -8,9 +8,7 @@ public class HomeModel extends BoxObstacle {
 
     private int score;
 
-    public int getScore() {
-        return score;
-    }
+    public int getScore() { return score; }
 
     public void incrementScore() {
         score++;
@@ -20,6 +18,7 @@ public class HomeModel extends BoxObstacle {
         super(x, y, width, height);
         this.team = team;
         this.setName("foo");
+        this.score = 0;
     }
 
     public String getTeam() {
@@ -39,4 +38,5 @@ public class HomeModel extends BoxObstacle {
         setSensor(true);
         return true;
     }
+
 }
