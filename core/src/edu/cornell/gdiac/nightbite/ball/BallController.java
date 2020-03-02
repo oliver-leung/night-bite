@@ -284,9 +284,6 @@ public class BallController extends WorldController implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
-        // TODO: Player-Player Contact
-        // if (a instanceof BallModel && b instanceof BallModel) { handlePlayerToPlayerContact(); return; }
-
         // Player-Object Contact
         if (a instanceof BallModel) {
             handlePlayerToObjectContact((BallModel) a, b);
@@ -301,26 +298,31 @@ public class BallController extends WorldController implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
+
+        // Player-Player Contact
         if (a instanceof BallModel && b instanceof BallModel) {
+            BallModel playerA = (BallModel) a;
+            BallModel playerB = (BallModel) b;
+
             Vector2 flyDirection = null;
-            if (((BallModel) a).state == BallModel.MoveState.RUN &&
-                    (((BallModel) b).state == BallModel.MoveState.WALK || ((BallModel) b).state == BallModel.MoveState.STATIC)) {
-                flyDirection = ((BallModel) b).getLinearVelocity().nor();
-                ((BallModel) a).resetBoosting();
-                ((BallModel) b).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) b).getPosition(), true);
-            } else if (((BallModel) b).state == BallModel.MoveState.RUN &&
-                    (((BallModel) a).state == BallModel.MoveState.WALK || ((BallModel) a).state == BallModel.MoveState.STATIC)) {
-                flyDirection = ((BallModel) a).getLinearVelocity().nor();
-                ((BallModel) a).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) a).getPosition(), true);
-                ((BallModel) b).resetBoosting();
-            } else if (((BallModel) b).state == BallModel.MoveState.RUN &&
-                    (((BallModel) a).state == BallModel.MoveState.RUN)) {
-                flyDirection = ((BallModel) a).getLinearVelocity().nor();
-                ((BallModel) a).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) a).getPosition(), true);
-                flyDirection = ((BallModel) b).getLinearVelocity().nor();
-                ((BallModel) a).resetBoosting();
-                ((BallModel) b).resetBoosting();
-                ((BallModel) b).getBody().applyLinearImpulse(flyDirection.scl(3000), ((BallModel) b).getPosition(), true);
+            if (playerA.state == BallModel.MoveState.RUN &&
+                    (playerB.state == BallModel.MoveState.WALK || playerB.state == BallModel.MoveState.STATIC)) {
+                flyDirection = playerB.getLinearVelocity().nor();
+                playerA.resetBoosting();
+                playerB.getBody().applyLinearImpulse(flyDirection.scl(3000), playerB.getPosition(), true);
+            } else if (playerB.state == BallModel.MoveState.RUN &&
+                    (playerA.state == BallModel.MoveState.WALK || playerA.state == BallModel.MoveState.STATIC)) {
+                flyDirection = playerA.getLinearVelocity().nor();
+                playerA.getBody().applyLinearImpulse(flyDirection.scl(3000), playerA.getPosition(), true);
+                playerB.resetBoosting();
+            } else if (playerB.state == BallModel.MoveState.RUN &&
+                    (playerA.state == BallModel.MoveState.RUN)) {
+                flyDirection = playerA.getLinearVelocity().nor();
+                playerA.getBody().applyLinearImpulse(flyDirection.scl(3000), playerA.getPosition(), true);
+                flyDirection = playerB.getLinearVelocity().nor();
+                playerA.resetBoosting();
+                playerB.resetBoosting();
+                playerB.getBody().applyLinearImpulse(flyDirection.scl(3000), playerB.getPosition(), true);
             }
         }
     }
