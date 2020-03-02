@@ -41,7 +41,7 @@ public class BallModel extends CapsuleObstacle{
     /**
      * The impulse for the character boost
      */
-    private static final float BOOST_IMP = 200.0f;
+    private static final float BOOST_IMP = 170.0f;
     /**
      * The amount to slow the character down
      */
@@ -90,6 +90,7 @@ public class BallModel extends CapsuleObstacle{
         setRestitution(DEFAULT_RESTITUTION);
         setName("ball");
         setOrientation(Orientation.VERTICAL);
+        setBullet(true);
 
         this.team = team;
     }

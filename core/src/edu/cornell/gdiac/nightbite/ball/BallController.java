@@ -53,6 +53,7 @@ public class BallController extends WorldController implements ContactListener {
     /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0f;
 
+    private static final float PUSH_IMPULSE = 200f;
     /** Load all assets necessary for the level onto an asset manager */
     public void preLoadContent(AssetManager manager) {
         manager.load(PLAYER1_TEXTURE, Texture.class);
@@ -179,13 +180,6 @@ public class BallController extends WorldController implements ContactListener {
         p1 = new BallModel(p1_position.x, p1_position.y, pWidth, pHeight, "a");
         p1.setDrawScale(scale);
         p1.setTexture(player1Texture);
-        addObject(p1);
-
-        // Team B
-        p2 = new BallModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
-        p2.setDrawScale(scale);
-        p2.setTexture(player2Texture);
-        addObject(p2);
 
         /** Add home stalls */
         // Team A
@@ -195,7 +189,15 @@ public class BallController extends WorldController implements ContactListener {
         home.setTexture(standTile);
         home.setName("homeA");
         addObject(home);
+        addObject(p1);
 
+        /** Add players */
+        // Team B
+        p2 = new BallModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
+        p2.setDrawScale(scale);
+        p2.setTexture(player2Texture);
+
+        /** Add home stalls */
         // Team B
         home = new HomeModel(p2.getHome_loc().x, p2.getHome_loc().y, 2.5f, 2.5f, "b");
         home.setBodyType(BodyDef.BodyType.StaticBody);
@@ -203,6 +205,7 @@ public class BallController extends WorldController implements ContactListener {
         home.setTexture(standTile);
         home.setName("homeB");
         addObject(home);
+        addObject(p2);
     }
 
     public void update(float dt) {
@@ -314,20 +317,20 @@ public class BallController extends WorldController implements ContactListener {
                     (playerB.state == BallModel.MoveState.WALK || playerB.state == BallModel.MoveState.STATIC)) {
                 flyDirection = playerB.getLinearVelocity().nor();
                 playerA.resetBoosting();
-                playerB.getBody().applyLinearImpulse(flyDirection.scl(3000), playerB.getPosition(), true);
+                playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
             } else if (playerB.state == BallModel.MoveState.RUN &&
                     (playerA.state == BallModel.MoveState.WALK || playerA.state == BallModel.MoveState.STATIC)) {
                 flyDirection = playerA.getLinearVelocity().nor();
-                playerA.getBody().applyLinearImpulse(flyDirection.scl(3000), playerA.getPosition(), true);
+                playerA.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerA.getPosition(), true);
                 playerB.resetBoosting();
             } else if (playerB.state == BallModel.MoveState.RUN &&
                     (playerA.state == BallModel.MoveState.RUN)) {
                 flyDirection = playerA.getLinearVelocity().nor();
-                playerA.getBody().applyLinearImpulse(flyDirection.scl(3000), playerA.getPosition(), true);
+                playerA.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerA.getPosition(), true);
                 flyDirection = playerB.getLinearVelocity().nor();
                 playerA.resetBoosting();
                 playerB.resetBoosting();
-                playerB.getBody().applyLinearImpulse(flyDirection.scl(3000), playerB.getPosition(), true);
+                playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
             }
         }
     }
