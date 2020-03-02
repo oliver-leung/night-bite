@@ -148,6 +148,7 @@ public class BallController extends WorldController implements ContactListener {
         obj1.setBodyType(BodyDef.BodyType.StaticBody);
         obj1.setDrawScale(scale);
         obj1.setTexture(standTile);
+        obj1.setName("homeA");
         addObject(obj1);
 
         // add ball B
@@ -161,6 +162,7 @@ public class BallController extends WorldController implements ContactListener {
         obj1.setBodyType(BodyDef.BodyType.StaticBody);
         obj1.setDrawScale(scale);
         obj1.setTexture(standTile);
+        obj1.setName("homeB");
         addObject(obj1);
     }
 
@@ -246,9 +248,22 @@ public class BallController extends WorldController implements ContactListener {
         if (b instanceof HomeModel) {
             HomeModel bHome = (HomeModel) b;
             if (a instanceof BallModel && ((BallModel) a).getTeam().equals(bHome.getTeam())) {
+                if (((BallModel) a).item) {
+                    bHome.incrementScore();
+                }
                 ((BallModel) a).item = false;
                 ((BallModel) a).setTexture(ballTexture);
-                bHome.incrementScore();
+            }
+        }
+
+        if (a instanceof HomeModel) {
+            HomeModel bHome = (HomeModel) a;
+            if (b instanceof BallModel && ((BallModel) b).getTeam().equals(bHome.getTeam())) {
+                if (((BallModel) b).item) {
+                    bHome.incrementScore();
+                }
+                ((BallModel) b).item = false;
+                ((BallModel) b).setTexture(ballTexture);
             }
         }
     }
