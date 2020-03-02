@@ -15,23 +15,29 @@ import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 
 public class BallController extends WorldController implements ContactListener {
 
-    /** Reference to the ball texture */
-    private static final String BALL_TEXTURE = "ball/ballSprite.png";
-    private static final String BALL_WITH_ITEM_TEXTURE = "ball/ballItem.png";
-    private static final String ITEM_TEXTURE = "item/item.png";
+    /**
+     * Reference to the ball texture
+     */
+    private static final String PLAYER1_TEXTURE = "ball/char1.png";
+    private static final String PLAYER2_TEXTURE = "ball/char2-f1.png";
+    private static final String PLAYER_WITH_ITEM_TEXTURE = "ball/ballItem.png";
+    private static final String ITEM_TEXTURE = "ball/fish.png";
 
-    /** Texture assets for the ball */
-    private TextureRegion ballTexture;
+    /**
+     * Texture assets for the ball
+     */
+    private TextureRegion player1Texture;
+    private TextureRegion player2Texture;
     private TextureRegion ballItemTexture;
     private TextureRegion itemTexture;
 
 
-    /** Ball A */
-    private BallModel ballA;
-    private static Vector2 ballA_position = new Vector2(26,3);
-    /** Ball B */
-    private BallModel ballB;
-    private static Vector2 ballB_position = new Vector2(6, 3);
+    /** Player 1 */
+    private BallModel p1;
+    private static Vector2 p1_position = new Vector2(26,3);
+    /** Player 2 */
+    private BallModel p2;
+    private static Vector2 p2_position = new Vector2(6, 3);
     /** Item */
     private BoxObstacle item;
     private static Vector2 item_position = new Vector2(16, 12);
@@ -49,10 +55,12 @@ public class BallController extends WorldController implements ContactListener {
 
     /** Load all assets necessary for the level onto an asset manager */
     public void preLoadContent(AssetManager manager) {
-        manager.load(BALL_TEXTURE, Texture.class);
-        assets.add(BALL_TEXTURE);
-        manager.load(BALL_WITH_ITEM_TEXTURE, Texture.class);
-        assets.add(BALL_WITH_ITEM_TEXTURE);
+        manager.load(PLAYER1_TEXTURE, Texture.class);
+        assets.add(PLAYER1_TEXTURE);
+        manager.load(PLAYER2_TEXTURE, Texture.class);
+        assets.add(PLAYER2_TEXTURE);
+        manager.load(PLAYER_WITH_ITEM_TEXTURE, Texture.class);
+        assets.add(PLAYER_WITH_ITEM_TEXTURE);
         manager.load(ITEM_TEXTURE, Texture.class);
         assets.add(ITEM_TEXTURE);
         super.preLoadContent(manager);
@@ -60,8 +68,9 @@ public class BallController extends WorldController implements ContactListener {
 
     /** Create textures */
     public void loadContent(AssetManager manager) {
-        ballTexture = createTexture(manager,BALL_TEXTURE,false);
-        ballItemTexture = createTexture(manager, BALL_WITH_ITEM_TEXTURE, false);
+        player1Texture = createTexture(manager,PLAYER1_TEXTURE,false);
+        player2Texture = createTexture(manager, PLAYER2_TEXTURE, false);
+        ballItemTexture = createTexture(manager, PLAYER_WITH_ITEM_TEXTURE, false);
         itemTexture = createTexture(manager, ITEM_TEXTURE, false);
         super.loadContent(manager);
     }
@@ -164,80 +173,80 @@ public class BallController extends WorldController implements ContactListener {
         item.setSensor(true);
         addObject(item);
 
-        /** Add balls */
+        /** Add players */
         // Team A
-        float ballWidth = ballTexture.getRegionWidth() / scale.x;
-        float ballHeight = ballTexture.getRegionHeight() / scale.y;
-        ballA = new BallModel(ballA_position.x, ballA_position.y, ballWidth, ballHeight, "a");
-        ballA.setDrawScale(scale);
-        ballA.setTexture(ballTexture);
-        addObject(ballA);
+        float pWidth = player1Texture.getRegionWidth() / scale.x;
+        float pHeight = player1Texture.getRegionHeight() / scale.y;
+        p1 = new BallModel(p1_position.x, p1_position.y, pWidth, pHeight, "a");
+        p1.setDrawScale(scale);
+        p1.setTexture(player1Texture);
+        addObject(p1);
 
         // Team B
-        ballB = new BallModel(ballB_position.x, ballB_position.y, ballWidth, ballHeight, "b");
-        ballB.setDrawScale(scale);
-        ballB.setTexture(ballTexture);
-        addObject(ballB);
+        p2 = new BallModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
+        p2.setDrawScale(scale);
+        p2.setTexture(player2Texture);
+        addObject(p2);
 
         /** Add home stalls */
         // Team A
-        HomeModel obj1 = new HomeModel(ballA.getHome_loc().x, ballA.getHome_loc().y, 2.5f, 2.5f, "a");
-        obj1.setBodyType(BodyDef.BodyType.StaticBody);
-        obj1.setDrawScale(scale);
-        obj1.setTexture(standTile);
-        obj1.setName("homeA");
-        addObject(obj1);
+        HomeModel home = new HomeModel(p1.getHome_loc().x, p1.getHome_loc().y, 2.5f, 2.5f, "a");
+        home.setBodyType(BodyDef.BodyType.StaticBody);
+        home.setDrawScale(scale);
+        home.setTexture(standTile);
+        home.setName("home1");
+        addObject(home);
 
         // Team B
-        obj1 = new HomeModel(ballB.getHome_loc().x, ballB.getHome_loc().y, 2.5f, 2.5f, "b");
-        obj1.setBodyType(BodyDef.BodyType.StaticBody);
-        obj1.setDrawScale(scale);
-        obj1.setTexture(standTile);
-        obj1.setName("homeB");
-        addObject(obj1);
+        home = new HomeModel(p2.getHome_loc().x, p2.getHome_loc().y, 2.5f, 2.5f, "b");
+        home.setBodyType(BodyDef.BodyType.StaticBody);
+        home.setDrawScale(scale);
+        home.setTexture(standTile);
+        obj.setName("home2");
+        addObject(home);
     }
 
     public void update(float dt) {
         if (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0) {
-            ballA.setWalk();
+            p1.setWalk();
         } else {
-            ballA.setStatic();
+            p1.setStatic();
         }
-        ballA.setIX(InputController.getInstance().getHorizontalA());
-        ballA.setIY(InputController.getInstance().getVerticalA());
+        p1.setIX(InputController.getInstance().getHorizontalA());
+        p1.setIY(InputController.getInstance().getVerticalA());
         if (InputController.getInstance().didBoostA() && (InputController.getInstance().getHorizontalA()!= 0 || InputController.getInstance().getVerticalA() != 0)) {
-            ballA.setBoostImpulse(InputController.getInstance().getHorizontalA(), InputController.getInstance().getVerticalA());
+            p1.setBoostImpulse(InputController.getInstance().getHorizontalA(), InputController.getInstance().getVerticalA());
         }
-        ballA.applyImpulse();
+        p1.applyImpulse();
 
         if (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0) {
-            ballB.setWalk();
+            p2.setWalk();
         } else {
-            ballB.setStatic();
+            p2.setStatic();
         }
-        ballB.setIX(InputController.getInstance().getHorizontalB());
-        ballB.setIY(InputController.getInstance().getVerticalB());
+        p2.setIX(InputController.getInstance().getHorizontalB());
+        p2.setIY(InputController.getInstance().getVerticalB());
         if (InputController.getInstance().didBoostB() && (InputController.getInstance().getHorizontalB()!= 0 || InputController.getInstance().getVerticalB() != 0)) {
-            ballB.setBoostImpulse(InputController.getInstance().getHorizontalB(), InputController.getInstance().getVerticalB());
+            p2.setBoostImpulse(InputController.getInstance().getHorizontalB(), InputController.getInstance().getVerticalB());
         }
-        ballB.applyImpulse();
+        p2.applyImpulse();
 
-        if (!ballA.isAlive()) {
-            ballA.respawn();
+        if (!p1.isAlive()) {
+            p1.respawn();
         }
-        if (!ballB.isAlive()) {
-            ballB.respawn();
+        if (!p2.isAlive()) {
+            p2.respawn();
         }
-        ballA.setActive(ballA.isAlive());
-        ballB.setActive(ballB.isAlive());
+        p1.setActive(p1.isAlive());
+        p2.setActive(p2.isAlive());
 
-        if (!itemActive && ! ballA.item && !ballB.item) {
+        if (!itemActive && ! p1.item && !p2.item) {
             addItem(item_position);
         }
 
         if (! itemActive) { removeItem(); }
-        ballA.cooldown();
-        ballB.cooldown();
+        p1.cooldown();
+        p2.cooldown();
     }
 
     public void beginContact(Contact contact) {
@@ -283,7 +292,7 @@ public class BallController extends WorldController implements ContactListener {
                     bHome.incrementScore();
                 }
                 ((BallModel) a).item = false;
-                ((BallModel) a).setTexture(ballTexture);
+                ((BallModel) a).resetTexture();
             }
         }
 
@@ -294,7 +303,7 @@ public class BallController extends WorldController implements ContactListener {
                     bHome.incrementScore();
                 }
                 ((BallModel) b).item = false;
-                ((BallModel) b).setTexture(ballTexture);
+                ((BallModel) b).setTexture(player2Texture);
             }
         }
     }
