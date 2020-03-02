@@ -18,7 +18,7 @@ public class BallController extends WorldController implements ContactListener {
     /**
      * Reference to the ball texture
      */
-    private static final String PLAYER1_TEXTURE = "ball/char1.png";
+    private static final String PLAYER1_TEXTURE = "ball/char1trimmed.png";
     private static final String PLAYER2_TEXTURE = "ball/char2-f1.png";
     private static final String PLAYER_WITH_ITEM_TEXTURE = "ball/ballItem.png";
     private static final String ITEM_TEXTURE = "ball/fish.png";
@@ -214,7 +214,7 @@ public class BallController extends WorldController implements ContactListener {
         // If player initiated movement, set moveState to WALK
         if (p1_horizontal != 0 || p1_vertical != 0) {
             p1.setWalk();
-        } else {
+    } else {
             p1.setStatic();
         }
         // Set player movement impulse
@@ -253,6 +253,12 @@ public class BallController extends WorldController implements ContactListener {
         p2.setActive(p2.isAlive());
 
         /** Item */
+        if (p1.item) {
+            item.setPosition(p1.getX(), p1.getY() + 1f);
+        }
+        if (p2.item) {
+            item.setPosition(p2.getX(), p2.getY() + 1f);
+        }
         if (!itemActive && ! p1.item && !p2.item) { addItem(item_position); }
         if (!itemActive) { removeItem(); }
 
@@ -267,7 +273,6 @@ public class BallController extends WorldController implements ContactListener {
             player.draw = false;
         } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) { // Player-Item
             player.item = true;
-            player.setTexture(ballItemTexture);
             itemActive = false;
         } else if (object instanceof HomeModel ) { // Player-Home
             HomeModel homeObject = (HomeModel) object;
@@ -331,7 +336,6 @@ public class BallController extends WorldController implements ContactListener {
     }
 
     private void removeItem() {
-        item.draw = false;
         item.setActive(false);
     }
 
