@@ -239,6 +239,11 @@ public class InputController {
 		clampPosition(bounds);
 	}
 
+
+	private boolean notDeadZoned(float vert, float hori) {
+		return Math.abs(vert) > DEADZONE || Math.abs(hori) > DEADZONE;
+	}
+
 	/**
 	 * Reads input from the keyboard.
 	 *
@@ -258,7 +263,7 @@ public class InputController {
 			// FOR PLAYER A
 
 			// Directional controls
-			horizontalA = (secondary && Math.abs(horizontalA) > DEADZONE ? horizontalA : 0.0f);
+			horizontalA = (secondary && notDeadZoned(horizontalA, verticalA) ? horizontalA : 0.0f);
 			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
 				horizontalA += 1.0f;
 			}
@@ -266,7 +271,7 @@ public class InputController {
 				horizontalA -= 1.0f;
 			}
 
-			verticalA = (secondary  && Math.abs(verticalA) > DEADZONE ? verticalA : 0.0f);
+			verticalA = (secondary  && notDeadZoned(horizontalA, verticalA) ? verticalA : 0.0f);
 			if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 				verticalA += 1.0f;
 			}
@@ -280,7 +285,7 @@ public class InputController {
 		} else {
 			// FOR PLAYER B
 			// Directional controls
-			horizontalB = (secondary  && Math.abs(horizontalB) > DEADZONE ? horizontalB : 0.0f);
+			horizontalB = (secondary  && notDeadZoned(horizontalB, verticalB) ? horizontalB : 0.0f);
 			if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 				horizontalB += 1.0f;
 			}
@@ -288,7 +293,7 @@ public class InputController {
 				horizontalB -= 1.0f;
 			}
 
-			verticalB = (secondary && Math.abs(verticalB) > DEADZONE ? verticalB : 0.0f);
+			verticalB = (secondary && notDeadZoned(horizontalB, verticalB) ? verticalB : 0.0f);
 			if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 				verticalB += 1.0f;
 			}
