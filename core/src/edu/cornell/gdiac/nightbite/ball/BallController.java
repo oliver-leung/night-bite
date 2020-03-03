@@ -46,6 +46,9 @@ public class BallController extends WorldController implements ContactListener {
     /** Wall */
     private static final float[] WALL1 = { -2.0f, 10.5f, 2.0f, 10.5f, 2.0f,  9.5f,  -2.0f,  9.5f };
     private static final float[] WALL2 = { -0.5f, 5.0f, 0.5f, 5.0f, 0.5f,  0.0f,  -0.5f,  0.0f };
+    /** Wall for screen edge */
+    private static final float[] VERT_WALL = { -0.5f, 18.0f, 0.5f, 18.0f, 0.5f,  0.0f,  -0.5f,  0.0f };
+    private static final float[] HORI_WALL = { 0.0f, 0.5f, 32.0f, 0.5f, 32.0f,  -0.5f,  0.0f,  -0.5f };
 
     /** Density of objects */
     private static final float BASIC_DENSITY   = 0.0f;
@@ -163,6 +166,52 @@ public class BallController extends WorldController implements ContactListener {
         wall.setTexture(standTile);
         wall.setName("wall3");
         addObject(wall);
+
+        /* Add screen edges */
+
+        // left screen edge
+        obj = new PolygonObstacle(VERT_WALL, 32.5f, 0);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(standTile);
+        obj.setName("wall1");
+        addObject(obj);
+
+        // right screen edge
+        obj = new PolygonObstacle(VERT_WALL, -0.5f, 0);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(standTile);
+        obj.setName("wall1");
+        addObject(obj);
+
+        // top screen edge
+        obj = new PolygonObstacle(HORI_WALL, 0.0f, -0.5f);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(standTile);
+        obj.setName("wall1");
+        addObject(obj);
+
+        // bottom screen edge
+        obj = new PolygonObstacle(HORI_WALL, 0.0f, 18.5f);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(BASIC_DENSITY);
+        obj.setFriction(BASIC_FRICTION);
+        obj.setRestitution(BASIC_RESTITUTION);
+        obj.setDrawScale(scale);
+        obj.setTexture(standTile);
+        obj.setName("wall1");
+        addObject(obj);
 
         /* Add items */
         float itemWidth  = itemTexture.getRegionWidth()/scale.x;
