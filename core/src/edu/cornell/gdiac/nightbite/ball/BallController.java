@@ -184,7 +184,7 @@ public class BallController extends WorldController implements ContactListener {
         BoxObstacle wall;
         float ddwidth = wallTile.getRegionWidth() / scale.x;
         float ddheight = wallTile.getRegionHeight() / scale.y;
-        wall = new BoxObstacle(16, 3, ddwidth, ddheight);
+        wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
         wall.setDensity(BASIC_DENSITY);
         wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
