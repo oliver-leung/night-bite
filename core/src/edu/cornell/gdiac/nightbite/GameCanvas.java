@@ -251,8 +251,8 @@ public class GameCanvas {
 	 * This method raises an IllegalStateException if called while drawing is
 	 * active (e.g. in-between a begin-end pair).
 	 *
-	 * @param fullscreen Whether this canvas should change to fullscreen.
-	 * @param desktop 	 Whether to use the current desktop resolution
+	 * @param value Whether this canvas should change to fullscreen.
+	 * @param desktop     Whether to use the current desktop resolution
 	 */	 
 	public void setFullscreen(boolean value, boolean desktop) {
 		if (active != DrawPass.INACTIVE) {
@@ -394,7 +394,6 @@ public class GameCanvas {
 	 * at the given coordinates.
 	 *
 	 * @param image The texture to draw
-	 * @param tint  The color tint
 	 * @param x 	The x-coordinate of the bottom left corner
 	 * @param y 	The y-coordinate of the bottom left corner
 	 */
@@ -547,7 +546,6 @@ public class GameCanvas {
 	 * at the given coordinates.
 	 *
 	 * @param region The texture to draw
-	 * @param tint  The color tint
 	 * @param x 	The x-coordinate of the bottom left corner
 	 * @param y 	The y-coordinate of the bottom left corner
 	 */
@@ -556,27 +554,28 @@ public class GameCanvas {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
 		}
-		
+
 		// Unlike Lab 1, we can shortcut without a master drawing method
-    	spriteBatch.setColor(Color.WHITE);
-		spriteBatch.draw(region, x,  y);
+		spriteBatch.setColor(Color.WHITE);
+		spriteBatch.draw(region, x, y);
 	}
 
 	/**
 	 * Draws the tinted texture at the given position.
-	 *
+	 * <p>
 	 * The texture colors will be multiplied by the given color.  This will turn
 	 * any white into the given color.  Other colors will be similarly affected.
-	 *
+	 * <p>
 	 * Unless otherwise transformed by the global transform (@see begin(Affine2)),
 	 * the texture will be unscaled.  The bottom left of the texture will be positioned
 	 * at the given coordinates.
-	 *region
-	 * @param image The texture to draw
-	 * @param tint  The color tint
-	 * @param x 	The x-coordinate of the bottom left corner
-	 * @param y 	The y-coordinate of the bottom left corner
-	 * @param width	The texture width
+	 * region
+	 *
+	 * @param region The texture to draw
+	 * @param tint   The color tint
+	 * @param x      The x-coordinate of the bottom left corner
+	 * @param y      The y-coordinate of the bottom left corner
+	 * @param width  The texture width
 	 * @param height The texture height
 	 */
 	public void draw(TextureRegion region, Color tint, float x, float y, float width, float height) {
@@ -674,12 +673,12 @@ public class GameCanvas {
 	 * The local transformations in this method are applied in the following order: 
 	 * scaling, then rotation, then translation (e.g. placement at (sx,sy)).
 	 *
-	 * @param image The region to draw
+	 * @param region The region to draw
 	 * @param tint  The color tint
-	 * @param ox 	The x-coordinate of texture origin (in pixels)
-	 * @param oy 	The y-coordinate of texture origin (in pixels)
-	 * @param transform  The image transform
-	 */	
+	 * @param ox    The x-coordinate of texture origin (in pixels)
+	 * @param oy    The y-coordinate of texture origin (in pixels)
+	 * @param affine  The image transform
+	 */
 	public void draw(TextureRegion region, Color tint, float ox, float oy, Affine2 affine) {
 		if (active != DrawPass.STANDARD) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
@@ -709,7 +708,6 @@ public class GameCanvas {
 	 * scaling, then rotation, then translation (e.g. placement at (sx,sy)).
 	 *
 	 * @param region The polygon to draw
-	 * @param tint  The color tint
 	 * @param x 	The x-coordinate of the bottom left corner
 	 * @param y 	The y-coordinate of the bottom left corner
 	 */	
@@ -852,9 +850,9 @@ public class GameCanvas {
 	 *
 	 * @param region The polygon to draw
 	 * @param tint  The color tint
-	 * @param ox 	The x-coordinate of texture origin (in pixels)
-	 * @param oy 	The y-coordinate of texture origin (in pixels)
-	 * @param transform  The image transform
+	 * @param ox    The x-coordinate of texture origin (in pixels)
+	 * @param oy    The y-coordinate of texture origin (in pixels)
+	 * @param affine  The image transform
 	 */	
 	public void draw(PolygonRegion region, Color tint, float ox, float oy, Affine2 affine) {
 		if (active != DrawPass.STANDARD) {
@@ -1048,18 +1046,18 @@ public class GameCanvas {
 		local.applyTo(vertex);
 		x1 = vertex.x; y1 = vertex.y;
 		debugRender.line(x0, y0, x1, y1);
-    }
+	}
 
-    /**
-     * Draws the outline of the given shape in the specified color
-     *
-     * @param shape The Box2d shape
-     * @param color The outline color
-     * @param x  The x-coordinate of the shape position
-     * @param y  The y-coordinate of the shape position
-     * @param angle  The shape angle of rotation
-     * @param sx The amount to scale the x-axis
-     * @param sx The amount to scale the y-axis
+	/**
+	 * Draws the outline of the given shape in the specified color
+	 *
+	 * @param shape The Box2d shape
+	 * @param color The outline color
+	 * @param x  The x-coordinate of the shape position
+	 * @param y  The y-coordinate of the shape position
+	 * @param angle  The shape angle of rotation
+	 * @param sx The amount to scale the x-axis
+	 * @param sy The amount to scale the y-axis
      */
     public void drawPhysics(PolygonShape shape, Color color, float x, float y, float angle, float sx, float sy) {
 		if (active != DrawPass.DEBUG) {
@@ -1110,21 +1108,21 @@ public class GameCanvas {
 		}
 		
     	debugRender.setColor(color);
-    	debugRender.circle(x, y, shape.getRadius(),12);
-    }
-    
-    /** 
-     * Draws the outline of the given shape in the specified color
-     *
-     * The position of the circle is ignored.  Only the radius is used. To move the
-     * circle, change the x and y parameters.
-     * 
-     * @param shape The Box2d shape
-     * @param color The outline color
-     * @param x  The x-coordinate of the shape position
-     * @param y  The y-coordinate of the shape position
-     * @param sx The amount to scale the x-axis
-     * @param sx The amount to scale the y-axis
+    	debugRender.circle(x, y, shape.getRadius(), 12);
+	}
+
+	/**
+	 * Draws the outline of the given shape in the specified color
+	 *
+	 * The position of the circle is ignored.  Only the radius is used. To move the
+	 * circle, change the x and y parameters.
+	 *
+	 * @param shape The Box2d shape
+	 * @param color The outline color
+	 * @param x  The x-coordinate of the shape position
+	 * @param y  The y-coordinate of the shape position
+	 * @param sx The amount to scale the x-axis
+	 * @param sy The amount to scale the y-axis
      */
     public void drawPhysics(CircleShape shape, Color color, float x, float y, float sx, float sy) {
 		if (active != DrawPass.DEBUG) {
