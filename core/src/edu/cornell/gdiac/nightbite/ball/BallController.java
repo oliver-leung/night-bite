@@ -60,21 +60,21 @@ public class BallController extends WorldController implements ContactListener {
      * Friction of objects
      */
     private static final float BASIC_FRICTION = 1f;
+    /*
+     * Collision restitution for all objects
+     */
+    /* Wall */
+    /**
+     * Wall for screen edge
+     */
+    private static final float[] VERT_WALL = {-0.5f, 18.0f, 0.5f, 18.0f, 0.5f, 0.0f, -0.5f, 0.0f};
+    private static final float[] HORI_WALL = {0.0f, 0.5f, 32.0f, 0.5f, 32.0f, -0.5f, 0.0f, -0.5f};
+
+    /* Density of objects */
+    /* Friction of objects */
     /**
      * Collision restitution for all objects
      */
-    /** Wall */
-    private static final float[] WALL1 = { -2.0f, 10.5f, 2.0f, 10.5f, 2.0f,  9.5f,  -2.0f,  9.5f };
-    private static final float[] WALL2 = { -0.5f, 5.0f, 0.5f, 5.0f, 0.5f,  0.0f,  -0.5f,  0.0f };
-    /** Wall for screen edge */
-    private static final float[] VERT_WALL = { -0.5f, 18.0f, 0.5f, 18.0f, 0.5f,  0.0f,  -0.5f,  0.0f };
-    private static final float[] HORI_WALL = { 0.0f, 0.5f, 32.0f, 0.5f, 32.0f,  -0.5f,  0.0f,  -0.5f };
-
-    /** Density of objects */
-    private static final float BASIC_DENSITY   = 0.0f;
-    /** Friction of objects */
-    private static final float BASIC_FRICTION  = 1f;
-    /** Collision restitution for all objects */
     private static final float BASIC_RESTITUTION = 0f;
     private FilmStrip player2FilmStrip;
 
