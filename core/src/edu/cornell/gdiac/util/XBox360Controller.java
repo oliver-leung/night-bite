@@ -53,7 +53,8 @@ public class XBox360Controller implements ControllerListener {
 	private Controller controller;
 	/** Whether this controller is currently running with the Mac OS X driver */
 	private boolean macosx;
-	
+	private boolean linux;
+
 	/** Button identifier for the X-Button */
 	private int button_x;
 	/** Button identifier for the Y-Button */
@@ -148,50 +149,15 @@ public class XBox360Controller implements ControllerListener {
 	
 		this.controller = controller;
 		macosx = System.getProperty("os.name").equals("Mac OS X");
-		
-		if (!macosx) {
-			// Windows button mapping
-			button_x = 2;
-			button_y = 3;
-			button_a = 0;
-			button_b = 1;
-			
-			button_back  = 6;
-			button_start = 7;
-			button_guide = 10;
-			
-			button_lb = 4;
-			button_l3 = 8;
-			button_rb = 5;
-			button_r3 = 9;
+		linux = System.getProperty("os.name").equals("Linux");
 
-			// Windows does not treat dpad as discrete buttons
-			button_dpad_up    = -1;
-			button_dpad_down  = -1;
-			button_dpad_left  = -1;
-			button_dpad_right = -1;
-			
-			pov_index_dpad = 0;
-			pov_dpad_up    = PovDirection.north;
-			pov_dpad_down  = PovDirection.south;
-			pov_dpad_left  = PovDirection.east;
-			pov_dpad_right = PovDirection.west;
-			
-			axis_left_x = 1;
-			axis_left_y = 0;
-			axis_left_trigger = 4;
-			
-			axis_right_x = 3;
-			axis_right_y = 2;
-			axis_right_trigger = 4;
-		} else {
-		
+		if (macosx) {
 			// Mac Driver settings
 			button_x = 14;
 			button_y = 15;
 			button_a = 12;
 			button_b = 13;
-			
+
 			button_back  = 5;
 			button_start = 4;
 			button_guide = 10;
@@ -206,22 +172,92 @@ public class XBox360Controller implements ControllerListener {
 			button_dpad_down  = 1;
 			button_dpad_left  = 2;
 			button_dpad_right = 3;
-			
+
 			pov_index_dpad = -1;
 			pov_dpad_up    = null;
 			pov_dpad_down  = null;
 			pov_dpad_left  = null;
 			pov_dpad_right = null;
-			
+
 			axis_left_x = 2;
 			axis_left_y = 3;
 			axis_left_trigger = 0;
-			
+
 			axis_right_x = 4;
 			axis_right_y = 5;
 			axis_right_trigger = 1;
+		} else if (linux) {
+			button_x = 2;
+			button_y = 3;
+			button_a = 0;
+			button_b = 1;
+
+			button_back  = 6;
+			button_start = 7;
+			button_guide = 10;
+
+			button_lb = 4;
+			button_l3 = 8;
+			button_rb = 5;
+			button_r3 = 9;
+
+			// Windows does not treat dpad as discrete buttons
+			button_dpad_up    = -1;
+			button_dpad_down  = -1;
+			button_dpad_left  = -1;
+			button_dpad_right = -1;
+
+			pov_index_dpad = 0;
+			pov_dpad_up    = PovDirection.north;
+			pov_dpad_down  = PovDirection.south;
+			pov_dpad_left  = PovDirection.east;
+			pov_dpad_right = PovDirection.west;
+
+			axis_left_x = 0;
+			axis_left_y = 1;
+			axis_left_trigger = 4;
+
+			axis_right_x = 3;
+			axis_right_y = 2;
+			axis_right_trigger = 4;
+		} else {
+			// Windows button mapping
+			button_x = 2;
+			button_y = 3;
+			button_a = 0;
+			button_b = 1;
+
+			button_back  = 6;
+			button_start = 7;
+			button_guide = 10;
+
+			button_lb = 4;
+			button_l3 = 8;
+			button_rb = 5;
+			button_r3 = 9;
+
+			// Windows does not treat dpad as discrete buttons
+			button_dpad_up    = -1;
+			button_dpad_down  = -1;
+			button_dpad_left  = -1;
+			button_dpad_right = -1;
+
+			pov_index_dpad = 0;
+			pov_dpad_up    = PovDirection.north;
+			pov_dpad_down  = PovDirection.south;
+			pov_dpad_left  = PovDirection.east;
+			pov_dpad_right = PovDirection.west;
+
+			axis_left_x = 1;
+			axis_left_y = 0;
+			axis_left_trigger = 4;
+
+			axis_right_x = 3;
+			axis_right_y = 2;
+			axis_right_trigger = 4;
+
 		}
-		
+
 		// Workaround for trigger bug
 		left_trigger_begin = true;
 		right_trigger_begin = true;
@@ -522,7 +558,7 @@ public class XBox360Controller implements ControllerListener {
 	 * @return the Y axis value of the left analog stick.
 	 */
 	public float getLeftY() {
-		return controller.getAxis(axis_left_y);
+		return linux ? - controller.getAxis(axis_left_y) : controller.getAxis(axis_left_y);
 	}
 	
 	/**

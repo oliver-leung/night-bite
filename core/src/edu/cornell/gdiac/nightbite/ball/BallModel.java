@@ -5,9 +5,10 @@ import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
-public class BallModel extends BoxObstacle {
+public class BallModel extends CapsuleObstacle{
 
     /**
      * The density of this ball
@@ -40,7 +41,7 @@ public class BallModel extends BoxObstacle {
     /**
      * The impulse for the character boost
      */
-    private static final float BOOST_IMP = 200.0f;
+    private static final float BOOST_IMP = 170.0f;
     /**
      * The amount to slow the character down
      */
@@ -88,6 +89,9 @@ public class BallModel extends BoxObstacle {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setName("ball");
+        setOrientation(Orientation.VERTICAL);
+        setBullet(true);
+
         this.team = team;
     }
 
@@ -176,6 +180,7 @@ public class BallModel extends BoxObstacle {
             draw = true;
         }
         item = false;
+        resetTexture();
 
         setLinearVelocity(Vector2.Zero);
     }
