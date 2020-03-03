@@ -62,27 +62,28 @@ public abstract class WorldController implements Screen {
 	 * The default value of gravity (going down)
 	 */
 	protected static final float DEFAULT_GRAVITY = -4.9f;
+	private static final String STAND_FILE = "shared/stand-border.png";
+	private static String BACKGROUND_FILE = "ball/cobble.png";
+	private static String HOLE_FILE = "shared/hole2.png";
 	/**
 	 * File to texture for walls and platforms
 	 */
-	private static String STAND_FILE = "shared/stand-border.png";
+	private static String WALL_FILE = "ball/brick.png";
 
 	// Pathnames to shared assets
 	/**
 	 * File to texture for the win door
 	 */
 	private static String GOAL_FILE = "shared/goaldoor.png";
-	protected String winner;
 	/**
 	 * Retro font for displaying messages
 	 */
 	private static String FONT_FILE = "shared/RetroGame.ttf";
 	private static int FONT_SIZE = 12;
-
-	/**
-	 * The texture for walls and platforms
-	 */
-	protected TextureRegion standTile;
+	public TextureRegion backgroundTile;
+	public TextureRegion standTile;
+	public TextureRegion holeTile;
+	protected String winner;
 	/**
 	 * The texture for the exit condition
 	 */
@@ -91,29 +92,34 @@ public abstract class WorldController implements Screen {
 	 * The font for giving messages to the player
 	 */
 	protected BitmapFont displayFont;
+	/**
+	 * The texture for walls and platforms
+	 */
+	protected TextureRegion wallTile;
 
 	/**
 	 * Preloads the assets for this controller.
-	 *
+	 * <p>
 	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
 	 * this time.  However, we still want the assets themselves to be static.  So
 	 * we have an AssetState that determines the current loading state.  If the
 	 * assets are already loaded, this method will do nothing.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void preLoadContent(AssetManager manager) {
 		if (worldAssetState != AssetState.EMPTY) {
 			return;
 		}
-		
+
 		worldAssetState = AssetState.LOADING;
 		// Load the shared tiles.
-		manager.load(STAND_FILE,Texture.class);
-		assets.add(STAND_FILE);
-		manager.load(GOAL_FILE,Texture.class);
-		assets.add(GOAL_FILE);
-		
+		loadFile(manager, WALL_FILE);
+		loadFile(manager, GOAL_FILE);
+		loadFile(manager, BACKGROUND_FILE);
+		loadFile(manager, STAND_FILE);
+		loadFile(manager, HOLE_FILE);
+
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 		size2Params.fontFileName = FONT_FILE;
@@ -122,28 +128,36 @@ public abstract class WorldController implements Screen {
 		assets.add(FONT_FILE);
 	}
 
+	private void loadFile(AssetManager manager, String fileName) {
+		manager.load(fileName, Texture.class);
+		assets.add(fileName);
+	}
+
 	/**
 	 * Loads the assets for this controller.
-	 *
+	 * <p>
 	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
 	 * this time.  However, we still want the assets themselves to be static.  So
 	 * we have an AssetState that determines the current loading state.  If the
 	 * assets are already loaded, this method will do nothing.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
 		if (worldAssetState != AssetState.LOADING) {
 			return;
 		}
-		
+
 		// Allocate the tiles
-		standTile = createTexture(manager,STAND_FILE,true);
-		goalTile  = createTexture(manager,GOAL_FILE,true);
-		
+		wallTile = createTexture(manager, WALL_FILE, true);
+		standTile = createTexture(manager, STAND_FILE, true);
+		backgroundTile = createTexture(manager, BACKGROUND_FILE, true);
+		goalTile = createTexture(manager, GOAL_FILE, true);
+		holeTile = createTexture(manager, HOLE_FILE, true);
+
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
-			displayFont = manager.get(FONT_FILE,BitmapFont.class);
+			displayFont = manager.get(FONT_FILE, BitmapFont.class);
 		} else {
 			displayFont = null;
 		}
@@ -459,6 +473,12 @@ public abstract class WorldController implements Screen {
 		canvas.clear();
 
 		canvas.begin();
+
+		// Draw background
+		backgroundTile.setRegionHeight(canvas.getHeight());
+		backgroundTile.setRegionWidth(canvas.getWidth());
+		canvas.draw(backgroundTile, 0, 0);
+
 		StringBuilder message1 = new StringBuilder("Player A score: ");
 		StringBuilder message2 = new StringBuilder("Player B score: ");
 
@@ -472,6 +492,7 @@ public abstract class WorldController implements Screen {
 				obj.draw(canvas);
 			}
 		}
+
 		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
 		canvas.end();
@@ -495,8 +516,8 @@ public abstract class WorldController implements Screen {
 			canvas.begin(); // DO NOT SCALE
 			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
 			canvas.end();
-		}
-	}
+        }
+    }
 	
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
@@ -78,9 +77,11 @@ public class BallModel extends CapsuleObstacle{
         super.setTexture(value);
     }
 
+    private Vector2 homeLoc;
+
     public BallModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
-        home_loc = new Vector2(x, y);
+        homeLoc = new Vector2(x, y);
         impulse = new Vector2();
         boost = new Vector2();
         cooldown = 0;
@@ -103,16 +104,14 @@ public class BallModel extends CapsuleObstacle{
         this.team = team;
     }
 
-    public Vector2 getHome_loc() {
-        return home_loc;
+    public Vector2 getHomeLoc() {
+        return homeLoc;
     }
-
-    private Vector2 home_loc;
 
     public boolean item;
 
-    public void setHome_loc(Vector2 home_loc) {
-        this.home_loc = home_loc;
+    public void setHomeLoc(Vector2 homeLoc) {
+        this.homeLoc = homeLoc;
     }
 
     public boolean activatePhysics(World world) {
@@ -175,7 +174,7 @@ public class BallModel extends CapsuleObstacle{
         }
         spawnCooldown--;
         if (spawnCooldown == 0) {
-            setPosition(home_loc);
+            setPosition(homeLoc);
             isAlive = true;
             draw = true;
         }
@@ -188,6 +187,7 @@ public class BallModel extends CapsuleObstacle{
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
+
     }
 
     public void setStatic() {
