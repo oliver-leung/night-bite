@@ -43,7 +43,6 @@ public class DesktopLauncher {
 		// THERE IS NO FULLSCREEN SUPPORT FOR RETINA MACS...
 		// ... until LibGDX updates to LWGJL 3 (still testing as of December 2015) 
 		config.fullscreen = false;
-		//config.useGL30 = true;
 
 		// Create the new application and run it.
 		new LwjglApplication(new GDXRoot(), config);
