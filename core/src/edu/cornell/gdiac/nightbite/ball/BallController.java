@@ -258,7 +258,7 @@ public class BallController extends WorldController implements ContactListener {
 
         /* Add home stalls */
         // Team A
-        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2.5f, 2.5f, "a");
+        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
@@ -273,7 +273,7 @@ public class BallController extends WorldController implements ContactListener {
 
         /* Add home stalls */
         // Team B
-        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2.5f, 2.5f, "b");
+        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
