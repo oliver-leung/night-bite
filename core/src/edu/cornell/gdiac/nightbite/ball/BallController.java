@@ -165,7 +165,7 @@ public class BallController extends WorldController implements ContactListener {
         BoxObstacle wall;
         float ddwidth  = standTile.getRegionWidth()/scale.x;
         float ddheight = standTile.getRegionHeight()/scale.y;
-        wall = new BoxObstacle(16, 3, ddwidth, ddheight);
+        wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
         wall.setDensity(BASIC_DENSITY);
         wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
@@ -245,7 +245,6 @@ public class BallController extends WorldController implements ContactListener {
         home.setTexture(standTile);
         home.setName("homeA");
         addObject(home);
-        addObject(p1);
 
         /** Add players */
         // Team B
@@ -261,6 +260,7 @@ public class BallController extends WorldController implements ContactListener {
         home.setTexture(standTile);
         home.setName("homeB");
         addObject(home);
+        addObject(p1);
         addObject(p2);
     }
 
