@@ -27,8 +27,10 @@ public class BallController extends WorldController implements ContactListener {
     /**
      * Texture assets for the ball
      */
-    private TextureRegion player1Texture;
-    private TextureRegion player2Texture;
+    private TextureRegion player1LeftTexture;
+    private TextureRegion player1RightTexture;
+    private TextureRegion player2LeftTexture;
+    private TextureRegion player2RightTexture;
     private TextureRegion ballItemTexture;
     private TextureRegion itemTexture;
 
@@ -73,8 +75,12 @@ public class BallController extends WorldController implements ContactListener {
 
     /** Create textures */
     public void loadContent(AssetManager manager) {
-        player1Texture = createTexture(manager,PLAYER1_TEXTURE,false);
-        player2Texture = createTexture(manager, PLAYER2_TEXTURE, false);
+        player1LeftTexture = createTexture(manager,PLAYER1_TEXTURE,false);
+        player1RightTexture = createTexture(manager,PLAYER1_TEXTURE,false);
+        player1RightTexture.flip(true, false);
+        player2LeftTexture = createTexture(manager, PLAYER2_TEXTURE, false);
+        player2RightTexture = createTexture(manager, PLAYER2_TEXTURE, false);
+        player2RightTexture.flip(true, false);
         ballItemTexture = createTexture(manager, PLAYER_WITH_ITEM_TEXTURE, false);
         itemTexture = createTexture(manager, ITEM_TEXTURE, false);
         super.loadContent(manager);
@@ -225,11 +231,11 @@ public class BallController extends WorldController implements ContactListener {
 
         /* Add players */
         // Team A
-        float pWidth = player1Texture.getRegionWidth() / scale.x;
-        float pHeight = player1Texture.getRegionHeight() / scale.y;
+        float pWidth = player1LeftTexture.getRegionWidth() / scale.x;
+        float pHeight = player1LeftTexture.getRegionHeight() / scale.y;
         p1 = new BallModel(p1_position.x, p1_position.y, pWidth, pHeight, "a");
         p1.setDrawScale(scale);
-        p1.setTexture(player1Texture);
+        p1.setTexture(player1LeftTexture);
 
         /* Add home stalls */
         // Team A
@@ -245,7 +251,7 @@ public class BallController extends WorldController implements ContactListener {
         // Team B
         p2 = new BallModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
         p2.setDrawScale(scale);
-        p2.setTexture(player2Texture);
+        p2.setTexture(player2RightTexture);
 
         /** Add home stalls */
         // Team B
@@ -267,7 +273,12 @@ public class BallController extends WorldController implements ContactListener {
         // If player initiated movement, set moveState to WALK
         if (p1_horizontal != 0 || p1_vertical != 0) {
             p1.setWalk();
-    } else {
+            if (p1_horizontal == -1) {
+                p1.setTexture(player1LeftTexture);
+            } else if (p1_horizontal == 1) {
+                p1.setTexture(player1RightTexture);
+            }
+        } else {
             p1.setStatic();
         }
         // Set player movement impulse
@@ -287,6 +298,11 @@ public class BallController extends WorldController implements ContactListener {
         // If player initiated movement, set moveState to WALK
         if (p2_horizontal!= 0 || p2_vertical != 0) {
             p2.setWalk();
+            if (p2_horizontal == -1) {
+                p2.setTexture(player2LeftTexture);
+            } else if (p2_horizontal == 1) {
+                p2.setTexture(player2RightTexture);
+            }
         } else {
             p2.setStatic();
         }
