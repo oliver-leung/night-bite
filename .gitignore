@@ -3,6 +3,7 @@
 *.class
 *.war
 *.ear
+*.jar
 hs_err_pid*
 
 ## Robovm
@@ -120,5 +121,8 @@ Thumbs.db
 !/ios-moe/xcode/*.xcodeproj/project.pbxproj
 /ios-moe/xcode/native/
 
-.idea/
+# IntelliJ build/run
+!.idea/runConfigurations
+!.idea/artifacts
 /desktop/out/
+/core/resources/
