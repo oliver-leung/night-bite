@@ -1,17 +1,23 @@
 package edu.cornell.gdiac.nightbite.ball;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
-public class BallModel extends BoxObstacle {
+public class BallModel extends CapsuleObstacle{
 
     /**
      * The density of this ball
      */
     private static final float DEFAULT_DENSITY = 1.0f;
+    private TextureRegion defaultTexture;
+
+    public void resetTexture() {
+        texture = defaultTexture;
+    }
 
     public enum MoveState {
         WALK,
@@ -30,15 +36,15 @@ public class BallModel extends BoxObstacle {
     /**
      * The thrust factor to convert player input into thrust
      */
-    private static final float DEFAULT_THRUST = 15.0f;
+    private static final float DEFAULT_THRUST = 10.0f;
     /**
      * The impulse for the character boost
      */
-    private static final float BOOST_IMP = 200.0f;
+    private static final float BOOST_IMP = 100.0f;
     /**
      * The amount to slow the character down
      */
-    private static final float MOTION_DAMPING = 15f;
+    private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
 
@@ -63,9 +69,19 @@ public class BallModel extends BoxObstacle {
 
     private String team;
 
+    @Override
+    public void setTexture(TextureRegion value) {
+        if (defaultTexture == null) {
+            defaultTexture = value;
+        }
+        super.setTexture(value);
+    }
+
+    private Vector2 homeLoc;
+
     public BallModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
-        home_loc = new Vector2(x, y);
+        homeLoc = new Vector2(x, y);
         impulse = new Vector2();
         boost = new Vector2();
         cooldown = 0;
@@ -74,6 +90,9 @@ public class BallModel extends BoxObstacle {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setName("ball");
+        setOrientation(Orientation.VERTICAL);
+        setBullet(true);
+
         this.team = team;
     }
 
@@ -85,16 +104,14 @@ public class BallModel extends BoxObstacle {
         this.team = team;
     }
 
-    public Vector2 getHome_loc() {
-        return home_loc;
+    public Vector2 getHomeLoc() {
+        return homeLoc;
     }
-
-    private Vector2 home_loc;
 
     public boolean item;
 
-    public void setHome_loc(Vector2 home_loc) {
-        this.home_loc = home_loc;
+    public void setHomeLoc(Vector2 homeLoc) {
+        this.homeLoc = homeLoc;
     }
 
     public boolean activatePhysics(World world) {
@@ -157,11 +174,12 @@ public class BallModel extends BoxObstacle {
         }
         spawnCooldown--;
         if (spawnCooldown == 0) {
-            setPosition(home_loc);
+            setPosition(homeLoc);
             isAlive = true;
             draw = true;
         }
         item = false;
+        resetTexture();
 
         setLinearVelocity(Vector2.Zero);
     }
@@ -169,6 +187,7 @@ public class BallModel extends BoxObstacle {
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
+
     }
 
     public void setStatic() {

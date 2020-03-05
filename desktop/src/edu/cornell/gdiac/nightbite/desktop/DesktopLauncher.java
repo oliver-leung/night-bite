@@ -35,15 +35,14 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		// These are the configuration attributes
-		config.width  = 1024;
+		config.width = 1024;
 		config.height = 576;
-		config.resizable  = false;
+		config.resizable = true;
 		config.foregroundFPS = 60;
 
 		// THERE IS NO FULLSCREEN SUPPORT FOR RETINA MACS...
 		// ... until LibGDX updates to LWGJL 3 (still testing as of December 2015) 
 		config.fullscreen = false;
-		//config.useGL30 = true;
 
 		// Create the new application and run it.
 		new LwjglApplication(new GDXRoot(), config);
