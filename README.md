@@ -1,4 +1,4 @@
-# Night Bite
+![](core/assets/shared/night-bite-sign-black-v2.png)
 
 Presented by SOYA Studios!
 
