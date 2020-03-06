@@ -1,6 +1,6 @@
 ![](core/assets/shared/night-bite-sign-black-v2.png)
 
-Presented by SOYA Studios!
+Presented by SOYA Studios! (CS/INFO 3152 Group 11)
 
 ## Controls
 
