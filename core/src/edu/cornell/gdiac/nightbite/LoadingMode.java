@@ -53,10 +53,6 @@ import edu.cornell.gdiac.util.ScreenListener;
  * loading screen.
  */
 public class LoadingMode implements Screen, InputProcessor, ControllerListener {
-	// Textures necessary to support the loading screen 
-	private static final String BACKGROUND_FILE = "shared/loading.png";
-	private static final String PROGRESS_FILE = "shared/progressbar.png";
-	private static final String PLAY_BTN_FILE = "shared/play.png";
 	/**
 	 * Reference to the ball texture
 	 */
@@ -65,6 +61,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	static final String PLAYER_WITH_ITEM_TEXTURE = "ball/ballItem.png";
 	static final String ITEM_TEXTURE = "ball/fish.png";
 	static final String STAND_FILE = "shared/stand-border.png";
+	// Textures necessary to support the loading screen
+	private static final String BACKGROUND_FILE = "shared/loading.png";
+	private static final String PROGRESS_FILE = "shared/progressbar.png";
+	private static final String PLAY_BTN_FILE = "shared/play.png";
 	static String GAME_BACKGROUND_FILE = "ball/cobble.png";
 	/**
 	 * File to texture for walls and platforms
@@ -79,7 +79,52 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	static String FONT_FILE = "shared/RetroGame.ttf";
 	static int FONT_SIZE = 12;
+	/**
+	 * Default budget for asset loader (do nothing but load 60 fps)
+	 */
+	private static int DEFAULT_BUDGET = 15;
+	/**
+	 * Standard window size (for scaling)
+	 */
+	private static int STANDARD_WIDTH = 800;
+	/**
+	 * Standard window height (for scaling)
+	 */
+	private static int STANDARD_HEIGHT = 700;
 
+	// statusBar is a "texture atlas." Break it up into parts.
+	/**
+	 * Ratio of the bar width to the screen
+	 */
+	private static float BAR_WIDTH_RATIO = 0.66f;
+	/**
+	 * Ration of the bar height to the screen
+	 */
+	private static float BAR_HEIGHT_RATIO = 0.25f;
+	/**
+	 * Height of the progress bar
+	 */
+	private static int PROGRESS_HEIGHT = 30;
+	/**
+	 * Width of the rounded cap on left or right
+	 */
+	private static int PROGRESS_CAP = 15;
+	/**
+	 * Width of the middle portion in texture atlas
+	 */
+	private static int PROGRESS_MIDDLE = 200;
+	/**
+	 * Amount to scale the play button
+	 */
+	private static float BUTTON_SCALE = 0.75f;
+	/**
+	 * Start button for XBox controller on Windows
+	 */
+	private static int WINDOWS_START = 7;
+	/**
+	 * Start button for XBox controller on Mac OS X
+	 */
+	private static int MAC_OS_X_START = 4;
 	/**
 	 * Background texture for start-up
 	 */
@@ -92,57 +137,50 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Texture atlas to support a progress bar
 	 */
 	private Texture statusBar;
-
-	// statusBar is a "texture atlas." Break it up into parts.
 	/**
 	 * Left cap to the status background (grey region)
 	 */
 	private TextureRegion statusBkgLeft;
-	/** Middle portion of the status background (grey region) */
+	/**
+	 * Middle portion of the status background (grey region)
+	 */
 	private TextureRegion statusBkgMiddle;
-	/** Right cap to the status background (grey region) */
+	/**
+	 * Right cap to the status background (grey region)
+	 */
 	private TextureRegion statusBkgRight;
-	/** Left cap to the status forground (colored region) */
+	/**
+	 * Left cap to the status forground (colored region)
+	 */
 	private TextureRegion statusFrgLeft;
-	/** Middle portion of the status forground (colored region) */
+	/**
+	 * Middle portion of the status forground (colored region)
+	 */
 	private TextureRegion statusFrgMiddle;
-	/** Right cap to the status forground (colored region) */
-	private TextureRegion statusFrgRight;	
-
-	/** Default budget for asset loader (do nothing but load 60 fps) */
-	private static int DEFAULT_BUDGET = 15;
-	/** Standard window size (for scaling) */
-	private static int STANDARD_WIDTH  = 800;
-	/** Standard window height (for scaling) */
-	private static int STANDARD_HEIGHT = 700;
-	/** Ratio of the bar width to the screen */
-	private static float BAR_WIDTH_RATIO  = 0.66f;
-	/** Ration of the bar height to the screen */
-	private static float BAR_HEIGHT_RATIO = 0.25f;	
-	/** Height of the progress bar */
-	private static int PROGRESS_HEIGHT = 30;
-	/** Width of the rounded cap on left or right */
-	private static int PROGRESS_CAP    = 15;
-	/** Width of the middle portion in texture atlas */
-	private static int PROGRESS_MIDDLE = 200;
-	/** Amount to scale the play button */
-	private static float BUTTON_SCALE  = 0.75f;
-	
-	/** Start button for XBox controller on Windows */
-	private static int WINDOWS_START = 7;
-	/** Start button for XBox controller on Mac OS X */
-	private static int MAC_OS_X_START = 4;
-
-	/** AssetManager to be loading in the background */
+	/**
+	 * Right cap to the status forground (colored region)
+	 */
+	private TextureRegion statusFrgRight;
+	/**
+	 * AssetManager to be loading in the background
+	 */
 	private AssetManager manager;
-	/** Reference to GameCanvas created by the root */
+	/**
+	 * Reference to GameCanvas created by the root
+	 */
 	private GameCanvas canvas;
-	/** Listener that will update the player mode when we are done */
+	/**
+	 * Listener that will update the player mode when we are done
+	 */
 	private ScreenListener listener;
 
-	/** The width of the progress bar */	
+	/**
+	 * The width of the progress bar
+	 */
 	private int width;
-	/** The y-coordinate of the center of the progress bar */
+	/**
+	 * The y-coordinate of the center of the progress bar
+	 */
 	private int centerY;
 	/**
 	 * The x-coordinate of the center of the progress bar
@@ -177,6 +215,63 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Whether or not this player mode is still active
 	 */
 	private boolean active;
+
+	/**
+	 * Creates a LoadingMode with the default budget, size and position.
+	 *
+	 * @param manager The AssetManager to load in the background
+	 */
+	public LoadingMode(GameCanvas canvas, AssetManager manager) {
+		this(canvas, manager, DEFAULT_BUDGET);
+	}
+
+	/**
+	 * Creates a LoadingMode with the default size and position.
+	 * <p>
+	 * The budget is the number of milliseconds to spend loading assets each animation
+	 * frame.  This allows you to do something other than load assets.  An animation
+	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
+	 * do something else.  This is how game companies animate their loading screens.
+	 *
+	 * @param manager The AssetManager to load in the background
+	 * @param millis  The loading budget in milliseconds
+	 */
+	public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
+		this.manager = manager;
+		this.canvas = canvas;
+		budget = millis;
+
+		// Compute the dimensions from the canvas
+		resize(canvas.getWidth(), canvas.getHeight());
+
+		// Load the next two images immediately.
+		playButton = null;
+		background = new Texture(BACKGROUND_FILE);
+		statusBar = new Texture(PROGRESS_FILE);
+
+		// No progress so far.
+		progress = 0;
+		pressState = 0;
+		active = false;
+
+		// Break up the status bar texture into regions
+		statusBkgLeft = new TextureRegion(statusBar, 0, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
+		statusBkgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
+		statusBkgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, 0, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
+
+		int offset = statusBar.getHeight() - PROGRESS_HEIGHT;
+		statusFrgLeft = new TextureRegion(statusBar, 0, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
+		statusFrgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
+		statusFrgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, offset, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
+
+		startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
+		Gdx.input.setInputProcessor(this);
+		// Let ANY connected controller start the game.
+		for (Controller controller : Controllers.getControllers()) {
+			controller.addListener(this);
+		}
+		active = true;
+	}
 
 	/**
 	 * Returns a newly loaded filmstrip for the given file.
@@ -227,8 +322,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Returns the budget for the asset loader.
 	 *
 	 * The budget is the number of milliseconds to spend loading assets each animation
-	 * frame.  This allows you to do something other than load assets.  An animation 
-	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to 
+	 * frame.  This allows you to do something other than load assets.  An animation
+	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
 	 * do something else.  This is how game companies animate their loading screens.
 	 *
 	 * @return the budget in milliseconds
@@ -241,8 +336,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Sets the budget for the asset loader.
 	 *
 	 * The budget is the number of milliseconds to spend loading assets each animation
-	 * frame.  This allows you to do something other than load assets.  An animation 
-	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to 
+	 * frame.  This allows you to do something other than load assets.  An animation
+	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
 	 * do something else.  This is how game companies animate their loading screens.
 	 *
 	 * @param millis the budget in milliseconds
@@ -250,7 +345,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public void setBudget(int millis) {
 		budget = millis;
 	}
-	
+
 	/**
 	 * Returns true if all assets are loaded and the player is ready to go.
 	 *
@@ -258,63 +353,6 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	public boolean isReady() {
 		return pressState == 2;
-	}
-	
-	/**
-	 * Creates a LoadingMode with the default budget, size and position.
-	 *
-	 * @param manager The AssetManager to load in the background
-	 */
-	public LoadingMode(GameCanvas canvas, AssetManager manager) {
-		this(canvas, manager,DEFAULT_BUDGET);
-	}
-
-	/**
-	 * Creates a LoadingMode with the default size and position.
-	 *
-	 * The budget is the number of milliseconds to spend loading assets each animation
-	 * frame.  This allows you to do something other than load assets.  An animation 
-	 * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to 
-	 * do something else.  This is how game companies animate their loading screens.
-	 *
-	 * @param manager The AssetManager to load in the background
-	 * @param millis The loading budget in milliseconds
-	 */
-	public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
-		this.manager = manager;
-		this.canvas  = canvas;
-		budget = millis;
-		
-		// Compute the dimensions from the canvas
-		resize(canvas.getWidth(),canvas.getHeight());
-
-		// Load the next two images immediately.
-		playButton = null;
-		background = new Texture(BACKGROUND_FILE);
-		statusBar  = new Texture(PROGRESS_FILE);
-		
-		// No progress so far.		
-		progress   = 0;
-		pressState = 0;
-		active = false;
-
-		// Break up the status bar texture into regions
-		statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP,PROGRESS_HEIGHT);
-		statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,0,PROGRESS_CAP,PROGRESS_HEIGHT);
-		statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
-
-		int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
-		statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP,PROGRESS_HEIGHT);
-		statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,offset,PROGRESS_CAP,PROGRESS_HEIGHT);
-		statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
-
-		startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
-		Gdx.input.setInputProcessor(this);
-		// Let ANY connected controller start the game.
-		for(Controller controller : Controllers.getControllers()) {
-			controller.addListener(this);
-		}
-		active = true;
 	}
 	
 	/**

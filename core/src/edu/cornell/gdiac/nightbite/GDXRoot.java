@@ -115,7 +115,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
-		// TODO: Add logic for affine-transforming objects and hitboxes when resizing
+		// TODO: Add logic for affine-transforming objects and hitboxes when resizing. Perhaps GameCanvas.computeTransform would be useful for this?
 		canvas.resize();
 		super.resize(width, height);
 	}

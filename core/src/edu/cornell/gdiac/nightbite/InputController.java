@@ -20,23 +20,94 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 /**
- * Class for reading player input. 
- *
- * This supports both a keyboard and X-Box controller. In previous solutions, we only 
+ * Class for reading player input.
+ * <p>
+ * This supports both a keyboard and X-Box controller. In previous solutions, we only
  * detected the X-Box controller on start-up.  This class allows us to hot-swap in
  * a controller via the new XBox360Controller class.
  */
 public class InputController {
 	// Sensitivity for moving crosshair with gameplay
 	private static final float GP_ACCELERATE = 1.0f;
-	private static final float GP_MAX_SPEED  = 10.0f;
-	private static final float GP_THRESHOLD  = 0.01f;
+	private static final float GP_MAX_SPEED = 10.0f;
+	private static final float GP_THRESHOLD = 0.01f;
 	private static final float DEADZONE = 0.3f;
 
-	/** The singleton instance of the input controller */
+	/**
+	 * The singleton instance of the input controller
+	 */
 	private static InputController theController = null;
-	
-	/** 
+	/**
+	 * An X-Box controller (if it is connected)
+	 */
+	XBox360Controller xboxA;
+
+	// Fields to manage buttons
+	XBox360Controller xboxB;
+	/**
+	 * Whether the reset button was pressed.
+	 */
+	private boolean resetPressed;
+	private boolean resetPrevious;
+	/**
+	 * Whether the debug toggle was pressed.
+	 */
+	private boolean debugPressed;
+	private boolean debugPrevious;
+	/**
+	 * Whether the exit button was pressed.
+	 */
+	private boolean exitPressed;
+
+	// for player A // will refactor next week loool
+	private boolean exitPrevious;
+	/**
+	 * How much did we move horizontally?
+	 */
+	private float horizontalA;
+	/**
+	 * How much did we move vertically?
+	 */
+	private float verticalA;
+	/**
+	 * Whether the boost button was pressed.
+	 */
+	private boolean boostPressedA;
+
+	// for player B
+	private boolean boostPreviousA;
+	/**
+	 * How much did we move horizontally?
+	 */
+	private float horizontalB;
+	/**
+	 * How much did we move vertically?
+	 */
+	private float verticalB;
+	/**
+	 * Whether the boost button was pressed.
+	 */
+	private boolean boostPressedB;
+	private boolean boostPreviousB;
+	/**
+	 * The crosshair position (for raddoll)
+	 */
+	private Vector2 crosshair;
+
+	/**
+	 * Creates a new input controller
+	 * <p>
+	 * The input controller attempts to connect to the X-Box controller at device 0,
+	 * if it exists.  Otherwise, it falls back to the keyboard control.
+	 */
+	public InputController() {
+		// If we have a game-pad for id, then use it.
+		xboxA = new XBox360Controller(1);
+		xboxB = new XBox360Controller(0);
+		crosshair = new Vector2();
+	}
+
+	/**
 	 * Return the singleton instance of the input controller
 	 *
 	 * @return the singleton instance of the input controller
@@ -47,56 +118,17 @@ public class InputController {
 		}
 		return theController;
 	}
-	
-	// Fields to manage buttons
-	/** Whether the reset button was pressed. */
-	private boolean resetPressed;
-	private boolean resetPrevious;
-	/** Whether the debug toggle was pressed. */
-	private boolean debugPressed;
-	private boolean debugPrevious;
-	/** Whether the exit button was pressed. */
-	private boolean exitPressed;
-	private boolean exitPrevious;
-
-	// for player A // will refactor next week loool
-	/** How much did we move horizontally? */
-	private float horizontalA;
-	/** How much did we move vertically? */
-	private float verticalA;
-	/** Whether the boost button was pressed. */
-	private boolean boostPressedA;
-	private boolean boostPreviousA;
-
-	// for player B
-	/** How much did we move horizontally? */
-	private float horizontalB;
-	/** How much did we move vertically? */
-	private float verticalB;
-	/** Whether the boost button was pressed. */
-	private boolean boostPressedB;
-	private boolean boostPreviousB;
-
-	/** The crosshair position (for raddoll) */
-	private Vector2 crosshair;
-	/** The crosshair cache (for using as a return value) */
-	private Vector2 crosscache;
-	/** For the gamepad crosshair control */
-	private float momentum;
-	
-	/** An X-Box controller (if it is connected) */
-	XBox360Controller xboxA;
-
-	XBox360Controller xboxB;
 
 	/**
 	 * Returns the amount of sideways movement.
-	 *
+	 * <p>
 	 * -1 = left, 1 = right, 0 = still
 	 *
 	 * @return the amount of sideways movement.
 	 */
-	public float getHorizontalA() { return horizontalA; }
+	public float getHorizontalA() {
+		return horizontalA;
+	}
 
 	/**
 	 * Returns the amount of vertical movement.
@@ -109,12 +141,14 @@ public class InputController {
 
 	/**
 	 * Returns the amount of sideways movement.
-	 *
+	 * <p>
 	 * -1 = left, 1 = right, 0 = still
 	 *
 	 * @return the amount of sideways movement.
 	 */
-	public float getHorizontalB() { return horizontalB; }
+	public float getHorizontalB() {
+		return horizontalB;
+	}
 
 	/**
 	 * Returns the amount of vertical movement.
@@ -124,7 +158,7 @@ public class InputController {
 	 * @return the amount of vertical movement.
 	 */
 	public float getVerticalB() { return verticalB; }
-
+	
 	/**
 	 * Returns true if the reset button was pressed.
 	 *
@@ -140,7 +174,7 @@ public class InputController {
 	public boolean didDebug() {
 		return debugPressed && !debugPrevious;
 	}
-	
+
 	/**
 	 * Returns true if the exit button was pressed.
 	 *
@@ -153,23 +187,9 @@ public class InputController {
 	public boolean didBoostA() {
 		return boostPressedA && !boostPreviousA;
 	}
-
+	
 	public boolean didBoostB() {
 		return boostPressedB && !boostPreviousB;
-	}
-	
-	/**
-	 * Creates a new input controller
-	 * 
-	 * The input controller attempts to connect to the X-Box controller at device 0,
-	 * if it exists.  Otherwise, it falls back to the keyboard control.
-	 */
-	public InputController() { 
-		// If we have a game-pad for id, then use it.
-		xboxA = new XBox360Controller(1);
-		xboxB = new XBox360Controller(0);
-		crosshair = new Vector2();
-		crosscache = new Vector2();
 	}
 
 	/**
