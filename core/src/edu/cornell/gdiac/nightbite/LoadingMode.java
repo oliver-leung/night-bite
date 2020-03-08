@@ -64,16 +64,39 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	static final String PLAYER2_FILMSTRIP = "ball/char2.png";
 	static final String PLAYER_WITH_ITEM_TEXTURE = "ball/ballItem.png";
 	static final String ITEM_TEXTURE = "ball/fish.png";
+	static final String STAND_FILE = "shared/stand-border.png";
+	static String GAME_BACKGROUND_FILE = "ball/cobble.png";
+	/**
+	 * File to texture for walls and platforms
+	 */
+	static String WALL_FILE = "ball/brick.png";
+	/**
+	 * File to texture for the win door
+	 */
+	static String GOAL_FILE = "shared/goaldoor.png";
+	/**
+	 * Retro font for displaying messages
+	 */
+	static String FONT_FILE = "shared/RetroGame.ttf";
+	static int FONT_SIZE = 12;
 
-	/** Background texture for start-up */
+	/**
+	 * Background texture for start-up
+	 */
 	private Texture background;
-	/** Play button to display when done */
+	/**
+	 * Play button to display when done
+	 */
 	private Texture playButton;
-	/** Texture atlas to support a progress bar */
+	/**
+	 * Texture atlas to support a progress bar
+	 */
 	private Texture statusBar;
-	
+
 	// statusBar is a "texture atlas." Break it up into parts.
-	/** Left cap to the status background (grey region) */
+	/**
+	 * Left cap to the status background (grey region)
+	 */
 	private TextureRegion statusBkgLeft;
 	/** Middle portion of the status background (grey region) */
 	private TextureRegion statusBkgMiddle;

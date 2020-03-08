@@ -27,10 +27,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.entity.HoleModel;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
@@ -97,12 +94,6 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected static final float DEFAULT_GRAVITY = -4.9f;
 	protected static final float PUSH_IMPULSE = 200f;
-	private static final String STAND_FILE = "shared/stand-border.png";
-	private static final float[] WALL2 = {-0.5f, 5.0f, 0.5f, 5.0f, 0.5f, 0.0f, -0.5f, 0.0f};
-	/**
-	 * Wall
-	 */
-	private static final float[] WALL1 = {-2.0f, 10.5f, 2.0f, 10.5f, 2.0f, 9.5f, -2.0f, 9.5f};
 	/**
 	 * Density of objects
 	 */
@@ -114,31 +105,10 @@ public class WorldController implements Screen, ContactListener {
 
 	// Pathnames to shared assets
 	/**
-	 * Wall for screen edge
-	 */
-	private static final float[] VERT_WALL = {-0.5f, 18.0f, 0.5f, 18.0f, 0.5f, 0.0f, -0.5f, 0.0f};
-	private static final float[] HORI_WALL = {0.0f, 0.5f, 32.0f, 0.5f, 32.0f, -0.5f, 0.0f, -0.5f};
-	/**
 	 * Collision restitution for all objects
 	 */
 	private static final float BASIC_RESTITUTION = 0f;
 	protected static Vector2 item_position = new Vector2(16, 12);
-	private static String BACKGROUND_FILE = "ball/cobble.png";
-	/**
-	 * File to texture for walls and platforms
-	 */
-	private static String WALL_FILE = "ball/brick.png";
-	/**
-	 * File to texture for the win door
-	 */
-	private static String GOAL_FILE = "shared/goaldoor.png";
-	/**
-	 * Retro font for displaying messages
-	 */
-	private static String FONT_FILE = "shared/RetroGame.ttf";
-	private static int FONT_SIZE = 12;
-	private static Vector2 p1_position = new Vector2(26, 3);
-	private static Vector2 p2_position = new Vector2(6, 3);
 	public TextureRegion backgroundTile;
 	public TextureRegion standTile;
 	public TextureRegion holeTile;
@@ -306,21 +276,21 @@ public class WorldController implements Screen, ContactListener {
 
 		worldAssetState = AssetState.LOADING;
 		// Load the shared tiles.
-		loadFile(manager, WALL_FILE);
-		loadFile(manager, GOAL_FILE);
-		loadFile(manager, BACKGROUND_FILE);
-		loadFile(manager, STAND_FILE);
+		loadFile(manager, LoadingMode.WALL_FILE);
+		loadFile(manager, LoadingMode.GOAL_FILE);
+		loadFile(manager, LoadingMode.GAME_BACKGROUND_FILE);
+		loadFile(manager, LoadingMode.STAND_FILE);
 		loadFile(manager, HoleModel.HOLE_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-		size2Params.fontFileName = FONT_FILE;
-		size2Params.fontParameters.size = FONT_SIZE;
-		manager.load(FONT_FILE, BitmapFont.class, size2Params);
-		assets.add(FONT_FILE);
+		size2Params.fontFileName = LoadingMode.FONT_FILE;
+		size2Params.fontParameters.size = LoadingMode.FONT_SIZE;
+		manager.load(LoadingMode.FONT_FILE, BitmapFont.class, size2Params);
+		assets.add(LoadingMode.FONT_FILE);
 	}
 
-	private void loadFile(AssetManager manager, String fileName) {
+	public void loadFile(AssetManager manager, String fileName) {
 		manager.load(fileName, Texture.class);
 		assets.add(fileName);
 	}
@@ -347,15 +317,15 @@ public class WorldController implements Screen, ContactListener {
 		}
 
 		// Allocate the tiles
-		wallTile = LoadingMode.createTexture(manager, WALL_FILE, true);
-		standTile = LoadingMode.createTexture(manager, STAND_FILE, true);
-		backgroundTile = LoadingMode.createTexture(manager, BACKGROUND_FILE, true);
-		goalTile = LoadingMode.createTexture(manager, GOAL_FILE, true);
+		wallTile = LoadingMode.createTexture(manager, LoadingMode.WALL_FILE, true);
+		standTile = LoadingMode.createTexture(manager, LoadingMode.STAND_FILE, true);
+		backgroundTile = LoadingMode.createTexture(manager, LoadingMode.GAME_BACKGROUND_FILE, true);
+		goalTile = LoadingMode.createTexture(manager, LoadingMode.GOAL_FILE, true);
 		holeTile = LoadingMode.createTexture(manager, HoleModel.HOLE_FILE, true);
 
 		// Allocate the font
-		if (manager.isLoaded(FONT_FILE)) {
-			displayFont = manager.get(FONT_FILE, BitmapFont.class);
+		if (manager.isLoaded(LoadingMode.FONT_FILE)) {
+			displayFont = manager.get(LoadingMode.FONT_FILE, BitmapFont.class);
 		} else {
 			displayFont = null;
 		}
@@ -666,7 +636,7 @@ public class WorldController implements Screen, ContactListener {
 	private void populateLevel() {
 		/* Add holes */
 		PolygonObstacle obj;
-		obj = new HoleModel(WALL1, 16, 5);
+		obj = new HoleModel(LevelController.WALL1, 16, 5);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -675,7 +645,7 @@ public class WorldController implements Screen, ContactListener {
 		obj.setTexture(holeTile);
 		addObject(obj);
 
-		obj = new HoleModel(WALL2, 2, 4);
+		obj = new HoleModel(LevelController.WALL2, 2, 4);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -684,7 +654,7 @@ public class WorldController implements Screen, ContactListener {
 		obj.setTexture(holeTile);
 		addObject(obj);
 
-		obj = new HoleModel(WALL2, 30, 4);
+		obj = new HoleModel(LevelController.WALL2, 30, 4);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -694,7 +664,7 @@ public class WorldController implements Screen, ContactListener {
 		addObject(obj);
 
 		/* Add walls */
-		obj = new PolygonObstacle(WALL2, 9.5f, 8);
+		obj = new PolygonObstacle(LevelController.WALL2, 9.5f, 8);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -704,7 +674,7 @@ public class WorldController implements Screen, ContactListener {
 		obj.setName("wall1");
 		addObject(obj);
 
-		obj = new PolygonObstacle(WALL2, 22.5f, 8);
+		obj = new PolygonObstacle(LevelController.WALL2, 22.5f, 8);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -728,7 +698,7 @@ public class WorldController implements Screen, ContactListener {
 		/* Add screen edges */
 
 		// left screen edge
-		obj = new PolygonObstacle(VERT_WALL, 32.5f, 0);
+		obj = new PolygonObstacle(LevelController.VERT_WALL, 32.5f, 0);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -739,7 +709,7 @@ public class WorldController implements Screen, ContactListener {
 		addObject(obj);
 
 		// right screen edge
-		obj = new PolygonObstacle(VERT_WALL, -0.5f, 0);
+		obj = new PolygonObstacle(LevelController.VERT_WALL, -0.5f, 0);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -750,7 +720,7 @@ public class WorldController implements Screen, ContactListener {
 		addObject(obj);
 
 		// top screen edge
-		obj = new PolygonObstacle(HORI_WALL, 0.0f, -0.5f);
+		obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, -0.5f);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -761,7 +731,7 @@ public class WorldController implements Screen, ContactListener {
 		addObject(obj);
 
 		// bottom screen edge
-		obj = new PolygonObstacle(HORI_WALL, 0.0f, 18.5f);
+		obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, 18.5f);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
 		obj.setDensity(BASIC_DENSITY);
 		obj.setFriction(BASIC_FRICTION);
@@ -785,7 +755,7 @@ public class WorldController implements Screen, ContactListener {
 		// Team A
 		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
 		float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
-		p1 = new PlayerModel(p1_position.x, p1_position.y, pWidth, pHeight, "a");
+		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a");
 		p1.setDrawScale(scale);
 		p1.setTexture(PlayerModel.player1Texture);
 
@@ -800,7 +770,7 @@ public class WorldController implements Screen, ContactListener {
 
 		/* Add players */
 		// Team B
-		p2 = new PlayerModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
+		p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b");
 		p2.setDrawScale(scale);
 		p2.setTexture(PlayerModel.player2FilmStrip);
 
