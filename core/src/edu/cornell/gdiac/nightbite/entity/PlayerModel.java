@@ -1,18 +1,24 @@
-package edu.cornell.gdiac.nightbite;
+package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 
 
-public class PlayerModel extends CapsuleObstacle{
+public class PlayerModel extends CapsuleObstacle {
 
     /**
      * The density of this ball
      */
     private static final float DEFAULT_DENSITY = 1.0f;
+    /**
+     * Texture assets for the ball
+     */
+    public static TextureRegion player1Texture;
+    public static FilmStrip player2FilmStrip;
     private TextureRegion defaultTexture;
 
     public void resetTexture() {

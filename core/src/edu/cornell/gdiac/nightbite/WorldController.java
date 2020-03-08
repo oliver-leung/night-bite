@@ -27,10 +27,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.entity.HoleModel;
+import edu.cornell.gdiac.nightbite.entity.HomeModel;
+import edu.cornell.gdiac.nightbite.entity.ItemModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -53,6 +56,34 @@ import java.util.Iterator;
 public class WorldController implements Screen, ContactListener {
 
 	public static final int ITEMS_TO_WIN = 3;
+	/**
+	 * Exit code for quitting the game
+	 */
+	public static final int EXIT_QUIT = 0;
+	/**
+	 * Exit code for advancing to next level
+	 */
+	public static final int EXIT_NEXT = 1;
+	/**
+	 * Exit code for jumping back to previous level
+	 */
+	public static final int EXIT_PREV = 2;
+	/**
+	 * How many frames after winning/losing do we continue?
+	 */
+	public static final int EXIT_COUNT = 120;
+	/**
+	 * The amount of time for a physics engine step.
+	 */
+	public static final float WORLD_STEP = 1 / 60.0f;
+	/**
+	 * Number of velocity iterations for the constrain solvers
+	 */
+	public static final int WORLD_VELOC = 6;
+	/**
+	 * Number of position iterations for the constrain solvers
+	 */
+	public static final int WORLD_POSIT = 2;
 	/**
 	 * Width of the game world in Box2d units
 	 */
@@ -80,6 +111,8 @@ public class WorldController implements Screen, ContactListener {
 	 * Friction of objects
 	 */
 	private static final float BASIC_FRICTION = 1f;
+
+	// Pathnames to shared assets
 	/**
 	 * Wall for screen edge
 	 */
@@ -91,13 +124,10 @@ public class WorldController implements Screen, ContactListener {
 	private static final float BASIC_RESTITUTION = 0f;
 	protected static Vector2 item_position = new Vector2(16, 12);
 	private static String BACKGROUND_FILE = "ball/cobble.png";
-	private static String HOLE_FILE = "shared/hole2.png";
 	/**
 	 * File to texture for walls and platforms
 	 */
 	private static String WALL_FILE = "ball/brick.png";
-
-	// Pathnames to shared assets
 	/**
 	 * File to texture for the win door
 	 */
@@ -126,12 +156,8 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected TextureRegion wallTile;
 	/**
-	 * Texture assets for the ball
+	 * Player 1
 	 */
-	protected TextureRegion player1Texture;
-	protected TextureRegion ballItemTexture;
-	protected TextureRegion itemTexture;
-	/** Player 1 */
 	protected PlayerModel p1;
 	/**
 	 * Player 2
@@ -142,8 +168,117 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected BoxObstacle item;
 	protected boolean itemActive = true;
-	protected FilmStrip player2FilmStrip;
 	protected int p2WalkCounter;
+	/**
+	 * All the objects in the world.
+	 */
+	protected PooledList<Obstacle> objects = new PooledList<>();
+	/**
+	 * Track asset loading from all instances and subclasses
+	 */
+	protected AssetState worldAssetState = AssetState.EMPTY;
+	/**
+	 * Track all loaded assets (for unloading purposes)
+	 */
+	protected Array<String> assets;
+	/**
+	 * Reference to the game canvas
+	 */
+	protected GameCanvas canvas;
+	/**
+	 * Queue for adding objects
+	 */
+	protected PooledList<Obstacle> addQueue = new PooledList<>();
+	/**
+	 * The Box2D world
+	 */
+	protected World world;
+	/**
+	 * The boundary of the world
+	 */
+	protected Rectangle bounds;
+	/**
+	 * The world scale
+	 */
+	protected Vector2 scale;
+	/**
+	 * Listener that will update the player mode when we are done
+	 */
+	private ScreenListener listener;
+	/**
+	 * Whether or not this is an active controller
+	 */
+	private boolean active;
+	/**
+	 * Whether we have completed this level
+	 */
+	private boolean complete;
+	/**
+	 * Whether we have failed at this world (and need a reset)
+	 */
+	private boolean failed;
+	/**
+	 * Whether or not debug mode is active
+	 */
+	private boolean debug;
+	/**
+	 * Countdown active for winning or losing
+	 */
+	private int countdown;
+
+	/**
+	 * Creates a new game world
+	 * <p>
+	 * The game world is scaled so that the screen coordinates do not agree
+	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
+	 * world, not the screen.
+	 *
+	 * @param bounds  The game bounds in Box2d coordinates
+	 * @param gravity The gravitational force on this Box2d world
+	 */
+	protected WorldController(Rectangle bounds, Vector2 gravity) {
+		setDebug(false);
+		setComplete(false);
+		setFailure(false);
+		world = new World(gravity, false);
+		world.setContactListener(this);
+		world.setGravity(new Vector2(0, 0));
+		assets = new Array<>();
+		this.bounds = new Rectangle(bounds);
+		this.scale = new Vector2(1, 1);
+		complete = false;
+		failed = false;
+		debug = false;
+		active = false;
+		countdown = -1;
+	}
+
+	/**
+	 * Creates a new game world with the default values.
+	 * <p>
+	 * The game world is scaled so that the screen coordinates do not agree
+	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
+	 * world, not the screen.
+	 */
+	protected WorldController() {
+		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
+				new Vector2(0, DEFAULT_GRAVITY));
+	}
+
+	/**
+	 * Creates a new game world
+	 * <p>
+	 * The game world is scaled so that the screen coordinates do not agree
+	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
+	 * world, not the screen.
+	 *
+	 * @param width   The width in Box2d coordinates
+	 * @param height  The height in Box2d coordinates
+	 * @param gravity The downward gravity
+	 */
+	protected WorldController(float width, float height, float gravity) {
+		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
+	}
 
 	/**
 	 * Preloads the assets for this controller.
@@ -175,7 +310,7 @@ public class WorldController implements Screen, ContactListener {
 		loadFile(manager, GOAL_FILE);
 		loadFile(manager, BACKGROUND_FILE);
 		loadFile(manager, STAND_FILE);
-		loadFile(manager, HOLE_FILE);
+		loadFile(manager, HoleModel.HOLE_FILE);
 
 		// Load the font
 		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -201,21 +336,22 @@ public class WorldController implements Screen, ContactListener {
 	 * @param manager Reference to global asset manager.
 	 */
 	public void loadContent(AssetManager manager) {
-		player1Texture = createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		player2FilmStrip = createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
-		ballItemTexture = createTexture(manager, LoadingMode.PLAYER_WITH_ITEM_TEXTURE, false);
-		itemTexture = createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
+		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
+		// WorldController as a singleton
+		PlayerModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
+		PlayerModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
+		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
 
 		if (worldAssetState != AssetState.LOADING) {
 			return;
 		}
 
 		// Allocate the tiles
-		wallTile = createTexture(manager, WALL_FILE, true);
-		standTile = createTexture(manager, STAND_FILE, true);
-		backgroundTile = createTexture(manager, BACKGROUND_FILE, true);
-		goalTile = createTexture(manager, GOAL_FILE, true);
-		holeTile = createTexture(manager, HOLE_FILE, true);
+		wallTile = LoadingMode.createTexture(manager, WALL_FILE, true);
+		standTile = LoadingMode.createTexture(manager, STAND_FILE, true);
+		backgroundTile = LoadingMode.createTexture(manager, BACKGROUND_FILE, true);
+		goalTile = LoadingMode.createTexture(manager, GOAL_FILE, true);
+		holeTile = LoadingMode.createTexture(manager, HoleModel.HOLE_FILE, true);
 
 		// Allocate the font
 		if (manager.isLoaded(FONT_FILE)) {
@@ -226,60 +362,13 @@ public class WorldController implements Screen, ContactListener {
 
 		worldAssetState = AssetState.COMPLETE;
 	}
-	
+
 	/**
-	 * Returns a newly loaded texture region for the given file.
-	 *
-	 * This helper methods is used to set texture settings (such as scaling, and
-	 * whether or not the texture should repeat) after loading.
-	 *
-	 * @param manager 	Reference to global asset manager.
-	 * @param file		The texture (region) file
-	 * @param repeat	Whether the texture should be repeated
-	 *
-	 * @return a newly loaded texture region for the given file.
-	 */
-	protected TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
-		if (manager.isLoaded(file)) {
-			TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
-			region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-			if (repeat) {
-				region.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-			}
-			return region;
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns a newly loaded filmstrip for the given file.
-	 *
-	 * This helper methods is used to set texture settings (such as scaling, and
-	 * the number of animation frames) after loading.
-	 *
-	 * @param manager 	Reference to global asset manager.
-	 * @param file		The texture (region) file
-	 * @param rows 		The number of rows in the filmstrip
-	 * @param cols 		The number of columns in the filmstrip
-	 * @param size 		The number of frames in the filmstrip
-	 *
-	 * @return a newly loaded texture region for the given file.
-	 */
-	protected FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
-		if (manager.isLoaded(file)) {
-			FilmStrip strip = new FilmStrip(manager.get(file, Texture.class),rows,cols,size);
-			strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-			return strip;
-		}
-		return null;
-	}
-	
-	/** 
 	 * Unloads the assets for this game.
-	 * 
-	 * This method erases the static variables.  It also deletes the associated textures 
+	 *
+	 * This method erases the static variables.  It also deletes the associated textures
 	 * from the asset manager. If no assets are loaded, this method does nothing.
-	 * 
+	 *
 	 * @param manager Reference to global asset manager.
 	 */
 	public void unloadContent(AssetManager manager) {
@@ -289,111 +378,6 @@ public class WorldController implements Screen, ContactListener {
     		}
     	}
 	}
-	
-	/** Exit code for quitting the game */
-	public static final int EXIT_QUIT = 0;
-	/** Exit code for advancing to next level */
-	public static final int EXIT_NEXT = 1;
-	/**
-	 * Exit code for jumping back to previous level
-	 */
-	public static final int EXIT_PREV = 2;
-	/**
-	 * How many frames after winning/losing do we continue?
-	 */
-	public static final int EXIT_COUNT = 120;
-
-	/**
-	 * The amount of time for a physics engine step.
-	 */
-	public static final float WORLD_STEP = 1 / 60.0f;
-	/**
-	 * Number of velocity iterations for the constrain solvers
-	 */
-	public static final int WORLD_VELOC = 6;
-	/**
-	 * Number of position iterations for the constrain solvers
-	 */
-	public static final int WORLD_POSIT = 2;
-	/**
-	 * All the objects in the world.
-	 */
-	protected PooledList<Obstacle> objects = new PooledList<>();
-	/**
-	 * Track asset loading from all instances and subclasses
-	 */
-	protected AssetState worldAssetState = AssetState.EMPTY;
-	/**
-	 * Track all loaded assets (for unloading purposes)
-	 */
-	protected Array<String> assets;
-	/**
-	 * Reference to the game canvas
-	 */
-	protected GameCanvas canvas;
-	/**
-	 * Queue for adding objects
-	 */
-	protected PooledList<Obstacle> addQueue = new PooledList<>();
-	/**
-	 * The Box2D world
-	 */
-	protected World world;
-	/**
-	 * The boundary of the world
-	 */
-	protected Rectangle bounds;
-	/**
-	 * Listener that will update the player mode when we are done
-	 */
-	private ScreenListener listener;
-
-	/**
-	 * Creates a new game world
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param bounds  The game bounds in Box2d coordinates
-	 * @param gravity The gravitational force on this Box2d world
-	 */
-	protected WorldController(Rectangle bounds, Vector2 gravity) {
-		setDebug(false);
-		setComplete(false);
-		setFailure(false);
-		world = new World(gravity, false);
-		world.setContactListener(this);
-		world.setGravity(new Vector2(0, 0));
-		assets = new Array<>();
-		this.bounds = new Rectangle(bounds);
-		this.scale = new Vector2(1, 1);
-		complete = false;
-		failed = false;
-		debug = false;
-		active = false;
-		countdown = -1;
-	}
-
-	/**
-	 * The world scale
-	 */
-	protected Vector2 scale;
-
-	/**
-	 * Whether or not this is an active controller
-	 */
-	private boolean active;
-	/**
-	 * Whether we have completed this level
-	 */
-	private boolean complete;
-	/** Whether we have failed at this world (and need a reset) */
-	private boolean failed;
-	/** Whether or not debug mode is active */
-	private boolean debug;
-	/** Countdown active for winning or losing */
-	private int countdown;
 
 	/**
 	 * Returns true if debug mode is active.
@@ -402,13 +386,13 @@ public class WorldController implements Screen, ContactListener {
 	 *
 	 * @return true if debug mode is active.
 	 */
-	public boolean isDebug( ) {
+	public boolean isDebug() {
 		return debug;
 	}
 
 	/**
 	 * Sets whether debug mode is active.
-	 *
+	 * <p>
 	 * If true, all objects will display their physics bodies.
 	 *
 	 * @param value whether debug mode is active.
@@ -424,7 +408,7 @@ public class WorldController implements Screen, ContactListener {
 	 *
 	 * @return true if the level is completed.
 	 */
-	public boolean isComplete( ) {
+	public boolean isComplete() {
 		return complete;
 	}
 
@@ -441,7 +425,7 @@ public class WorldController implements Screen, ContactListener {
 		}
 		complete = value;
 	}
-
+	
 	/**
 	 * Returns true if the level is failed.
 	 *
@@ -475,7 +459,7 @@ public class WorldController implements Screen, ContactListener {
 	public boolean isActive( ) {
 		return active;
 	}
-
+	
 	/**
 	 * Returns the canvas associated with this controller
 	 *
@@ -484,7 +468,7 @@ public class WorldController implements Screen, ContactListener {
 	public GameCanvas getCanvas() {
 		return canvas;
 	}
-	
+
 	/**
 	 * Sets the canvas associated with this controller
 	 *
@@ -497,33 +481,6 @@ public class WorldController implements Screen, ContactListener {
 		this.canvas = canvas;
 		this.scale.x = canvas.getWidth()/bounds.getWidth();
 		this.scale.y = canvas.getHeight()/bounds.getHeight();
-	}
-	
-	/**
-	 * Creates a new game world with the default values.
-	 *
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 */
-	protected WorldController() {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-				new Vector2(0, DEFAULT_GRAVITY));
-	}
-
-	/**
-	 * Creates a new game world
-	 *
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param width    The width in Box2d coordinates
-	 * @param height    The height in Box2d coordinates
-	 * @param gravity    The downward gravity
-	 */
-	protected WorldController(float width, float height, float gravity) {
-		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
 	}
 
 	/**
@@ -815,22 +772,22 @@ public class WorldController implements Screen, ContactListener {
 		addObject(obj);
 
 		/* Add items */
-		float itemWidth = itemTexture.getRegionWidth()/scale.x;
-		float itemHeight = itemTexture.getRegionHeight()/scale.y;
+		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
+		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
 		item = new BoxObstacle(item_position.x, item_position.y, itemWidth, itemHeight);
 		item.setDrawScale(scale);
-		item.setTexture(itemTexture);
+		item.setTexture(ItemModel.itemTexture);
 		item.setName("item");
 		item.setSensor(true);
 		addObject(item);
 
 		/* Add players */
 		// Team A
-		float pWidth = player1Texture.getRegionWidth() / scale.x;
-		float pHeight = player1Texture.getRegionHeight() / scale.y;
+		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
+		float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
 		p1 = new PlayerModel(p1_position.x, p1_position.y, pWidth, pHeight, "a");
 		p1.setDrawScale(scale);
-		p1.setTexture(player1Texture);
+		p1.setTexture(PlayerModel.player1Texture);
 
 		/* Add home stalls */
 		// Team A
@@ -845,7 +802,7 @@ public class WorldController implements Screen, ContactListener {
 		// Team B
 		p2 = new PlayerModel(p2_position.x, p2_position.y, pWidth, pHeight, "b");
 		p2.setDrawScale(scale);
-		p2.setTexture(player2FilmStrip);
+		p2.setTexture(PlayerModel.player2FilmStrip);
 
 		/* Add home stalls */
 		// Team B
@@ -889,15 +846,15 @@ public class WorldController implements Screen, ContactListener {
 		if (p2_horizontal != 0 || p2_vertical != 0) {
 			p2.setWalk();
 			if (p2WalkCounter % 20 == 0) {
-				player2FilmStrip.setFrame(1);
+				PlayerModel.player2FilmStrip.setFrame(1);
 			} else if (p2WalkCounter % 20 == 10) {
-				player2FilmStrip.setFrame(0);
+				PlayerModel.player2FilmStrip.setFrame(0);
 			}
 			p2WalkCounter++;
 		} else {
 			p2.setStatic();
 			p2WalkCounter = 0;
-			player2FilmStrip.setFrame(0);
+			PlayerModel.player2FilmStrip.setFrame(0);
 		}
 		// Set player movement impulse
 		p2.setIX(p2_horizontal);
@@ -1052,21 +1009,9 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	/**
-	 * Tracks the asset state.  Otherwise subclasses will try to load assets
-	 */
-	protected enum AssetState {
-		/** No assets loaded */
-		EMPTY,
-		/** Still loading assets */
-		LOADING,
-		/** Assets are complete */
-		COMPLETE
-	}
-	
-	/**
-	 * Called when the Screen is resized. 
+	 * Called when the Screen is resized.
 	 *
-	 * This can happen at any point during a non-paused state but will never happen 
+	 * This can happen at any point during a non-paused state but will never happen
 	 * before a call to show().
 	 *
 	 * @param width  The new width in pixels
@@ -1075,7 +1020,7 @@ public class WorldController implements Screen, ContactListener {
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
 	}
-
+	
 	/**
 	 * Called when the Screen should render itself.
 	 *
@@ -1096,8 +1041,8 @@ public class WorldController implements Screen, ContactListener {
 
 	/**
 	 * Called when the Screen is paused.
-	 * 
-	 * This is usually when it's not active or visible on screen. An Application is 
+	 *
+	 * This is usually when it's not active or visible on screen. An Application is
 	 * also paused before it is destroyed.
 	 */
 	public void pause() {
@@ -1112,7 +1057,7 @@ public class WorldController implements Screen, ContactListener {
 	public void resume() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * Called when this screen becomes the current screen for a Game.
 	 */
@@ -1131,11 +1076,23 @@ public class WorldController implements Screen, ContactListener {
 
 	/**
 	 * Sets the ScreenListener for this mode
-	 *
+	 * <p>
 	 * The ScreenListener will respond to requests to quit.
 	 */
 	public void setScreenListener(ScreenListener listener) {
 		this.listener = listener;
+	}
+
+	/**
+	 * Tracks the asset state.  Otherwise subclasses will try to load assets
+	 */
+	protected enum AssetState {
+		/** No assets loaded */
+		EMPTY,
+		/** Still loading assets */
+		LOADING,
+		/** Assets are complete */
+		COMPLETE
 	}
 
 }

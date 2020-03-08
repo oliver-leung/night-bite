@@ -36,6 +36,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -120,23 +121,84 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private int width;
 	/** The y-coordinate of the center of the progress bar */
 	private int centerY;
-	/** The x-coordinate of the center of the progress bar */
+	/**
+	 * The x-coordinate of the center of the progress bar
+	 */
 	private int centerX;
-	/** The height of the canvas window (necessary since sprite origin != screen origin) */
+	/**
+	 * The height of the canvas window (necessary since sprite origin != screen origin)
+	 */
 	private int heightY;
-	/** Scaling factor for when the student changes the resolution. */
+	/**
+	 * Scaling factor for when the student changes the resolution.
+	 */
 	private float scale;
-	
-	/** Current progress (0 to 1) of the asset manager */
+
+	/**
+	 * Current progress (0 to 1) of the asset manager
+	 */
 	private float progress;
-	/** The current state of the play button */
-	private int   pressState;
-	/** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
-	private int   budget;
-	/** Support for the X-Box start button in place of play button */
-	private int   startButton;
-	/** Whether or not this player mode is still active */
+	/**
+	 * The current state of the play button
+	 */
+	private int pressState;
+	/**
+	 * The amount of time to devote to loading assets (as opposed to on screen hints, etc.)
+	 */
+	private int budget;
+	/**
+	 * Support for the X-Box start button in place of play button
+	 */
+	private int startButton;
+	/**
+	 * Whether or not this player mode is still active
+	 */
 	private boolean active;
+
+	/**
+	 * Returns a newly loaded filmstrip for the given file.
+	 * <p>
+	 * This helper methods is used to set texture settings (such as scaling, and
+	 * the number of animation frames) after loading.
+	 *
+	 * @param manager Reference to global asset manager.
+	 * @param file    The texture (region) file
+	 * @param rows    The number of rows in the filmstrip
+	 * @param cols    The number of columns in the filmstrip
+	 * @param size    The number of frames in the filmstrip
+	 * @return a newly loaded texture region for the given file.
+	 */
+	protected static FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
+		if (manager.isLoaded(file)) {
+			FilmStrip strip = new FilmStrip(manager.get(file, Texture.class), rows, cols, size);
+			strip.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			return strip;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a newly loaded texture region for the given file.
+	 * <p>
+	 * This helper methods is used to set texture settings (such as scaling, and
+	 * whether or not the texture should repeat) after loading.
+	 *
+	 * @param manager Reference to global asset manager.
+	 * @param file    The texture (region) file
+	 * @param repeat  Whether the texture should be repeated
+	 * @return a newly loaded texture region for the given file.
+	 */
+	protected static TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
+		if (manager.isLoaded(file)) {
+			TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
+			region.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+			if (repeat) {
+				region.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+			}
+			return region;
+		}
+		return null;
+	}
 
 	/**
 	 * Returns the budget for the asset loader.

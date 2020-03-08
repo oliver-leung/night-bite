@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.nightbite;
+package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
