@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.nightbite.ball;
+package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
-public class BallModel extends CapsuleObstacle{
+public class PlayerModel extends CapsuleObstacle{
 
     /**
      * The density of this ball
@@ -79,7 +79,7 @@ public class BallModel extends CapsuleObstacle{
 
     private Vector2 homeLoc;
 
-    public BallModel(float x, float y, float width, float height, String team) {
+    public PlayerModel(float x, float y, float width, float height, String team) {
         super(x, y, width, height);
         homeLoc = new Vector2(x, y);
         impulse = new Vector2();

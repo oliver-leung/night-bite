@@ -56,7 +56,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	private static final String BACKGROUND_FILE = "shared/loading.png";
 	private static final String PROGRESS_FILE = "shared/progressbar.png";
 	private static final String PLAY_BTN_FILE = "shared/play.png";
-	
+	/**
+	 * Reference to the ball texture
+	 */
+	static final String PLAYER1_TEXTURE = "ball/char1trimmed.png";
+	static final String PLAYER2_FILMSTRIP = "ball/char2.png";
+	static final String PLAYER_WITH_ITEM_TEXTURE = "ball/ballItem.png";
+	static final String ITEM_TEXTURE = "ball/fish.png";
+
 	/** Background texture for start-up */
 	private Texture background;
 	/** Play button to display when done */
@@ -282,7 +289,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 			drawProgress(canvas);
 		} else {
 			Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-			canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2, 
+			canvas.draw(playButton, tint,  playButton.getWidth()/2.0f, playButton.getHeight()/2.0f,
 						centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
 		}
 		canvas.end();
@@ -298,17 +305,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param canvas The drawing context
 	 */	
 	private void drawProgress(GameCanvas canvas) {
-		canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2.0f-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 
-		canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 		if (progress > 0) {
 			float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
-			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-			canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+			canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
 		} else {
-			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 		}
 	}
 
@@ -346,7 +353,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		// Compute the drawing scale
 		float sx = ((float)width)/STANDARD_WIDTH;
 		float sy = ((float)height)/STANDARD_HEIGHT;
-		scale = (sx < sy ? sx : sy);
+		scale = (Math.min(sx, sy));
 		
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
@@ -503,7 +510,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/** 
 	 * Called when a key is typed (UNSUPPORTED)
 	 *
-	 * @param keycode the key typed
+	 * @param character the key typed
 	 * @return whether to hand the event to other listeners. 
 	 */
 	public boolean keyTyped(char character) { 

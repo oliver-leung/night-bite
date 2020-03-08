@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import edu.cornell.gdiac.nightbite.ball.BallController;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -56,7 +55,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * List of all WorldControllers
 	 */
 	private WorldController[] controllers;
-	private BallController controller;
+	private WorldController controller;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -84,12 +83,12 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = new GameCanvas();
 		loading = new LoadingMode(canvas, manager, 1);
 
-		controller = new BallController();
+		controller = new WorldController();
 		controller.preLoadContent(manager);
 
 		// Initialize the three game worlds
 		controllers = new WorldController[1];
-		controllers[0] = new BallController();
+		controllers[0] = new WorldController();
 		for (WorldController worldController : controllers) {
 			worldController.preLoadContent(manager);
 		}
