@@ -600,8 +600,10 @@ public class WorldController implements Screen, ContactListener {
 	 * @return whether to process the update loop
 	 */
 	public boolean preUpdate(float dt) {
-		InputController input = InputController.getInstance();
-		input.readInput(bounds, scale);
+		MechanicManager input = MechanicManager.getInstance();
+		input.update(); // TODO: do we need bounds and scale?
+
+		// TODO: use listener properly? maybe?
 		if (listener == null) {
 			return true;
 		}
@@ -617,6 +619,9 @@ public class WorldController implements Screen, ContactListener {
 		}
 		
 		// Now it is time to maybe switch screens.
+
+		// TODO: what is exit?
+        // TODO: Actually what is this entire if statement
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
@@ -787,10 +792,15 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	public void update(float dt) {
+		// TODO: Refactor all player movement
+
+		MechanicManager manager = MechanicManager.getInstance();
+
+		// TODO: 0 index lol
 		/* Player 1 */
-		float p1_horizontal = InputController.getInstance().getHorizontalA();
-		float p1_vertical = InputController.getInstance().getVerticalA();
-		boolean p1_didBoost = InputController.getInstance().didBoostA();
+		float p1_horizontal = manager.getVelX(0);
+		float p1_vertical = manager.getVelY(0);
+		boolean p1_didBoost = manager.isDashing(0);
 
 		// If player initiated movement, set moveState to WALK
 		if (p1_horizontal != 0 || p1_vertical != 0) {
@@ -808,9 +818,9 @@ public class WorldController implements Screen, ContactListener {
 		p1.applyImpulse();
 
 		/* Player 2 */
-		float p2_horizontal = InputController.getInstance().getHorizontalB();
-		float p2_vertical = InputController.getInstance().getVerticalB();
-		boolean p2_didBoost = InputController.getInstance().didBoostB();
+		float p2_horizontal = manager.getVelX(1);
+		float p2_vertical = manager.getVelY(1);
+		boolean p2_didBoost = manager.isDashing(1);
 
 		// If player initiated movement, set moveState to WALK
 		if (p2_horizontal != 0 || p2_vertical != 0) {
