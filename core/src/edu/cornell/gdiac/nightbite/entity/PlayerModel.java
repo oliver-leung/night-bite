@@ -74,6 +74,7 @@ public class PlayerModel extends CapsuleObstacle {
     private Vector2 boost;
 
     private String team;
+    private int playerId;
 
     @Override
     public void setTexture(TextureRegion value) {
@@ -85,13 +86,14 @@ public class PlayerModel extends CapsuleObstacle {
 
     private Vector2 homeLoc;
 
-    public PlayerModel(float x, float y, float width, float height, String team) {
+    public PlayerModel(float x, float y, float width, float height, String team, int id) {
         super(x, y, width, height);
         homeLoc = new Vector2(x, y);
         impulse = new Vector2();
         boost = new Vector2();
         cooldown = 0;
         boosting = 0;
+        playerId = id;
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
@@ -104,6 +106,10 @@ public class PlayerModel extends CapsuleObstacle {
 
     public String getTeam() {
         return team;
+    }
+
+    public int getId() {
+        return playerId;
     }
 
     public void setTeam(String team) {

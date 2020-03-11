@@ -136,8 +136,12 @@ public class WorldController implements Screen, ContactListener {
 	/**
 	 * Item
 	 */
-	protected BoxObstacle item;
+	protected ItemModel item;
 	protected boolean itemActive = true;
+	protected boolean itemHeld;
+	protected boolean overlapItemA;
+	protected boolean overlapItemB;
+
 	protected int p2WalkCounter;
 	/**
 	 * All the objects in the world.
@@ -749,7 +753,7 @@ public class WorldController implements Screen, ContactListener {
 		/* Add items */
 		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
 		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
-		item = new BoxObstacle(item_position.x, item_position.y, itemWidth, itemHeight);
+		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
 		item.setDrawScale(scale);
 		item.setTexture(ItemModel.itemTexture);
 		item.setName("item");
@@ -760,7 +764,7 @@ public class WorldController implements Screen, ContactListener {
 		// Team A
 		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
 		float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
-		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a");
+		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a", 0);
 		p1.setDrawScale(scale);
 		p1.setTexture(PlayerModel.player1Texture);
 
@@ -775,7 +779,7 @@ public class WorldController implements Screen, ContactListener {
 
 		/* Add players */
 		// Team B
-		p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b");
+		p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b",1);
 		p2.setDrawScale(scale);
 		p2.setTexture(PlayerModel.player2FilmStrip);
 
@@ -801,11 +805,12 @@ public class WorldController implements Screen, ContactListener {
 		float p1_horizontal = manager.getVelX(0);
 		float p1_vertical = manager.getVelY(0);
 		boolean p1_didBoost = manager.isDashing(0);
+		boolean p1_didThrow = manager.isThrowing(0);
 
 		// If player initiated movement, set moveState to WALK
 		if (p1_horizontal != 0 || p1_vertical != 0) {
 			p1.setWalk();
-	} else {
+		} else {
 			p1.setStatic();
 		}
 		// Set player movement impulse
@@ -821,6 +826,7 @@ public class WorldController implements Screen, ContactListener {
 		float p2_horizontal = manager.getVelX(1);
 		float p2_vertical = manager.getVelY(1);
 		boolean p2_didBoost = manager.isDashing(1);
+		boolean p2_didThrow = manager.isThrowing(1);
 
 		// If player initiated movement, set moveState to WALK
 		if (p2_horizontal != 0 || p2_vertical != 0) {
@@ -852,14 +858,42 @@ public class WorldController implements Screen, ContactListener {
 		p2.setActive(p2.isAlive());
 
 		/* Item */
+		item.updateCooldown();
 		if (p1.item) {
 			item.setPosition(p1.getX(), p1.getY() + 1f);
 		}
 		if (p2.item) {
 			item.setPosition(p2.getX(), p2.getY() + 1f);
 		}
-		if (!itemActive && ! p1.item && !p2.item) { addItem(item_position); }
-		if (!itemActive) { removeItem(); }
+//		if (!itemActive && !p1.item && !p2.item) {
+//			System.out.println("called");
+//			addItem(item_position); }
+//		if (!itemActive) { removeItem(); }
+
+		// grabbing item
+		if (!itemHeld && overlapItemA && p1_didThrow && item.cooldownStatus()) { // TODO how to make fair
+			// A gets fish
+			p1.item = true;
+			itemHeld = true;
+			item.startCooldown();
+//			itemActive = false;
+		}
+		if (!itemHeld && overlapItemB && p2_didThrow && item.cooldownStatus()) {
+			// B gets fish
+			p2.item = true;
+			itemHeld = true;
+//			itemActive = false;
+		}
+
+		System.out.println(item.cooldownStatus());
+
+		// throwing item
+		if (p1.item && item.cooldownStatus() && p1_didThrow) {
+			System.out.println("a throw");
+			p1.item = false;
+			itemHeld = false;
+			item.startCooldown();
+		}
 
 		/* Player cooldown */
 		p1.cooldown();
@@ -917,8 +951,11 @@ public class WorldController implements Screen, ContactListener {
 			player.setAlive(false);
 			player.draw = false;
 		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) { // Player-Item
-			player.item = true;
-			itemActive = false;
+			if (player.getId() == 0) {
+				overlapItemA = true;
+			} else {
+				overlapItemB = true;
+			}
 		} else if (object instanceof HomeModel ) { // Player-Home
 			HomeModel homeObject = (HomeModel) object;
 			// If players went to their own home, drop off item and increment score
@@ -951,6 +988,21 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	public void endContact(Contact contact) {
+		Object a = contact.getFixtureA().getBody().getUserData();
+		Object b = contact.getFixtureB().getBody().getUserData();
+		if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
+			if (((PlayerModel) a).getId() == 0) {
+				overlapItemA = false;
+			} else {
+				overlapItemB = false;
+			}
+		} else if (b instanceof PlayerModel && a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
+			if (((PlayerModel) b).getId() == 0) {
+				overlapItemA = false;
+			} else {
+				overlapItemB = false;
+			}
+		}
 	}
 
 	public void postSolve(Contact contact, ContactImpulse impulse) {
