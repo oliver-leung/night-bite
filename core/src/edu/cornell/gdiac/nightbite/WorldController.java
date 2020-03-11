@@ -137,7 +137,7 @@ public class WorldController implements Screen, ContactListener {
 	 * Item
 	 */
 	protected ItemModel item;
-	protected boolean itemActive = true;
+	protected boolean prevRespawning = false;
 	protected boolean itemHeld;
 	protected boolean overlapItemA;
 	protected boolean overlapItemB;
@@ -750,16 +750,6 @@ public class WorldController implements Screen, ContactListener {
 		obj.setName("wall1");
 		addObject(obj);
 
-		/* Add items */
-		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
-		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
-		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
-		item.setDrawScale(scale);
-		item.setTexture(ItemModel.itemTexture);
-		item.setName("item");
-		item.setSensor(true);
-		addObject(item);
-
 		/* Add players */
 		// Team A
 		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
@@ -793,6 +783,15 @@ public class WorldController implements Screen, ContactListener {
 		addObject(home);
 		addObject(p1);
 		addObject(p2);
+
+		/* Add items */
+		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
+		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
+		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
+		item.setDrawScale(scale);
+		item.setTexture(ItemModel.itemTexture);
+		item.setSensor(true);
+		addObject(item);
 	}
 
 	public void update(float dt) {
@@ -865,9 +864,6 @@ public class WorldController implements Screen, ContactListener {
 		if (p2.item) {
 			item.setPosition(p2.getX(), p2.getY() + 1f);
 		}
-//		if (!itemActive && !p1.item && !p2.item) {
-//			System.out.println("called");
-//			addItem(item_position); }
 //		if (!itemActive) { removeItem(); }
 
 		// grabbing item
@@ -876,28 +872,39 @@ public class WorldController implements Screen, ContactListener {
 			p1.item = true;
 			itemHeld = true;
 			item.startCooldown();
-//			itemActive = false;
 		}
 		if (!itemHeld && overlapItemB && p2_didThrow && item.cooldownStatus()) {
 			// B gets fish
 			p2.item = true;
 			itemHeld = true;
-//			itemActive = false;
+			item.startCooldown();
 		}
 
-		System.out.println(item.cooldownStatus());
-
-		// throwing item
+		// throwing items
 		if (p1.item && item.cooldownStatus() && p1_didThrow) {
-			System.out.println("a throw");
 			p1.item = false;
 			itemHeld = false;
+			item.throwItem(p1.getImpulse());
+			item.startCooldown();
+		}
+
+		if (p2.item && item.cooldownStatus() && p2_didThrow) {
+			p2.item = false;
+			itemHeld = false;
+			item.throwItem(p2.getImpulse());
 			item.startCooldown();
 		}
 
 		/* Player cooldown */
 		p1.cooldown();
 		p2.cooldown();
+
+		if (!prevRespawning && item.getRespawning()) {
+			System.out.println("respawn");
+			addItem(item_position);
+			item.setRespawning(false);
+		}
+		prevRespawning = item.getRespawning();
 	}
 	
 	/**
@@ -941,7 +948,7 @@ public class WorldController implements Screen, ContactListener {
 
 	private void addItem(Vector2 position) {
 		item.draw = true;
-		itemActive = true;
+		itemHeld = false;
 		item.setActive(true);
 		item.setPosition(position);
 	}
@@ -950,19 +957,21 @@ public class WorldController implements Screen, ContactListener {
 		if (object instanceof HoleModel) { // Player-Hole
 			player.setAlive(false);
 			player.draw = false;
+			item.setRespawning(true);
 		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) { // Player-Item
 			if (player.getId() == 0) {
 				overlapItemA = true;
 			} else {
 				overlapItemB = true;
 			}
-		} else if (object instanceof HomeModel ) { // Player-Home
+		} else if (object instanceof HomeModel) { // Player-Home
 			HomeModel homeObject = (HomeModel) object;
 			// If players went to their own home, drop off item and increment score
 			if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
 				homeObject.incrementScore();
 				player.item = false;
 				player.resetTexture();
+				item.setRespawning(true);
 				if (homeObject.getScore() >= ITEMS_TO_WIN) {
 					setComplete(true);
 					if (homeObject.getTeam().equals("a")) {
