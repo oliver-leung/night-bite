@@ -28,16 +28,6 @@ public class KeyboardMap {
     }
 
     private static Player PLAYER0 = new Player(
-            Keys.W,
-            Keys.S,
-            Keys.A,
-            Keys.D,
-            Keys.SHIFT_LEFT,
-            Keys.E,
-            Keys.Y,
-            Keys.R);
-
-    private static Player PLAYER1 = new Player(
             Keys.UP,
             Keys.DOWN,
             Keys.LEFT,
@@ -46,6 +36,16 @@ public class KeyboardMap {
             Keys.PERIOD,
             Keys.UNKNOWN,
             Keys.UNKNOWN);
+
+    private static Player PLAYER1 = new Player(
+            Keys.W,
+            Keys.S,
+            Keys.A,
+            Keys.D,
+            Keys.SHIFT_LEFT,
+            Keys.E,
+            Keys.Y,
+            Keys.R);
 
     public static Player[] players = {PLAYER0, PLAYER1};
 }
