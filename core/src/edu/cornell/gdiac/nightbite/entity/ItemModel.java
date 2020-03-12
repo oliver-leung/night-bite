@@ -9,10 +9,13 @@ public class ItemModel extends BoxObstacle {
 
     public static TextureRegion itemTexture;
 
-    private boolean respawning;
+    private float respawning;
+    private boolean held;
 
     private int itemCooldown; // used during item grab and item respawn
     private static int COOLDOWN_PERIOD = 25;
+
+    private int RESPAWN_TIME = 150;
 
     private float THROW_FORCE = 500f;
 
@@ -30,6 +33,8 @@ public class ItemModel extends BoxObstacle {
         setRestitution(DEFAULT_RESTITUTION);
         setName("item");
         setBullet(true);
+
+        held = false;
     }
 
     public void throwItem(Vector2 impulse) {
@@ -52,12 +57,25 @@ public class ItemModel extends BoxObstacle {
     }
 
     // respawn
-    public void setRespawning(boolean b) {
-        respawning = b;
+    public void startRespawning() {
+        respawning = RESPAWN_TIME;
+    }
+
+    public void updateRespawning() {
+        respawning -= 1;
     }
 
     public boolean getRespawning() {
-        return respawning;
+        return respawning == 0;
+    }
+
+    // held
+    public boolean getHeldStatus() {
+        return held;
+    }
+
+    public void setHeldStatus(boolean b) {
+        held = b;
     }
 
     // add physics
@@ -70,4 +88,5 @@ public class ItemModel extends BoxObstacle {
         body.setFixedRotation(true);
         return true;
     }
+
 }

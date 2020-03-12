@@ -76,6 +76,9 @@ public class PlayerModel extends CapsuleObstacle {
     private String team;
     private int playerId;
 
+    // for items
+    private boolean overlapItem = false;
+
     @Override
     public void setTexture(TextureRegion value) {
         if (defaultTexture == null) {
@@ -214,6 +217,14 @@ public class PlayerModel extends CapsuleObstacle {
 
     public void resetBoosting() {
         boosting = 0;
+    }
+
+    public void setOverlapItem(boolean b) {
+        overlapItem = b;
+    }
+
+    public boolean getOverlapItem() {
+        return overlapItem;
     }
 }
 

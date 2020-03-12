@@ -138,9 +138,6 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected ItemModel item;
 	protected boolean prevRespawning = false;
-	protected boolean itemHeld;
-	protected boolean overlapItemA;
-	protected boolean overlapItemB;
 
 	protected int p2WalkCounter;
 	/**
@@ -199,6 +196,10 @@ public class WorldController implements Screen, ContactListener {
 	 * Countdown active for winning or losing
 	 */
 	private int countdown;
+
+	// TODO for refactoring update
+	private int NUM_PLAYERS = 2;
+	private PlayerModel[] player_list;
 
 	/**
 	 * Creates a new game world
@@ -784,6 +785,9 @@ public class WorldController implements Screen, ContactListener {
 		addObject(p1);
 		addObject(p2);
 
+		// player list
+		player_list = new PlayerModel[] { p1, p2 };
+
 		/* Add items */
 		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
 		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
@@ -799,110 +803,87 @@ public class WorldController implements Screen, ContactListener {
 
 		MechanicManager manager = MechanicManager.getInstance();
 
-		// TODO: 0 index lol
-		/* Player 1 */
-		float p1_horizontal = manager.getVelX(0);
-		float p1_vertical = manager.getVelY(0);
-		boolean p1_didBoost = manager.isDashing(0);
-		boolean p1_didThrow = manager.isThrowing(0);
+		// TODO peer review below
 
-		// If player initiated movement, set moveState to WALK
-		if (p1_horizontal != 0 || p1_vertical != 0) {
-			p1.setWalk();
-		} else {
-			p1.setStatic();
-		}
-		// Set player movement impulse
-		p1.setIX(p1_horizontal);
-		p1.setIY(p1_vertical);
-		// If player dashed whiled moving, set boost impulse
-		if (p1_didBoost && (p1_horizontal != 0 || p1_vertical != 0)) {
-			p1.setBoostImpulse(p1_horizontal, p1_vertical);
-		}
-		p1.applyImpulse();
-
-		/* Player 2 */
-		float p2_horizontal = manager.getVelX(1);
-		float p2_vertical = manager.getVelY(1);
-		boolean p2_didBoost = manager.isDashing(1);
-		boolean p2_didThrow = manager.isThrowing(1);
-
-		// If player initiated movement, set moveState to WALK
-		if (p2_horizontal != 0 || p2_vertical != 0) {
-			p2.setWalk();
-			if (p2WalkCounter % 20 == 0) {
-				PlayerModel.player2FilmStrip.setFrame(1);
-			} else if (p2WalkCounter % 20 == 10) {
-				PlayerModel.player2FilmStrip.setFrame(0);
-			}
-			p2WalkCounter++;
-		} else {
-			p2.setStatic();
-			p2WalkCounter = 0;
-			PlayerModel.player2FilmStrip.setFrame(0);
-		}
-		// Set player movement impulse
-		p2.setIX(p2_horizontal);
-		p2.setIY(p2_vertical);
-		// If player dashed whiled moving, set boost impulse
-		if (p2_didBoost && (p2_horizontal!= 0 || p2_vertical != 0)) {
-			p2.setBoostImpulse(p2_horizontal, p2_vertical);
-		}
-		p2.applyImpulse();
-
-		/* Play state */
-		if (!p1.isAlive()) { p1.respawn(); }
-		if (!p2.isAlive()) { p2.respawn(); }
-		p1.setActive(p1.isAlive());
-		p2.setActive(p2.isAlive());
-
-		/* Item */
 		item.updateCooldown();
-		if (p1.item) {
-			item.setPosition(p1.getX(), p1.getY() + 1f);
-		}
-		if (p2.item) {
-			item.setPosition(p2.getX(), p2.getY() + 1f);
-		}
-//		if (!itemActive) { removeItem(); }
+		item.updateRespawning();
 
-		// grabbing item
-		if (!itemHeld && overlapItemA && p1_didThrow && item.cooldownStatus()) { // TODO how to make fair
-			// A gets fish
-			p1.item = true;
-			itemHeld = true;
-			item.startCooldown();
-		}
-		if (!itemHeld && overlapItemB && p2_didThrow && item.cooldownStatus()) {
-			// B gets fish
-			p2.item = true;
-			itemHeld = true;
-			item.startCooldown();
-		}
+		PlayerModel p;
+		float playerHorizontal;
+		float playerVertical;
+		boolean playerDidBoost;
+		boolean playerDidThrow;
+		for (int i = 0; i < NUM_PLAYERS; i++) {
 
-		// throwing items
-		if (p1.item && item.cooldownStatus() && p1_didThrow) {
-			p1.item = false;
-			itemHeld = false;
-			item.throwItem(p1.getImpulse());
-			item.startCooldown();
-		}
+			playerHorizontal = manager.getVelX(i);
+			playerVertical = manager.getVelY(i);
+			playerDidBoost = manager.isDashing(i);
+			playerDidThrow = manager.isThrowing(i);
+			p = player_list[i];
 
-		if (p2.item && item.cooldownStatus() && p2_didThrow) {
-			p2.item = false;
-			itemHeld = false;
-			item.throwItem(p2.getImpulse());
-			item.startCooldown();
-		}
+			// update player state // TODO facing and film strip thing
+//			if (p2_horizontal != 0 || p2_vertical != 0) {
+//				p2.setWalk();
+//				if (p2WalkCounter % 20 == 0) {
+//					PlayerModel.player2FilmStrip.setFrame(1);
+//				} else if (p2WalkCounter % 20 == 10) {
+//					PlayerModel.player2FilmStrip.setFrame(0);
+//				}
+//				p2WalkCounter++;
+//			} else {
+//				p2.setStatic();
+//				p2WalkCounter = 0;
+//				PlayerModel.player2FilmStrip.setFrame(0);
+//			}
+			if (playerHorizontal != 0 || playerVertical != 0) {
+				p.setWalk();
+			} else {
+				p.setStatic();
+			}
 
-		/* Player cooldown */
-		p1.cooldown();
-		p2.cooldown();
+			// Set player movement impulse
+			p.setIX(playerHorizontal);
+			p.setIY(playerVertical);
+			// If player dashed whiled moving, set boost impulse
+			if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
+				p.setBoostImpulse(playerHorizontal, playerVertical);
+			}
+			p.applyImpulse();
 
-		if (!prevRespawning && item.getRespawning()) {
-			System.out.println("respawn");
-			addItem(item_position);
-			item.setRespawning(false);
+			/* Play state */
+			if (!p.isAlive()) { p.respawn(); }
+			p.setActive(p.isAlive());
+
+			/* Items */
+
+			/* IF FISH IN PLAYER HANDS */
+			if (p.item) {
+				item.setPosition(p.getX(), p.getY() + 1f);
+			}
+
+			/* IF PLAYER GRABS ITEM */
+			// TODO how to make fair (if grab at same time, player 1 advantage)
+			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
+				// A gets fish
+				p.item = true;
+				item.setHeldStatus(true);
+				item.startCooldown();
+			}
+
+			/* IF PLAYER THROWS ITEM */
+			if (playerDidThrow && p.item && item.cooldownStatus()) {
+				p.item = false;
+				item.setHeldStatus(false);
+				item.startCooldown();
+				item.throwItem(p.getImpulse());
+			}
+
+			if (item.getRespawning()) {
+				addItem(item_position);
+			}
+
+			// player cooldown (for respawn)
+			p.cooldown();
 		}
 		prevRespawning = item.getRespawning();
 	}
@@ -942,36 +923,48 @@ public class WorldController implements Screen, ContactListener {
 		}
 	}
 
-	private void removeItem() {
-		item.setActive(false);
-	}
-
 	private void addItem(Vector2 position) {
 		item.draw = true;
-		itemHeld = false;
-		item.setActive(true);
+		item.setHeldStatus(false);
+//		item.setActive(true);
 		item.setPosition(position);
 	}
 
 	public void handlePlayerToObjectContact(PlayerModel player, Object object) {
-		if (object instanceof HoleModel) { // Player-Hole
+
+		if (object instanceof HoleModel) {
+
+			// Player-Hole collision
 			player.setAlive(false);
 			player.draw = false;
-			item.setRespawning(true);
-		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) { // Player-Item
-			if (player.getId() == 0) {
-				overlapItemA = true;
-			} else {
-				overlapItemB = true;
+
+			if (player.item) {
+				item.setHeldStatus(false);
+				item.startRespawning();
+				item.draw = false;
 			}
-		} else if (object instanceof HomeModel) { // Player-Home
+		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
+
+			// Player-Item
+			player.setOverlapItem(true);
+
+		} else if (object instanceof HomeModel) {
+
+			// Player-Home
 			HomeModel homeObject = (HomeModel) object;
 			// If players went to their own home, drop off item and increment score
 			if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
+
 				homeObject.incrementScore();
+
 				player.item = false;
 				player.resetTexture();
-				item.setRespawning(true);
+
+				item.setHeldStatus(false);
+				item.startRespawning();
+				item.draw = false;
+
+				// win condition
 				if (homeObject.getScore() >= ITEMS_TO_WIN) {
 					setComplete(true);
 					if (homeObject.getTeam().equals("a")) {
@@ -1000,17 +993,9 @@ public class WorldController implements Screen, ContactListener {
 		Object a = contact.getFixtureA().getBody().getUserData();
 		Object b = contact.getFixtureB().getBody().getUserData();
 		if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
-			if (((PlayerModel) a).getId() == 0) {
-				overlapItemA = false;
-			} else {
-				overlapItemB = false;
-			}
+			((PlayerModel) a).setOverlapItem(false);
 		} else if (b instanceof PlayerModel && a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
-			if (((PlayerModel) b).getId() == 0) {
-				overlapItemA = false;
-			} else {
-				overlapItemB = false;
-			}
+			((PlayerModel) b).setOverlapItem(false);
 		}
 	}
 
