@@ -13,7 +13,7 @@ public class ItemModel extends BoxObstacle {
     private boolean held;
 
     private int itemCooldown; // used during item grab and item respawn
-    private static int COOLDOWN_PERIOD = 25;
+    private static int ITEM_COOLDOWN_PERIOD = 15;
 
     private int RESPAWN_TIME = 150;
 
@@ -43,7 +43,7 @@ public class ItemModel extends BoxObstacle {
 
     // manage cooldown
     public void startCooldown() {
-        itemCooldown = COOLDOWN_PERIOD;
+        itemCooldown = ITEM_COOLDOWN_PERIOD;
     }
 
     public void updateCooldown() {

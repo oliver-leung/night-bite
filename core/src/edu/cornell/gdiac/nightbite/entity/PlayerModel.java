@@ -154,9 +154,7 @@ public class PlayerModel extends CapsuleObstacle {
         impulse.x = value;
     }
 
-    public void setIY(float value) {
-        impulse.y = value;
-    }
+    public void setIY(float value) { impulse.y = value; }
 
     public float getThrust() {
         return DEFAULT_THRUST;

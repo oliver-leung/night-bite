@@ -200,6 +200,7 @@ public class WorldController implements Screen, ContactListener {
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
 	private PlayerModel[] player_list;
+	private PooledList<Vector2> object_list = new PooledList<Vector2>();
 
 	/**
 	 * Creates a new game world
@@ -605,7 +606,7 @@ public class WorldController implements Screen, ContactListener {
 	 * @return whether to process the update loop
 	 */
 	public boolean preUpdate(float dt) {
-		MechanicManager input = MechanicManager.getInstance();
+		MechanicManager input = MechanicManager.getInstance(object_list);
 		input.update(); // TODO: do we need bounds and scale?
 
 		// TODO: use listener properly? maybe?
@@ -654,6 +655,7 @@ public class WorldController implements Screen, ContactListener {
 		obj.setDrawScale(scale);
 		obj.setTexture(holeTile);
 		addObject(obj);
+		addToObjectList(14, 18, 14.5f, 15.5f);
 
 		obj = new HoleModel(LevelController.WALL2, 2, 4);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -798,10 +800,28 @@ public class WorldController implements Screen, ContactListener {
 		addObject(item);
 	}
 
+	public void addToObjectList(float xbottom, float xtop, float ybottom, float ytop) {
+		int x_bottom = Math.round(xbottom);
+		int x_top = Math.round(xtop);
+		int y_bottom = Math.round(ybottom);
+		int y_top = Math.round(ytop);
+
+		Vector2 v = new Vector2();
+		for (int i = x_bottom; i <= x_top; i++) {
+			for (int j = y_bottom; j <= y_top; j++) {
+				v.x = i;
+				v.y = j;
+//				System.out.println(v.x + "" + v.y);
+				object_list.add(v);
+			}
+		}
+//		System.out.println("-----");
+	}
+
 	public void update(float dt) {
 		// TODO: Refactor all player movement
 
-		MechanicManager manager = MechanicManager.getInstance();
+		MechanicManager manager = MechanicManager.getInstance(object_list);
 
 		// TODO peer review below
 
@@ -871,7 +891,7 @@ public class WorldController implements Screen, ContactListener {
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && p.item && item.cooldownStatus()) {
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
 				p.item = false;
 				item.setHeldStatus(false);
 				item.startCooldown();
@@ -926,7 +946,6 @@ public class WorldController implements Screen, ContactListener {
 	private void addItem(Vector2 position) {
 		item.draw = true;
 		item.setHeldStatus(false);
-//		item.setActive(true);
 		item.setPosition(position);
 	}
 

@@ -1,5 +1,9 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.math.Vector2;
+import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.util.PooledList;
+
 public class MechanicManager {
     // TODO: exit doesn't work
 
@@ -7,7 +11,10 @@ public class MechanicManager {
 
     public static MechanicManager instance;
 
-    public static MechanicManager getInstance() {
+    public static PooledList<Vector2> objectList; // TODO feels whack
+
+    public static MechanicManager getInstance(PooledList<Vector2> objects) {
+        objectList = objects;
         if (instance == null) {
             instance = new MechanicManager();
         }
@@ -19,6 +26,8 @@ public class MechanicManager {
         controllers = new MechanicController[SUPPORTED_CONTROLLERS];
         connectController(0, 0, true);
         connectController(1, 1, false);
+//        controllers[connected] = new AIController();
+//        connected++;
     }
 
     private int connected = 0;
@@ -37,6 +46,9 @@ public class MechanicManager {
 
     public void update() {
         for (int i = 0; i < controllers.length; i ++) {
+            if (controllers[i] instanceof AIController) {
+                ((AIController) controllers[i]).updateAI(objectList);
+            }
             controllers[i].poll();
         }
     }

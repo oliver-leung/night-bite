@@ -34,8 +34,8 @@ public class KeyboardMap {
             Keys.RIGHT,
             Keys.SLASH,
             Keys.PERIOD,
-            Keys.UNKNOWN,
-            Keys.UNKNOWN);
+            Keys.Y,
+            Keys.R);
 
     private static Player PLAYER1 = new Player(
             Keys.W,
@@ -44,8 +44,8 @@ public class KeyboardMap {
             Keys.D,
             Keys.SHIFT_LEFT,
             Keys.E,
-            Keys.Y,
-            Keys.R);
+            Keys.UNKNOWN,
+            Keys.UNKNOWN);
 
     public static Player[] players = {PLAYER0, PLAYER1};
 }
