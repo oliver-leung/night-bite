@@ -796,7 +796,7 @@ public class WorldController implements Screen, ContactListener {
 		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
 		item.setDrawScale(scale);
 		item.setTexture(ItemModel.itemTexture);
-		item.setSensor(true);
+		item.setSensor(true); // TODO
 		addObject(item);
 	}
 
@@ -896,6 +896,9 @@ public class WorldController implements Screen, ContactListener {
 				item.setHeldStatus(false);
 				item.startCooldown();
 				item.throwItem(p.getImpulse());
+
+				item.setSensor(false);
+				item.setThrow(true);
 			}
 
 			if (item.getRespawning()) {
@@ -905,6 +908,12 @@ public class WorldController implements Screen, ContactListener {
 			// player cooldown (for respawn)
 			p.cooldown();
 		}
+
+		// item
+		if (item.getThrow()) {
+			item.checkStopped();
+		}
+
 		prevRespawning = item.getRespawning();
 	}
 	
@@ -1006,6 +1015,23 @@ public class WorldController implements Screen, ContactListener {
 		} else if (b instanceof PlayerModel) {
 			handlePlayerToObjectContact((PlayerModel) b, a);
 		}
+
+		if ((a instanceof ItemModel && b instanceof HoleModel) || (b instanceof ItemModel && a instanceof HoleModel)) {
+			for (int i = 0; i < NUM_PLAYERS; i++) {
+				player_list[i].item = false;
+			}
+			item.setHeldStatus(false);
+
+			item.startRespawning();
+			item.draw = false;
+		}
+
+//		if (a instanceof PlayerModel && b instanceof ItemModel) {
+//			contact.setEnabled(true);
+//		}
+//		if (a instanceof ItemModel && b instanceof PlayerModel) {
+//			contact.setEnabled(true);
+//		}
 	}
 
 	public void endContact(Contact contact) {

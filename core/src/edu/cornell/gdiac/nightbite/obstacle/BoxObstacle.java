@@ -34,7 +34,7 @@ public class BoxObstacle extends SimpleObstacle {
 	/** A cache value for when the user wants to access the dimensions */
 	private Vector2 sizeCache;
 	/** A cache value for the fixture (for resizing) */
-	private Fixture geometry;
+	public Fixture geometry;
 	/** Cache of the polygon vertices (for resizing) */
 	private float[] vertices;
 	
@@ -166,6 +166,10 @@ public class BoxObstacle extends SimpleObstacle {
 		shape.set(vertices);
 	}
 
+	protected void defineFixtures() {
+		fixture.shape = shape;
+	}
+
 	/**
 	 * Create new fixtures for this body, defining the shape
 	 *
@@ -179,7 +183,7 @@ public class BoxObstacle extends SimpleObstacle {
 	    releaseFixtures();
 
 		// Create the fixture
-		fixture.shape = shape;
+		defineFixtures();
 		geometry = body.createFixture(fixture);
 		markDirty(false);
 	}

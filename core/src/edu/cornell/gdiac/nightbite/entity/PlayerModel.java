@@ -139,6 +139,18 @@ public class PlayerModel extends CapsuleObstacle {
         return true;
     }
 
+//    @Override
+//    protected void defineFixtures() {
+//        super.defineFixtures();
+//        fixture.filter.categoryBits = 0x001;
+//        fixture.filter.maskBits = 0x004;
+//    }
+
+//    @Override
+//    protected void createFixtures() {
+//        super.createFixtures();
+//    }
+
     public void applyImpulse() {
         if (!isActive()) {
             return;

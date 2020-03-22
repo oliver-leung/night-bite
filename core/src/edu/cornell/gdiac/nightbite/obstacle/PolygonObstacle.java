@@ -304,6 +304,10 @@ public class PolygonObstacle extends SimpleObstacle {
 			geoms[ii] = body.createFixture(fixture);
 		}
 		markDirty(false);
+
+		// TODO add to own obstacle class and override
+		fixture.filter.categoryBits = 0x004;
+		fixture.filter.maskBits = 0x001 | 0x002;
 	}
 	
 	/**

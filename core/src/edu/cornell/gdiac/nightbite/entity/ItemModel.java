@@ -12,6 +12,11 @@ public class ItemModel extends BoxObstacle {
     private float respawning;
     private boolean held;
 
+    public boolean throw_item;
+    private float prev_x;
+    private float prev_y;
+    private float scale = 0.001f;
+
     private int itemCooldown; // used during item grab and item respawn
     private static int ITEM_COOLDOWN_PERIOD = 15;
 
@@ -36,6 +41,13 @@ public class ItemModel extends BoxObstacle {
 
         held = false;
     }
+
+//    @Override
+//    protected void defineFixtures() {
+//        super.defineFixtures();
+//        fixture.filter.categoryBits = 0x002;
+//        fixture.filter.maskBits = 0x004;
+//    }
 
     public void throwItem(Vector2 impulse) {
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
@@ -78,6 +90,37 @@ public class ItemModel extends BoxObstacle {
         held = b;
     }
 
+    /*
+    * Throw item goes through two stages: thrown -> throw_item is true -> velocity check -> throw_item is false
+    * During these two stages collisions are turned on.
+    * */
+
+    public void setThrow(boolean b) {
+        prev_x = -2000; // TODO fix with max_int or something
+        prev_y = -2000;
+        throw_item = b;
+    }
+
+    public boolean getThrow() {
+        return throw_item;
+    }
+
+    public boolean checkStopped() {
+        float curr_x = Math.round(getX() / scale) * scale;
+        float curr_y = Math.round(getY() / scale) * scale;
+        System.out.println(curr_x == prev_x && curr_y == prev_y);
+        System.out.println(curr_x);
+        System.out.println(prev_x);
+        System.out.println("--------");
+        if (curr_x == prev_x && curr_y == prev_y) {
+            setThrow(false);
+            setSensor(true);
+            return true;
+        }
+        prev_x = curr_x;
+        prev_y = curr_y;
+        return false;
+    }
     // add physics
     public boolean activatePhysics(World world) {
         boolean ret = super.activatePhysics(world);
