@@ -1077,6 +1077,12 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	public void preSolve(Contact contact, Manifold oldManifold) {
+		Object a = contact.getFixtureA().getBody().getUserData();
+		Object b = contact.getFixtureB().getBody().getUserData();
+
+		if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
+			contact.setEnabled(false);
+		}
 	}
 
 	/**
