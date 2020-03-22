@@ -15,6 +15,8 @@ public class ItemModel extends BoxObstacle {
     public boolean throw_item;
     private float prev_x;
     private float prev_y;
+    private int sensor_countdown;
+    private static int SENSOR_COUNTDOWN_PERIOD = 1;
     private float scale = 0.001f;
 
     private int itemCooldown; // used during item grab and item respawn
@@ -105,18 +107,27 @@ public class ItemModel extends BoxObstacle {
         return throw_item;
     }
 
+    public void startSensor() {
+        sensor_countdown = SENSOR_COUNTDOWN_PERIOD;
+    }
+
+    private void updateSensor() {
+        if (sensor_countdown != 0) {
+            sensor_countdown -= 1;
+        } else {
+            setSensor(false);
+        }
+    }
+
     public boolean checkStopped() {
         float curr_x = Math.round(getX() / scale) * scale;
         float curr_y = Math.round(getY() / scale) * scale;
-        System.out.println(curr_x == prev_x && curr_y == prev_y);
-        System.out.println(curr_x);
-        System.out.println(prev_x);
-        System.out.println("--------");
         if (curr_x == prev_x && curr_y == prev_y) {
             setThrow(false);
             setSensor(true);
             return true;
         }
+        updateSensor();
         prev_x = curr_x;
         prev_y = curr_y;
         return false;

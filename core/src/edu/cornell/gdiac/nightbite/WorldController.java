@@ -897,7 +897,7 @@ public class WorldController implements Screen, ContactListener {
 				item.startCooldown();
 				item.throwItem(p.getImpulse());
 
-				item.setSensor(false);
+				item.startSensor();
 				item.setThrow(true);
 			}
 
