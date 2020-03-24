@@ -33,7 +33,6 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-import org.w3c.dom.Text;
 
 import java.util.Iterator;
 
@@ -219,6 +218,7 @@ public class WorldController implements Screen, ContactListener {
 		setComplete(false);
 		setFailure(false);
 		world = new World(gravity, false);
+		// TODO: Refactor out collisions to another class?
 		world.setContactListener(this);
 		world.setGravity(new Vector2(0, 0));
 		assets = new Array<>();
@@ -581,6 +581,7 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	public void reset() {
+		// TODO: Reset should basically throw away WorldModel and make a new one
 		Vector2 gravity = new Vector2( world.getGravity() );
 
 		for(Obstacle obj : objects) {
@@ -658,7 +659,6 @@ public class WorldController implements Screen, ContactListener {
 		obj.setDrawScale(scale);
 		obj.setTexture(holeTile);
 		addObject(obj);
-		addToObjectList(14, 18, 14.5f, 15.5f);
 
 		obj = new HoleModel(LevelController.WALL2, 2, 4);
 		obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -763,6 +763,7 @@ public class WorldController implements Screen, ContactListener {
 		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a", 0);
 		p1.setDrawScale(scale);
 		p1.setTexture(PlayerModel.player1Texture);
+		p2.setMovable(true);
 
 		/* Add home stalls */
 		// Team A
@@ -778,6 +779,7 @@ public class WorldController implements Screen, ContactListener {
 		p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b",1);
 		p2.setDrawScale(scale);
 		p2.setTexture(PlayerModel.player2FilmStrip);
+		p2.setMovable(true);
 
 		/* Add home stalls */
 		// Team B
@@ -800,23 +802,8 @@ public class WorldController implements Screen, ContactListener {
 		item.setDrawScale(scale);
 		item.setTexture(ItemModel.itemTexture);
 		item.setSensor(true);
+		item.setMovable(true);
 		addObject(item);
-	}
-
-	public void addToObjectList(float xbottom, float xtop, float ybottom, float ytop) {
-		int x_bottom = Math.round(xbottom);
-		int x_top = Math.round(xtop);
-		int y_bottom = Math.round(ybottom);
-		int y_top = Math.round(ytop);
-
-		Vector2 v = new Vector2();
-		for (int i = x_bottom; i <= x_top; i++) {
-			for (int j = y_bottom; j <= y_top; j++) {
-				v.x = i;
-				v.y = j;
-				object_list.add(v);
-			}
-		}
 	}
 
 	public void update(float dt) {

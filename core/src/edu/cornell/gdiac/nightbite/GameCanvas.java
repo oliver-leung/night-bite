@@ -1134,6 +1134,24 @@ public class GameCanvas {
 		debugRender.ellipse(x0 - w, y0 - h, 2 * w, 2 * h, 12);
 	}
 
+	public void drawCircle(float x, float y, float radius, boolean filled) {
+		if (active != DrawPass.DEBUG) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active beginDebug()", new IllegalStateException());
+			return;
+		}
+
+		ShapeRenderer.ShapeType prev = debugRender.getCurrentType();
+
+		if (filled) {
+			debugRender.set(ShapeRenderer.ShapeType.Filled);
+		} else {
+			debugRender.set(ShapeRenderer.ShapeType.Line);
+		}
+
+		debugRender.circle(x, y, radius);
+		debugRender.set(prev);
+	}
+
 	/**
 	 * Compute the affine transform (and store it in local) for this image.
 	 *

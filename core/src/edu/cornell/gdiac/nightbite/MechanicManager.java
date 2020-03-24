@@ -11,10 +11,7 @@ public class MechanicManager {
 
     public static MechanicManager instance;
 
-    public static PooledList<Vector2> objectList; // TODO feels whack
-
     public static MechanicManager getInstance(PooledList<Vector2> objects) {
-        objectList = objects;
         if (instance == null) {
             instance = new MechanicManager();
         }
@@ -47,7 +44,7 @@ public class MechanicManager {
     public void update() {
         for (int i = 0; i < controllers.length; i ++) {
             if (controllers[i] instanceof AIController) {
-                ((AIController) controllers[i]).updateAI(objectList);
+                ((AIController) controllers[i]).updateAI();
             }
             controllers[i].poll();
         }

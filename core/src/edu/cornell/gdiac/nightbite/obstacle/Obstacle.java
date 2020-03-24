@@ -68,6 +68,12 @@ public abstract class Obstacle {
 
 	public boolean draw = true;
 
+	public boolean isMovable;
+
+
+	public void setMovable(boolean movable) {
+		isMovable = movable;
+	}
 
 	/// BodyDef Methods
 	/**
@@ -832,7 +838,7 @@ public abstract class Obstacle {
 	public Body getBody() {
 		return null;
 	}
-	
+
 	/// DRAWING METHODS
 	/**
      * Returns the drawing scale for this physics object

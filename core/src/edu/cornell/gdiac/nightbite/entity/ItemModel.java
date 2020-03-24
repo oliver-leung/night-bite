@@ -19,7 +19,7 @@ public class ItemModel extends BoxObstacle {
     private float prev_y;
     private int sensor_countdown;
     private static int SENSOR_COUNTDOWN_PERIOD = 1;
-    private float scale = 0.001f;
+    private float decimalPlaces = 0.001f;
 
     private int itemCooldown; // used during item grab and item respawn
     private static int ITEM_COOLDOWN_PERIOD = 15;
@@ -122,8 +122,8 @@ public class ItemModel extends BoxObstacle {
     }
 
     public boolean checkStopped() {
-        float curr_x = Math.round(getX() / scale) * scale;
-        float curr_y = Math.round(getY() / scale) * scale;
+        float curr_x = Math.round(getX() / decimalPlaces) * decimalPlaces;
+        float curr_y = Math.round(getY() / decimalPlaces) * decimalPlaces;
         if (curr_x == prev_x && curr_y == prev_y) {
             setThrow(false);
             setSensor(true);

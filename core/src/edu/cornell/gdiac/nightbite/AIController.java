@@ -1,18 +1,33 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
 
 public class AIController extends MechanicController {
 
-    private int[][] map;
+    private int[][] staticMap;
+    private int[][] dynamicMap;
+    private int numW;
+    private int numH;
+    private float partX;
+    private float partY;
 
-    public AIController() {
-        map = new int [19][33];
+    public AIController(int w, int h, Rectangle bounds) {
+        numW = w;
+        numH = h;
+        partX = bounds.x/numW;
+        partY = bounds.y/numH;
+        staticMap = new int [h][w];
+        dynamicMap = new int [h][w];
     }
 
-    public void updateAI(PooledList<Vector2> objects) {
+    public void populateStatic() {
+
+    }
+
+    public void updateAI() {
         // construct lattice
 //        for (Vector2 v : objects) {
 //            System.out.println(v.x);
@@ -24,5 +39,8 @@ public class AIController extends MechanicController {
 
     public void poll() {
 
+    }
+
+    public void drawDebug(GameCanvas canvas) {
     }
 }
