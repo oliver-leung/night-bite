@@ -19,6 +19,8 @@ public class PlayerModel extends CapsuleObstacle {
      */
     public static TextureRegion player1Texture;
     public static FilmStrip player2FilmStrip;
+    public static TextureRegion[] playerTexture;
+
     private TextureRegion defaultTexture;
 
     public void resetTexture() {
@@ -138,18 +140,6 @@ public class PlayerModel extends CapsuleObstacle {
         body.setFixedRotation(true);
         return true;
     }
-
-//    @Override
-//    protected void defineFixtures() {
-//        super.defineFixtures();
-//        fixture.filter.categoryBits = 0x001;
-//        fixture.filter.maskBits = 0x004;
-//    }
-
-//    @Override
-//    protected void createFixtures() {
-//        super.createFixtures();
-//    }
 
     public void applyImpulse() {
         if (!isActive()) {

@@ -33,6 +33,7 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+import org.w3c.dom.Text;
 
 import java.util.Iterator;
 
@@ -139,7 +140,7 @@ public class WorldController implements Screen, ContactListener {
 	protected ItemModel item;
 	protected boolean prevRespawning = false;
 
-	protected int p2WalkCounter;
+	protected int playerWalkCounter;
 	/**
 	 * All the objects in the world.
 	 */
@@ -200,7 +201,8 @@ public class WorldController implements Screen, ContactListener {
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
 	private PlayerModel[] player_list;
-	private PooledList<Vector2> object_list = new PooledList<Vector2>();
+	private PooledList<Vector2> object_list = new PooledList<>();
+	private float[] prev_hori_dir = new float[]{-1, -1};
 
 	/**
 	 * Creates a new game world
@@ -316,6 +318,12 @@ public class WorldController implements Screen, ContactListener {
 		// WorldController as a singleton
 		PlayerModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
 		PlayerModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
+
+		// TODO less whack way to do this
+		PlayerModel.playerTexture = new TextureRegion[NUM_PLAYERS];
+		PlayerModel.playerTexture[0] = PlayerModel.player1Texture;
+		PlayerModel.playerTexture[1] = PlayerModel.player2FilmStrip;
+
 		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
 
 		if (worldAssetState != AssetState.LOADING) {
@@ -796,7 +804,7 @@ public class WorldController implements Screen, ContactListener {
 		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
 		item.setDrawScale(scale);
 		item.setTexture(ItemModel.itemTexture);
-		item.setSensor(true); // TODO
+		item.setSensor(true);
 		addObject(item);
 	}
 
@@ -811,11 +819,9 @@ public class WorldController implements Screen, ContactListener {
 			for (int j = y_bottom; j <= y_top; j++) {
 				v.x = i;
 				v.y = j;
-//				System.out.println(v.x + "" + v.y);
 				object_list.add(v);
 			}
 		}
-//		System.out.println("-----");
 	}
 
 	public void update(float dt) {
@@ -841,25 +847,30 @@ public class WorldController implements Screen, ContactListener {
 			playerDidThrow = manager.isThrowing(i);
 			p = player_list[i];
 
-			// update player state // TODO facing and film strip thing
-//			if (p2_horizontal != 0 || p2_vertical != 0) {
-//				p2.setWalk();
-//				if (p2WalkCounter % 20 == 0) {
+			// handle player facing left-right
+			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
+				PlayerModel.playerTexture[i].flip(true, false);
+			}
+
+			// update player state // TODO film strip: needs player 1 film strip first
+//			if (playerVertical != 0 || playerHorizontal != 0) {
+//				p.setWalk();
+//				if (playerWalkCounter % 20 == 0) {
 //					PlayerModel.player2FilmStrip.setFrame(1);
-//				} else if (p2WalkCounter % 20 == 10) {
+//				} else if (playerWalkCounter % 20 == 10) {
 //					PlayerModel.player2FilmStrip.setFrame(0);
 //				}
-//				p2WalkCounter++;
+//				playerWalkCounter++;
 //			} else {
-//				p2.setStatic();
-//				p2WalkCounter = 0;
+//				p.setStatic();
+//				playerWalkCounter = 0;
 //				PlayerModel.player2FilmStrip.setFrame(0);
 //			}
-			if (playerHorizontal != 0 || playerVertical != 0) {
-				p.setWalk();
-			} else {
-				p.setStatic();
-			}
+//			if (playerHorizontal != 0 || playerVertical != 0) {
+//				p.setWalk();
+//			} else {
+//				p.setStatic();
+//			}
 
 			// Set player movement impulse
 			p.setIX(playerHorizontal);
@@ -907,13 +918,17 @@ public class WorldController implements Screen, ContactListener {
 
 			// player cooldown (for respawn)
 			p.cooldown();
+
+			// update horizontal direction
+			if (playerHorizontal != 0) {
+				prev_hori_dir[i] = playerHorizontal;
+			}
 		}
 
 		// item
 		if (item.getThrow()) {
 			item.checkStopped();
 		}
-
 		prevRespawning = item.getRespawning();
 	}
 	
