@@ -29,17 +29,11 @@ public class ItemModel extends BoxObstacle {
     private float THROW_FORCE = 500f;
 
     // physics config
-    private static final float DEFAULT_DENSITY = 1.0f;
-    private static final float DEFAULT_FRICTION = 0.1f;
-    private static final float DEFAULT_RESTITUTION = 0.4f;
     private float MOTION_DAMPING = 25f;
 
 
     public ItemModel(float x, float y, float width, float height) {
         super(x, y, width, height);
-        setDensity(DEFAULT_DENSITY);
-        setFriction(DEFAULT_FRICTION);
-        setRestitution(DEFAULT_RESTITUTION);
         setName("item");
         setBullet(true);
 

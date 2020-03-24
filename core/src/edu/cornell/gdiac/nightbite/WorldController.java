@@ -52,63 +52,35 @@ import java.util.Iterator;
  */
 public class WorldController implements Screen, ContactListener {
 
-	public static final int ITEMS_TO_WIN = 3;
-	/**
-	 * Exit code for quitting the game
-	 */
-	public static final int EXIT_QUIT = 0;
-	/**
-	 * Exit code for advancing to next level
-	 */
-	public static final int EXIT_NEXT = 1;
-	/**
-	 * Exit code for jumping back to previous level
-	 */
-	public static final int EXIT_PREV = 2;
-	/**
-	 * How many frames after winning/losing do we continue?
-	 */
-	public static final int EXIT_COUNT = 120;
-	/**
-	 * The amount of time for a physics engine step.
-	 */
-	public static final float WORLD_STEP = 1 / 60.0f;
-	/**
-	 * Number of velocity iterations for the constrain solvers
-	 */
-	public static final int WORLD_VELOC = 6;
-	/**
-	 * Number of position iterations for the constrain solvers
-	 */
-	public static final int WORLD_POSIT = 2;
-	/**
-	 * Width of the game world in Box2d units
-	 */
-	protected static final float DEFAULT_WIDTH = 32.0f;
-	/**
-	 * Height of the game world in Box2d units
-	 */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
-	/**
-	 * The default value of gravity (going down)
-	 */
-	protected static final float DEFAULT_GRAVITY = -4.9f;
-	protected static final float PUSH_IMPULSE = 200f;
-	/**
-	 * Density of objects
-	 */
-	private static final float BASIC_DENSITY = 0.0f;
-	/**
-	 * Friction of objects
-	 */
-	private static final float BASIC_FRICTION = 1f;
+	/** GAME END CHECKS */
 
-	// Pathnames to shared assets
-	/**
-	 * Collision restitution for all objects
-	 */
-	private static final float BASIC_RESTITUTION = 0f;
-	protected static Vector2 item_position = new Vector2(16, 12);
+	public static final int ITEMS_TO_WIN = 3;
+
+	/** Exit code for quitting the game */
+	public static final int EXIT_QUIT = 0;
+
+	/** PHYSICS ENGINE STEP */
+
+	/** The amount of time for a physics engine step. */
+	public static final float WORLD_STEP = 1 / 60.0f;
+	/** Number of velocity iterations for the constrain solvers. */
+	public static final int WORLD_VELOC = 6;
+	/** Number of position iterations for the constrain solvers. */
+	public static final int WORLD_POSIT = 2;
+
+	/** GAME PARAMS */
+
+	/** Width of the game world in Box2d units. */
+	protected static final float DEFAULT_WIDTH = 32.0f;
+	/** Height of the game world in Box2d units. */
+	protected static final float DEFAULT_HEIGHT = 18.0f;
+
+
+	protected static final float DEFAULT_GRAVITY = -4.9f;
+
+	protected static final float PUSH_IMPULSE = 200f;
+
+
 	public TextureRegion backgroundTile;
 	public TextureRegion standTile;
 	public TextureRegion holeTile;
@@ -125,21 +97,18 @@ public class WorldController implements Screen, ContactListener {
 	 * The texture for walls and platforms
 	 */
 	protected TextureRegion wallTile;
-	/**
-	 * Player 1
-	 */
+
+	/** Player 1 */
 	protected PlayerModel p1;
-	/**
-	 * Player 2
-	 */
+	/** Player 2 */
 	protected PlayerModel p2;
+
 	/**
 	 * Item
 	 */
 	protected ItemModel item;
 	protected boolean prevRespawning = false;
 
-	protected int playerWalkCounter;
 	/**
 	 * All the objects in the world.
 	 */
@@ -180,22 +149,11 @@ public class WorldController implements Screen, ContactListener {
 	 * Whether or not this is an active controller
 	 */
 	private boolean active;
-	/**
-	 * Whether we have completed this level
-	 */
-	private boolean complete;
-	/**
-	 * Whether we have failed at this world (and need a reset)
-	 */
-	private boolean failed;
+
 	/**
 	 * Whether or not debug mode is active
 	 */
 	private boolean debug;
-	/**
-	 * Countdown active for winning or losing
-	 */
-	private int countdown;
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
@@ -215,8 +173,6 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
 		setDebug(false);
-		setComplete(false);
-		setFailure(false);
 		world = new World(gravity, false);
 		// TODO: Refactor out collisions to another class?
 		world.setContactListener(this);
@@ -224,11 +180,8 @@ public class WorldController implements Screen, ContactListener {
 		assets = new Array<>();
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);
-		complete = false;
-		failed = false;
 		debug = false;
 		active = false;
-		countdown = -1;
 	}
 
 	/**
@@ -384,65 +337,6 @@ public class WorldController implements Screen, ContactListener {
 	public void setDebug(boolean value) {
 		debug = value;
 	}
-
-	/**
-	 * Returns true if the level is completed.
-	 *
-	 * If true, the level will advance after a countdown
-	 *
-	 * @return true if the level is completed.
-	 */
-	public boolean isComplete() {
-		return complete;
-	}
-
-	/**
-	 * Sets whether the level is completed.
-	 *
-	 * If true, the level will advance after a countdown
-	 *
-	 * @param value whether the level is completed.
-	 */
-	public void setComplete(boolean value) {
-		if (value) {
-			countdown = EXIT_COUNT;
-		}
-		complete = value;
-	}
-	
-	/**
-	 * Returns true if the level is failed.
-	 *
-	 * If true, the level will reset after a countdown
-	 *
-	 * @return true if the level is failed.
-	 */
-	public boolean isFailure( ) {
-		return failed;
-	}
-
-	/**
-	 * Sets whether the level is failed.
-	 *
-	 * If true, the level will reset after a countdown
-	 *
-	 * @param value whether the level is failed.
-	 */
-	public void setFailure(boolean value) {
-		if (value) {
-			countdown = EXIT_COUNT;
-		}
-		failed = value;
-	}
-	
-	/**
-	 * Returns true if this is the active screen
-	 *
-	 * @return true if this is the active screen
-	 */
-	public boolean isActive( ) {
-		return active;
-	}
 	
 	/**
 	 * Returns the canvas associated with this controller
@@ -504,13 +398,6 @@ public class WorldController implements Screen, ContactListener {
 		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
 
-		if (complete && !failed) {
-			displayFont.setColor(Color.YELLOW);
-			canvas.drawTextCentered(winner + "VICTORY!", displayFont, 0.0f);
-		} else if (failed) {
-			displayFont.setColor(Color.RED);
-			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-		}
 		canvas.end();
 
 		if (debug) {
@@ -593,8 +480,6 @@ public class WorldController implements Screen, ContactListener {
 
 		world = new World(gravity,false);
 		world.setContactListener(this);
-		setComplete(false);
-		setFailure(false);
 		populateLevel();
 	}
 	
@@ -627,183 +512,12 @@ public class WorldController implements Screen, ContactListener {
 		if (input.didReset()) {
 			reset();
 		}
-		
-		// Now it is time to maybe switch screens.
 
-		// TODO: what is exit?
-        // TODO: Actually what is this entire if statement
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} else if (countdown > 0) {
-			countdown--;
-		} else if (countdown == 0) {
-			if (failed) {
-				reset();
-			} else if (complete) {
-				listener.exitScreen(this, EXIT_NEXT);
-				return false;
-			}
 		}
 		return true;
-	}
-
-	private void populateLevel() {
-		/* Add holes */
-		PolygonObstacle obj;
-		obj = new HoleModel(LevelController.WALL1, 16, 5);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(holeTile);
-		addObject(obj);
-
-		obj = new HoleModel(LevelController.WALL2, 2, 4);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(holeTile);
-		addObject(obj);
-
-		obj = new HoleModel(LevelController.WALL2, 30, 4);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(holeTile);
-		addObject(obj);
-
-		/* Add walls */
-		obj = new PolygonObstacle(LevelController.WALL2, 9.5f, 8);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(wallTile);
-		obj.setName("wall1");
-		addObject(obj);
-
-		obj = new PolygonObstacle(LevelController.WALL2, 22.5f, 8);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(wallTile);
-		obj.setName("wall2");
-		addObject(obj);
-
-		BoxObstacle wall;
-		float ddwidth = wallTile.getRegionWidth() / scale.x;
-		float ddheight = wallTile.getRegionHeight() / scale.y;
-		wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
-		wall.setDensity(BASIC_DENSITY);
-		wall.setBodyType(BodyDef.BodyType.StaticBody);
-		wall.setDrawScale(scale);
-		wall.setTexture(standTile);
-		wall.setName("wall3");
-		addObject(wall);
-
-		/* Add screen edges */
-
-		// left screen edge
-		obj = new PolygonObstacle(LevelController.VERT_WALL, 32.5f, 0);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(standTile);
-		obj.setName("wall1");
-		addObject(obj);
-
-		// right screen edge
-		obj = new PolygonObstacle(LevelController.VERT_WALL, -0.5f, 0);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(standTile);
-		obj.setName("wall1");
-		addObject(obj);
-
-		// top screen edge
-		obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, -0.5f);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(standTile);
-		obj.setName("wall1");
-		addObject(obj);
-
-		// bottom screen edge
-		obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, 18.5f);
-		obj.setBodyType(BodyDef.BodyType.StaticBody);
-		obj.setDensity(BASIC_DENSITY);
-		obj.setFriction(BASIC_FRICTION);
-		obj.setRestitution(BASIC_RESTITUTION);
-		obj.setDrawScale(scale);
-		obj.setTexture(standTile);
-		obj.setName("wall1");
-		addObject(obj);
-
-		/* Add players */
-		// Team A
-		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
-		float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
-		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a", 0);
-		p1.setDrawScale(scale);
-		p1.setTexture(PlayerModel.player1Texture);
-		p2.setMovable(true);
-
-		/* Add home stalls */
-		// Team A
-		HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
-		home.setBodyType(BodyDef.BodyType.StaticBody);
-		home.setDrawScale(scale);
-		home.setTexture(standTile);
-		home.setName("homeA");
-		addObject(home);
-
-		/* Add players */
-		// Team B
-		p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b",1);
-		p2.setDrawScale(scale);
-		p2.setTexture(PlayerModel.player2FilmStrip);
-		p2.setMovable(true);
-
-		/* Add home stalls */
-		// Team B
-		home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
-		home.setBodyType(BodyDef.BodyType.StaticBody);
-		home.setDrawScale(scale);
-		home.setTexture(standTile);
-		home.setName("homeB");
-		addObject(home);
-		addObject(p1);
-		addObject(p2);
-
-		// player list
-		player_list = new PlayerModel[] { p1, p2 };
-
-		/* Add items */
-		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
-		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
-		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
-		item.setDrawScale(scale);
-		item.setTexture(ItemModel.itemTexture);
-		item.setSensor(true);
-		item.setMovable(true);
-		addObject(item);
 	}
 
 	public void update(float dt) {
@@ -897,7 +611,7 @@ public class WorldController implements Screen, ContactListener {
 			}
 
 			if (item.getRespawning()) {
-				addItem(item_position);
+				addItem(ITEM_START_POSITION);
 			}
 
 			// player cooldown (for respawn)
@@ -1003,7 +717,6 @@ public class WorldController implements Screen, ContactListener {
 
 	public void checkWinCondition(HomeModel homeObject) {
 		if (homeObject.getScore() >= ITEMS_TO_WIN) {
-			setComplete(true);
 			if (homeObject.getTeam().equals("a")) {
 				winner = "PLAYER B ";
 			} else if (homeObject.getTeam().equals("b")) {
@@ -1055,12 +768,6 @@ public class WorldController implements Screen, ContactListener {
 			handleItemToObjectContact((ItemModel) b, a);
 		}
 
-//		if (a instanceof PlayerModel && b instanceof ItemModel) {
-//			contact.setEnabled(true);
-//		}
-//		if (a instanceof ItemModel && b instanceof PlayerModel) {
-//			contact.setEnabled(true);
-//		}
 	}
 
 	public void endContact(Contact contact) {
