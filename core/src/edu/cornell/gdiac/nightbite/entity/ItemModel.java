@@ -9,6 +9,8 @@ public class ItemModel extends BoxObstacle {
 
     public static TextureRegion itemTexture;
 
+    public PlayerModel holdingPlayer;
+
     private float respawning;
     private boolean held;
 

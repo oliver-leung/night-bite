@@ -897,6 +897,7 @@ public class WorldController implements Screen, ContactListener {
 			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
 				// A gets fish
 				p.item = true;
+				item.holdingPlayer = p;
 				item.setHeldStatus(true);
 				item.startCooldown();
 			}
@@ -904,6 +905,7 @@ public class WorldController implements Screen, ContactListener {
 			/* IF PLAYER THROWS ITEM */
 			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
 				p.item = false;
+				item.holdingPlayer = null;
 				item.setHeldStatus(false);
 				item.startCooldown();
 				item.throwItem(p.getImpulse());
@@ -982,10 +984,12 @@ public class WorldController implements Screen, ContactListener {
 			player.draw = false;
 
 			if (player.item) {
+				item.holdingPlayer = null;
 				item.setHeldStatus(false);
 				item.startRespawning();
 				item.draw = false;
 			}
+
 		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
 
 			// Player-Item
@@ -1003,20 +1007,46 @@ public class WorldController implements Screen, ContactListener {
 				player.item = false;
 				player.resetTexture();
 
+				item.holdingPlayer = null;
 				item.setHeldStatus(false);
 				item.startRespawning();
 				item.draw = false;
 
 				// win condition
-				if (homeObject.getScore() >= ITEMS_TO_WIN) {
-					setComplete(true);
-					if (homeObject.getTeam().equals("a")) {
-						winner = "PLAYER B ";
-					} else if (homeObject.getTeam().equals("b")) {
-						winner = "PLAYER A ";
-					}
-				}
+				checkWinCondition(homeObject);
 			}
+		}
+	}
+
+	public void checkWinCondition(HomeModel homeObject) {
+		if (homeObject.getScore() >= ITEMS_TO_WIN) {
+			setComplete(true);
+			if (homeObject.getTeam().equals("a")) {
+				winner = "PLAYER B ";
+			} else if (homeObject.getTeam().equals("b")) {
+				winner = "PLAYER A ";
+			}
+		}
+	}
+
+	public void handleItemToObjectContact(ItemModel item, Object object) {
+		if (object instanceof HoleModel) {
+			item.holdingPlayer = null;
+			item.setHeldStatus(false);
+
+			item.startRespawning();
+			item.draw = false;
+		} else if ((object instanceof HomeModel) && (item.holdingPlayer == null)) {
+			item.setHeldStatus(false);
+			item.startRespawning();
+			item.draw = false;
+
+			// add score
+			HomeModel homeObject = (HomeModel) object;
+			homeObject.incrementScore();
+
+			// check win condition
+			checkWinCondition(homeObject);
 		}
 	}
 
@@ -1031,14 +1061,10 @@ public class WorldController implements Screen, ContactListener {
 			handlePlayerToObjectContact((PlayerModel) b, a);
 		}
 
-		if ((a instanceof ItemModel && b instanceof HoleModel) || (b instanceof ItemModel && a instanceof HoleModel)) {
-			for (int i = 0; i < NUM_PLAYERS; i++) {
-				player_list[i].item = false;
-			}
-			item.setHeldStatus(false);
-
-			item.startRespawning();
-			item.draw = false;
+		if (a instanceof ItemModel) {
+			handleItemToObjectContact((ItemModel) a, b);
+		} else if (b instanceof ItemModel) {
+			handleItemToObjectContact((ItemModel) b, a);
 		}
 
 //		if (a instanceof PlayerModel && b instanceof ItemModel) {
