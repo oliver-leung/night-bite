@@ -503,6 +503,14 @@ public class WorldController implements Screen, ContactListener {
 
 		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
+
+		if (complete && !failed) {
+			displayFont.setColor(Color.YELLOW);
+			canvas.drawTextCentered(winner + "VICTORY!", displayFont, 0.0f);
+		} else if (failed) {
+			displayFont.setColor(Color.RED);
+			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+		}
 		canvas.end();
 
 		if (debug) {
@@ -512,19 +520,6 @@ public class WorldController implements Screen, ContactListener {
 			}
 			canvas.endDebug();
 		}
-
-		// Final message
-		if (complete && !failed) {
-			displayFont.setColor(Color.YELLOW);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered(winner + "VICTORY!", displayFont, 0.0f);
-			canvas.end();
-		} else if (failed) {
-			displayFont.setColor(Color.RED);
-			canvas.begin(); // DO NOT SCALE
-			canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-			canvas.end();
-        }
     }
 	
 	/**
