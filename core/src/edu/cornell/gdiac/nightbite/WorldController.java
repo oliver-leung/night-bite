@@ -1000,6 +1000,7 @@ public class WorldController implements Screen, ContactListener {
 			// Player-Home
 			HomeModel homeObject = (HomeModel) object;
 			// If players went to their own home, drop off item and increment score
+			// TODO no consequence if try to drop item at opponent's home?
 			if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
 
 				homeObject.incrementScore();
@@ -1031,6 +1032,11 @@ public class WorldController implements Screen, ContactListener {
 
 	public void handleItemToObjectContact(ItemModel item, Object object) {
 		if (object instanceof HoleModel) {
+			PlayerModel p = item.holdingPlayer;
+			if (p != null) {
+				p.item = false;
+			}
+
 			item.holdingPlayer = null;
 			item.setHeldStatus(false);
 
