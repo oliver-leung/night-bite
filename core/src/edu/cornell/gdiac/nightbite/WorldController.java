@@ -16,9 +16,11 @@
  */
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.*;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -33,7 +35,8 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-import org.w3c.dom.Text;
+import edu.cornell.gdiac.util.LightSource;
+import edu.cornell.gdiac.util.PointSource;
 
 import java.util.Iterator;
 
@@ -52,6 +55,21 @@ import java.util.Iterator;
  * place nicely with the static assets.
  */
 public class WorldController implements Screen, ContactListener {
+
+	/**
+	 * The camera defining the RayHandler view; scale is in physics coordinates
+	 */
+	protected OrthographicCamera raycamera;
+
+	/**
+	 * The rayhandler for storing lights, and drawing them
+	 */
+	protected RayHandler rayhandler;
+
+	/**
+	 * All of the active lights that we loaded from the JSON file
+	 */
+	private Array<LightSource> lights = new Array<LightSource>();
 
 	public static final int ITEMS_TO_WIN = 3;
 	/**
