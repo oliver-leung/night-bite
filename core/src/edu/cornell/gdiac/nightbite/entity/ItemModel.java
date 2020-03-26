@@ -78,8 +78,9 @@ public class ItemModel extends BoxObstacle {
 
     public void setHeld(PlayerModel p) {
         p.item = true;
-
         holdingPlayer = p;
+
+        setSensor(true);
     }
 
     public void setUnheld() {
@@ -87,6 +88,8 @@ public class ItemModel extends BoxObstacle {
             holdingPlayer.item = false;
             holdingPlayer = null;
         }
+
+        setSensor(false);
     }
 
     public boolean isHeld() {
