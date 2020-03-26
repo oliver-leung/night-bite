@@ -109,7 +109,6 @@ public class WorldController implements Screen, ContactListener {
 	 * Collision restitution for all objects
 	 */
 	private static final float BASIC_RESTITUTION = 0f;
-	protected static Vector2 item_position = new Vector2(16, 12);
 	public TextureRegion backgroundTile;
 	public TextureRegion standTile;
 	public TextureRegion holeTile;
@@ -138,7 +137,6 @@ public class WorldController implements Screen, ContactListener {
 	 * Item
 	 */
 	protected ItemModel item;
-	protected boolean prevRespawning = false;
 
 	protected int playerWalkCounter;
 	/**
@@ -203,6 +201,12 @@ public class WorldController implements Screen, ContactListener {
 	private PlayerModel[] player_list;
 	private PooledList<Vector2> object_list = new PooledList<>();
 	private float[] prev_hori_dir = new float[]{-1, -1};
+
+	protected Vector2 item_position = new Vector2(16, 12);
+
+	private static final float MOVABLE_OBJECT_DENSITY = 1.0f;
+	private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
+	private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
 	/**
 	 * Creates a new game world
@@ -797,9 +801,12 @@ public class WorldController implements Screen, ContactListener {
 		float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
 		float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
 		item = new ItemModel(item_position.x, item_position.y, itemWidth, itemHeight);
+		item.setDensity(MOVABLE_OBJECT_DENSITY);
+		item.setFriction(MOVABLE_OBJECT_FRICTION);
+		item.setRestitution(MOVABLE_OBJECT_RESTITUTION);
 		item.setDrawScale(scale);
 		item.setTexture(ItemModel.itemTexture);
-		item.setSensor(true);
+		item.setSensor(false);
 		addObject(item);
 	}
 
@@ -826,14 +833,14 @@ public class WorldController implements Screen, ContactListener {
 
 		// TODO peer review below
 
-		item.updateCooldown();
-		item.updateRespawning();
+		item.update();
 
 		PlayerModel p;
 		float playerHorizontal;
 		float playerVertical;
 		boolean playerDidBoost;
 		boolean playerDidThrow;
+
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 
 			playerHorizontal = manager.getVelX(i);
@@ -889,28 +896,18 @@ public class WorldController implements Screen, ContactListener {
 
 			/* IF PLAYER GRABS ITEM */
 			// TODO how to make fair (if grab at same time, player 1 advantage)
-			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
-				// A gets fish
-				p.item = true;
-				item.holdingPlayer = p;
-				item.setHeldStatus(true);
+			if (!item.isHeld() && p.getOverlapItem() && playerDidThrow && item.cooldownOver()) {
+				item.setHeld(p);
 				item.startCooldown();
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
-				p.item = false;
-				item.holdingPlayer = null;
-				item.setHeldStatus(false);
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownOver()) {
+
+				item.setUnheld();
 				item.startCooldown();
+
 				item.throwItem(p.getImpulse());
-
-				item.startSensor();
-				item.setThrow(true);
-			}
-
-			if (item.getRespawning()) {
-				addItem(item_position);
 			}
 
 			// player cooldown (for respawn)
@@ -921,12 +918,6 @@ public class WorldController implements Screen, ContactListener {
 				prev_hori_dir[i] = playerHorizontal;
 			}
 		}
-
-		// item
-		if (item.getThrow()) {
-			item.checkStopped();
-		}
-		prevRespawning = item.getRespawning();
 	}
 	
 	/**
@@ -964,12 +955,6 @@ public class WorldController implements Screen, ContactListener {
 		}
 	}
 
-	private void addItem(Vector2 position) {
-		item.draw = true;
-		item.setHeldStatus(false);
-		item.setPosition(position);
-	}
-
 	public void handlePlayerToObjectContact(PlayerModel player, Object object) {
 
 		if (object instanceof HoleModel) {
@@ -979,10 +964,8 @@ public class WorldController implements Screen, ContactListener {
 			player.draw = false;
 
 			if (player.item) {
-				item.holdingPlayer = null;
-				item.setHeldStatus(false);
-				item.startRespawning();
-				item.draw = false;
+				item.setUnheld();
+				item.startRespawn();
 			}
 
 		} else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
@@ -1000,13 +983,10 @@ public class WorldController implements Screen, ContactListener {
 
 				homeObject.incrementScore();
 
-				player.item = false;
 				player.resetTexture();
 
-				item.holdingPlayer = null;
-				item.setHeldStatus(false);
-				item.startRespawning();
-				item.draw = false;
+				item.setUnheld();
+				item.startRespawn();
 
 				// win condition
 				checkWinCondition(homeObject);
@@ -1032,15 +1012,12 @@ public class WorldController implements Screen, ContactListener {
 				p.item = false;
 			}
 
-			item.holdingPlayer = null;
-			item.setHeldStatus(false);
+			item.setUnheld();
+			item.startRespawn();
 
-			item.startRespawning();
-			item.draw = false;
 		} else if ((object instanceof HomeModel) && (item.holdingPlayer == null)) {
-			item.setHeldStatus(false);
-			item.startRespawning();
-			item.draw = false;
+			item.setUnheld();
+			item.startRespawn();
 
 			// add score
 			HomeModel homeObject = (HomeModel) object;
