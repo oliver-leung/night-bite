@@ -94,8 +94,8 @@ public class ItemModel extends BoxObstacle {
     * */
 
     public void setThrow(boolean b) {
-        prev_x = -2000; // TODO fix with max_int or something
-        prev_y = -2000;
+        prev_x = Integer.MIN_VALUE;
+        prev_y = Integer.MIN_VALUE;
         throw_item = b;
     }
 

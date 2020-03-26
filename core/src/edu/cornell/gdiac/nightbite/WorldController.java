@@ -140,6 +140,7 @@ public class WorldController implements Screen, ContactListener {
 	/**
 	 * The world scale
 	 */
+	// TODO: Replace all instances of `scale` with WorldModel scale
 	protected Vector2 scale;
 	/**
 	 * Listener that will update the player mode when we are done
@@ -176,7 +177,7 @@ public class WorldController implements Screen, ContactListener {
 		world = new World(gravity, false);
 		// TODO: Refactor out collisions to another class?
 		world.setContactListener(this);
-		world.setGravity(new Vector2(0, 0));
+		// world.setGravity(new Vector2(0, 0));
 		assets = new Array<>();
 		this.bounds = new Rectangle(bounds);
 		this.scale = new Vector2(1, 1);

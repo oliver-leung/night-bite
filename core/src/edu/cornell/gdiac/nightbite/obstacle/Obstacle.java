@@ -68,6 +68,9 @@ public abstract class Obstacle {
 
 	public boolean draw = true;
 
+	/** Whether an object is supposed to move */
+	// TODO: Honestly maybe this should be replaced with whether it is static. But I'm not quite sure
+	// TODO: that's a reliable way of doing it (eg: what if we change the position of a static object? would we?)
 	public boolean isMovable;
 
 
