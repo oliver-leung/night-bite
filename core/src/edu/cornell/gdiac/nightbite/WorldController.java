@@ -106,13 +106,9 @@ public class WorldController implements Screen, ContactListener {
 	/**
 	 * Item
 	 */
-	protected ItemModel item;
-	protected boolean prevRespawning = false;
+	// protected ItemModel item;
+	// protected boolean prevRespawning = false;
 
-	/**
-	 * All the objects in the world.
-	 */
-	protected PooledList<Obstacle> objects = new PooledList<>();
 	/**
 	 * Track asset loading from all instances and subclasses
 	 */
@@ -130,19 +126,6 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	protected PooledList<Obstacle> addQueue = new PooledList<>();
 	/**
-	 * The Box2D world
-	 */
-	protected World world;
-	/**
-	 * The boundary of the world
-	 */
-	protected Rectangle bounds;
-	/**
-	 * The world scale
-	 */
-	// TODO: Replace all instances of `scale` with WorldModel scale
-	protected Vector2 scale;
-	/**
 	 * Listener that will update the player mode when we are done
 	 */
 	private ScreenListener listener;
@@ -158,9 +141,13 @@ public class WorldController implements Screen, ContactListener {
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
-	private PlayerModel[] player_list;
 	private PooledList<Vector2> object_list = new PooledList<>();
 	private float[] prev_hori_dir = new float[]{-1, -1};
+
+	private WorldModel worldModel;
+
+	// TODO: Fix after item refactor
+	private boolean prevRespawning;
 
 	/**
 	 * Creates a new game world
@@ -172,15 +159,12 @@ public class WorldController implements Screen, ContactListener {
 	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
+	// TODO: Remove bounds and gravity parameter
 	protected WorldController(Rectangle bounds, Vector2 gravity) {
 		setDebug(false);
-		world = new World(gravity, false);
+		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
-		world.setContactListener(this);
-		// world.setGravity(new Vector2(0, 0));
 		assets = new Array<>();
-		this.bounds = new Rectangle(bounds);
-		this.scale = new Vector2(1, 1);
 		debug = false;
 		active = false;
 	}
@@ -208,6 +192,7 @@ public class WorldController implements Screen, ContactListener {
 	 * @param height  The height in Box2d coordinates
 	 * @param gravity The downward gravity
 	 */
+	// TODO: Remove Parameters
 	protected WorldController(float width, float height, float gravity) {
 		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
 	}
@@ -358,8 +343,13 @@ public class WorldController implements Screen, ContactListener {
 	 */
 	public void setCanvas(GameCanvas canvas) {
 		this.canvas = canvas;
-		this.scale.x = canvas.getWidth()/bounds.getWidth();
-		this.scale.y = canvas.getHeight()/bounds.getHeight();
+		worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+	}
+
+	public void populateLevel() {
+	    worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		worldModel.setTextures(new TextureRegion[] {wallTile, standTile, backgroundTile, goalTile, holeTile});
+	    worldModel.populate();
 	}
 
 	/**
@@ -385,7 +375,7 @@ public class WorldController implements Screen, ContactListener {
 		StringBuilder message1 = new StringBuilder("Player A score: ");
 		StringBuilder message2 = new StringBuilder("Player B score: ");
 
-		for (Obstacle obj : objects) {
+		for (Obstacle obj : worldModel.getObjects()) {
 			if (obj.draw) {
 				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
 					message1.append(((HomeModel) obj).getScore());
@@ -403,7 +393,7 @@ public class WorldController implements Screen, ContactListener {
 
 		if (debug) {
 			canvas.beginDebug();
-			for (Obstacle obj : objects) {
+			for (Obstacle obj : worldModel.getObjects()) {
 				obj.drawDebug(canvas);
 			}
 			canvas.endDebug();
@@ -414,20 +404,13 @@ public class WorldController implements Screen, ContactListener {
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
 	public void dispose() {
-		for(Obstacle obj : objects) {
-			obj.deactivatePhysics(world);
-		}
-		objects.clear();
+	    worldModel.dispose();
 		addQueue.clear();
-		world.dispose();
-		objects = null;
 		addQueue = null;
-		bounds = null;
-		scale  = null;
-		world  = null;
 		canvas = null;
 	}
 
+	// TODO: QUEUED OBJECT (Should probably move this to WorldModel)
 	/**
 	 *
 	 * Adds a physics object in to the insertion queue.
@@ -437,50 +420,37 @@ public class WorldController implements Screen, ContactListener {
 	 *
 	 * param obj The object to add
 	 */
-	public void addQueuedObject(Obstacle obj) {
-		assert inBounds(obj) : "Object is not in bounds";
-		addQueue.add(obj);
-	}
+	// public void addQueuedObject(Obstacle obj) {
+	// 	assert inBounds(obj) : "Object is not in bounds";
+	// 	addQueue.add(obj);
+	// }
 
 	/**
 	 * Immediately adds the object to the physics world
 	 *
 	 * param obj The object to add
 	 */
-	protected void addObject(Obstacle obj) {
-		assert inBounds(obj) : "Object is not in bounds";
-		objects.add(obj);
-		obj.activatePhysics(world);
-	}
-
-	/**
-	 * Returns true if the object is in bounds.
-	 *
-	 * This assertion is useful for debugging the physics.
-	 *
-	 * @param obj The object to check.
-	 *
-	 * @return true if the object is in bounds.
-	 */
-	public boolean inBounds(Obstacle obj) {
-		boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
-		boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
-		return horiz && vert;
-	}
+	// protected void addObject(Obstacle obj) {
+	// 	assert inBounds(obj) : "Object is not in bounds";
+	// 	objects.add(obj);
+	// 	obj.activatePhysics(world);
+	// }
 
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
-		Vector2 gravity = new Vector2( world.getGravity() );
+        worldModel = new WorldModel();
+        // TODO: WHAT
+		// Vector2 gravity = new Vector2( world.getGravity() );
 
-		for(Obstacle obj : objects) {
-			obj.deactivatePhysics(world);
-		}
-		objects.clear();
-		addQueue.clear();
-		world.dispose();
+		// for(Obstacle obj : objects) {
+		// 	obj.deactivatePhysics(world);
+		// }
+		// objects.clear();
+		// addQueue.clear();
+		// world.dispose();
 
-		world = new World(gravity,false);
-		world.setContactListener(this);
+		// world = new World(gravity,false);
+		// world.setContactListener(this);
 		populateLevel();
 	}
 	
@@ -527,9 +497,8 @@ public class WorldController implements Screen, ContactListener {
 		MechanicManager manager = MechanicManager.getInstance(object_list);
 
 		// TODO peer review below
-
-		item.updateCooldown();
-		item.updateRespawning();
+		// TODO: Wait for item refactor
+		ItemModel item = worldModel.getItem();
 
 		PlayerModel p;
 		float playerHorizontal;
@@ -542,7 +511,8 @@ public class WorldController implements Screen, ContactListener {
 			playerVertical = manager.getVelY(i);
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
-			p = player_list[i];
+			// TODO: player model refactor
+			p = worldModel.getPlayers()[i];
 
 			// handle player facing left-right
 			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
@@ -612,7 +582,7 @@ public class WorldController implements Screen, ContactListener {
 			}
 
 			if (item.getRespawning()) {
-				addItem(ITEM_START_POSITION);
+				addItem(worldModel.getITEMSTART());
 			}
 
 			// player cooldown (for respawn)
@@ -641,23 +611,27 @@ public class WorldController implements Screen, ContactListener {
 	 * @param dt Number of seconds since last animation frame
 	 */
 	public void postUpdate(float dt) {
+		// TODO: ADDQUEUE
+		// TODO: Although if we do implement this probably don't do it here and do it in worldmodel
 		// Add any objects created by actions
-		while (!addQueue.isEmpty()) {
-			addObject(addQueue.poll());
-		}
+		// while (!addQueue.isEmpty()) {
+		// 	addObject(addQueue.poll());
+		// }
 		
 		// Turn the physics engine crank.
-		world.step(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
+		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
 
+
+		// TODO: Maybe move this to WorldController
 		// Garbage collect the deleted objects.
 		// Note how we use the linked list nodes to delete O(1) in place.
 		// This is O(n) without copying.
-		Iterator<PooledList<Obstacle>.Entry> iterator = objects.entryIterator();
+		Iterator<PooledList<Obstacle>.Entry> iterator = worldModel.objectEntryIter();
 		while (iterator.hasNext()) {
 			PooledList<Obstacle>.Entry entry = iterator.next();
 			Obstacle obj = entry.getValue();
 			if (obj.isRemoved()) {
-				obj.deactivatePhysics(world);
+				obj.deactivatePhysics(worldModel.world);
 				entry.remove();
 			} else {
 				// Note that update is called last!
@@ -667,6 +641,8 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	private void addItem(Vector2 position) {
+		// TODO: wait for item refactor
+	    ItemModel item = worldModel.getItem();
 		item.draw = true;
 		item.setHeldStatus(false);
 		item.setPosition(position);
@@ -681,6 +657,8 @@ public class WorldController implements Screen, ContactListener {
 			player.draw = false;
 
 			if (player.item) {
+				// TODO: wait for item refactor
+				ItemModel item = worldModel.getItem();
 				item.holdingPlayer = null;
 				item.setHeldStatus(false);
 				item.startRespawning();
@@ -705,6 +683,8 @@ public class WorldController implements Screen, ContactListener {
 				player.item = false;
 				player.resetTexture();
 
+				// TODO: wait for item refactor
+				ItemModel item = worldModel.getItem();
 				item.holdingPlayer = null;
 				item.setHeldStatus(false);
 				item.startRespawning();

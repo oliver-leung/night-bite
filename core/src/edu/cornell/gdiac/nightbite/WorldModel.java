@@ -1,12 +1,16 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
+import org.w3c.dom.Text;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -27,9 +31,22 @@ public class WorldModel {
      /** World scale */
     protected Vector2 scale;
 
+    // TODO: Maybe use a better data structure
+    private ItemModel[] items;
+
     // TODO: This should be data driven
     /** Item parameters */
     protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
+
+    // TODO: PLEASE remove this eventually
+    public Vector2 getITEMSTART() {
+        return ITEM_START_POSITION;
+    }
+
+    // TODO: PLEASE fix this
+    public ItemModel getItem() {
+        return items[0];
+    }
 
     /** FOR AI */
 
@@ -41,23 +58,40 @@ public class WorldModel {
 
     private int NUM_PLAYERS = 2;
     private PlayerModel[] player_list;
-    // TODO: Maybe use a better data structure
-    private ItemModel[] items;
 
     private Rectangle bounds;
 
-    // TODO: DO we need addQueue?
 
-    public WorldModel(Vector2 gravity) {
-        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
-        // Actually technically not true since we can set this stuff in WorldController, but still
-        world = new World(gravity, false);
-        // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 32f, 16f);
+    // TODO: REMOVE ALL THESE DUMB TEXTURES
+    TextureRegion wallTile;
+    TextureRegion standTile;
+    TextureRegion backgroundTile;
+    TextureRegion goalTile;
+    TextureRegion holeTile;
+
+    public void setTextures(TextureRegion[] textures) {
+        wallTile = textures[0];
+        standTile = textures[1];
+        backgroundTile = textures[2];
+        goalTile = textures[3];
+        holeTile = textures[4];
     }
 
-    public void setScale(float x, float y) {
-        scale.set(x, y);
+    // TODO: END REMOVE ALL THESE DUMB TEXTURES
+
+    // TODO: DO we need addQueue?
+
+    public WorldModel() {
+        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
+        // Actually technically not true since we can set this stuff in WorldController, but still
+        world = new World(Vector2.Zero, false);
+        // TODO: CollisionController
+        // world.setContactListener();
+        // TODO: Make this data driven
+        bounds = new Rectangle(0, 0, 32f, 18f);
+        scale = new Vector2(1f, 1f);
+        dynamicObjects = new PooledList<>();
+        staticObjects = new PooledList<>();
     }
 
     public Iterable<Obstacle> getObjects() {
@@ -68,7 +102,7 @@ public class WorldModel {
             private int j = 0;
             @Override
             public boolean hasNext() {
-                return i >= lists.length;
+                return i < lists.length;
             }
 
             @Override
@@ -99,6 +133,40 @@ public class WorldModel {
         }
 
         return new objectIterator();
+    }
+
+    public Iterator<PooledList<Obstacle>.Entry> objectEntryIter() {
+        // Overkill, but I'm bored. Also this will probably help like a lot.
+        class objectIterable implements Iterator<PooledList<Obstacle>.Entry> {
+            Iterator<PooledList<Obstacle>.Entry> statIter = staticObjects.entryIterator();
+            Iterator<PooledList<Obstacle>.Entry> dynIter = dynamicObjects.entryIterator();
+            boolean finishedStat = false;
+            @Override
+            public boolean hasNext() {
+                return !statIter.hasNext() && ! dynIter.hasNext();
+            }
+
+            @Override
+            public PooledList<Obstacle>.Entry next() {
+                if (statIter.hasNext()) {
+                    return statIter.next();
+                }
+
+                if (dynIter.hasNext()) {
+                    return dynIter.next();
+                }
+
+                throw new NoSuchElementException();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        return new objectIterable();
+
     }
 
     public void populate() {
@@ -228,8 +296,31 @@ public class WorldModel {
         addDynamicObject(item);
     }
 
-    public void setObjectScale(float sx, float sy) {
+    public void setScale(Vector2 scale) {
+        setScale(scale.x, scale.y);
+    }
 
+    public void setScale(float sx, float sy) {
+        // scale.set(sx, sy);
+        scale.set(32f, 32f);
+        System.out.println(scale);
+    }
+
+    public float getHeight() {
+        return bounds.height;
+    }
+
+    public float getWidth() {
+        return bounds.height;
+    }
+
+    // TODO: player model refactor
+    public PlayerModel[] getPlayers() {
+        return player_list;
+    }
+
+    public void worldStep(float step, int vel, int posit) {
+        world.step(step, vel, posit);
     }
 
     /**
@@ -250,8 +341,7 @@ public class WorldModel {
     protected void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
-        // TODO: How do we activate physics
-        // obj.activatePhysics(world);
+        obj.activatePhysics(world);
     }
 
     protected void addDynamicObject(Obstacle obj) {
@@ -261,6 +351,8 @@ public class WorldModel {
     }
 
     public void reset() {
+        // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
+        // TODO: isn't really necessary
         staticObjects.clear();
         dynamicObjects.clear();
     }
@@ -278,4 +370,5 @@ public class WorldModel {
         world = null;
         scale = null;
     }
+
 }
