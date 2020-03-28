@@ -263,111 +263,6 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	/**
-	 * Preloads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void preLoadContent(AssetManager manager) {
-		manager.load(LoadingMode.PLAYER1_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER1_TEXTURE);
-		manager.load(LoadingMode.PLAYER2_FILMSTRIP, Texture.class);
-		assets.add(LoadingMode.PLAYER2_FILMSTRIP);
-		manager.load(LoadingMode.PLAYER_WITH_ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER_WITH_ITEM_TEXTURE);
-		manager.load(LoadingMode.ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.ITEM_TEXTURE);
-
-		if (worldAssetState != AssetState.EMPTY) {
-			return;
-		}
-
-		worldAssetState = AssetState.LOADING;
-		// Load the shared tiles.
-		loadFile(manager, LoadingMode.WALL_FILE);
-		loadFile(manager, LoadingMode.GOAL_FILE);
-		loadFile(manager, LoadingMode.GAME_BACKGROUND_FILE);
-		loadFile(manager, LoadingMode.STAND_FILE);
-		loadFile(manager, HoleModel.HOLE_FILE);
-
-		// Load the font
-		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-		size2Params.fontFileName = LoadingMode.FONT_FILE;
-		size2Params.fontParameters.size = LoadingMode.FONT_SIZE;
-		manager.load(LoadingMode.FONT_FILE, BitmapFont.class, size2Params);
-		assets.add(LoadingMode.FONT_FILE);
-	}
-
-	public void loadFile(AssetManager manager, String fileName) {
-		manager.load(fileName, Texture.class);
-		assets.add(fileName);
-	}
-
-	/**
-	 * Loads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void loadContent(AssetManager manager) {
-		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
-		// WorldController as a singleton
-		PlayerModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		PlayerModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
-
-		// TODO less whack way to do this
-		PlayerModel.playerTexture = new TextureRegion[NUM_PLAYERS];
-		PlayerModel.playerTexture[0] = PlayerModel.player1Texture;
-		PlayerModel.playerTexture[1] = PlayerModel.player2FilmStrip;
-
-		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
-
-		if (worldAssetState != AssetState.LOADING) {
-			return;
-		}
-
-		// Allocate the tiles
-		wallTile = LoadingMode.createTexture(manager, LoadingMode.WALL_FILE, true);
-		standTile = LoadingMode.createTexture(manager, LoadingMode.STAND_FILE, true);
-		backgroundTile = LoadingMode.createTexture(manager, LoadingMode.GAME_BACKGROUND_FILE, true);
-		goalTile = LoadingMode.createTexture(manager, LoadingMode.GOAL_FILE, true);
-		holeTile = LoadingMode.createTexture(manager, HoleModel.HOLE_FILE, true);
-
-		// Allocate the font
-		if (manager.isLoaded(LoadingMode.FONT_FILE)) {
-			displayFont = manager.get(LoadingMode.FONT_FILE, BitmapFont.class);
-		} else {
-			displayFont = null;
-		}
-
-		worldAssetState = AssetState.COMPLETE;
-	}
-
-	/**
-	 * Unloads the assets for this game.
-	 *
-	 * This method erases the static variables.  It also deletes the associated textures
-	 * from the asset manager. If no assets are loaded, this method does nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void unloadContent(AssetManager manager) {
-    	for(String s : assets) {
-    		if (manager.isLoaded(s)) {
-    			manager.unload(s);
-    		}
-    	}
-	}
-
-	/**
 	 * Returns true if debug mode is active.
 	 *
 	 * If true, all objects will display their physics bodies.
@@ -652,6 +547,17 @@ public class WorldController implements Screen, ContactListener {
 	}
 
 	private void populateLevel() {
+		/* populate asset textures */
+		holeTile = Assets.HOLE;
+		wallTile = Assets.WALL;
+		standTile = Assets.STAND;
+		backgroundTile = Assets.GAME_BACKGROUND;
+		displayFont = Assets.RETRO_FONT;
+		PlayerModel.playerTexture = Assets.PLAYER_FILMSTRIPS;
+		PlayerModel.player1FilmStrip = Assets.PLAYER_FILMSTRIPS[0];
+		PlayerModel.player2FilmStrip = Assets.PLAYER_FILMSTRIPS[1];
+		ItemModel.itemTexture = Assets.FISH_ITEM;
+
 		/* Add holes */
 		PolygonObstacle obj;
 		obj = new HoleModel(LevelController.WALL1, 16, 5);
@@ -762,11 +668,11 @@ public class WorldController implements Screen, ContactListener {
 
 		/* Add players */
 		// Team A
-		float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
-		float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
+		float pWidth = PlayerModel.player1FilmStrip.getRegionWidth() / scale.x;
+		float pHeight = PlayerModel.player1FilmStrip.getRegionHeight() / scale.y;
 		p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a", 0);
 		p1.setDrawScale(scale);
-		p1.setTexture(PlayerModel.player1Texture);
+		p1.setTexture(PlayerModel.player1FilmStrip);
 
 		/* Add home stalls */
 		// Team A
