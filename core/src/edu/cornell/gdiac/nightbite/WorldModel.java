@@ -2,10 +2,8 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
@@ -112,59 +110,37 @@ public class WorldModel {
         /* Add holes */
         PolygonObstacle obj;
         obj = new HoleModel(LevelController.WALL1, 16, 5);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         obj = new HoleModel(LevelController.WALL2, 2, 4);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         obj = new HoleModel(LevelController.WALL2, 30, 4);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         /* Add walls */
-        obj = new PolygonObstacle(LevelController.WALL2, 9.5f, 8);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.WALL2, 9.5f, 8);
         obj.setDrawScale(scale);
         obj.setTexture(wallTile);
         obj.setName("wall1");
         addStaticObject(obj);
 
-        obj = new PolygonObstacle(LevelController.WALL2, 22.5f, 8);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.WALL2, 22.5f, 8);
         obj.setDrawScale(scale);
         obj.setTexture(wallTile);
         obj.setName("wall2");
         addStaticObject(obj);
 
-        BoxObstacle wall;
+        WallModel wall;
         float ddwidth = wallTile.getRegionWidth() / scale.x;
         float ddheight = wallTile.getRegionHeight() / scale.y;
-        wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
-        wall.setDensity(IMMOVABLE_OBJ_DENSITY);
-        wall.setBodyType(BodyDef.BodyType.StaticBody);
+        wall = new WallModel(16, 3.5f, ddwidth, ddheight);
         wall.setDrawScale(scale);
         wall.setTexture(standTile);
         wall.setName("wall3");
@@ -173,44 +149,28 @@ public class WorldModel {
         /* Add screen edges */
 
         // left screen edge
-        obj = new PolygonObstacle(LevelController.VERT_WALL, 32.5f, 0);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.VERT_WALL, 32.5f, 0);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
 
         // right screen edge
-        obj = new PolygonObstacle(LevelController.VERT_WALL, -0.5f, 0);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.VERT_WALL, -0.5f, 0);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
 
         // top screen edge
-        obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, -0.5f);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.HORI_WALL, 0.0f, -0.5f);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
 
         // bottom screen edge
-        obj = new PolygonObstacle(LevelController.HORI_WALL, 0.0f, 18.5f);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        obj = new WallModel(LevelController.HORI_WALL, 0.0f, 18.5f);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -228,7 +188,6 @@ public class WorldModel {
         /* Add home stalls */
         // Team A
         HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
-        home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
         home.setName("homeA");
@@ -244,7 +203,6 @@ public class WorldModel {
         /* Add home stalls */
         // Team B
         home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
-        home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
         home.setName("homeB");
