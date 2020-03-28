@@ -58,10 +58,6 @@ public class WorldModel {
         bounds = new Rectangle(0, 0, 32f, 16f);
     }
 
-    public void setScale(float x, float y) {
-        scale.set(x, y);
-    }
-
     public Iterable<Obstacle> getObjects() {
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
@@ -270,8 +266,12 @@ public class WorldModel {
         addDynamicObject(item);
     }
 
-    public void setObjectScale(float sx, float sy) {
+    public void setScale(Vector2 scale) {
+        setScale(scale.x, scale.y);
+    }
 
+    public void setScale(float sx, float sy) {
+        scale.set(sx, sy);
     }
 
     /**
@@ -292,8 +292,7 @@ public class WorldModel {
     protected void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
-        // TODO: How do we activate physics
-        // obj.activatePhysics(world);
+        obj.activatePhysics(world);
     }
 
     protected void addDynamicObject(Obstacle obj) {
@@ -303,6 +302,8 @@ public class WorldModel {
     }
 
     public void reset() {
+        // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
+        // TODO: isn't really necessary
         staticObjects.clear();
         dynamicObjects.clear();
     }
