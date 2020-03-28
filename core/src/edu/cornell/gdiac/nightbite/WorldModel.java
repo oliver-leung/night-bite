@@ -301,8 +301,7 @@ public class WorldModel {
     }
 
     public void setScale(float sx, float sy) {
-        // scale.set(sx, sy);
-        scale.set(32f, 32f);
+        scale.set(sx, sy);
         System.out.println(scale);
     }
 
@@ -311,7 +310,7 @@ public class WorldModel {
     }
 
     public float getWidth() {
-        return bounds.height;
+        return bounds.width;
     }
 
     // TODO: player model refactor
