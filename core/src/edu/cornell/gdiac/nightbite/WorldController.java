@@ -17,6 +17,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.*;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
@@ -29,6 +30,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
@@ -531,6 +533,11 @@ public class WorldController implements Screen, ContactListener {
 		}
 		canvas.end();
 
+		// Now draw the shadows
+		if (rayhandler != null) {
+			rayhandler.render();
+		}
+
 		if (debug) {
 			canvas.beginDebug();
 			for (Obstacle obj : objects) {
@@ -544,9 +551,20 @@ public class WorldController implements Screen, ContactListener {
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
 	public void dispose() {
+		for(LightSource light : lights) {
+			light.remove();
+		}
+		lights.clear();
+
+		if (rayhandler != null) {
+			rayhandler.dispose();
+			rayhandler = null;
+		}
+
 		for(Obstacle obj : objects) {
 			obj.deactivatePhysics(world);
 		}
+
 		objects.clear();
 		addQueue.clear();
 		world.dispose();
@@ -612,7 +630,21 @@ public class WorldController implements Screen, ContactListener {
 		world.setContactListener(this);
 		setComplete(false);
 		setFailure(false);
+
+
+		initLighting();
+		createPointLight();
 		populateLevel();
+
+
+		/* TODO fix this */
+		for (LightSource light : lights) {
+			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
+		}
+
+		if (lights.size > 0) {
+			lights.get(0).setActive(true);
+		}
 	}
 	
 	/**
@@ -846,6 +878,10 @@ public class WorldController implements Screen, ContactListener {
 
 		item.updateCooldown();
 		item.updateRespawning();
+
+		if (rayhandler != null) {
+			rayhandler.update();
+		}
 
 		PlayerModel p;
 		float playerHorizontal;
@@ -1157,6 +1193,49 @@ public class WorldController implements Screen, ContactListener {
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
 	}
+
+	/**
+	 * TODO allow passing in of different lighting parameters
+	 */
+	private void initLighting() {
+		raycamera = new OrthographicCamera(bounds.width,bounds.height);
+		raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+		raycamera.update();
+
+		RayHandler.setGammaCorrection(true);
+		RayHandler.useDiffuseLight(true);
+		rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+		rayhandler.setCombinedMatrix(raycamera);
+
+		float[] color = new float[]{ 0.5f, 0.5f, 0.5f, 1.0f };
+		rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
+		int blur = 2;
+		rayhandler.setBlur(blur > 0);
+		rayhandler.setBlurNum(blur);
+	}
+
+	/**
+	 * Creates one point light, which goes in all directions.
+	 *
+	 * TODO allow parameters to be passed
+	 */
+	private void createPointLight() {
+		float[] color = new float[]{ 1.0f, 0.2f, 0.0f, 1.0f };
+		float[] pos = new float[]{ 0.0f, 0.0f };
+		float dist  = 7.0f;
+		int rays = 512;
+
+		PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+		point.setColor(color[0],color[1],color[2],color[3]);
+		point.setSoft(false);
+
+		// Create a filter to exclude see through items
+		Filter f = new Filter();
+		f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
+		point.setContactFilter(f);
+		point.setActive(false); // TURN ON LATER
+		lights.add(point);
+	}
 	
 	/**
 	 * Called when the Screen should render itself.
@@ -1230,6 +1309,29 @@ public class WorldController implements Screen, ContactListener {
 		LOADING,
 		/** Assets are complete */
 		COMPLETE
+	}
+
+	/**
+	 * Returns a string equivalent to the COMPLEMENT of bits in s
+	 *
+	 * This function assumes that s is a string of 0s and 1s of length < 16.
+	 * This function allows the JSON file to specify exclusion bit arrays (for masking)
+	 * in a readable format.
+	 *
+	 * @param s the string representation of the bit array
+	 *
+	 * @return a string equivalent to the COMPLEMENT of bits in s
+	 */
+	public static short bitStringToComplement(String s) {
+		short value = 0;
+		short pos = 1;
+		for(int ii = s.length()-1; ii >= 0; ii--) {
+			if (s.charAt(ii) == '0') {
+				value += pos;
+			}
+			pos *= 2;
+		}
+		return value;
 	}
 
 }
