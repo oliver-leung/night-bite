@@ -24,7 +24,6 @@ public class CollisionController implements ContactListener {
     }
 
     public void beginContact(Contact contact) {
-        System.out.println("contact");
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
@@ -108,9 +107,7 @@ public class CollisionController implements ContactListener {
         } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
 
             // Player-Item
-            ((ItemModel) object).holdingPlayer = player;
             player.setOverlapItem(true);
-            System.out.println("hmm");
 
         } else if (object instanceof HomeModel) {
 
@@ -137,7 +134,6 @@ public class CollisionController implements ContactListener {
             if (p == null) {
                 item.startRespawn();
             }
-            item.draw = false;
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
             item.setUnheld();
             item.startRespawn();

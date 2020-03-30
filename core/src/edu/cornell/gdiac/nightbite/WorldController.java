@@ -249,8 +249,8 @@ public class WorldController implements Screen {
 	public void loadContent(AssetManager manager) {
 		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
 		// WorldController as a singleton
-		player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
+		worldModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
+		worldModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
 
 		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
 
@@ -500,6 +500,7 @@ public class WorldController implements Screen {
 		// TODO peer review below
 		// TODO: Wait for item refactor
 		ItemModel item = worldModel.getItem();
+		item.update();
 
 		PlayerModel p;
 		float playerHorizontal;
@@ -518,7 +519,7 @@ public class WorldController implements Screen {
 
 			// handle player facing left-right
 			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
-				PlayerModel.playerTexture[i].flip(true, false);
+				p.playerTexture.flip(true, false);
 			}
 
 			// update player state // TODO film strip: needs player 1 film strip first
@@ -535,11 +536,11 @@ public class WorldController implements Screen {
 //				playerWalkCounter = 0;
 //				PlayerModel.player2FilmStrip.setFrame(0);
 //			}
-//			if (playerHorizontal != 0 || playerVertical != 0) {
-//				p.setWalk();
-//			} else {
-//				p.setStatic();
-//			}
+			if (playerHorizontal != 0 || playerVertical != 0) {
+				p.setWalk();
+			} else {
+				p.setStatic();
+			}
 
 			// Set player movement impulse
 			p.setIX(playerHorizontal);
@@ -562,45 +563,26 @@ public class WorldController implements Screen {
 			}
 
 			/* IF PLAYER GRABS ITEM */
-			// TODO how to make fair (if grab at same time, player 1 advantage)
-			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
-				// A gets fish
-				p.item = true;
-				item.holdingPlayer = p;
-				item.setHeldStatus(true);
+			if (!item.isHeld() && p.getOverlapItem() && playerDidThrow && item.cooldownOver()) {
+				item.setHeld(p);
 				item.startCooldown();
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			// if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
-			// 	p.item = false;
-			// 	item.holdingPlayer = null;
-			// 	item.setHeldStatus(false);
-			// 	item.startCooldown();
-			// 	item.throwItem(p.getImpulse());
-
-			// 	item.startSensor();
-			// 	item.setThrow(true);
-			// }
-
-			if (item.getRespawning()) {
-				addItem(worldModel.getITEMSTART());
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownOver()) {
+				item.setUnheld();
+				item.startCooldown();
+				item.throwItem(p.getImpulse());
 			}
 
-			// player cooldown (for respawn)
-			p.cooldown();
+			// player updates (for respawn and dash cool down)
+			p.update();
 
 			// update horizontal direction
 			if (playerHorizontal != 0) {
 				prev_hori_dir[i] = playerHorizontal;
 			}
 		}
-
-		// item
-		if (item.getThrow()) {
-			item.checkStopped();
-		}
-		prevRespawning = item.getRespawning();
 	}
 	
 	/**
@@ -640,14 +622,6 @@ public class WorldController implements Screen {
 				obj.update(dt);
 			}
 		}
-	}
-
-	private void addItem(Vector2 position) {
-		// TODO: wait for item refactor
-	    ItemModel item = worldModel.getItem();
-		item.draw = true;
-		item.setHeldStatus(false);
-		item.setPosition(position);
 	}
 
 

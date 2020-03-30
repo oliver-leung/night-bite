@@ -383,8 +383,6 @@ public class WorldModel {
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);
         item.setDrawScale(scale);
-//        item.setTexture(ItemModel.itemTexture);
-//        item.setMovable(true);
         items = new ItemModel[] {item};
         addDynamicObject(item);
     }
