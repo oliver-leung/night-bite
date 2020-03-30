@@ -52,12 +52,14 @@ import java.util.Iterator;
  */
 public class WorldController implements Screen {
 
-	/** GAME END CHECKS */
-
-	public static final int ITEMS_TO_WIN = 3;
 
 	/** Exit code for quitting the game */
 	public static final int EXIT_QUIT = 0;
+
+	/**
+	 * Exit code for advancing to next level
+	 */
+	public static final int EXIT_NEXT = 1;
 
 	/** PHYSICS ENGINE STEP */
 
@@ -82,7 +84,6 @@ public class WorldController implements Screen {
 	public TextureRegion backgroundTile;
 	public TextureRegion standTile;
 	public TextureRegion holeTile;
-	protected String winner;
 	/**
 	 * The texture for the exit condition
 	 */
@@ -95,11 +96,6 @@ public class WorldController implements Screen {
 	 * The texture for walls and platforms
 	 */
 	protected TextureRegion wallTile;
-
-	/** Player 1 */
-	protected PlayerModel p1;
-	/** Player 2 */
-	protected PlayerModel p2;
 
 	/**
 	 * Item
@@ -321,7 +317,8 @@ public class WorldController implements Screen {
 	public void setDebug(boolean value) {
 		debug = value;
 	}
-	
+
+
 	/**
 	 * Returns the canvas associated with this controller
 	 *
@@ -386,6 +383,11 @@ public class WorldController implements Screen {
 		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
 
+		if (worldModel.isComplete()) {
+			displayFont.setColor(Color.YELLOW);
+			canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+		}
+
 		canvas.end();
 
 		if (debug) {
@@ -437,6 +439,8 @@ public class WorldController implements Screen {
 		// TODO: Reset should basically throw away WorldModel and make a new one
         worldModel = new WorldModel();
         worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        CollisionController c = new CollisionController(worldModel);
+        worldModel.setContactListener(c);
         // TODO: WHAT
 		// Vector2 gravity = new Vector2( world.getGravity() );
 
@@ -485,6 +489,10 @@ public class WorldController implements Screen {
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
+		} else if (worldModel.isDone()){
+		    // TODO: Bruh i can actually just reset it here
+			listener.exitScreen(this, EXIT_NEXT);
+			return false;
 		}
 		return true;
 	}
@@ -505,12 +513,15 @@ public class WorldController implements Screen {
 		boolean playerDidThrow;
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 
+
 			playerHorizontal = manager.getVelX(i);
 			playerVertical = manager.getVelY(i);
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
 			// TODO: player model refactor
 			p = worldModel.getPlayers()[i];
+			System.out.println("item" + p.item);
+			System.out.println("II" + item.holdingPlayer);
 
 			// handle player facing left-right
 			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
@@ -554,12 +565,14 @@ public class WorldController implements Screen {
 
 			/* IF FISH IN PLAYER HANDS */
 			if (p.item) {
+				System.out.println("setting pos");
 				item.setPosition(p.getX(), p.getY() + 1f);
 			}
 
 			/* IF PLAYER GRABS ITEM */
 			// TODO how to make fair (if grab at same time, player 1 advantage)
 			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
+			    System.out.println("trigger");
 				// A gets fish
 				p.item = true;
 				item.holdingPlayer = p;
@@ -568,16 +581,16 @@ public class WorldController implements Screen {
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
-				p.item = false;
-				item.holdingPlayer = null;
-				item.setHeldStatus(false);
-				item.startCooldown();
-				item.throwItem(p.getImpulse());
+			// if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownStatus()) {
+			// 	p.item = false;
+			// 	item.holdingPlayer = null;
+			// 	item.setHeldStatus(false);
+			// 	item.startCooldown();
+			// 	item.throwItem(p.getImpulse());
 
-				item.startSensor();
-				item.setThrow(true);
-			}
+			// 	item.startSensor();
+			// 	item.setThrow(true);
+			// }
 
 			if (item.getRespawning()) {
 				addItem(worldModel.getITEMSTART());
@@ -646,16 +659,6 @@ public class WorldController implements Screen {
 		item.setPosition(position);
 	}
 
-
-	public void checkWinCondition(HomeModel homeObject) {
-		if (homeObject.getScore() >= ITEMS_TO_WIN) {
-			if (homeObject.getTeam().equals("a")) {
-				winner = "PLAYER B ";
-			} else if (homeObject.getTeam().equals("b")) {
-				winner = "PLAYER A ";
-			}
-		}
-	}
 
 	/**
 	 * Called when the Screen is resized.

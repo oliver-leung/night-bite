@@ -3,6 +3,7 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -26,6 +27,14 @@ public class WorldModel {
     private static final float MOVABLE_OBJ_FRICTION = 0.1f;
     private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
 
+    public String winner;
+
+    /**
+     * How many frames after winning/losing do we continue?
+     */
+    public static final int EXIT_COUNT = 120;
+
+
     /** World */
     protected World world;
      /** World scale */
@@ -47,6 +56,15 @@ public class WorldModel {
     public ItemModel getItem() {
         return items[0];
     }
+
+    /**
+     * Whether we have completed this level
+     */
+    private boolean complete;
+    /**
+     * Countdown active for winning or losing
+     */
+    private int countdown;
 
     /** FOR AI */
 
@@ -86,12 +104,41 @@ public class WorldModel {
         // Actually technically not true since we can set this stuff in WorldController, but still
         world = new World(Vector2.Zero, false);
         // TODO: CollisionController
-        // world.setContactListener();
         // TODO: Make this data driven
         bounds = new Rectangle(0, 0, 32f, 18f);
         scale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
         staticObjects = new PooledList<>();
+        complete = false;
+        countdown = -1;
+    }
+
+    /**
+     * Returns true if the level is completed.
+     *
+     * If true, the level will advance after a countdown
+     *
+     * @return true if the level is completed.
+     */
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public boolean isDone() {
+        countdown --;
+        return countdown <= 0 && complete;
+    }
+
+    /**
+     * Complete the level
+     */
+    public void completeLevel() {
+        countdown = EXIT_COUNT;
+        complete = true;
+    }
+
+    public void setContactListener(ContactListener c) {
+        world.setContactListener(c);
     }
 
     public Iterable<Obstacle> getObjects() {

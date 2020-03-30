@@ -15,7 +15,17 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
+    /** GAME END CHECKS */
+    public static final int ITEMS_TO_WIN = 3;
+
+    private WorldModel worldModel;
+
+    public CollisionController(WorldModel worldModel) {
+        this.worldModel = worldModel;
+    }
+
     public void beginContact(Contact contact) {
+        System.out.println("contact");
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
@@ -106,7 +116,9 @@ public class CollisionController implements ContactListener {
         } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
 
             // Player-Item
+            ((ItemModel) object).holdingPlayer = player;
             player.setOverlapItem(true);
+            System.out.println("hmm");
 
         } else if (object instanceof HomeModel) {
 
@@ -159,5 +171,17 @@ public class CollisionController implements ContactListener {
             checkWinCondition(homeObject);
         }
     }
+
+    public void checkWinCondition(HomeModel homeObject) {
+        if (homeObject.getScore() >= ITEMS_TO_WIN) {
+            worldModel.completeLevel();
+            if (homeObject.getTeam().equals("a")) {
+                worldModel.winner = "PLAYER B ";
+            } else if (homeObject.getTeam().equals("b")) {
+                worldModel.winner = "PLAYER A ";
+            }
+        }
+    }
+
 
 }
