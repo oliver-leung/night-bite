@@ -144,26 +144,23 @@ public class WorldModel {
     public Iterable<Obstacle> getObjects() {
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
-            private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
-            private int i = 0;
-            private int j = 0;
+            // private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
+            private Iterator<Obstacle> list0 = staticObjects.iterator();
+            private Iterator<Obstacle> list1 = dynamicObjects.iterator();
             @Override
             public boolean hasNext() {
-                return i < lists.length;
+                return list0.hasNext() || list1.hasNext();
             }
 
             @Override
             public Obstacle next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
+                if (list0.hasNext()) {
+                    return list0.next();
                 }
-                Obstacle ret = lists[i].get(j);
-                j ++;
-                if (j >= lists[i].size()) {
-                    j = 0;
-                    i ++;
+                if (list1.hasNext()) {
+                    return list1.next();
                 }
-                return ret;
+                throw new NoSuchElementException();
             }
 
             @Override

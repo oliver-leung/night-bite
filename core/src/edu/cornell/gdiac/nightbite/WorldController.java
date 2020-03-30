@@ -520,8 +520,6 @@ public class WorldController implements Screen {
 			playerDidThrow = manager.isThrowing(i);
 			// TODO: player model refactor
 			p = worldModel.getPlayers()[i];
-			System.out.println("item" + p.item);
-			System.out.println("II" + item.holdingPlayer);
 
 			// handle player facing left-right
 			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
@@ -565,14 +563,12 @@ public class WorldController implements Screen {
 
 			/* IF FISH IN PLAYER HANDS */
 			if (p.item) {
-				System.out.println("setting pos");
 				item.setPosition(p.getX(), p.getY() + 1f);
 			}
 
 			/* IF PLAYER GRABS ITEM */
 			// TODO how to make fair (if grab at same time, player 1 advantage)
 			if (!item.getHeldStatus() && p.getOverlapItem() && playerDidThrow && item.cooldownStatus()) {
-			    System.out.println("trigger");
 				// A gets fish
 				p.item = true;
 				item.holdingPlayer = p;
