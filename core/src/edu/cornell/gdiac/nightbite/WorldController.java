@@ -249,13 +249,8 @@ public class WorldController implements Screen {
 	public void loadContent(AssetManager manager) {
 		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
 		// WorldController as a singleton
-		PlayerModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		PlayerModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
-
-		// TODO less whack way to do this
-		PlayerModel.playerTexture = new TextureRegion[NUM_PLAYERS];
-		PlayerModel.playerTexture[0] = PlayerModel.player1Texture;
-		PlayerModel.playerTexture[1] = PlayerModel.player2FilmStrip;
+		player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
+		player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
 
 		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
 
