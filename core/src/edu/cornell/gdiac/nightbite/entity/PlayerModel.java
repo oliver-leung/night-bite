@@ -17,7 +17,7 @@ public class PlayerModel extends CapsuleObstacle {
     /**
      * Texture assets for the ball
      */
-    public static TextureRegion player1Texture;
+    public static FilmStrip player1FilmStrip;
     public static FilmStrip player2FilmStrip;
     public static TextureRegion[] playerTexture;
 
