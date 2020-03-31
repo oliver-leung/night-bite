@@ -72,8 +72,8 @@ public class LevelController {
         WallModel wall;
         for (JsonValue wallJson : walls.iterator()) {
             if (wallJson.getString("shape").equals("square")) {
-                float ddwidth = world.wallTile.getRegionWidth() / world.scale.x;
-                float ddheight = world.wallTile.getRegionHeight() / world.scale.y;
+                float ddwidth = Assets.WALL.getRegionWidth() / world.scale.x;
+                float ddheight = Assets.WALL.getRegionHeight() / world.scale.y;
                 wall = new WallModel(16, 3.5f, ddwidth, ddheight);
             } else {
                 wall = new WallModel(
