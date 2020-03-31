@@ -4,13 +4,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.PooledList;
-import org.w3c.dom.Text;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -26,10 +23,14 @@ public class WorldModel {
     private static final float MOVABLE_OBJ_FRICTION = 0.1f;
     private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
 
-    /** World */
+    /**
+     * World
+     */
     protected World world;
-     /** World scale */
-    protected Vector2 scale;
+    /**
+     * World scale
+     */
+    public Vector2 scale;
 
     // TODO: Maybe use a better data structure
     private ItemModel[] items;
@@ -63,11 +64,11 @@ public class WorldModel {
 
 
     // TODO: REMOVE ALL THESE DUMB TEXTURES
-    TextureRegion wallTile;
-    TextureRegion standTile;
-    TextureRegion backgroundTile;
-    TextureRegion goalTile;
-    TextureRegion holeTile;
+    public TextureRegion wallTile;
+    public TextureRegion standTile;
+    public TextureRegion backgroundTile;
+    public TextureRegion goalTile;
+    public TextureRegion holeTile;
 
     public void setTextures(TextureRegion[] textures) {
         wallTile = textures[0];
@@ -337,13 +338,13 @@ public class WorldModel {
         return horiz && vert;
     }
 
-    protected void addStaticObject(Obstacle obj) {
+    public void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
         obj.activatePhysics(world);
     }
 
-    protected void addDynamicObject(Obstacle obj) {
+    public void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         dynamicObjects.add(obj);
         obj.activatePhysics(world);

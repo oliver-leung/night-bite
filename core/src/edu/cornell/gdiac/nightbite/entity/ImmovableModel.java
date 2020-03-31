@@ -20,10 +20,10 @@ public abstract class ImmovableModel extends PolygonObstacle {
     public ImmovableModel(float x, float y, float width, float height) {
         super(
                 new float[]{
+                        x - width / 2, y + height / 2,
                         x + width / 2, y + height / 2,
                         x + width / 2, y - height / 2,
-                        x - width / 2, y - height / 2,
-                        x - width / 2, y + height / 2},
+                        x - width / 2, y - height / 2},
                 x, y);
     }
 

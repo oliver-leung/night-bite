@@ -1,0 +1,60 @@
+{
+    "walls": {
+        "wall 1": {
+            "shape": "horizontal rectangle",
+            "x": 9.5,
+            "y": 8
+        },
+        "wall 2": {
+            "shape": "horizontal rectangle",
+            "x": 22.5,
+            "y": 8
+        },
+        "wall 3": {
+            "shape": "square",
+            "x": 16,
+            "y": 3.5
+        },
+        "left border": {
+            "shape": "vertical border",
+            "x": 32.5,
+            "y": 0
+        },
+        "right border": {
+            "shape": "vertical border",
+            "x": -0.5,
+            "y": 0
+        },
+        "top border": {
+            "shape": "horizontal border",
+            "x": 0,
+            "y": -0.5
+        },
+        "bottom border": {
+            "shape": "horizontal border",
+            "x": 0,
+            "y": 18.5
+        }
+    },
+    "holes": {
+        "hole 1": {
+            "shape": "vertical rectangle",
+            "x": 16,
+            "y": 5
+        },
+        "hole 2": {
+            "shape": "horizontal rectangle",
+            "x": 2,
+            "y": 4
+        },
+        "hole 3": {
+            "shape": "horizontal rectangle",
+            "x": 30,
+            "y": 4
+        }
+    },
+    "teams": {
+        "a": {
+        }
+    }
+}
