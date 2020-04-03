@@ -80,7 +80,7 @@ public class WorldModel {
     private Rectangle bounds;
 
     /** Player textures */
-    public static TextureRegion player1Texture;
+    public static FilmStrip player1FilmStrip;
     public static FilmStrip player2FilmStrip;
 
 
@@ -90,13 +90,17 @@ public class WorldModel {
     TextureRegion backgroundTile;
     TextureRegion goalTile;
     TextureRegion holeTile;
+    TextureRegion itemTexture;
 
-    public void setTextures(TextureRegion[] textures) {
+    public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
         wallTile = textures[0];
         standTile = textures[1];
         backgroundTile = textures[2];
         goalTile = textures[3];
         holeTile = textures[4];
+        itemTexture = textures[5];
+        player1FilmStrip = filmStrips[0];
+        player2FilmStrip = filmStrips[1];
     }
 
     // TODO: END REMOVE ALL THESE DUMB TEXTURES
@@ -334,9 +338,9 @@ public class WorldModel {
 
         /* Add players */
         // Team A
-        float pWidth = player1Texture.getRegionWidth() / scale.x;
-        float pHeight = player1Texture.getRegionHeight() / scale.y;
-        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1Texture, "a");
+        float pWidth = player1FilmStrip.getRegionWidth() / scale.x;
+        float pHeight = player1FilmStrip.getRegionHeight() / scale.y;
+        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1FilmStrip, "a");
         p1.setDensity(MOVABLE_OBJ_DENSITY);
         p1.setFriction(MOVABLE_OBJ_FRICTION);
         p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
@@ -376,9 +380,9 @@ public class WorldModel {
         player_list = new PlayerModel[] { p1, p2 };
 
         /* Add items */
-        float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
-        float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
-        ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight);
+        float itemWidth = itemTexture.getRegionWidth() / scale.x;
+        float itemHeight = itemTexture.getRegionHeight() / scale.y;
+        ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight, itemTexture);
         item.setDensity(MOVABLE_OBJ_DENSITY);
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);

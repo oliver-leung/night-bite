@@ -30,7 +30,7 @@ public class ItemModel extends BoxObstacle {
     private float MOTION_DAMPING = 25f;
 
 
-    public ItemModel(float x, float y, float width, float height) {
+    public ItemModel(float x, float y, float width, float height, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
         setSensor(true);

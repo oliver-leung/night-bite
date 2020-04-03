@@ -31,6 +31,7 @@ import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -82,20 +83,10 @@ public class WorldController implements Screen {
 
 
 	public TextureRegion backgroundTile;
-	public TextureRegion standTile;
-	public TextureRegion holeTile;
-	/**
-	 * The texture for the exit condition
-	 */
-	protected TextureRegion goalTile;
 	/**
 	 * The font for giving messages to the player
 	 */
 	protected BitmapFont displayFont;
-	/**
-	 * The texture for walls and platforms
-	 */
-	protected TextureRegion wallTile;
 
 	/**
 	 * Item
@@ -103,14 +94,6 @@ public class WorldController implements Screen {
 	// protected ItemModel item;
 	// protected boolean prevRespawning = false;
 
-	/**
-	 * Track asset loading from all instances and subclasses
-	 */
-	protected AssetState worldAssetState = AssetState.EMPTY;
-	/**
-	 * Track all loaded assets (for unloading purposes)
-	 */
-	protected Array<String> assets;
 	/**
 	 * Reference to the game canvas
 	 */
@@ -158,7 +141,6 @@ public class WorldController implements Screen {
 		setDebug(false);
 		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
-		assets = new Array<>();
 		debug = false;
 		active = false;
 	}
@@ -189,106 +171,6 @@ public class WorldController implements Screen {
 	// TODO: Remove Parameters
 	protected WorldController(float width, float height, float gravity) {
 		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
-	}
-
-	/**
-	 * Preloads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void preLoadContent(AssetManager manager) {
-		manager.load(LoadingMode.PLAYER1_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER1_TEXTURE);
-		manager.load(LoadingMode.PLAYER2_FILMSTRIP, Texture.class);
-		assets.add(LoadingMode.PLAYER2_FILMSTRIP);
-		manager.load(LoadingMode.PLAYER_WITH_ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER_WITH_ITEM_TEXTURE);
-		manager.load(LoadingMode.ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.ITEM_TEXTURE);
-
-		if (worldAssetState != AssetState.EMPTY) {
-			return;
-		}
-
-		worldAssetState = AssetState.LOADING;
-		// Load the shared tiles.
-		loadFile(manager, LoadingMode.WALL_FILE);
-		loadFile(manager, LoadingMode.GOAL_FILE);
-		loadFile(manager, LoadingMode.GAME_BACKGROUND_FILE);
-		loadFile(manager, LoadingMode.STAND_FILE);
-		loadFile(manager, HoleModel.HOLE_FILE);
-
-		// Load the font
-		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-		size2Params.fontFileName = LoadingMode.FONT_FILE;
-		size2Params.fontParameters.size = LoadingMode.FONT_SIZE;
-		manager.load(LoadingMode.FONT_FILE, BitmapFont.class, size2Params);
-		assets.add(LoadingMode.FONT_FILE);
-	}
-
-	public void loadFile(AssetManager manager, String fileName) {
-		manager.load(fileName, Texture.class);
-		assets.add(fileName);
-	}
-
-	/**
-	 * Loads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void loadContent(AssetManager manager) {
-		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
-		// WorldController as a singleton
-		worldModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		worldModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
-
-		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
-
-		if (worldAssetState != AssetState.LOADING) {
-			return;
-		}
-
-		// Allocate the tiles
-		wallTile = LoadingMode.createTexture(manager, LoadingMode.WALL_FILE, true);
-		standTile = LoadingMode.createTexture(manager, LoadingMode.STAND_FILE, true);
-		backgroundTile = LoadingMode.createTexture(manager, LoadingMode.GAME_BACKGROUND_FILE, true);
-		goalTile = LoadingMode.createTexture(manager, LoadingMode.GOAL_FILE, true);
-		holeTile = LoadingMode.createTexture(manager, HoleModel.HOLE_FILE, true);
-
-		// Allocate the font
-		if (manager.isLoaded(LoadingMode.FONT_FILE)) {
-			displayFont = manager.get(LoadingMode.FONT_FILE, BitmapFont.class);
-		} else {
-			displayFont = null;
-		}
-
-		worldAssetState = AssetState.COMPLETE;
-	}
-
-	/**
-	 * Unloads the assets for this game.
-	 *
-	 * This method erases the static variables.  It also deletes the associated textures
-	 * from the asset manager. If no assets are loaded, this method does nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void unloadContent(AssetManager manager) {
-    	for(String s : assets) {
-    		if (manager.isLoaded(s)) {
-    			manager.unload(s);
-    		}
-    	}
 	}
 
 	/**
@@ -337,7 +219,12 @@ public class WorldController implements Screen {
 	}
 
 	public void populateLevel() {
-		worldModel.setTextures(new TextureRegion[] {wallTile, standTile, backgroundTile, goalTile, holeTile});
+		/** Populate asset textures */
+		backgroundTile = Assets.GAME_BACKGROUND;
+		displayFont = Assets.RETRO_FONT;
+
+		worldModel.setTextures(new TextureRegion[] {Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
+				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[] {Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
 	    worldModel.populate();
 	}
 
