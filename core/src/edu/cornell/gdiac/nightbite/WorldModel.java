@@ -33,7 +33,7 @@ public class WorldModel {
     private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
 
     /** Movable object parameters */
-    private static final float MOVABLE_OBJ_DENSITY = 1.0f;
+    private static final float MOVABLE_OBJ_DENSITY = 0.5f;
     private static final float MOVABLE_OBJ_FRICTION = 0.1f;
     private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
 
