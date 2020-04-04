@@ -16,9 +16,12 @@
  */
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -27,6 +30,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
@@ -34,6 +38,8 @@ import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.util.LightSource;
+import edu.cornell.gdiac.util.PointSource;
 
 import java.util.Iterator;
 
@@ -53,8 +59,11 @@ import java.util.Iterator;
  */
 public class WorldController implements Screen {
 
+	public static final int ITEMS_TO_WIN = 3;
 
-	/** Exit code for quitting the game */
+	/**
+	 * Exit code for quitting the game
+	 */
 	public static final int EXIT_QUIT = 0;
 
 	/**
@@ -272,6 +281,12 @@ public class WorldController implements Screen {
 
 		canvas.end();
 
+		// Draw with rayhandler
+		RayHandler rayhandler = worldModel.getRayhandler();
+		if (rayhandler != null) {
+			rayhandler.render();
+		}
+
 		if (debug) {
 			canvas.beginDebug();
 			for (Obstacle obj : worldModel.getObjects()) {
@@ -286,6 +301,7 @@ public class WorldController implements Screen {
 	 */
 	public void dispose() {
 	    worldModel.dispose();
+
 		addQueue.clear();
 		addQueue = null;
 		canvas = null;
@@ -335,7 +351,23 @@ public class WorldController implements Screen {
 
 		// world = new World(gravity,false);
 		// world.setContactListener(this);
+
+		worldModel.initLighting();
+		worldModel.createPointLight();
 		populateLevel();
+
+
+		// Attaching lights to p1 is janky and serves mostly as demo code
+		// TODO make data-driven
+		Array<LightSource> lights = worldModel.getLights();
+		PlayerModel p1 = worldModel.getPlayers()[0];  //
+		for (LightSource light : lights) {
+			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
+		}
+
+		if (lights.size > 0) {
+			lights.get(0).setActive(true);
+		}
 	}
 	
 	/**
@@ -388,6 +420,11 @@ public class WorldController implements Screen {
 		// TODO: Wait for item refactor
 		ItemModel item = worldModel.getItem();
 		item.update();
+
+		RayHandler rayhandler = worldModel.getRayhandler();
+		if (rayhandler != null) {
+			rayhandler.update();
+		}
 
 		PlayerModel p;
 		float playerHorizontal;
