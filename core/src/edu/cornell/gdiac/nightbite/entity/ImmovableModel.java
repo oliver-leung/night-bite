@@ -2,29 +2,19 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
-public abstract class ImmovableModel extends PolygonObstacle {
+public abstract class ImmovableModel extends BoxObstacle {
     private static final float DEFAULT_DENSITY = 0f;
     private static final float DEFAULT_FRICTION = 1f;
     private static final float DEFAULT_RESTITUTION = 0f;
 
-    public ImmovableModel(float[] points, float x, float y) {
-        super(points, x, y);
+    public ImmovableModel(float x, float y) {
+        super(x + 0.5f, y + 0.5f, 1, 1);
         setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
-    }
-
-    public ImmovableModel(float x, float y, float width, float height) {
-        super(
-                new float[]{
-                        x - width / 2, y + height / 2,
-                        x + width / 2, y + height / 2,
-                        x + width / 2, y - height / 2,
-                        x - width / 2, y - height / 2},
-                x, y);
     }
 
     public boolean activatePhysics(World world) {

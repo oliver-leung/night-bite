@@ -32,11 +32,11 @@ public class LevelController {
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal("jsons/level.json"));
         createWalls(world, levelFormat.get("walls"));
         createHoles(world, levelFormat.get("holes"));
-        createPlayers(world, levelFormat.get("players"));
+        createTeams(world, levelFormat.get("teams"));
     }
 
-    private void createPlayers(WorldModel world, JsonValue players) {
-
+    private void createTeams(WorldModel world, JsonValue players) {
+        
     }
 
     private void createHoles(WorldModel world, JsonValue holes) {
@@ -46,7 +46,7 @@ public class LevelController {
                     wallJson.getFloat("x"),
                     wallJson.getFloat("y"));
             hole.setDrawScale(world.scale);
-            hole.setTexture(Assets.WALL);
+            hole.setTexture(Assets.HOLE);
             hole.setName(wallJson.name());
             world.addStaticObject(hole);
         }
@@ -55,16 +55,9 @@ public class LevelController {
     void createWalls(WorldModel world, JsonValue walls) {
         WallModel wall;
         for (JsonValue wallJson : walls.iterator()) {
-            if (wallJson.getString("shape").equals("square")) {
-                float ddwidth = Assets.WALL.getRegionWidth() / world.scale.x;
-                float ddheight = Assets.WALL.getRegionHeight() / world.scale.y;
-                wall = new WallModel(16, 3.5f, ddwidth, ddheight);
-            } else {
-                wall = new WallModel(
-                        shapes.get(wallJson.getString("shape")).asFloatArray(),
-                        wallJson.getFloat("x"),
-                        wallJson.getFloat("y"));
-            }
+            wall = new WallModel(
+                    wallJson.getFloat("x"),
+                    wallJson.getFloat("y"));
             wall.setDrawScale(world.scale);
             wall.setTexture(Assets.WALL);
             wall.setName(wallJson.name());

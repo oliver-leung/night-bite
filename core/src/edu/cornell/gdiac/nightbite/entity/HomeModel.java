@@ -1,9 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
-public class HomeModel extends BoxObstacle {
+public class HomeModel extends ImmovableModel {
     // TODO: Extending ImmovableModel causes the positioning and textures to be thrown out of wack. Change the second
     // constructor in ImmovableModel to reflect that of BoxObstacle.
     private String team;
@@ -11,7 +10,7 @@ public class HomeModel extends BoxObstacle {
     private int score;
 
     public HomeModel(float x, float y, float width, float height, String team) {
-        super(x, y, width, height);
+        super(x, y);
         this.team = team;
         this.score = 0;
 

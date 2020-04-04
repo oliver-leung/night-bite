@@ -66,7 +66,7 @@ public class WorldModel {
     /**
      * World scale
      */
-    protected Vector2 scale;
+    public Vector2 scale;
 
     /**
      * FOR AI
@@ -434,7 +434,7 @@ public class WorldModel {
         return horiz && vert;
     }
 
-    protected void addStaticObject(Obstacle obj) {
+    public void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
         obj.activatePhysics(world);
