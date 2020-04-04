@@ -9,18 +9,6 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class LevelController {
     /**
-     * Walls for level
-     */
-    public static final float[] WALL1 = {-2.0f, 10.5f, 2.0f, 10.5f, 2.0f, 9.5f, -2.0f, 9.5f};
-    public static final float[] WALL2 = {-0.5f, 5.0f, 0.5f, 5.0f, 0.5f, 0.0f, -0.5f, 0.0f};
-
-    /**
-     * Wall for screen edge
-     */
-    public static final float[] VERT_WALL = {-0.5f, 18.0f, 0.5f, 18.0f, 0.5f, 0.0f, -0.5f, 0.0f};
-    public static final float[] HORI_WALL = {0.0f, 0.5f, 32.0f, 0.5f, 32.0f, -0.5f, 0.0f, -0.5f};
-
-    /**
      * Initial player positions
      */
     public static Vector2 p1_position = new Vector2(26, 3);
@@ -29,11 +17,8 @@ public class LevelController {
     private static LevelController instance;
     private static JsonReader jsonReader;
 
-    private static JsonValue shapes;
-
     private LevelController() {
         jsonReader = new JsonReader();
-        shapes = jsonReader.parse(Gdx.files.internal("jsons/shapes"));
     }
 
     public static LevelController getInstance() {
@@ -58,7 +43,6 @@ public class LevelController {
         HoleModel hole;
         for (JsonValue wallJson : holes.iterator()) {
             hole = new HoleModel(
-                    shapes.get(wallJson.getString("shape")).asFloatArray(),
                     wallJson.getFloat("x"),
                     wallJson.getFloat("y"));
             hole.setDrawScale(world.scale);

@@ -3,41 +3,51 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    /** Immovable object parameters */
-    private static final float IMMOVABLE_OBJ_DENSITY = 0f;
+    /**
+     * How many frames after winning/losing do we continue?
+     */
+    public static final int EXIT_COUNT = 120;
     private static final float IMMOVABLE_OBJ_FRICTION = 1f;
     private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
-
-    /** Movable object parameters */
-    private static final float MOVABLE_OBJ_DENSITY = 1.0f;
+    /**
+     * Immovable object parameters
+     */
+    private static final float IMMOVABLE_OBJ_DENSITY = 0f;
     private static final float MOVABLE_OBJ_FRICTION = 0.1f;
     private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
-
     /**
-     * World
+     * Movable object parameters
      */
-    protected World world;
+    private static final float MOVABLE_OBJ_DENSITY = 1.0f;
     /**
-     * World scale
+     * Player textures
      */
-    public Vector2 scale;
+    public static TextureRegion player1Texture;
+    public static FilmStrip player2FilmStrip;
+    /**
+     * Item parameters
+     */
+    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
 
     // TODO: Maybe use a better data structure
     private ItemModel[] items;
 
     // TODO: This should be data driven
-    /** Item parameters */
-    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
+    public String winner;
 
     // TODO: PLEASE remove this eventually
     public Vector2 getITEMSTART() {
@@ -49,26 +59,42 @@ public class WorldModel {
         return items[0];
     }
 
-    /** FOR AI */
+    /**
+     * World
+     */
+    protected World world;
+    /**
+     * World scale
+     */
+    protected Vector2 scale;
 
-    /** Objects that don't move during updates */
-    private PooledList<Obstacle> staticObjects;
-    /** Objects that move during updates */
-    private PooledList<Obstacle> dynamicObjects;
-
-
-    private int NUM_PLAYERS = 2;
-    private PlayerModel[] player_list;
-
-    private Rectangle bounds;
-
-
+    /**
+     * FOR AI
+     */
     // TODO: REMOVE ALL THESE DUMB TEXTURES
-    public TextureRegion wallTile;
-    public TextureRegion standTile;
-    public TextureRegion backgroundTile;
-    public TextureRegion goalTile;
-    public TextureRegion holeTile;
+    TextureRegion wallTile;
+    TextureRegion standTile;
+    TextureRegion backgroundTile;
+    TextureRegion goalTile;
+    TextureRegion holeTile;
+    private PlayerModel[] player_list;
+    private Rectangle bounds;
+    /**
+     * Objects that don't move during updates
+     */
+    private PooledList<Obstacle> staticObjects;
+    /**
+     * Objects that move during updates
+     */
+    private PooledList<Obstacle> dynamicObjects;
+    /**
+     * Whether we have completed this level
+     */
+    private boolean complete;
+    /**
+     * Countdown active for winning or losing
+     */
+    private int countdown;
 
     public void setTextures(TextureRegion[] textures) {
         wallTile = textures[0];
@@ -87,37 +113,64 @@ public class WorldModel {
         // Actually technically not true since we can set this stuff in WorldController, but still
         world = new World(Vector2.Zero, false);
         // TODO: CollisionController
-        // world.setContactListener();
         // TODO: Make this data driven
         bounds = new Rectangle(0, 0, 32f, 18f);
         scale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
         staticObjects = new PooledList<>();
+        complete = false;
+        countdown = -1;
+    }
+
+    /**
+     * Returns true if the level is completed.
+     * <p>
+     * If true, the level will advance after a countdown
+     *
+     * @return true if the level is completed.
+     */
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public boolean isDone() {
+        countdown--;
+        return countdown <= 0 && complete;
+    }
+
+    /**
+     * Complete the level
+     */
+    public void completeLevel() {
+        countdown = EXIT_COUNT;
+        complete = true;
+    }
+
+    public void setContactListener(ContactListener c) {
+        world.setContactListener(c);
     }
 
     public Iterable<Obstacle> getObjects() {
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
-            private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
-            private int i = 0;
-            private int j = 0;
+            // private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
+            private Iterator<Obstacle> list0 = staticObjects.iterator();
+            private Iterator<Obstacle> list1 = dynamicObjects.iterator();
+
             @Override
             public boolean hasNext() {
-                return i < lists.length;
+                return list0.hasNext() || list1.hasNext();
             }
 
             @Override
             public Obstacle next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
+                if (list0.hasNext()) {
+                    return list0.next();
                 }
-                Obstacle ret = lists[i].get(j);
-                j ++;
-                if (j >= lists[i].size()) {
-                    j = 0;
-                    i ++;
+                if (list1.hasNext()) {
+                    return list1.next();
                 }
-                return ret;
+                throw new NoSuchElementException();
             }
 
             @Override
@@ -179,37 +232,61 @@ public class WorldModel {
         /* Add holes */
         PolygonObstacle obj;
         obj = new HoleModel(LevelController.WALL1, 16, 5);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         obj = new HoleModel(LevelController.WALL2, 2, 4);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         obj = new HoleModel(LevelController.WALL2, 30, 4);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
         /* Add walls */
         obj = new WallModel(LevelController.WALL2, 9.5f, 8);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(wallTile);
         obj.setName("wall1");
         addStaticObject(obj);
 
         obj = new WallModel(LevelController.WALL2, 22.5f, 8);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(wallTile);
         obj.setName("wall2");
         addStaticObject(obj);
 
-        WallModel wall;
+        BoxObstacle wall;
         float ddwidth = wallTile.getRegionWidth() / scale.x;
         float ddheight = wallTile.getRegionHeight() / scale.y;
-        wall = new WallModel(16, 3.5f, ddwidth, ddheight);
+        wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
+        wall.setDensity(IMMOVABLE_OBJ_DENSITY);
+        wall.setFriction(IMMOVABLE_OBJ_FRICTION);
+        wall.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
+        wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
         wall.setTexture(standTile);
         wall.setName("wall3");
@@ -219,6 +296,10 @@ public class WorldModel {
 
         // left screen edge
         obj = new WallModel(LevelController.VERT_WALL, 32.5f, 0);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -226,6 +307,10 @@ public class WorldModel {
 
         // right screen edge
         obj = new WallModel(LevelController.VERT_WALL, -0.5f, 0);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -233,6 +318,10 @@ public class WorldModel {
 
         // top screen edge
         obj = new WallModel(LevelController.HORI_WALL, 0.0f, -0.5f);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -240,6 +329,10 @@ public class WorldModel {
 
         // bottom screen edge
         obj = new WallModel(LevelController.HORI_WALL, 0.0f, 18.5f);
+        obj.setBodyType(BodyDef.BodyType.StaticBody);
+        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
+        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
+        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -247,16 +340,19 @@ public class WorldModel {
 
         /* Add players */
         // Team A
-        float pWidth = PlayerModel.player1Texture.getRegionWidth() / scale.x;
-        float pHeight = PlayerModel.player1Texture.getRegionHeight() / scale.y;
-        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, "a", 0);
+        float pWidth = player1Texture.getRegionWidth() / scale.x;
+        float pHeight = player1Texture.getRegionHeight() / scale.y;
+        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1Texture, "a");
+        p1.setDensity(MOVABLE_OBJ_DENSITY);
+        p1.setFriction(MOVABLE_OBJ_FRICTION);
+        p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p1.setDrawScale(scale);
-        p1.setTexture(PlayerModel.player1Texture);
-        p1.setMovable(true);
+//        p1.setMovable(true);
 
         /* Add home stalls */
         // Team A
         HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
+        home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
         home.setName("homeA");
@@ -264,14 +360,17 @@ public class WorldModel {
 
         /* Add players */
         // Team B
-        PlayerModel p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, "b",1);
+        PlayerModel p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, player2FilmStrip, "b");
+        p2.setDensity(MOVABLE_OBJ_DENSITY);
+        p2.setFriction(MOVABLE_OBJ_FRICTION);
+        p2.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p2.setDrawScale(scale);
-        p2.setTexture(PlayerModel.player2FilmStrip);
-        p2.setMovable(true);
+//        p2.setMovable(true);
 
         /* Add home stalls */
         // Team B
         home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
+        home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
         home.setName("homeB");
@@ -290,9 +389,6 @@ public class WorldModel {
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);
         item.setDrawScale(scale);
-        item.setTexture(ItemModel.itemTexture);
-        item.setSensor(true);
-        item.setMovable(true);
         items = new ItemModel[] {item};
         addDynamicObject(item);
     }
@@ -333,18 +429,18 @@ public class WorldModel {
      * @return true if the object is in bounds.
      */
     public boolean inBounds(Obstacle obj) {
-        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
-        boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
+        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
         return horiz && vert;
     }
 
-    public void addStaticObject(Obstacle obj) {
+    protected void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
         obj.activatePhysics(world);
     }
 
-    public void addDynamicObject(Obstacle obj) {
+    protected void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         dynamicObjects.add(obj);
         obj.activatePhysics(world);

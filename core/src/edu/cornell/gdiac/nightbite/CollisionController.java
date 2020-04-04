@@ -15,6 +15,14 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
+    public static final int ITEMS_TO_WIN = 3;
+
+    private WorldModel worldModel;
+
+    public CollisionController(WorldModel worldModel) {
+        this.worldModel = worldModel;
+    }
+
     public void beginContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
@@ -54,18 +62,15 @@ public class CollisionController implements ContactListener {
             PlayerModel playerB = (PlayerModel) b;
 
             Vector2 flyDirection;
-            if (playerA.state == PlayerModel.MoveState.RUN &&
-                    (playerB.state == PlayerModel.MoveState.WALK || playerB.state == PlayerModel.MoveState.STATIC)) {
+            if (playerA.state == PlayerModel.MoveState.RUN && playerB.state != PlayerModel.MoveState.RUN) {
                 flyDirection = playerB.getLinearVelocity().nor();
                 playerA.resetBoosting();
                 playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
-            } else if (playerB.state == PlayerModel.MoveState.RUN &&
-                    (playerA.state == PlayerModel.MoveState.WALK || playerA.state == PlayerModel.MoveState.STATIC)) {
+            } else if (playerB.state == PlayerModel.MoveState.RUN && playerA.state != PlayerModel.MoveState.RUN) {
                 flyDirection = playerA.getLinearVelocity().nor();
                 playerA.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerA.getPosition(), true);
                 playerB.resetBoosting();
-            } else if (playerB.state == PlayerModel.MoveState.RUN &&
-                    (playerA.state == PlayerModel.MoveState.RUN)) {
+            } else if (playerB.state == PlayerModel.MoveState.RUN && playerA.state == PlayerModel.MoveState.RUN) {
                 flyDirection = playerA.getLinearVelocity().nor();
                 playerA.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerA.getPosition(), true);
                 flyDirection = playerB.getLinearVelocity().nor();
@@ -91,16 +96,12 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
 
             // Player-Hole collision
-            player.setAlive(false);
-            player.draw = false;
+            player.setDead();
 
             if (player.item) {
-                // TODO: wait for item refactor
                 ItemModel item = worldModel.getItem();
-                item.holdingPlayer = null;
-                item.setHeldStatus(false);
-                item.startRespawning();
-                item.draw = false;
+                item.setUnheld();
+                item.startRespawn();
             }
 
         } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
@@ -113,20 +114,13 @@ public class CollisionController implements ContactListener {
             // Player-Home
             HomeModel homeObject = (HomeModel) object;
             // If players went to their own home, drop off item and increment score
-            // TODO no consequence if try to drop item at opponent's home?
             if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
 
                 homeObject.incrementScore();
 
-                player.item = false;
-                player.resetTexture();
-
-                // TODO: wait for item refactor
                 ItemModel item = worldModel.getItem();
-                item.holdingPlayer = null;
-                item.setHeldStatus(false);
-                item.startRespawning();
-                item.draw = false;
+                item.setUnheld();
+                item.startRespawn();
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -137,19 +131,12 @@ public class CollisionController implements ContactListener {
     public void handleItemToObjectContact(ItemModel item, Object object) {
         if (object instanceof HoleModel) {
             PlayerModel p = item.holdingPlayer;
-            if (p != null) {
-                p.item = false;
+            if (p == null) {
+                item.startRespawn();
             }
-
-            item.holdingPlayer = null;
-            item.setHeldStatus(false);
-
-            item.startRespawning();
-            item.draw = false;
-        } else if ((object instanceof HomeModel) && (item.holdingPlayer == null)) {
-            item.setHeldStatus(false);
-            item.startRespawning();
-            item.draw = false;
+        } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
+            item.setUnheld();
+            item.startRespawn();
 
             // add score
             HomeModel homeObject = (HomeModel) object;
@@ -160,4 +147,14 @@ public class CollisionController implements ContactListener {
         }
     }
 
+    public void checkWinCondition(HomeModel homeObject) {
+        if (homeObject.getScore() >= ITEMS_TO_WIN) {
+            worldModel.completeLevel();
+            if (homeObject.getTeam().equals("a")) {
+                worldModel.winner = "PLAYER B ";
+            } else if (homeObject.getTeam().equals("b")) {
+                worldModel.winner = "PLAYER A ";
+            }
+        }
+    }
 }

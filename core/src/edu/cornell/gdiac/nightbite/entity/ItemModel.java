@@ -7,28 +7,44 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
 public class ItemModel extends BoxObstacle {
 
+    /**
+     * item texture
+     */
     public static TextureRegion itemTexture;
-
-    private Vector2 item_init_position;
-
+    /**
+     * item-player
+     */
     public PlayerModel holdingPlayer;
-
+    public PlayerModel lastTouch;
+    /**
+     * item parameters
+     */
+    private Vector2 item_init_position;
+    /**
+     * item respawn
+     */
     private float respawn;
     private int RESPAWN_TIME = 150;
 
-    /** cooldown for grabbing and throwing items */
+    /**
+     * cooldown for grabbing and throwing items
+     */
     private int itemCooldown;
     private static int ITEM_COOLDOWN_PERIOD = 15;
 
-    /** throwing configs */
+    /**
+     * throwing configs
+     */
     private float THROW_FORCE = 500f;
     private float MOTION_DAMPING = 25f;
 
 
     public ItemModel(float x, float y, float width, float height) {
         super(x, y, width, height);
-        setName("item");
+        setTexture(itemTexture);
+        setSensor(true);
         setBullet(true);
+        setName("item");
 
         item_init_position = new Vector2(x, y);
     }
@@ -79,6 +95,7 @@ public class ItemModel extends BoxObstacle {
     public void setHeld(PlayerModel p) {
         p.item = true;
         holdingPlayer = p;
+        lastTouch = p;
 
         setSensor(true);
     }
