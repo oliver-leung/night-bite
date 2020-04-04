@@ -132,8 +132,7 @@ public class WorldController implements Screen {
 
 	private WorldModel worldModel;
 
-	// TODO: Fix after item refactor
-	private boolean prevRespawning;
+	private int[] playerWalkCounter = new int[] {0, 0};
 
 	/**
 	 * Creates a new game world
@@ -441,29 +440,38 @@ public class WorldController implements Screen {
 			// TODO: player model refactor
 			p = worldModel.getPlayers()[i];
 
-			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
-				p.playerTexture.flip(true, false);
-			}
-
 			// update player state // TODO film strip: needs player 1 film strip first
-//			if (playerVertical != 0 || playerHorizontal != 0) {
-//				p.setWalk();
-//				if (playerWalkCounter % 20 == 0) {
-//					PlayerModel.player2FilmStrip.setFrame(1);
-//				} else if (playerWalkCounter % 20 == 10) {
-//					PlayerModel.player2FilmStrip.setFrame(0);
-//				}
-//				playerWalkCounter++;
-//			} else {
-//				p.setStatic();
-//				playerWalkCounter = 0;
-//				PlayerModel.player2FilmStrip.setFrame(0);
-//			}
+			if (playerVertical != 0 || playerHorizontal != 0) {
+				p.setWalk();
+				if (playerWalkCounter[i] % 20 == 0) {
+					p.playerTexture.setFrame(1);
+					if (prev_hori_dir[i] == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				} else if (playerWalkCounter[i] % 20 == 10) {
+					p.playerTexture.setFrame(0);
+					if (prev_hori_dir[i] == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				}
+				playerWalkCounter[i]++;
+			} else {
+				p.setStatic();
+				playerWalkCounter[i] = 0;
+				p.playerTexture.setFrame(0);
+				if (prev_hori_dir[i] == 1) {
+					p.playerTexture.flip(true, false);
+				}
+			}
 			if (playerHorizontal != 0 || playerVertical != 0) {
 				p.setWalk();
 			} else {
 				p.setStatic();
+			}
+
+			// handle player facing left-right
+			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
+				p.playerTexture.flip(true, false);
 			}
 
 			// Set player movement impulse
