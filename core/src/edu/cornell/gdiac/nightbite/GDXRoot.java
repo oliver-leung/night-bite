@@ -40,6 +40,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private AssetManager manager;
 	/**
+	 * Asset handler
+	 */
+	private Assets assets;
+	/**
 	 * Drawing context to display graphics (VIEW CLASS)
 	 */
 	private GameCanvas canvas;
@@ -51,10 +55,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * List of all WorldControllers
 	 */
 	private WorldController controller;
-	/**
-	 * Asset handler
-	 */
-	private Assets assets;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -83,8 +83,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadingMode(canvas, manager, 1);
 
 		assets = new Assets(manager);
-		controller = new WorldController();
 		assets.preLoadContent(manager);
+		controller = new WorldController();
 
 		loading.setScreenListener(this);
 		setScreen(loading);

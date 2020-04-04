@@ -16,23 +16,30 @@
  */
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.entity.HoleModel;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.util.LightSource;
+import edu.cornell.gdiac.util.PointSource;
 
 import java.util.Iterator;
 
@@ -52,6 +59,7 @@ import java.util.Iterator;
  */
 public class WorldController implements Screen {
 
+	public static final int ITEMS_TO_WIN = 3;
 
 	/**
 	 * Exit code for quitting the game
@@ -65,28 +73,18 @@ public class WorldController implements Screen {
 
 	/** PHYSICS ENGINE STEP */
 
-	/**
-	 * The amount of time for a physics engine step.
-	 */
+	/** The amount of time for a physics engine step. */
 	public static final float WORLD_STEP = 1 / 60.0f;
-	/**
-	 * Number of velocity iterations for the constrain solvers.
-	 */
+	/** Number of velocity iterations for the constrain solvers. */
 	public static final int WORLD_VELOC = 6;
-	/**
-	 * Number of position iterations for the constrain solvers.
-	 */
+	/** Number of position iterations for the constrain solvers. */
 	public static final int WORLD_POSIT = 2;
 
 	/** GAME PARAMS */
 
-	/**
-	 * Width of the game world in Box2d units.
-	 */
+	/** Width of the game world in Box2d units. */
 	protected static final float DEFAULT_WIDTH = 32.0f;
-	/**
-	 * Height of the game world in Box2d units.
-	 */
+	/** Height of the game world in Box2d units. */
 	protected static final float DEFAULT_HEIGHT = 18.0f;
 
 
@@ -94,20 +92,10 @@ public class WorldController implements Screen {
 
 
 	public TextureRegion backgroundTile;
-	public TextureRegion standTile;
-	public TextureRegion holeTile;
-	/**
-	 * The texture for the exit condition
-	 */
-	protected TextureRegion goalTile;
 	/**
 	 * The font for giving messages to the player
 	 */
 	protected BitmapFont displayFont;
-	/**
-	 * The texture for walls and platforms
-	 */
-	protected TextureRegion wallTile;
 
 	/**
 	 * Item
@@ -115,14 +103,6 @@ public class WorldController implements Screen {
 	// protected ItemModel item;
 	// protected boolean prevRespawning = false;
 
-	/**
-	 * Track asset loading from all instances and subclasses
-	 */
-	protected AssetState worldAssetState = AssetState.EMPTY;
-	/**
-	 * Track all loaded assets (for unloading purposes)
-	 */
-	protected Array<String> assets;
 	/**
 	 * Reference to the game canvas
 	 */
@@ -152,8 +132,7 @@ public class WorldController implements Screen {
 
 	private WorldModel worldModel;
 
-	// TODO: Fix after item refactor
-	private boolean prevRespawning;
+	private int[] playerWalkCounter = new int[] {0, 0};
 
 	/**
 	 * Creates a new game world
@@ -170,7 +149,6 @@ public class WorldController implements Screen {
 		setDebug(false);
 		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
-		assets = new Array<>();
 		debug = false;
 		active = false;
 	}
@@ -204,106 +182,6 @@ public class WorldController implements Screen {
 	}
 
 	/**
-	 * Preloads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void preLoadContent(AssetManager manager) {
-		manager.load(LoadingMode.PLAYER1_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER1_TEXTURE);
-		manager.load(LoadingMode.PLAYER2_FILMSTRIP, Texture.class);
-		assets.add(LoadingMode.PLAYER2_FILMSTRIP);
-		manager.load(LoadingMode.PLAYER_WITH_ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.PLAYER_WITH_ITEM_TEXTURE);
-		manager.load(LoadingMode.ITEM_TEXTURE, Texture.class);
-		assets.add(LoadingMode.ITEM_TEXTURE);
-
-		if (worldAssetState != AssetState.EMPTY) {
-			return;
-		}
-
-		worldAssetState = AssetState.LOADING;
-		// Load the shared tiles.
-		loadFile(manager, LoadingMode.WALL_FILE);
-		loadFile(manager, LoadingMode.GOAL_FILE);
-		loadFile(manager, LoadingMode.GAME_BACKGROUND_FILE);
-		loadFile(manager, LoadingMode.STAND_FILE);
-		loadFile(manager, HoleModel.HOLE_FILE);
-
-		// Load the font
-		FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-		size2Params.fontFileName = LoadingMode.FONT_FILE;
-		size2Params.fontParameters.size = LoadingMode.FONT_SIZE;
-		manager.load(LoadingMode.FONT_FILE, BitmapFont.class, size2Params);
-		assets.add(LoadingMode.FONT_FILE);
-	}
-
-	public void loadFile(AssetManager manager, String fileName) {
-		manager.load(fileName, Texture.class);
-		assets.add(fileName);
-	}
-
-	/**
-	 * Loads the assets for this controller.
-	 * <p>
-	 * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-	 * this time.  However, we still want the assets themselves to be static.  So
-	 * we have an AssetState that determines the current loading state.  If the
-	 * assets are already loaded, this method will do nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void loadContent(AssetManager manager) {
-		// TODO: Refactor this method such that these fields are either in other classes or accessing fields of
-		// WorldController as a singleton
-		WorldModel.player1Texture = LoadingMode.createTexture(manager, LoadingMode.PLAYER1_TEXTURE, false);
-		WorldModel.player2FilmStrip = LoadingMode.createFilmStrip(manager, LoadingMode.PLAYER2_FILMSTRIP, 1, 2, 2);
-
-		ItemModel.itemTexture = LoadingMode.createTexture(manager, LoadingMode.ITEM_TEXTURE, false);
-
-		if (worldAssetState != AssetState.LOADING) {
-			return;
-		}
-
-		// Allocate the tiles
-		wallTile = LoadingMode.createTexture(manager, LoadingMode.WALL_FILE, true);
-		standTile = LoadingMode.createTexture(manager, LoadingMode.STAND_FILE, true);
-		backgroundTile = LoadingMode.createTexture(manager, LoadingMode.GAME_BACKGROUND_FILE, true);
-		goalTile = LoadingMode.createTexture(manager, LoadingMode.GOAL_FILE, true);
-		holeTile = LoadingMode.createTexture(manager, HoleModel.HOLE_FILE, true);
-
-		// Allocate the font
-		if (manager.isLoaded(LoadingMode.FONT_FILE)) {
-			displayFont = manager.get(LoadingMode.FONT_FILE, BitmapFont.class);
-		} else {
-			displayFont = null;
-		}
-
-		worldAssetState = AssetState.COMPLETE;
-	}
-
-	/**
-	 * Unloads the assets for this game.
-	 * <p>
-	 * This method erases the static variables.  It also deletes the associated textures
-	 * from the asset manager. If no assets are loaded, this method does nothing.
-	 *
-	 * @param manager Reference to global asset manager.
-	 */
-	public void unloadContent(AssetManager manager) {
-		for (String s : assets) {
-			if (manager.isLoaded(s)) {
-				manager.unload(s);
-			}
-		}
-	}
-
-	/**
 	 * Returns true if debug mode is active.
 	 *
 	 * If true, all objects will display their physics bodies.
@@ -328,7 +206,7 @@ public class WorldController implements Screen {
 
 	/**
 	 * Returns the canvas associated with this controller
-	 * <p>
+	 *
 	 * The canvas is shared across all controllers
 	 */
 	public GameCanvas getCanvas() {
@@ -337,7 +215,7 @@ public class WorldController implements Screen {
 
 	/**
 	 * Sets the canvas associated with this controller
-	 * <p>
+	 *
 	 * The canvas is shared across all controllers.  Setting this value will compute
 	 * the drawing scale from the canvas size.
 	 *
@@ -345,12 +223,17 @@ public class WorldController implements Screen {
 	 */
 	public void setCanvas(GameCanvas canvas) {
 		this.canvas = canvas;
-		worldModel.setScale(canvas.getWidth() / worldModel.getWidth(), canvas.getHeight() / worldModel.getHeight());
+		worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
 	}
 
 	public void populateLevel() {
-		worldModel.setTextures(new TextureRegion[]{wallTile, standTile, backgroundTile, goalTile, holeTile});
-		worldModel.populate();
+		/** Populate asset textures */
+		backgroundTile = Assets.GAME_BACKGROUND;
+		displayFont = Assets.RETRO_FONT;
+
+		worldModel.setTextures(new TextureRegion[] {Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
+				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[] {Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
+	    worldModel.populate();
 	}
 
 	/**
@@ -397,6 +280,12 @@ public class WorldController implements Screen {
 
 		canvas.end();
 
+		// Draw with rayhandler
+		RayHandler rayhandler = worldModel.getRayhandler();
+		if (rayhandler != null) {
+			rayhandler.render();
+		}
+
 		if (debug) {
 			canvas.beginDebug();
 			for (Obstacle obj : worldModel.getObjects()) {
@@ -404,13 +293,14 @@ public class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
-	}
-
+    }
+	
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
 	public void dispose() {
-		worldModel.dispose();
+	    worldModel.dispose();
+
 		addQueue.clear();
 		addQueue = null;
 		canvas = null;
@@ -433,7 +323,7 @@ public class WorldController implements Screen {
 
 	/**
 	 * Immediately adds the object to the physics world
-	 * <p>
+	 *
 	 * param obj The object to add
 	 */
 	// protected void addObject(Obstacle obj) {
@@ -441,13 +331,14 @@ public class WorldController implements Screen {
 	// 	objects.add(obj);
 	// 	obj.activatePhysics(world);
 	// }
+
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
-		worldModel = new WorldModel();
-		worldModel.setScale(canvas.getWidth() / worldModel.getWidth(), canvas.getHeight() / worldModel.getHeight());
-		CollisionController c = new CollisionController(worldModel);
-		worldModel.setContactListener(c);
-		// TODO: WHAT
+        worldModel = new WorldModel();
+        worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        CollisionController c = new CollisionController(worldModel);
+        worldModel.setContactListener(c);
+        // TODO: WHAT
 		// Vector2 gravity = new Vector2( world.getGravity() );
 
 		// for(Obstacle obj : objects) {
@@ -459,7 +350,23 @@ public class WorldController implements Screen {
 
 		// world = new World(gravity,false);
 		// world.setContactListener(this);
+
+		worldModel.initLighting();
+		worldModel.createPointLight();
 		populateLevel();
+
+
+		// Attaching lights to p1 is janky and serves mostly as demo code
+		// TODO make data-driven
+		Array<LightSource> lights = worldModel.getLights();
+		PlayerModel p1 = worldModel.getPlayers()[0];  //
+		for (LightSource light : lights) {
+			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
+		}
+
+		if (lights.size > 0) {
+			lights.get(0).setActive(true);
+		}
 	}
 	
 	/**
@@ -486,7 +393,7 @@ public class WorldController implements Screen {
 		if (input.didDebug()) {
 			debug = !debug;
 		}
-
+		
 		// Handle resets
 		if (input.didReset()) {
 			reset();
@@ -495,8 +402,8 @@ public class WorldController implements Screen {
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} else if (worldModel.isDone()) {
-			// TODO: Bruh i can actually just reset it here
+		} else if (worldModel.isDone()){
+		    // TODO: Bruh i can actually just reset it here
 			listener.exitScreen(this, EXIT_NEXT);
 			return false;
 		}
@@ -513,6 +420,11 @@ public class WorldController implements Screen {
 		ItemModel item = worldModel.getItem();
 		item.update();
 
+		RayHandler rayhandler = worldModel.getRayhandler();
+		if (rayhandler != null) {
+			rayhandler.update();
+		}
+
 		PlayerModel p;
 		float playerHorizontal;
 		float playerVertical;
@@ -528,29 +440,38 @@ public class WorldController implements Screen {
 			// TODO: player model refactor
 			p = worldModel.getPlayers()[i];
 
-			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
-				p.playerTexture.flip(true, false);
-			}
-
 			// update player state // TODO film strip: needs player 1 film strip first
-//			if (playerVertical != 0 || playerHorizontal != 0) {
-//				p.setWalk();
-//				if (playerWalkCounter % 20 == 0) {
-//					PlayerModel.player2FilmStrip.setFrame(1);
-//				} else if (playerWalkCounter % 20 == 10) {
-//					PlayerModel.player2FilmStrip.setFrame(0);
-//				}
-//				playerWalkCounter++;
-//			} else {
-//				p.setStatic();
-//				playerWalkCounter = 0;
-//				PlayerModel.player2FilmStrip.setFrame(0);
-//			}
+			if (playerVertical != 0 || playerHorizontal != 0) {
+				p.setWalk();
+				if (playerWalkCounter[i] % 20 == 0) {
+					p.playerTexture.setFrame(1);
+					if (prev_hori_dir[i] == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				} else if (playerWalkCounter[i] % 20 == 10) {
+					p.playerTexture.setFrame(0);
+					if (prev_hori_dir[i] == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				}
+				playerWalkCounter[i]++;
+			} else {
+				p.setStatic();
+				playerWalkCounter[i] = 0;
+				p.playerTexture.setFrame(0);
+				if (prev_hori_dir[i] == 1) {
+					p.playerTexture.flip(true, false);
+				}
+			}
 			if (playerHorizontal != 0 || playerVertical != 0) {
 				p.setWalk();
 			} else {
 				p.setStatic();
+			}
+
+			// handle player facing left-right
+			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
+				p.playerTexture.flip(true, false);
 			}
 
 			// Set player movement impulse
@@ -563,9 +484,7 @@ public class WorldController implements Screen {
 			p.applyImpulse();
 
 			/* Play state */
-			if (!p.isAlive()) {
-				p.respawn();
-			}
+			if (!p.isAlive()) { p.respawn(); }
 			p.setActive(p.isAlive());
 
 			/* Items */
@@ -614,9 +533,9 @@ public class WorldController implements Screen {
 		// while (!addQueue.isEmpty()) {
 		// 	addObject(addQueue.poll());
 		// }
-
+		
 		// Turn the physics engine crank.
-		worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
+		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
 
 
 		// TODO: Maybe move this to WorldController

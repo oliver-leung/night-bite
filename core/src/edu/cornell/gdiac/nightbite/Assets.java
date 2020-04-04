@@ -34,27 +34,27 @@ public class Assets {
 
     /** RESOURCES */
     // Character
-    static String[] PLAYER_FILMSTRIP_FILES = {"ball/char1trimmed.png", "ball/char2.png"};
+    static String[] PLAYER_FILMSTRIP_FILES = {"character/granny_walkcycle_64_fs_v1.png", "character/lin_walkcycle_64_fs_v2.png"};
     static int PLAYER_FILMSTRIP_ROW = 1;
-    static int PLAYER_FILMSTRIP_COL = 2;
-    static int PLAYER_FILMSTRIP_SIZE = 2;
+    static int PLAYER_FILMSTRIP_COL = 4;
+    static int PLAYER_FILMSTRIP_SIZE = 4;
 
     // Item
-    static  String FISH_ITEM_FILE = "ball/fish.png";
+    static  String FISH_ITEM_FILE = "item/fish.png";
 
     // Obstacle
-    static String WALL_FILE = "ball/brick.png";
-    static String HOLE_FILE = "shared/hole2.png";
-    static String STAND_FILE = "shared/stand-border.png";
+    static String WALL_FILE = "environment/brick.png";
+    static String HOLE_FILE = "environment/hole2.png";
+    static String STAND_FILE = "environment/stand-border.png";
 
     // Background
-    static String GAME_BACKGROUND_FILE = "ball/cobble.png";
+    static String GAME_BACKGROUND_FILE = "environment/cobble.png";
 
     // Other
-    static String GOAL_FILE = "shared/goaldoor.png";
+    static String GOAL_FILE = "environment/goaldoor.png";
 
     // Font
-    static String RETRO_FONT_FILE = "shared/RetroGame.ttf";
+    static String RETRO_FONT_FILE = "font/RetroGame.ttf";
     static int RETRO_FONT_SIZE = 12;
 
     // Sound
@@ -85,7 +85,6 @@ public class Assets {
      *  telling manager what to load */
     public void preLoadContent(AssetManager manager) {
         // Load Textures
-        System.out.println(FISH_ITEM_FILE);
         loadTexture(FISH_ITEM_FILE);
         loadTexture(WALL_FILE);
         loadTexture(HOLE_FILE);
@@ -115,7 +114,7 @@ public class Assets {
         PLAYER_FILMSTRIPS = new FilmStrip[num_players];
         for (int i = 0; i < num_players; i++) {
             FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
-                                                            PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
+                    PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
         }
 
@@ -140,7 +139,6 @@ public class Assets {
     }
 
     public void loadTexture(String filePath) {
-        System.out.println(filePath);
         manager.load(filePath, Texture.class);
         assets.add(filePath);
     }
