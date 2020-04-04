@@ -1,0 +1,33 @@
+{
+  "tiles": {
+    "height": 64,
+    "width": 64,
+    "rows": 24,
+    "columns": 24
+  },
+  "walls": {},
+  "holes": {
+    "h0": {
+      "x": 0,
+      "y": 0,
+      "texture": "corner",
+      "rotate": 2
+    }
+  },
+  "teams": {
+    "p1": {
+      "x": 5,
+      "y": 6
+    },
+    "p2": {},
+    "p3": {},
+    "p4": {}
+  },
+  "items": {
+    "fishStall": {
+      "x": 20,
+      "y": 10,
+      "type": "fish"
+    }
+  }
+}
