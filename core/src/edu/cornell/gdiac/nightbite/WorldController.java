@@ -431,7 +431,7 @@ public class WorldController implements Screen {
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
 			// TODO: player model refactor
-			p = worldModel.getPlayers().get(0);
+			p = worldModel.getPlayers().get(i);
 
 			// update player state // TODO film strip: needs player 1 film strip first
 			if (playerVertical != 0 || playerHorizontal != 0) {
