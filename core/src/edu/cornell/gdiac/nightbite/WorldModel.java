@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -463,6 +464,51 @@ public class WorldModel {
         dynamicObjects = null;
         world = null;
         scale = null;
+    }
+
+
+    // TODO: This is experimental scaling code
+
+    // This padding might be approximate lol tbh
+    private static final float PADDING = 0f;
+
+    public Rectangle setPixelBounds(GameCanvas canvas) {
+        // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
+
+        // scaleWorld translates the levelspace to canonical world space
+        // (32 x 18, or otherwise indicated in WorldController)
+        float scaleWorldX = WorldController.DEFAULT_WIDTH / bounds.width;
+        float scaleWorldY = WorldController.DEFAULT_HEIGHT / bounds.height;
+
+        // World2Pixel translates from canonical world space to canonical pixel space
+        // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
+        // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
+        float world2Pixel =  WorldController.DEFAULT_PIXEL_HEIGHT / WorldController.DEFAULT_HEIGHT;
+
+        // scalePixel translate canonical pixel space to pixel space
+        // (1920 x 1080, or otherwise indicated in WorldController)
+        float scalePixelX = canvas.getWidth() / (WorldController.DEFAULT_PIXEL_WIDTH - 2 * PADDING);
+        float scalePixelY = canvas.getHeight() / (WorldController.DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
+
+        // Take the smaller scale so that we only scale diagonally or something
+        // This is for asset scaling
+        float finalAssetScale = Math.min(scaleWorldX * scalePixelX, scaleWorldY * scalePixelY);
+        // This is for converting things to pixel space?
+        float finalPosScale = finalAssetScale * world2Pixel;
+
+        scale.set(finalPosScale, finalPosScale);
+        System.out.println(scale);
+
+        // Affine2 transform = new Affine2();
+        // transform.scale(finalPosScale, finalPosScale);
+
+        // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
+        // transform.applyTo(pixelBoundsSize);
+
+        // transform.translate((bounds.width - pixelBoundsSize.x) / 2, (bounds.height - pixelBoundsSize.y) / 2);
+        // pixelBoundsSize.set(bounds.width, bounds.height);
+
+        return null;
     }
 
 }

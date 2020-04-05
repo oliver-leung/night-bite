@@ -74,9 +74,15 @@ public class WorldController implements Screen {
 	/** GAME PARAMS */
 
 	/** Width of the game world in Box2d units. */
-	protected static final float DEFAULT_WIDTH = 32.0f;
+	public static final float DEFAULT_WIDTH = 32.0f;
 	/** Height of the game world in Box2d units. */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
+	public static final float DEFAULT_HEIGHT = 18.0f;
+
+	// TODO: Should this be here? Maybe this should be defined in Canvas instead
+	/** Width of the game world in pixel units. */
+	public static final float DEFAULT_PIXEL_WIDTH = 1920f;
+	/** Height of the game world in units. */
+	public static final float DEFAULT_PIXEL_HEIGHT = 1080f;
 
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
@@ -321,6 +327,7 @@ public class WorldController implements Screen {
 		// TODO: Reset should basically throw away WorldModel and make a new one
         worldModel = new WorldModel();
         worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		// worldModel.setPixelBounds(canvas);
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
         // TODO: WHAT
