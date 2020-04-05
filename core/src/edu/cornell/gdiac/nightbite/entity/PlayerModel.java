@@ -1,7 +1,6 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
@@ -43,8 +42,10 @@ public class PlayerModel extends CapsuleObstacle {
     public boolean item;
     private boolean overlapItem;
 
-    /** player texture */
-    public final TextureRegion playerTexture;
+    /**
+     * player texture
+     */
+    public final FilmStrip playerTexture;
     private TextureRegion defaultTexture;
 
     @Override
@@ -55,9 +56,10 @@ public class PlayerModel extends CapsuleObstacle {
         super.setTexture(value);
     }
 
-    public void resetTexture() { texture = defaultTexture; }
+    public void resetTexture() { texture = defaultTexture;
+    }
 
-    public PlayerModel(float x, float y, float width, float height, TextureRegion texture, String playerTeam) {
+    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
         super(x, y, width, height);
         setOrientation(Orientation.VERTICAL);
         setBullet(true);
