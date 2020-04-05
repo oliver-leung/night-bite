@@ -1,60 +1,92 @@
 {
     "walls": {
         "wall 1": {
-            "shape": "horizontal rectangle",
-            "x": 9.5,
-            "y": 8
+            "x": 4,
+            "y": 6,
+            "rotate": 1
         },
         "wall 2": {
-            "shape": "horizontal rectangle",
-            "x": 22.5,
-            "y": 8
+            "x": 4,
+            "y": 5,
+            "rotate": 1
         },
         "wall 3": {
-            "shape": "square",
-            "x": 16,
-            "y": 3.5
+            "x": 4,
+            "y": 4,
+            "rotate": 1
         },
-        "left border": {
-            "shape": "vertical border",
-            "x": 32.5,
-            "y": 0
+        "wall 4": {
+            "x": 4,
+            "y": 3,
+            "rotate": 1
         },
-        "right border": {
-            "shape": "vertical border",
-            "x": -0.5,
-            "y": 0
+        "wall 5": {
+            "x": 10,
+            "y": 6,
+            "rotate": 1
         },
-        "top border": {
-            "shape": "horizontal border",
-            "x": 0,
-            "y": -0.5
+        "wall 6": {
+            "x": 10,
+            "y": 5,
+            "rotate": 1
         },
-        "bottom border": {
-            "shape": "horizontal border",
-            "x": 0,
-            "y": 18.5
+        "wall 7": {
+            "x": 10,
+            "y": 4,
+            "rotate": 1
+        },
+        "wall 8": {
+            "x": 10,
+            "y": 3,
+            "rotate": 1
+        },
+        "wall 9": {
+            "x": 7,
+            "y": 1,
+            "rotate": 0
         }
     },
     "holes": {
         "hole 1": {
-            "shape": "vertical rectangle",
-            "x": 16,
-            "y": 5
+            "x": 8,
+            "y": 7,
+            "rotate": 0
         },
         "hole 2": {
-            "shape": "horizontal rectangle",
-            "x": 2,
-            "y": 4
+            "x": 7,
+            "y": 7,
+            "rotate": 0
         },
         "hole 3": {
-            "shape": "horizontal rectangle",
-            "x": 30,
-            "y": 4
+            "x": 6,
+            "y": 7,
+            "rotate": 0
+        },
+        "hole 4": {
+            "x": 1,
+            "y": 1,
+            "rotate": 0
+        },
+        "hole 5": {
+            "x": 13,
+            "y": 1,
+            "rotate": 0
         }
     },
     "teams": {
         "a": {
+            "x": 3,
+            "y": 1
+        },
+        "b": {
+            "x": 11,
+            "y": 1
+        }
+    },
+    "items": {
+        "fish": {
+            "x": 15,
+            "y": 11
         }
     }
 }
