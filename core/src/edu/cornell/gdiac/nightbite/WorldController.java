@@ -254,9 +254,9 @@ public class WorldController implements Screen {
 
 		for (Obstacle obj : worldModel.getObjects()) {
 			if (obj.draw) {
-				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
+				if (obj instanceof HomeModel && obj.getName().equals("home a")) {
 					message1.append(((HomeModel) obj).getScore());
-				} else if (obj instanceof HomeModel && obj.getName().equals("homeA")) {
+				} else if (obj instanceof HomeModel && obj.getName().equals("home b")) {
 					message2.append(((HomeModel) obj).getScore());
 				}
 				obj.draw(canvas);
