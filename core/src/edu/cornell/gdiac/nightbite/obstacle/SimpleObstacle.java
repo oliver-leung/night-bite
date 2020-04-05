@@ -45,8 +45,8 @@ public abstract class SimpleObstacle extends Obstacle {
 	protected Vector2 origin;
 
 	public void setActualScale(Vector2 actualScale) {
-	    System.out.println("setA" + actualScale);
 		this.actualScale.set(actualScale);
+
 	}
 
 	public Vector2 actualScale;
