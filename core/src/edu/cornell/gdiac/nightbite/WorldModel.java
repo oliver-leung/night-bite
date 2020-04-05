@@ -49,6 +49,8 @@ public class WorldModel {
     protected World world;
      /** World scale */
     protected Vector2 scale;
+    // TODO: should this be a float or v2?
+    protected Vector2 actualScale;
 
     // TODO: Maybe use a better data structure
     private ItemModel[] items;
@@ -138,6 +140,7 @@ public class WorldModel {
         // TODO: Make this data driven
         bounds = new Rectangle(0, 0, 32f, 18f);
         scale = new Vector2(1f, 1f);
+        actualScale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
         staticObjects = new PooledList<>();
         complete = false;
@@ -258,6 +261,8 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
@@ -267,6 +272,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
@@ -276,6 +282,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
@@ -286,6 +293,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(wallTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -296,6 +304,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(wallTile);
         obj.setName("wall2");
         addStaticObject(obj);
@@ -309,6 +318,7 @@ public class WorldModel {
         wall.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
+        wall.setActualScale(actualScale);
         wall.setTexture(standTile);
         wall.setName("wall3");
         addStaticObject(wall);
@@ -322,6 +332,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -333,6 +344,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -344,6 +356,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -355,6 +368,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -368,6 +382,7 @@ public class WorldModel {
         p1.setFriction(MOVABLE_OBJ_FRICTION);
         p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p1.setDrawScale(scale);
+        p1.setActualScale(actualScale);
 //        p1.setMovable(true);
 
         /* Add home stalls */
@@ -375,6 +390,8 @@ public class WorldModel {
         HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
+        home.setActualScale(actualScale);
+        // obj.setActualScale(actualScale);
         home.setTexture(standTile);
         home.setName("homeA");
         addStaticObject(home);
@@ -386,6 +403,7 @@ public class WorldModel {
         p2.setFriction(MOVABLE_OBJ_FRICTION);
         p2.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p2.setDrawScale(scale);
+        p2.setActualScale(actualScale);
 //        p2.setMovable(true);
 
         /* Add home stalls */
@@ -393,6 +411,8 @@ public class WorldModel {
         home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
+        home.setActualScale(actualScale);
+        // obj.setActualScale(actualScale);
         home.setTexture(standTile);
         home.setName("homeB");
         addStaticObject(home);
@@ -410,6 +430,7 @@ public class WorldModel {
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);
         item.setDrawScale(scale);
+        item.setActualScale(actualScale);
         items = new ItemModel[] {item};
         addDynamicObject(item);
     }
@@ -617,6 +638,13 @@ public class WorldModel {
 
         scale.set(finalPosScale, finalPosScale);
         System.out.println(scale);
+        System.out.println(scale);
+        System.out.println(world2Pixel);
+        System.out.println(scalePixelX);
+        System.out.println(scaleWorldX);
+        System.out.println(finalAssetScale);
+        actualScale.set(finalAssetScale, finalAssetScale);
+        System.out.println(actualScale);
 
         // Affine2 transform = new Affine2();
         // transform.scale(finalPosScale, finalPosScale);

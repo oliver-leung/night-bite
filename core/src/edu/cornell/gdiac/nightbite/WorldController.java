@@ -89,9 +89,9 @@ public class WorldController implements Screen {
 
 	// TODO: Should this be here? Maybe this should be defined in Canvas instead
 	/** Width of the game world in pixel units. */
-	public static final float DEFAULT_PIXEL_WIDTH = 1920f;
+	public static final float DEFAULT_PIXEL_WIDTH = 1024f;
 	/** Height of the game world in units. */
-	public static final float DEFAULT_PIXEL_HEIGHT = 1080f;
+	public static final float DEFAULT_PIXEL_HEIGHT = 576f;
 
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
@@ -229,7 +229,8 @@ public class WorldController implements Screen {
 	 */
 	public void setCanvas(GameCanvas canvas) {
 		this.canvas = canvas;
-		worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		// worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		worldModel.setPixelBounds(canvas);
 	}
 
 	public void populateLevel() {
@@ -341,7 +342,8 @@ public class WorldController implements Screen {
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
         worldModel = new WorldModel();
-        worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        // worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        worldModel.setPixelBounds(canvas);
 		// worldModel.setPixelBounds(canvas);
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
@@ -451,12 +453,12 @@ public class WorldController implements Screen {
 			if (playerVertical != 0 || playerHorizontal != 0) {
 				p.setWalk();
 				if (playerWalkCounter[i] % 20 == 0) {
-					p.playerTexture.setFrame(1);
+					// p.playerTexture.setFrame(1);
 					if (prev_hori_dir[i] == 1) {
 						p.playerTexture.flip(true, false);
 					}
 				} else if (playerWalkCounter[i] % 20 == 10) {
-					p.playerTexture.setFrame(0);
+					// p.playerTexture.setFrame(0);
 					if (prev_hori_dir[i] == 1) {
 						p.playerTexture.flip(true, false);
 					}
@@ -465,7 +467,7 @@ public class WorldController implements Screen {
 			} else {
 				p.setStatic();
 				playerWalkCounter[i] = 0;
-				p.playerTexture.setFrame(0);
+				// p.playerTexture.setFrame(0);
 				if (prev_hori_dir[i] == 1) {
 					p.playerTexture.flip(true, false);
 				}

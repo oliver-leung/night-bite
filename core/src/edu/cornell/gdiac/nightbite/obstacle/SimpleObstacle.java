@@ -43,7 +43,14 @@ public abstract class SimpleObstacle extends Obstacle {
 
 	/** The texture origin for drawing */
 	protected Vector2 origin;
-	
+
+	public void setActualScale(Vector2 actualScale) {
+	    System.out.println("setA" + actualScale);
+		this.actualScale.set(actualScale);
+	}
+
+	public Vector2 actualScale;
+
 	/// BodyDef Methods
 	/**
 	 * Returns the body type for Box2D physics
@@ -78,7 +85,7 @@ public abstract class SimpleObstacle extends Obstacle {
 	/**
 	 * Returns the current position for this physics body
 	 *
-	 * This method does NOT return a reference to the position vector. Changes to this 
+	 * This method does NOT return a reference to the position vector. Changes to this
 	 * vector will not affect the body.  However, it returns the same vector each time
 	 * its is called, and so cannot be used as an allocator.
 	 *
@@ -285,7 +292,7 @@ public abstract class SimpleObstacle extends Obstacle {
 			super.setAngularVelocity(value);
 		}
 	}
-	
+
 	/**
 	 * Returns true if the body is active
 	 *
@@ -757,7 +764,7 @@ public abstract class SimpleObstacle extends Obstacle {
 	public TextureRegion getTexture() {
 		return texture;
 	}
-	
+
 	/**
 	 * Sets the object texture for drawing purposes.
 	 *
@@ -778,7 +785,9 @@ public abstract class SimpleObstacle extends Obstacle {
 	 */
 	public void draw(GameCanvas canvas) {
 		if (texture != null) {
-			canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+			System.out.print("actually ");
+			System.out.println(actualScale);
+			canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),actualScale.x,actualScale.y);
 		}
 	}
 	
@@ -812,6 +821,7 @@ public abstract class SimpleObstacle extends Obstacle {
 		super(x,y);
 		origin = new Vector2();
 		body = null;
+		actualScale = new Vector2(1f, 1f);
 	}
 	
 	/**
