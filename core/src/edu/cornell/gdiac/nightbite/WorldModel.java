@@ -1,11 +1,16 @@
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -14,6 +19,8 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.LightSource;
+import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
 import org.w3c.dom.Text;
 
@@ -27,7 +34,7 @@ public class WorldModel {
     private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
 
     /** Movable object parameters */
-    private static final float MOVABLE_OBJ_DENSITY = 1.0f;
+    private static final float MOVABLE_OBJ_DENSITY = 0.5f;
     private static final float MOVABLE_OBJ_FRICTION = 0.1f;
     private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
 
@@ -68,6 +75,21 @@ public class WorldModel {
      * Countdown active for winning or losing
      */
     private int countdown;
+
+    /**
+     * The camera defining the RayHandler view; scale is in physics coordinates
+     */
+    protected OrthographicCamera raycamera;
+
+    /**
+     * The rayhandler for storing lights, and drawing them
+     */
+    protected RayHandler rayhandler;
+
+    /**
+     * All of the lights that we loaded from the JSON file
+     */
+    private Array<LightSource> lights = new Array<LightSource>();
 
     /** FOR AI */
 
@@ -414,6 +436,21 @@ public class WorldModel {
         return player_list;
     }
 
+
+    /**
+     * Returns the world's rayhandler.
+     */
+    public RayHandler getRayhandler() {
+        return rayhandler;
+    }
+
+    /**
+     * Returns the world's lights.
+     */
+    public Array<LightSource> getLights() {
+        return lights;
+    }
+
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
     }
@@ -445,6 +482,77 @@ public class WorldModel {
         obj.activatePhysics(world);
     }
 
+    // ******************** LIGHTING METHODS ********************
+
+    /**
+     * TODO allow passing in of different lighting parameters
+     */
+    public void initLighting() {
+        raycamera = new OrthographicCamera(bounds.width,bounds.height);
+        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+        raycamera.update();
+
+        RayHandler.setGammaCorrection(true);
+        RayHandler.useDiffuseLight(true);
+        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler.setCombinedMatrix(raycamera);
+
+        // All hard coded for now, to be changed with data-driven levels
+        float[] color = new float[]{ 0.5f, 0.5f, 0.5f, 1.0f };
+        rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
+        int blur = 2;
+        // rayhandler.setBlur(blur > 0);
+        rayhandler.setBlur(true);
+        rayhandler.setBlurNum(blur);
+    }
+
+    /**
+     * Creates one point light, which goes in all directions.
+     *
+     * TODO allow parameters to be passed
+     */
+    public void createPointLight() {
+        // ALL HARDCODED!
+        float[] color = new float[]{ 1.0f, 0.2f, 0.0f, 1.0f };
+        float[] pos = new float[]{ 0.0f, 0.0f };
+        float dist  = 7.0f;
+        int rays = 512;
+
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0],color[1],color[2],color[3]);
+        point.setSoft(false);
+
+        // Create a filter to exclude see through items
+        Filter f = new Filter();
+        f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
+        point.setContactFilter(f);
+        point.setActive(false); // TURN ON LATER
+        lights.add(point);
+    }
+
+    /**
+     * Returns a string equivalent to the COMPLEMENT of bits in s
+     *
+     * This function assumes that s is a string of 0s and 1s of length < 16.
+     * This function allows the JSON file to specify exclusion bit arrays (for masking)
+     * in a readable format.
+     *
+     * @param s the string representation of the bit array
+     *
+     * @return a string equivalent to the COMPLEMENT of bits in s
+     */
+    public static short bitStringToComplement(String s) {
+        short value = 0;
+        short pos = 1;
+        for(int ii = s.length()-1; ii >= 0; ii--) {
+            if (s.charAt(ii) == '0') {
+                value += pos;
+            }
+            pos *= 2;
+        }
+        return value;
+    }
+
     public void reset() {
         // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
         // TODO: isn't really necessary
@@ -456,6 +564,17 @@ public class WorldModel {
         for (Obstacle obj : getObjects()) {
             obj.deactivatePhysics(world);
         }
+
+        for(LightSource light : lights) {
+            light.remove();
+        }
+        lights.clear();
+
+        if (rayhandler != null) {
+            rayhandler.dispose();
+            rayhandler = null;
+        }
+
         staticObjects.clear();
         dynamicObjects.clear();
         // Honestly this is kind of dumb.
