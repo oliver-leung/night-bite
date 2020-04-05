@@ -1,14 +1,22 @@
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.LightSource;
+import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.Iterator;
@@ -16,25 +24,25 @@ import java.util.NoSuchElementException;
 
 public class WorldModel {
     /**
+     * Movable object parameters
+     */
+    public static final float MOVABLE_OBJ_DENSITY = 0.5f;
+    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
+    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
+    /**
      * How many frames after winning/losing do we continue?
      */
     public static final int EXIT_COUNT = 120;
-    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
-    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
+    public static final float MOVABLE_OBJ_FRICTION = 0.1f;
+    public static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
     /**
      * Immovable object parameters
      */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
-    public static final float MOVABLE_OBJ_FRICTION = 0.1f;
-    public static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
-    /**
-     * Movable object parameters
-     */
-    public static final float MOVABLE_OBJ_DENSITY = 1.0f;
     /**
      * Player textures
      */
-    public static TextureRegion player1Texture;
+    public static FilmStrip player1FilmStrip;
     public static FilmStrip player2FilmStrip;
     /**
      * Item parameters
@@ -46,39 +54,43 @@ public class WorldModel {
 
     // TODO: This should be data driven
     public String winner;
-    private TextureRegion itemTexture;
-    private FilmStrip player1FilmStrip;
 
     // TODO: PLEASE remove this eventually
     public Vector2 getITEMSTART() {
         return ITEM_START_POSITION;
     }
 
-    // TODO: PLEASE fix this
-    public ItemModel getItem() {
-        return items[0];
-    }
-
+    /**
+     * World scale
+     */
+    public Vector2 scale;
     /**
      * World
      */
     protected World world;
     /**
-     * World scale
+     * The camera defining the RayHandler view; scale is in physics coordinates
      */
-    public Vector2 scale;
-
+    protected OrthographicCamera raycamera;
     /**
-     * FOR AI
+     * The rayhandler for storing lights, and drawing them
      */
-    // TODO: REMOVE ALL THESE DUMB TEXTURES
-    TextureRegion wallTile;
-    TextureRegion standTile;
-    TextureRegion backgroundTile;
-    TextureRegion goalTile;
-    TextureRegion holeTile;
-    private PlayerModel[] player_list;
-    private Rectangle bounds;
+    protected RayHandler rayhandler;
+    TextureRegion itemTexture;
+    /**
+     * Whether we have completed this level
+     */
+    private boolean complete;
+
+    /** FOR AI */
+    /**
+     * Countdown active for winning or losing
+     */
+    private int countdown;
+    /**
+     * All of the lights that we loaded from the JSON file
+     */
+    private Array<LightSource> lights = new Array<LightSource>();
     /**
      * Objects that don't move during updates
      */
@@ -87,14 +99,38 @@ public class WorldModel {
      * Objects that move during updates
      */
     private PooledList<Obstacle> dynamicObjects;
+    private PlayerModel[] player_list;
+    private Rectangle bounds;
+
+
+    // TODO: REMOVE ALL THESE DUMB TEXTURES
+    TextureRegion wallTile;
+    TextureRegion standTile;
+    TextureRegion backgroundTile;
+    TextureRegion goalTile;
+    TextureRegion holeTile;
+
     /**
-     * Whether we have completed this level
+     * Returns a string equivalent to the COMPLEMENT of bits in s
+     * <p>
+     * This function assumes that s is a string of 0s and 1s of length < 16.
+     * This function allows the JSON file to specify exclusion bit arrays (for masking)
+     * in a readable format.
+     *
+     * @param s the string representation of the bit array
+     * @return a string equivalent to the COMPLEMENT of bits in s
      */
-    private boolean complete;
-    /**
-     * Countdown active for winning or losing
-     */
-    private int countdown;
+    public static short bitStringToComplement(String s) {
+        short value = 0;
+        short pos = 1;
+        for (int ii = s.length() - 1; ii >= 0; ii--) {
+            if (s.charAt(ii) == '0') {
+                value += pos;
+            }
+            pos *= 2;
+        }
+        return value;
+    }
 
     public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
         wallTile = textures[0];
@@ -106,6 +142,10 @@ public class WorldModel {
         player1FilmStrip = filmStrips[0];
         player2FilmStrip = filmStrips[1];
     }
+
+    // TODO: END REMOVE ALL THESE DUMB TEXTURES
+
+    // TODO: DO we need addQueue?
 
     public WorldModel() {
         // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
@@ -121,20 +161,20 @@ public class WorldModel {
         countdown = -1;
     }
 
+    // TODO: PLEASE fix this
+    public ItemModel[] getItems() {
+        return items;
+    }
+
     /**
      * Returns true if the level is completed.
-     * <p>
+     *
      * If true, the level will advance after a countdown
      *
      * @return true if the level is completed.
      */
     public boolean isComplete() {
         return complete;
-    }
-
-    public boolean isDone() {
-        countdown--;
-        return countdown <= 0 && complete;
     }
 
     /**
@@ -155,7 +195,6 @@ public class WorldModel {
             // private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
             private Iterator<Obstacle> list0 = staticObjects.iterator();
             private Iterator<Obstacle> list1 = dynamicObjects.iterator();
-
             @Override
             public boolean hasNext() {
                 return list0.hasNext() || list1.hasNext();
@@ -221,7 +260,6 @@ public class WorldModel {
         return new objectIterable();
 
     }
-
 
     /*public void populate() {
         // TODO: PLEASE FIX HOW OBJECTS ARE INSTANTIATED PROPERLY
@@ -340,9 +378,9 @@ public class WorldModel {
 
         *//* Add players *//*
         // Team A
-        float pWidth = player1Texture.getRegionWidth() / scale.x;
-        float pHeight = player1Texture.getRegionHeight() / scale.y;
-        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1Texture, "a");
+        float pWidth = player1FilmStrip.getRegionWidth() / scale.x;
+        float pHeight = player1FilmStrip.getRegionHeight() / scale.y;
+        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1FilmStrip, "a");
         p1.setDensity(MOVABLE_OBJ_DENSITY);
         p1.setFriction(MOVABLE_OBJ_FRICTION);
         p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
@@ -351,7 +389,7 @@ public class WorldModel {
 
         *//* Add home stalls *//*
         // Team A
-        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, "a");
+        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
@@ -369,7 +407,7 @@ public class WorldModel {
 
         *//* Add home stalls *//*
         // Team B
-        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, "b");
+        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
@@ -382,9 +420,9 @@ public class WorldModel {
         player_list = new PlayerModel[] { p1, p2 };
 
         *//* Add items *//*
-        float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
-        float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
-        ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight);
+        float itemWidth = itemTexture.getRegionWidth() / scale.x;
+        float itemHeight = itemTexture.getRegionHeight() / scale.y;
+        ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight, itemTexture);
         item.setDensity(MOVABLE_OBJ_DENSITY);
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);
@@ -415,23 +453,27 @@ public class WorldModel {
         return player_list;
     }
 
+    public boolean isDone() {
+        countdown--;
+        return countdown <= 0 && complete;
+    }
+
+    /**
+     * Returns the world's rayhandler.
+     */
+    public RayHandler getRayhandler() {
+        return rayhandler;
+    }
+
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
     }
 
     /**
-     * Returns true if the object is in bounds.
-     *
-     * This assertion is useful for debugging the physics.
-     *
-     * @param obj The object to check.
-     *
-     * @return true if the object is in bounds.
+     * Returns the world's lights.
      */
-    public boolean inBounds(Obstacle obj) {
-        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
-        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
-        return horiz && vert;
+    public Array<LightSource> getLights() {
+        return lights;
     }
 
     public void addStaticObject(Obstacle obj) {
@@ -446,6 +488,68 @@ public class WorldModel {
         obj.activatePhysics(world);
     }
 
+    // ******************** LIGHTING METHODS ********************
+
+    /**
+     * Returns true if the object is in bounds.
+     * <p>
+     * This assertion is useful for debugging the physics.
+     *
+     * @param obj The object to check.
+     * @return true if the object is in bounds.
+     */
+    public boolean inBounds(Obstacle obj) {
+        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
+        return horiz && vert;
+    }
+
+    /**
+     * TODO allow passing in of different lighting parameters
+     */
+    public void initLighting() {
+        raycamera = new OrthographicCamera(bounds.width, bounds.height);
+        raycamera.position.set(bounds.width / 2.0f, bounds.height / 2.0f, 0);
+        raycamera.update();
+
+        RayHandler.setGammaCorrection(true);
+        RayHandler.useDiffuseLight(true);
+        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler.setCombinedMatrix(raycamera);
+
+        // All hard coded for now, to be changed with data-driven levels
+        float[] color = new float[]{0.5f, 0.5f, 0.5f, 1.0f};
+        rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
+        int blur = 2;
+        // rayhandler.setBlur(blur > 0);
+        rayhandler.setBlur(true);
+        rayhandler.setBlurNum(blur);
+    }
+
+    /**
+     * Creates one point light, which goes in all directions.
+     * <p>
+     * TODO allow parameters to be passed
+     */
+    public void createPointLight() {
+        // ALL HARDCODED!
+        float[] color = new float[]{1.0f, 0.2f, 0.0f, 1.0f};
+        float[] pos = new float[]{0.0f, 0.0f};
+        float dist = 7.0f;
+        int rays = 512;
+
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0], color[1], color[2], color[3]);
+        point.setSoft(false);
+
+        // Create a filter to exclude see through items
+        Filter f = new Filter();
+        f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
+        point.setContactFilter(f);
+        point.setActive(false); // TURN ON LATER
+        lights.add(point);
+    }
+
     public void reset() {
         // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
         // TODO: isn't really necessary
@@ -457,6 +561,17 @@ public class WorldModel {
         for (Obstacle obj : getObjects()) {
             obj.deactivatePhysics(world);
         }
+
+        for (LightSource light : lights) {
+            light.remove();
+        }
+        lights.clear();
+
+        if (rayhandler != null) {
+            rayhandler.dispose();
+            rayhandler = null;
+        }
+
         staticObjects.clear();
         dynamicObjects.clear();
         // Honestly this is kind of dumb.

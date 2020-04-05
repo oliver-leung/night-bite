@@ -99,7 +99,7 @@ public class CollisionController implements ContactListener {
             player.setDead();
 
             if (player.item) {
-                ItemModel item = worldModel.getItem();
+                ItemModel item = worldModel.getItems()[0];
                 item.setUnheld();
                 item.startRespawn();
             }
@@ -118,7 +118,7 @@ public class CollisionController implements ContactListener {
 
                 homeObject.incrementScore();
 
-                ItemModel item = worldModel.getItem();
+                ItemModel item = worldModel.getItems()[0];
                 item.setUnheld();
                 item.startRespawn();
 

@@ -23,14 +23,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
-import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -351,15 +349,15 @@ public class WorldController implements Screen {
 
 		// Attaching lights to p1 is janky and serves mostly as demo code
 		// TODO make data-driven
-		Array<LightSource> lights = worldModel.getLights();
-		PlayerModel p1 = worldModel.getPlayers()[0];  //
-		for (LightSource light : lights) {
-			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
-		}
-
-		if (lights.size > 0) {
-			lights.get(0).setActive(true);
-		}
+//		Array<LightSource> lights = worldModel.getLights();
+//		PlayerModel p1 = worldModel.getPlayers()[0];  //
+//		for (LightSource light : lights) {
+//			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
+//		}
+//
+//		if (lights.size > 0) {
+//			lights.get(0).setActive(true);
+//		}
 	}
 	
 	/**
@@ -410,8 +408,9 @@ public class WorldController implements Screen {
 
 		// TODO peer review below
 		// TODO: Wait for item refactor
-		ItemModel item = worldModel.getItem();
-		item.update();
+		for (ItemModel item : worldModel.getItems()) {
+			item.update();
+		}
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
