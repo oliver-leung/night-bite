@@ -31,6 +31,17 @@ public class LevelController {
     }
 
     private void createItems(WorldModel world, JsonValue items) {
+        ItemModel item;
+        for (JsonValue itemJson : items.iterator()) {
+            item = new ItemModel(
+                    itemJson.getFloat("x"),
+                    itemJson.getFloat("y"),
+                    1, 1, Assets.FISH_ITEM
+            );
+            item.setName("item");
+            item.setDrawScale(world.scale);
+            world.addItem(item);
+        }
     }
 
     private void createTeams(WorldModel world, JsonValue teams) {
@@ -47,9 +58,11 @@ public class LevelController {
 
             player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, teamName);
             player.setDrawScale(world.scale);
-            world.addDynamicObject(player);
+            player.setName("player " + teamName);
+            world.addPlayer(player);
 
             home = new HomeModel(x, y, teamName);
+            home.setName("home " + teamName);
             home.setDrawScale(world.scale);
             world.addStaticObject(home);
         }

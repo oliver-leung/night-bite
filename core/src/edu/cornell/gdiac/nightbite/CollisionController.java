@@ -99,12 +99,12 @@ public class CollisionController implements ContactListener {
             player.setDead();
 
             if (player.item) {
-                ItemModel item = worldModel.getItems()[0];
+                ItemModel item = worldModel.getItem();
                 item.setUnheld();
                 item.startRespawn();
             }
 
-        } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
+        } else if (object instanceof ItemModel) {
 
             // Player-Item
             player.setOverlapItem(true);
@@ -118,7 +118,7 @@ public class CollisionController implements ContactListener {
 
                 homeObject.incrementScore();
 
-                ItemModel item = worldModel.getItems()[0];
+                ItemModel item = worldModel.getItem();
                 item.setUnheld();
                 item.startRespawn();
 

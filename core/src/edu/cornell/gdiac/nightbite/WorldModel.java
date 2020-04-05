@@ -19,41 +19,45 @@ import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
     /**
-     * Movable object parameters
-     */
-    public static final float MOVABLE_OBJ_DENSITY = 0.5f;
-    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
-    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
-    /**
-     * How many frames after winning/losing do we continue?
-     */
-    public static final int EXIT_COUNT = 120;
-    public static final float MOVABLE_OBJ_FRICTION = 0.1f;
-    public static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
-    /**
      * Immovable object parameters
      */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
+    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
+    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
+
+    /**
+     * Movable object parameters
+     */
+    private static final float MOVABLE_OBJ_DENSITY = 0.5f;
+    private static final float MOVABLE_OBJ_FRICTION = 0.1f;
+    private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
     /**
      * Player textures
      */
     public static FilmStrip player1FilmStrip;
+
+    /**
+     * How many frames after winning/losing do we continue?
+     */
+    public static final int EXIT_COUNT = 120;
     public static FilmStrip player2FilmStrip;
     /**
      * Item parameters
      */
     protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
-
-    // TODO: Maybe use a better data structure
-    private ItemModel[] items;
+    public String winner;
 
     // TODO: This should be data driven
-    public String winner;
+    /**
+     * World scale
+     */
+    public Vector2 scale;
 
     // TODO: PLEASE remove this eventually
     public Vector2 getITEMSTART() {
@@ -61,46 +65,50 @@ public class WorldModel {
     }
 
     /**
-     * World scale
-     */
-    public Vector2 scale;
-    /**
      * World
      */
     protected World world;
-    /**
-     * The camera defining the RayHandler view; scale is in physics coordinates
-     */
-    protected OrthographicCamera raycamera;
-    /**
-     * The rayhandler for storing lights, and drawing them
-     */
-    protected RayHandler rayhandler;
-    TextureRegion itemTexture;
+
     /**
      * Whether we have completed this level
      */
     private boolean complete;
-
-    /** FOR AI */
     /**
      * Countdown active for winning or losing
      */
     private int countdown;
     /**
+     * The camera defining the RayHandler view; scale is in physics coordinates
+     */
+    protected OrthographicCamera raycamera;
+
+    /**
+     * The rayhandler for storing lights, and drawing them
+     */
+    protected RayHandler rayhandler;
+
+    /**
      * All of the lights that we loaded from the JSON file
      */
     private Array<LightSource> lights = new Array<LightSource>();
+
+    /**
+     * FOR AI
+     */
+    TextureRegion itemTexture;
+    // TODO: Maybe use a better data structure
+    private ArrayList<ItemModel> items;
     /**
      * Objects that don't move during updates
      */
     private PooledList<Obstacle> staticObjects;
+
+    private Rectangle bounds;
     /**
      * Objects that move during updates
      */
     private PooledList<Obstacle> dynamicObjects;
-    private PlayerModel[] player_list;
-    private Rectangle bounds;
+    private ArrayList<PlayerModel> player_list;
 
 
     // TODO: REMOVE ALL THESE DUMB TEXTURES
@@ -109,6 +117,36 @@ public class WorldModel {
     TextureRegion backgroundTile;
     TextureRegion goalTile;
     TextureRegion holeTile;
+    public WorldModel() {
+        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
+        // Actually technically not true since we can set this stuff in WorldController, but still
+        world = new World(Vector2.Zero, false);
+        // TODO: CollisionController
+        // TODO: Make this data driven
+        bounds = new Rectangle(0, 0, 32f, 18f);
+        scale = new Vector2(1f, 1f);
+        dynamicObjects = new PooledList<>();
+        staticObjects = new PooledList<>();
+        complete = false;
+        countdown = -1;
+        player_list = new ArrayList<>();
+        items = new ArrayList<>();
+    }
+
+    public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
+        wallTile = textures[0];
+        standTile = textures[1];
+        backgroundTile = textures[2];
+        goalTile = textures[3];
+        holeTile = textures[4];
+        itemTexture = textures[5];
+        player1FilmStrip = filmStrips[0];
+        player2FilmStrip = filmStrips[1];
+    }
+
+    // TODO: END REMOVE ALL THESE DUMB TEXTURES
+
+    // TODO: DO we need addQueue?
 
     /**
      * Returns a string equivalent to the COMPLEMENT of bits in s
@@ -132,49 +170,20 @@ public class WorldModel {
         return value;
     }
 
-    public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
-        wallTile = textures[0];
-        standTile = textures[1];
-        backgroundTile = textures[2];
-        goalTile = textures[3];
-        holeTile = textures[4];
-        itemTexture = textures[5];
-        player1FilmStrip = filmStrips[0];
-        player2FilmStrip = filmStrips[1];
-    }
-
-    // TODO: END REMOVE ALL THESE DUMB TEXTURES
-
-    // TODO: DO we need addQueue?
-
-    public WorldModel() {
-        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
-        // Actually technically not true since we can set this stuff in WorldController, but still
-        world = new World(Vector2.Zero, false);
-        // TODO: CollisionController
-        // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 32f, 18f);
-        scale = new Vector2(1f, 1f);
-        dynamicObjects = new PooledList<>();
-        staticObjects = new PooledList<>();
-        complete = false;
-        countdown = -1;
-    }
-
-    // TODO: PLEASE fix this
-    public ItemModel[] getItems() {
-        return items;
-    }
-
     /**
      * Returns true if the level is completed.
-     *
+     * <p>
      * If true, the level will advance after a countdown
      *
      * @return true if the level is completed.
      */
     public boolean isComplete() {
         return complete;
+    }
+
+    // TODO: PLEASE fix this
+    public ItemModel getItem() {
+        return items.get(0);
     }
 
     /**
@@ -261,7 +270,7 @@ public class WorldModel {
 
     }
 
-    /*public void populate() {
+   /* public void populate() {
         // TODO: PLEASE FIX HOW OBJECTS ARE INSTANTIATED PROPERLY
         // TODO: WE NEED TO MAKE IT SO THAT THIS IS LIKE DATA DRIVEN OR SOME CRAP
 
@@ -448,15 +457,11 @@ public class WorldModel {
         return bounds.width;
     }
 
-    // TODO: player model refactor
-    public PlayerModel[] getPlayers() {
-        return player_list;
-    }
-
     public boolean isDone() {
         countdown--;
         return countdown <= 0 && complete;
     }
+
 
     /**
      * Returns the world's rayhandler.
@@ -465,15 +470,34 @@ public class WorldModel {
         return rayhandler;
     }
 
-    public void worldStep(float step, int vel, int posit) {
-        world.step(step, vel, posit);
-    }
-
     /**
      * Returns the world's lights.
      */
     public Array<LightSource> getLights() {
         return lights;
+    }
+
+    // TODO: player model refactor
+    public ArrayList<PlayerModel> getPlayers() {
+        return player_list;
+    }
+
+    public void worldStep(float step, int vel, int posit) {
+        world.step(step, vel, posit);
+    }
+
+    /**
+     * Returns true if the object is in bounds.
+     * <p>
+     * This assertion is useful for debugging the physics.
+     *
+     * @param obj The object to check.
+     * @return true if the object is in bounds.
+     */
+    public boolean inBounds(Obstacle obj) {
+        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
+        return horiz && vert;
     }
 
     public void addStaticObject(Obstacle obj) {
@@ -488,20 +512,16 @@ public class WorldModel {
         obj.activatePhysics(world);
     }
 
+    public void addPlayer(PlayerModel player) {
+        player_list.add(player);
+        addDynamicObject(player);
+    }
+
     // ******************** LIGHTING METHODS ********************
 
-    /**
-     * Returns true if the object is in bounds.
-     * <p>
-     * This assertion is useful for debugging the physics.
-     *
-     * @param obj The object to check.
-     * @return true if the object is in bounds.
-     */
-    public boolean inBounds(Obstacle obj) {
-        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
-        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
-        return horiz && vert;
+    public void addItem(ItemModel item) {
+        items.add(item);
+        addDynamicObject(item);
     }
 
     /**
@@ -518,7 +538,7 @@ public class WorldModel {
         rayhandler.setCombinedMatrix(raycamera);
 
         // All hard coded for now, to be changed with data-driven levels
-        float[] color = new float[]{0.5f, 0.5f, 0.5f, 1.0f};
+        float[] color = new float[]{ 0.5f, 0.5f, 0.5f, 1.0f };
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 2;
         // rayhandler.setBlur(blur > 0);
@@ -528,7 +548,7 @@ public class WorldModel {
 
     /**
      * Creates one point light, which goes in all directions.
-     * <p>
+     *
      * TODO allow parameters to be passed
      */
     public void createPointLight() {
@@ -562,7 +582,7 @@ public class WorldModel {
             obj.deactivatePhysics(world);
         }
 
-        for (LightSource light : lights) {
+        for(LightSource light : lights) {
             light.remove();
         }
         lights.clear();

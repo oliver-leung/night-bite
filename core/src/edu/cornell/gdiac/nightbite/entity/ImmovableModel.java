@@ -10,7 +10,7 @@ public abstract class ImmovableModel extends BoxObstacle {
     private static final float DEFAULT_RESTITUTION = 0f;
 
     public ImmovableModel(float x, float y, int rotate) {
-        super(x + 0.5f, y + 0.5f, 1, 1);
+        super(x + 1f, y + 1f, 1, 1);
         setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);

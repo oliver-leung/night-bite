@@ -1,10 +1,10 @@
 /*
  * WorldController.java
  *
- * This is the most important new class in this lab.  This class serves as a combination 
- * of the CollisionController and GameplayController from the previous lab.  There is not 
- * much to do for collisions; Box2d takes care of all of that for us.  This controller 
- * invokes Box2d and then performs any after the fact modifications to the data 
+ * This is the most important new class in this lab.  This class serves as a combination
+ * of the CollisionController and GameplayController from the previous lab.  There is not
+ * much to do for collisions; Box2d takes care of all of that for us.  This controller
+ * invokes Box2d and then performs any after the fact modifications to the data
  * (e.g. gameplay).
  *
  * If you study this class, and the contents of the edu.cornell.cs3152.physics.obstacles
@@ -23,12 +23,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -36,14 +38,14 @@ import java.util.Iterator;
 
 /**
  * Base class for a world-specific controller.
- *
- *
- * A world has its own objects, assets, and input controller.  Thus this is 
+ * <p>
+ * <p>
+ * A world has its own objects, assets, and input controller.  Thus this is
  * really a mini-GameEngine in its own right.  The only thing that it does
  * not do is create a GameCanvas; that is shared with the main application.
- *
- * You will notice that asset loading is not done with static methods this time.  
- * Instance asset loading makes it easier to process our game modes in a loop, which 
+ * <p>
+ * You will notice that asset loading is not done with static methods this time.
+ * Instance asset loading makes it easier to process our game modes in a loop, which
  * is much more scalable. However, we still want the assets themselves to be static.
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
@@ -284,13 +286,13 @@ public class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
-    }
-	
+	}
+
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
 	public void dispose() {
-	    worldModel.dispose();
+		worldModel.dispose();
 
 		addQueue.clear();
 		addQueue = null;
@@ -302,7 +304,7 @@ public class WorldController implements Screen {
 	 *
 	 * Adds a physics object in to the insertion queue.
 	 *
-	 * Objects on the queue are added just before collision processing.  We do this to 
+	 * Objects on the queue are added just before collision processing.  We do this to
 	 * control object creation.
 	 *
 	 * param obj The object to add
@@ -325,11 +327,11 @@ public class WorldController implements Screen {
 
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
-        worldModel = new WorldModel();
-        worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
-        CollisionController c = new CollisionController(worldModel);
-        worldModel.setContactListener(c);
-        // TODO: WHAT
+		worldModel = new WorldModel();
+		worldModel.setScale(canvas.getWidth() / worldModel.getWidth(), canvas.getHeight() / worldModel.getHeight());
+		CollisionController c = new CollisionController(worldModel);
+		worldModel.setContactListener(c);
+		// TODO: WHAT
 		// Vector2 gravity = new Vector2( world.getGravity() );
 
 		// for(Obstacle obj : objects) {
@@ -349,17 +351,17 @@ public class WorldController implements Screen {
 
 		// Attaching lights to p1 is janky and serves mostly as demo code
 		// TODO make data-driven
-//		Array<LightSource> lights = worldModel.getLights();
-//		PlayerModel p1 = worldModel.getPlayers()[0];  //
-//		for (LightSource light : lights) {
-//			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
-//		}
-//
-//		if (lights.size > 0) {
-//			lights.get(0).setActive(true);
-//		}
+		Array<LightSource> lights = worldModel.getLights();
+		PlayerModel p1 = worldModel.getPlayers().get(0);  //
+		for (LightSource light : lights) {
+			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
+		}
+
+		if (lights.size > 0) {
+			lights.get(0).setActive(true);
+		}
 	}
-	
+
 	/**
 	 * Returns whether to process the update loop
 	 *
@@ -368,7 +370,7 @@ public class WorldController implements Screen {
 	 * normally.
 	 *
 	 * @param dt Number of seconds since last animation frame
-	 * 
+	 *
 	 * @return whether to process the update loop
 	 */
 	public boolean preUpdate(float dt) {
@@ -384,7 +386,7 @@ public class WorldController implements Screen {
 		if (input.didDebug()) {
 			debug = !debug;
 		}
-		
+
 		// Handle resets
 		if (input.didReset()) {
 			reset();
@@ -393,8 +395,8 @@ public class WorldController implements Screen {
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} else if (worldModel.isDone()){
-		    // TODO: Bruh i can actually just reset it here
+		} else if (worldModel.isDone()) {
+			// TODO: Bruh i can actually just reset it here
 			listener.exitScreen(this, EXIT_NEXT);
 			return false;
 		}
@@ -408,9 +410,8 @@ public class WorldController implements Screen {
 
 		// TODO peer review below
 		// TODO: Wait for item refactor
-		for (ItemModel item : worldModel.getItems()) {
-			item.update();
-		}
+		ItemModel item = worldModel.getItem();
+		item.update();
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
@@ -430,7 +431,7 @@ public class WorldController implements Screen {
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
 			// TODO: player model refactor
-			p = worldModel.getPlayers()[i];
+			p = worldModel.getPlayers().get(0);
 
 			// update player state // TODO film strip: needs player 1 film strip first
 			if (playerVertical != 0 || playerHorizontal != 0) {
@@ -508,7 +509,7 @@ public class WorldController implements Screen {
 			}
 		}
 	}
-	
+
 	/**
 	 * Processes physics
 	 *
@@ -525,7 +526,7 @@ public class WorldController implements Screen {
 		// while (!addQueue.isEmpty()) {
 		// 	addObject(addQueue.poll());
 		// }
-		
+
 		// Turn the physics engine crank.
 		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
 
@@ -561,7 +562,7 @@ public class WorldController implements Screen {
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
 	}
-	
+
 	/**
 	 * Called when the Screen should render itself.
 	 *
