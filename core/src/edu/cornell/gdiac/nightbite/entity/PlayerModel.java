@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
+import static edu.cornell.gdiac.nightbite.WorldModel.*;
+
 
 public class PlayerModel extends CapsuleObstacle {
 
@@ -65,6 +67,10 @@ public class PlayerModel extends CapsuleObstacle {
 
         homeLoc = new Vector2(x, y);
         team = playerTeam;
+
+        setDensity(MOVABLE_OBJ_DENSITY);
+        setFriction(MOVABLE_OBJ_FRICTION);
+        setRestitution(MOVABLE_OBJ_RESTITUTION);
     }
 
     @Override

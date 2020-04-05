@@ -6,14 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
-import com.sun.org.apache.regexp.internal.RE;
-import edu.cornell.gdiac.nightbite.entity.HoleModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.util.FilmStrip;
-
-import java.awt.*;
-import java.util.HashMap;
 
 // The whole point of this class is to get all textures in a unified location.
 // This makes it easier for assets to be data driven (defining assets in json files)
@@ -59,7 +52,14 @@ public class Assets {
 
     // Sound
 
-    /** LOADED ASSETS */
+    /*
+     * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
+     * data-driven.
+     */
+
+    /**
+     * LOADED ASSETS
+     */
     public static FilmStrip[] PLAYER_FILMSTRIPS;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;

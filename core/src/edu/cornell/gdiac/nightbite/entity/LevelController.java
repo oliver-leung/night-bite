@@ -1,19 +1,13 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.util.FilmStrip;
 
 public class LevelController {
-    /**
-     * Initial player positions
-     */
-    public static Vector2 p1_position = new Vector2(26, 3);
-    public static Vector2 p2_position = new Vector2(6, 3);
-
     private static LevelController instance;
     private static JsonReader jsonReader;
 
@@ -29,14 +23,36 @@ public class LevelController {
     }
 
     public void populate(WorldModel world) {
-        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal("jsons/level.json"));
+        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal("jsons/level1.json"));
         createWalls(world, levelFormat.get("walls"));
         createHoles(world, levelFormat.get("holes"));
         createTeams(world, levelFormat.get("teams"));
+        createItems(world, levelFormat.get("items"));
     }
 
-    private void createTeams(WorldModel world, JsonValue players) {
-        
+    private void createItems(WorldModel world, JsonValue items) {
+    }
+
+    private void createTeams(WorldModel world, JsonValue teams) {
+        PlayerModel player;
+        HomeModel home;
+        int playerNum = 0;
+        for (JsonValue teamJson : teams.iterator()) {
+            float x = teamJson.getFloat("x");
+            float y = teamJson.getFloat("y");
+            FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
+            float pWidth = filmStrip.getRegionWidth() / world.scale.x;
+            float pHeight = filmStrip.getRegionHeight() / world.scale.y;
+            String teamName = teamJson.name;
+
+            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, teamName);
+            player.setDrawScale(world.scale);
+            world.addDynamicObject(player);
+
+            home = new HomeModel(x, y, teamName);
+            home.setDrawScale(world.scale);
+            world.addStaticObject(home);
+        }
     }
 
     private void createHoles(WorldModel world, JsonValue holes) {
@@ -44,9 +60,9 @@ public class LevelController {
         for (JsonValue wallJson : holes.iterator()) {
             hole = new HoleModel(
                     wallJson.getFloat("x"),
-                    wallJson.getFloat("y"));
+                    wallJson.getFloat("y"),
+                    wallJson.getInt("rotate"));
             hole.setDrawScale(world.scale);
-            hole.setTexture(Assets.HOLE);
             hole.setName(wallJson.name());
             world.addStaticObject(hole);
         }
@@ -57,9 +73,9 @@ public class LevelController {
         for (JsonValue wallJson : walls.iterator()) {
             wall = new WallModel(
                     wallJson.getFloat("x"),
-                    wallJson.getFloat("y"));
+                    wallJson.getFloat("y"),
+                    wallJson.getInt("rotate"));
             wall.setDrawScale(world.scale);
-            wall.setTexture(Assets.WALL);
             wall.setName(wallJson.name());
             world.addStaticObject(wall);
         }

@@ -3,13 +3,11 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.entity.ItemModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
@@ -27,12 +25,12 @@ public class WorldModel {
      * Immovable object parameters
      */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
-    private static final float MOVABLE_OBJ_FRICTION = 0.1f;
-    private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
+    public static final float MOVABLE_OBJ_FRICTION = 0.1f;
+    public static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
     /**
      * Movable object parameters
      */
-    private static final float MOVABLE_OBJ_DENSITY = 1.0f;
+    public static final float MOVABLE_OBJ_DENSITY = 1.0f;
     /**
      * Player textures
      */
@@ -48,6 +46,8 @@ public class WorldModel {
 
     // TODO: This should be data driven
     public String winner;
+    private TextureRegion itemTexture;
+    private FilmStrip player1FilmStrip;
 
     // TODO: PLEASE remove this eventually
     public Vector2 getITEMSTART() {
@@ -96,17 +96,16 @@ public class WorldModel {
      */
     private int countdown;
 
-    public void setTextures(TextureRegion[] textures) {
+    public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
         wallTile = textures[0];
         standTile = textures[1];
         backgroundTile = textures[2];
         goalTile = textures[3];
         holeTile = textures[4];
+        itemTexture = textures[5];
+        player1FilmStrip = filmStrips[0];
+        player2FilmStrip = filmStrips[1];
     }
-
-    // TODO: END REMOVE ALL THESE DUMB TEXTURES
-
-    // TODO: DO we need addQueue?
 
     public WorldModel() {
         // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
@@ -223,13 +222,14 @@ public class WorldModel {
 
     }
 
-    public void populate() {
+
+    /*public void populate() {
         // TODO: PLEASE FIX HOW OBJECTS ARE INSTANTIATED PROPERLY
         // TODO: WE NEED TO MAKE IT SO THAT THIS IS LIKE DATA DRIVEN OR SOME CRAP
 
         // TODO: What are we going to do with assets
 
-        /* Add holes */
+        *//* Add holes *//*
         PolygonObstacle obj;
         obj = new HoleModel(LevelController.WALL1, 16, 5);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -258,7 +258,7 @@ public class WorldModel {
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
-        /* Add walls */
+        *//* Add walls *//*
         obj = new WallModel(LevelController.WALL2, 9.5f, 8);
         obj.setBodyType(BodyDef.BodyType.StaticBody);
         obj.setDensity(IMMOVABLE_OBJ_DENSITY);
@@ -292,7 +292,7 @@ public class WorldModel {
         wall.setName("wall3");
         addStaticObject(wall);
 
-        /* Add screen edges */
+        *//* Add screen edges *//*
 
         // left screen edge
         obj = new WallModel(LevelController.VERT_WALL, 32.5f, 0);
@@ -338,7 +338,7 @@ public class WorldModel {
         obj.setName("wall1");
         addStaticObject(obj);
 
-        /* Add players */
+        *//* Add players *//*
         // Team A
         float pWidth = player1Texture.getRegionWidth() / scale.x;
         float pHeight = player1Texture.getRegionHeight() / scale.y;
@@ -349,16 +349,16 @@ public class WorldModel {
         p1.setDrawScale(scale);
 //        p1.setMovable(true);
 
-        /* Add home stalls */
+        *//* Add home stalls *//*
         // Team A
-        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
+        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, "a");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
         home.setName("homeA");
         addStaticObject(home);
 
-        /* Add players */
+        *//* Add players *//*
         // Team B
         PlayerModel p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, player2FilmStrip, "b");
         p2.setDensity(MOVABLE_OBJ_DENSITY);
@@ -367,9 +367,9 @@ public class WorldModel {
         p2.setDrawScale(scale);
 //        p2.setMovable(true);
 
-        /* Add home stalls */
+        *//* Add home stalls *//*
         // Team B
-        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
+        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, "b");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setTexture(standTile);
@@ -381,7 +381,7 @@ public class WorldModel {
         // player list
         player_list = new PlayerModel[] { p1, p2 };
 
-        /* Add items */
+        *//* Add items *//*
         float itemWidth = ItemModel.itemTexture.getRegionWidth() / scale.x;
         float itemHeight = ItemModel.itemTexture.getRegionHeight() / scale.y;
         ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight);
@@ -391,7 +391,7 @@ public class WorldModel {
         item.setDrawScale(scale);
         items = new ItemModel[] {item};
         addDynamicObject(item);
-    }
+    }*/
 
     public void setScale(Vector2 scale) {
         setScale(scale.x, scale.y);
@@ -440,7 +440,7 @@ public class WorldModel {
         obj.activatePhysics(world);
     }
 
-    protected void addDynamicObject(Obstacle obj) {
+    public void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         dynamicObjects.add(obj);
         obj.activatePhysics(world);
