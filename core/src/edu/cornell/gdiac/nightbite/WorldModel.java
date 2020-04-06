@@ -176,8 +176,8 @@ public class WorldModel {
     }
 
     // TODO: PLEASE fix this
-    public ItemModel getItem() {
-        return items.get(0);
+    public ItemModel getItem(int index) {
+        return items.get(index);
     }
 
     /**

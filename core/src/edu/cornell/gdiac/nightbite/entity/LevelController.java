@@ -32,15 +32,17 @@ public class LevelController {
 
     private void createItems(WorldModel world, JsonValue items) {
         ItemModel item;
+        int itemNum = 0;
         for (JsonValue itemJson : items.iterator()) {
             item = new ItemModel(
                     itemJson.getFloat("x"),
                     itemJson.getFloat("y"),
-                    1, 1, Assets.FISH_ITEM
+                    1, 1, itemNum, Assets.FISH_ITEM
             );
             item.setName("item");
             item.setDrawScale(world.scale);
             world.addItem(item);
+            itemNum++;
         }
     }
 

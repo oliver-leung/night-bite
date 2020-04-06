@@ -120,6 +120,7 @@ public class WorldController implements Screen {
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
+	private int NUM_ITEMS = 2;
 	private PooledList<Vector2> object_list = new PooledList<>();
 	private float[] prev_hori_dir = new float[]{-1, -1};
 
@@ -410,8 +411,11 @@ public class WorldController implements Screen {
 
 		// TODO peer review below
 		// TODO: Wait for item refactor
-		ItemModel item = worldModel.getItem();
-		item.update();
+
+		for (int i = 0; i < NUM_ITEMS; i++) {
+			ItemModel item = worldModel.getItem(i);
+			item.update();
+		}
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
@@ -424,7 +428,6 @@ public class WorldController implements Screen {
 		boolean playerDidBoost;
 		boolean playerDidThrow;
 		for (int i = 0; i < NUM_PLAYERS; i++) {
-
 
 			playerHorizontal = manager.getVelX(i);
 			playerVertical = manager.getVelY(i);
@@ -482,22 +485,35 @@ public class WorldController implements Screen {
 
 			/* Items */
 
-			/* IF FISH IN PLAYER HANDS */
-			if (p.item) {
-				item.setPosition(p.getX(), p.getY() + 1f);
-			}
+			// TODO
 
 			/* IF PLAYER GRABS ITEM */
-			if (!item.isHeld() && p.getOverlapItem() && playerDidThrow && item.cooldownOver()) {
-				item.setHeld(p);
-				item.startCooldown();
+			for (int j = 0; j < NUM_ITEMS; j++) {
+				ItemModel item = worldModel.getItem(j);
+				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && item.cooldownOver()) {
+					item.setHeld(p);
+					item.startCooldown();
+				}
+			}
+
+			/* IF FISH IN PLAYER HANDS */
+			if (p.hasItem()) {
+				for (int id: p.getItemId()) {
+					ItemModel heldItem = worldModel.getItem(id);
+					heldItem.setPosition(p.getX(), p.getY() + 1f);
+				}
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownOver()) {
-				item.setUnheld();
-				item.startCooldown();
-				item.throwItem(p.getImpulse());
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem()) {
+				for (int id: p.getItemId()) {
+					ItemModel item = worldModel.getItem(id);
+					if (item.cooldownOver()) {
+						item.setUnheld();
+						item.startCooldown();
+						item.throwItem(p.getImpulse());
+					}
+				}
 			}
 
 			// player updates (for respawn and dash cool down)

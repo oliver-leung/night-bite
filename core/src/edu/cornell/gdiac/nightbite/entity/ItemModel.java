@@ -8,10 +8,6 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 public class ItemModel extends BoxObstacle {
 
     /**
-     * item texture
-     */
-    public static TextureRegion itemTexture;
-    /**
      * item-player
      */
     public PlayerModel holdingPlayer;
@@ -37,9 +33,13 @@ public class ItemModel extends BoxObstacle {
      */
     private float THROW_FORCE = 500f;
     private float MOTION_DAMPING = 25f;
+    /**
+     * item identification
+     * */
+    private int id;
 
 
-    public ItemModel(float x, float y, float width, float height, TextureRegion itemTexture) {
+    public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
         setSensor(true);
@@ -47,11 +47,17 @@ public class ItemModel extends BoxObstacle {
         setName("item");
 
         item_init_position = new Vector2(x, y);
+        id = itemId;
     }
 
     public void update() {
         updateCooldown();
         updateRespawn();
+    }
+
+    /** item identification */
+    public int getId() {
+        return id;
     }
 
     /** cooldown between grabbing/throwing */
@@ -93,7 +99,7 @@ public class ItemModel extends BoxObstacle {
     /** item held */
 
     public void setHeld(PlayerModel p) {
-        p.item = true;
+        p.item.set(id, true);
         holdingPlayer = p;
         lastTouch = p;
 
@@ -102,7 +108,7 @@ public class ItemModel extends BoxObstacle {
 
     public void setUnheld() {
         if (holdingPlayer != null) {
-            holdingPlayer.item = false;
+            holdingPlayer.item.set(id, false);
             holdingPlayer = null;
         }
 

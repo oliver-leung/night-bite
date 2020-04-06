@@ -6,10 +6,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 
 public class PlayerModel extends CapsuleObstacle {
+
+    // TODO
+    private int NUM_ITEMS = 2;
 
     /**
      * player movement params
@@ -43,17 +50,14 @@ public class PlayerModel extends CapsuleObstacle {
     private Vector2 homeLoc;
 
     /** player-item */
-    public boolean item;
-    private boolean overlapItem;
+    public ArrayList<Boolean> item;
+    private ArrayList<Boolean> overlapItem;
 
-    /**
-     * player texture
-     */
+    /** player texture */
     public final FilmStrip playerTexture;
-    private TextureRegion defaultTexture;
+    private FilmStrip defaultTexture;
 
-    @Override
-    public void setTexture(TextureRegion value) {
+    public void setTexture(FilmStrip value) {
         if (defaultTexture == null) {
             defaultTexture = value;
         }
@@ -79,7 +83,12 @@ public class PlayerModel extends CapsuleObstacle {
         boosting = 0;
 
         isAlive = true;
-        overlapItem = false;
+        item = new ArrayList<Boolean>();
+        overlapItem = new ArrayList<Boolean>();
+        for (int i = 0; i < NUM_ITEMS; i++) {
+            item.add(false);
+            overlapItem.add(false);
+        }
 
         homeLoc = new Vector2(2 * x + 1f, 2 * y + 1f);
         team = playerTeam;
@@ -117,7 +126,7 @@ public class PlayerModel extends CapsuleObstacle {
     public void setIY(float value) { impulse.y = value; }
 
     public void setBoostImpulse(float hori, float vert) {
-        if (cooldown > 0 || item) { return; }
+        if (cooldown > 0 || hasItem()) { return; }
         state = MoveState.RUN;
         boosting = BOOST_FRAMES;
         cooldown = COOLDOWN_FRAMES;
@@ -173,19 +182,33 @@ public class PlayerModel extends CapsuleObstacle {
             isAlive = true;
             draw = true;
         }
-        item = false;
+        Collections.fill(item, false);
         resetTexture();
 
         setLinearVelocity(Vector2.Zero);
     }
 
     /** player-item */
-    public void setOverlapItem(boolean b) {
-        overlapItem = b;
+    public void setOverlapItem(int id, boolean b) {
+        overlapItem.set(id, b);
     }
 
-    public boolean getOverlapItem() {
-        return overlapItem;
+    public boolean getOverlapItem(int id) {
+        return overlapItem.get(id);
+    }
+
+    public boolean hasItem() {
+        return item.contains(true);
+    }
+
+    public ArrayList<Integer> getItemId() {
+        ArrayList<Integer> ids = new ArrayList<>();
+        for (int i = 0; i < item.size(); i++) {
+            if (item.get(i)) {
+                ids.add(i);
+            }
+        }
+        return ids;
     }
 }
 
