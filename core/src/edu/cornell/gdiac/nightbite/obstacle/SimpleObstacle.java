@@ -785,12 +785,14 @@ public abstract class SimpleObstacle extends Obstacle {
 	 */
 	public void draw(GameCanvas canvas) {
 		if (texture != null) {
-			System.out.print("actually ");
-			System.out.println(actualScale);
-			canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),actualScale.x,actualScale.y);
+			// Vector2 newPos = getPosition().cpy();
+			// transformToPixel.applyTo(newPos);
+			// System.out.println("old: " + getPosition() + " new: " + newPos);
+			canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+					getAngle(),actualScale.x,actualScale.y);
 		}
 	}
-	
+
 	/**
 	 * Returns the Box2D body for this object.
 	 *

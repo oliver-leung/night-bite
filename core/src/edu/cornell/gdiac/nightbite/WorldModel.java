@@ -52,6 +52,8 @@ public class WorldModel {
     // TODO: should this be a float or v2?
     protected Vector2 actualScale;
 
+    protected Affine2 pixTransform;
+
     // TODO: Maybe use a better data structure
     private ItemModel[] items;
 
@@ -261,8 +263,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
-        // obj.setActualScale(actualScale);
-        // obj.setActualScale(actualScale);
+        obj.setTransformToPixel(pixTransform);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
@@ -272,7 +273,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
-        // obj.setActualScale(actualScale);
+        obj.setTransformToPixel(pixTransform);
         obj.setTexture(holeTile);
         addStaticObject(obj);
 
@@ -282,6 +283,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        obj.setTransformToPixel(pixTransform);
         // obj.setActualScale(actualScale);
         obj.setTexture(holeTile);
         addStaticObject(obj);
@@ -293,6 +295,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        obj.setTransformToPixel(pixTransform);
         // obj.setActualScale(actualScale);
         obj.setTexture(wallTile);
         obj.setName("wall1");
@@ -304,7 +307,6 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
-        // obj.setActualScale(actualScale);
         obj.setTexture(wallTile);
         obj.setName("wall2");
         addStaticObject(obj);
@@ -319,7 +321,9 @@ public class WorldModel {
         wall.setBodyType(BodyDef.BodyType.StaticBody);
         wall.setDrawScale(scale);
         wall.setActualScale(actualScale);
+        wall.setTransformToPixel(pixTransform);
         wall.setTexture(standTile);
+        wall.setTransformToPixel(pixTransform);
         wall.setName("wall3");
         addStaticObject(wall);
 
@@ -332,6 +336,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        obj.setTransformToPixel(pixTransform);
         // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -344,7 +349,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
-        // obj.setActualScale(actualScale);
+        obj.setTransformToPixel(pixTransform);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -356,6 +361,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
+        obj.setTransformToPixel(pixTransform);
         // obj.setActualScale(actualScale);
         obj.setTexture(standTile);
         obj.setName("wall1");
@@ -368,7 +374,7 @@ public class WorldModel {
         obj.setFriction(IMMOVABLE_OBJ_FRICTION);
         obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
         obj.setDrawScale(scale);
-        // obj.setActualScale(actualScale);
+        obj.setTransformToPixel(pixTransform);
         obj.setTexture(standTile);
         obj.setName("wall1");
         addStaticObject(obj);
@@ -383,6 +389,7 @@ public class WorldModel {
         p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p1.setDrawScale(scale);
         p1.setActualScale(actualScale);
+        p1.setTransformToPixel(pixTransform);
 //        p1.setMovable(true);
 
         /* Add home stalls */
@@ -390,8 +397,8 @@ public class WorldModel {
         HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
+        home.setTransformToPixel(pixTransform);
         home.setActualScale(actualScale);
-        // obj.setActualScale(actualScale);
         home.setTexture(standTile);
         home.setName("homeA");
         addStaticObject(home);
@@ -403,6 +410,7 @@ public class WorldModel {
         p2.setFriction(MOVABLE_OBJ_FRICTION);
         p2.setRestitution(MOVABLE_OBJ_RESTITUTION);
         p2.setDrawScale(scale);
+        p2.setTransformToPixel(pixTransform);
         p2.setActualScale(actualScale);
 //        p2.setMovable(true);
 
@@ -412,7 +420,7 @@ public class WorldModel {
         home.setBodyType(BodyDef.BodyType.StaticBody);
         home.setDrawScale(scale);
         home.setActualScale(actualScale);
-        // obj.setActualScale(actualScale);
+        home.setTransformToPixel(pixTransform);
         home.setTexture(standTile);
         home.setName("homeB");
         addStaticObject(home);
@@ -430,6 +438,7 @@ public class WorldModel {
         item.setFriction(MOVABLE_OBJ_FRICTION);
         item.setRestitution(MOVABLE_OBJ_RESTITUTION);
         item.setDrawScale(scale);
+        item.setTransformToPixel(pixTransform);
         item.setActualScale(actualScale);
         items = new ItemModel[] {item};
         addDynamicObject(item);
@@ -612,7 +621,7 @@ public class WorldModel {
     // This padding might be approximate lol tbh
     private static final float PADDING = 0f;
 
-    public Rectangle setPixelBounds(GameCanvas canvas) {
+    public void setPixelBounds(GameCanvas canvas) {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
         // scaleWorld translates the levelspace to canonical world space
@@ -637,25 +646,20 @@ public class WorldModel {
         float finalPosScale = finalAssetScale * world2Pixel;
 
         scale.set(finalPosScale, finalPosScale);
-        System.out.println(scale);
-        System.out.println(scale);
-        System.out.println(world2Pixel);
-        System.out.println(scalePixelX);
-        System.out.println(scaleWorldX);
-        System.out.println(finalAssetScale);
         actualScale.set(finalAssetScale, finalAssetScale);
-        System.out.println(actualScale);
 
-        // Affine2 transform = new Affine2();
-        // transform.scale(finalPosScale, finalPosScale);
+        // pixTransform = new Affine2();
+        // pixTransform.scale(finalPosScale, finalPosScale);
 
         // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
-        // transform.applyTo(pixelBoundsSize);
+        // pixTransform.applyTo(pixelBoundsSize);
 
-        // transform.translate((bounds.width - pixelBoundsSize.x) / 2, (bounds.height - pixelBoundsSize.y) / 2);
-        // pixelBoundsSize.set(bounds.width, bounds.height);
+        // System.out.println(pixelBoundsSize);
+        // System.out.println(canvas.getWidth());
+        // System.out.println((canvas.getWidth() - pixelBoundsSize.x) / 2);
 
-        return null;
+        // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
+
     }
 
 }
