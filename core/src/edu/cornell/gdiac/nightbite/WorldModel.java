@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -24,9 +25,18 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    /**
-     * Immovable object parameters
-     */
+    /** Width of the game world in Box2d units. */
+    public static final float DEFAULT_WIDTH = 32.0f;
+    /** Height of the game world in Box2d units. */
+    public static final float DEFAULT_HEIGHT = 18.0f;
+
+    // TODO: Should this be here? Maybe this should be defined in Canvas instead
+    /** Width of the game world in pixel units. */
+    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
+    /** Height of the game world in units. */
+    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
+
+    /** Immovable object parameters */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
     private static final float IMMOVABLE_OBJ_FRICTION = 1f;
     private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
@@ -36,32 +46,33 @@ public class WorldModel {
      */
     public static FilmStrip player1FilmStrip;
 
-    /**
-     * How many frames after winning/losing do we continue?
-     */
-    public static final int EXIT_COUNT = 120;
     public static FilmStrip player2FilmStrip;
     /**
      * Item parameters
      */
+
     protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
     public String winner;
 
-    // TODO: This should be data driven
     /**
-     * World scale
+     * FOR AI
      */
-    public Vector2 scale;
-
-    // TODO: PLEASE remove this eventually
-    public Vector2 getITEMSTART() {
-        return ITEM_START_POSITION;
-    }
+    TextureRegion itemTexture;
+    // TODO: Maybe use a better data structure
+    private ArrayList<ItemModel> items;
 
     /**
-     * World
+     * How many frames after winning/losing do we continue?
      */
+    public static final int EXIT_COUNT = 120;
+
+    /** World */
     protected World world;
+
+    /** World scale */
+    protected Vector2 scale;
+    // TODO: should this be a float or v2?
+    protected Vector2 actualScale;
 
     /**
      * Whether we have completed this level
@@ -86,12 +97,6 @@ public class WorldModel {
      */
     private Array<LightSource> lights = new Array<LightSource>();
 
-    /**
-     * FOR AI
-     */
-    TextureRegion itemTexture;
-    // TODO: Maybe use a better data structure
-    private ArrayList<ItemModel> items;
     /**
      * Objects that don't move during updates
      */
@@ -119,6 +124,7 @@ public class WorldModel {
         // TODO: Make this data driven
         bounds = new Rectangle(0, 0, 32f, 18f);
         scale = new Vector2(1f, 1f);
+        actualScale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
         staticObjects = new PooledList<>();
         complete = false;
@@ -306,6 +312,15 @@ public class WorldModel {
         return player_list;
     }
 
+    public Vector2 getScale() {
+        return scale;
+    }
+
+    public Vector2 getActualScale() {
+        return actualScale;
+    }
+
+
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
     }
@@ -351,14 +366,15 @@ public class WorldModel {
     /**
      * TODO allow passing in of different lighting parameters
      */
-    public void initLighting() {
-        raycamera = new OrthographicCamera(bounds.width, bounds.height);
-        raycamera.position.set(bounds.width / 2.0f, bounds.height / 2.0f, 0);
+    public void initLighting(GameCanvas canvas) {
+        // TODO; make all this work with non diagonal scaling
+        raycamera = new OrthographicCamera(canvas.getWidth() / scale.x, canvas.getHeight() / scale.y);
+        raycamera.position.set(canvas.getWidth() / scale.x / 2, canvas.getHeight() / scale.y / 2, 0);
         raycamera.update();
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler = new RayHandler(world, canvas.getWidth(), canvas.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
         // All hard coded for now, to be changed with data-driven levels
@@ -424,6 +440,56 @@ public class WorldModel {
         dynamicObjects = null;
         world = null;
         scale = null;
+    }
+
+    // TODO: This is experimental scaling code
+
+    // This padding might be approximate lol tbh
+    private static final float PADDING = 0f;
+
+    public void setPixelBounds(GameCanvas canvas) {
+        // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
+
+        // The whole point is that if the canvas is DEFAULT_PIXEL_WIDTH x DEFAULT_PIXEL_HEIGHT and
+        // the world is DEFAULT_WIDTH x DEFAULT_HEIGHT, everything is unscaled.
+        // These are called the canonical pixel space and canonical world space respectively.
+
+        // scaleWorld translates the levelspace to canonical world space
+        // (32 x 18, or otherwise indicated in WorldController)
+        float scaleWorldX = DEFAULT_WIDTH / bounds.width;
+        float scaleWorldY = DEFAULT_HEIGHT / bounds.height;
+
+        // World2Pixel translates from canonical world space to canonical pixel space
+        // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
+        // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
+        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
+
+        // scalePixel translate canonical pixel space to pixel space
+        // (1920 x 1080, or otherwise indicated in WorldController)
+        float scalePixelX = canvas.getWidth() / (DEFAULT_PIXEL_WIDTH - 2 * PADDING);
+        float scalePixelY = canvas.getHeight() / (DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
+
+        // Take the smaller scale so that we only scale diagonally or something
+        // This is for asset scaling
+        float finalAssetScale = Math.min(scaleWorldX * scalePixelX, scaleWorldY * scalePixelY);
+        // This is for converting things to pixel space?
+        float finalPosScale = finalAssetScale * world2Pixel;
+
+        scale.set(finalPosScale, finalPosScale);
+        actualScale.set(finalAssetScale, finalAssetScale);
+
+        // pixTransform = new Affine2();
+        // pixTransform.scale(finalPosScale, finalPosScale);
+
+        // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
+        // pixTransform.applyTo(pixelBoundsSize);
+
+        // System.out.println(pixelBoundsSize);
+        // System.out.println(canvas.getWidth());
+        // System.out.println((canvas.getWidth() - pixelBoundsSize.x) / 2);
+
+        // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
+
     }
 
 }

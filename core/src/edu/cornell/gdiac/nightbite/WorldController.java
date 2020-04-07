@@ -75,11 +75,6 @@ public class WorldController implements Screen {
 
 	/** GAME PARAMS */
 
-	/** Width of the game world in Box2d units. */
-	protected static final float DEFAULT_WIDTH = 32.0f;
-	/** Height of the game world in Box2d units. */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
-
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
 
@@ -131,11 +126,10 @@ public class WorldController implements Screen {
 	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
 	 * world, not the screen.
 	 *
-	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	// TODO: Remove bounds and gravity parameter
-	protected WorldController(Rectangle bounds, Vector2 gravity) {
+	protected WorldController(Vector2 gravity) {
 		setDebug(false);
 		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
@@ -151,24 +145,7 @@ public class WorldController implements Screen {
 	 * world, not the screen.
 	 */
 	protected WorldController() {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-				new Vector2(0, DEFAULT_GRAVITY));
-	}
-
-	/**
-	 * Creates a new game world
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param width   The width in Box2d coordinates
-	 * @param height  The height in Box2d coordinates
-	 * @param gravity The downward gravity
-	 */
-	// TODO: Remove Parameters
-	protected WorldController(float width, float height, float gravity) {
-		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
+		this(new Vector2(0, DEFAULT_GRAVITY));
 	}
 
 	/**
@@ -213,7 +190,8 @@ public class WorldController implements Screen {
 	 */
 	public void setCanvas(GameCanvas canvas) {
 		this.canvas = canvas;
-		worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		// worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		worldModel.setPixelBounds(canvas);
 	}
 
 	public void populateLevel() {
@@ -324,11 +302,11 @@ public class WorldController implements Screen {
 
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
-		worldModel = new WorldModel();
-		worldModel.setScale(canvas.getWidth() / worldModel.getWidth(), canvas.getHeight() / worldModel.getHeight());
-		CollisionController c = new CollisionController(worldModel);
-		worldModel.setContactListener(c);
-		// TODO: WHAT
+        worldModel = new WorldModel();
+        worldModel.setPixelBounds(canvas);
+        CollisionController c = new CollisionController(worldModel);
+        worldModel.setContactListener(c);
+        // TODO: WHAT
 		// Vector2 gravity = new Vector2( world.getGravity() );
 
 		// for(Obstacle obj : objects) {
@@ -341,7 +319,7 @@ public class WorldController implements Screen {
 		// world = new World(gravity,false);
 		// world.setContactListener(this);
 
-		worldModel.initLighting();
+		worldModel.initLighting(canvas);
 		worldModel.createPointLight();
 		populateLevel();
 
@@ -435,6 +413,7 @@ public class WorldController implements Screen {
 			// update player state // TODO film strip: needs player 1 film strip first
 			if (playerVertical != 0 || playerHorizontal != 0) {
 				p.setWalk();
+
 				if (p.getPlayerWalkCounter() % 20 == 0) {
 					p.playerTexture.setFrame(1);
 					if (p.getPrevHoriDir() == 1) {

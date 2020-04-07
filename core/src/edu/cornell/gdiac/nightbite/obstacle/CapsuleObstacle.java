@@ -127,7 +127,14 @@ public class CapsuleObstacle extends SimpleObstacle {
 		markDirty(true);
 		resize(width, height);
 	}
-	
+
+	@Override
+	public void setActualScale(Vector2 actualScale) {
+		setDimension(actualScale.x / this.actualScale.x * dimension.x,
+				actualScale.y / this.actualScale.y * dimension.y);
+		super.setActualScale(actualScale);
+	}
+
 	/**
 	 * Returns the box width
 	 *
