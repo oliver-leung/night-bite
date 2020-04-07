@@ -1,8 +1,8 @@
 package edu.cornell.gdiac.nightbite;
 
-import com.badlogic.gdx.controllers.mappings.Xbox;
-import edu.cornell.gdiac.util.XBox360Controller;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.JsonReader;
+import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
     // TODO: Configurable controls
@@ -12,6 +12,7 @@ public class InputController extends MechanicController {
 
     private XBox360Controller xbox;
     private int keyboard;
+    private Keymap keymap;
 
     private boolean prevDash;
     private boolean prevThrow;
@@ -116,4 +117,26 @@ public class InputController extends MechanicController {
         pollKeyboard();
     }
 
+    private static class Keymap {
+        public final int UP;
+        public final int DOWN;
+        public final int LEFT;
+        public final int RIGHT;
+        public final int DASH;
+        public final int GRAB;
+        public final int DEBUG;
+        public final int RESET;
+
+        public Keymap(int mappingSet) {
+            JsonReader jsonReader = new JsonReader();
+            this.UP = UP;
+            this.DOWN = DOWN;
+            this.LEFT = LEFT;
+            this.RIGHT = RIGHT;
+            this.DASH = DASH;
+            this.GRAB = GRAB;
+            this.DEBUG = DEBUG;
+            this.RESET = RESET;
+        }
+    }
 }
