@@ -28,6 +28,17 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
+    /** Width of the game world in Box2d units. */
+    public static final float DEFAULT_WIDTH = 32.0f;
+    /** Height of the game world in Box2d units. */
+    public static final float DEFAULT_HEIGHT = 18.0f;
+
+    // TODO: Should this be here? Maybe this should be defined in Canvas instead
+    /** Width of the game world in pixel units. */
+    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
+    /** Height of the game world in units. */
+    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
+
     /** Immovable object parameters */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
     private static final float IMMOVABLE_OBJ_FRICTION = 1f;
@@ -627,20 +638,24 @@ public class WorldModel {
     public void setPixelBounds(GameCanvas canvas) {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
+        // The whole point is that if the canvas is DEFAULT_PIXEL_WIDTH x DEFAULT_PIXEL_HEIGHT and
+        // the world is DEFAULT_WIDTH x DEFAULT_HEIGHT, everything is unscaled.
+        // These are called the canonical pixel space and canonical world space respectively.
+
         // scaleWorld translates the levelspace to canonical world space
         // (32 x 18, or otherwise indicated in WorldController)
-        float scaleWorldX = WorldController.DEFAULT_WIDTH / bounds.width;
-        float scaleWorldY = WorldController.DEFAULT_HEIGHT / bounds.height;
+        float scaleWorldX = DEFAULT_WIDTH / bounds.width;
+        float scaleWorldY = DEFAULT_HEIGHT / bounds.height;
 
         // World2Pixel translates from canonical world space to canonical pixel space
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
-        float world2Pixel =  WorldController.DEFAULT_PIXEL_HEIGHT / WorldController.DEFAULT_HEIGHT;
+        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
 
         // scalePixel translate canonical pixel space to pixel space
         // (1920 x 1080, or otherwise indicated in WorldController)
-        float scalePixelX = canvas.getWidth() / (WorldController.DEFAULT_PIXEL_WIDTH - 2 * PADDING);
-        float scalePixelY = canvas.getHeight() / (WorldController.DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
+        float scalePixelX = canvas.getWidth() / (DEFAULT_PIXEL_WIDTH - 2 * PADDING);
+        float scalePixelY = canvas.getHeight() / (DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
 
         // Take the smaller scale so that we only scale diagonally or something
         // This is for asset scaling

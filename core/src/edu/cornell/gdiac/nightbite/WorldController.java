@@ -82,17 +82,6 @@ public class WorldController implements Screen {
 
 	/** GAME PARAMS */
 
-	/** Width of the game world in Box2d units. */
-	public static final float DEFAULT_WIDTH = 32.0f;
-	/** Height of the game world in Box2d units. */
-	public static final float DEFAULT_HEIGHT = 18.0f;
-
-	// TODO: Should this be here? Maybe this should be defined in Canvas instead
-	/** Width of the game world in pixel units. */
-	public static final float DEFAULT_PIXEL_WIDTH = 1024f;
-	/** Height of the game world in units. */
-	public static final float DEFAULT_PIXEL_HEIGHT = 576f;
-
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
 
@@ -147,11 +136,10 @@ public class WorldController implements Screen {
 	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
 	 * world, not the screen.
 	 *
-	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	// TODO: Remove bounds and gravity parameter
-	protected WorldController(Rectangle bounds, Vector2 gravity) {
+	protected WorldController(Vector2 gravity) {
 		setDebug(false);
 		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
@@ -167,24 +155,7 @@ public class WorldController implements Screen {
 	 * world, not the screen.
 	 */
 	protected WorldController() {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-				new Vector2(0, DEFAULT_GRAVITY));
-	}
-
-	/**
-	 * Creates a new game world
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param width   The width in Box2d coordinates
-	 * @param height  The height in Box2d coordinates
-	 * @param gravity The downward gravity
-	 */
-	// TODO: Remove Parameters
-	protected WorldController(float width, float height, float gravity) {
-		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
+		this(new Vector2(0, DEFAULT_GRAVITY));
 	}
 
 	/**
