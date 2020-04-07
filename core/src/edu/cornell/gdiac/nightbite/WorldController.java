@@ -122,11 +122,7 @@ public class WorldController implements Screen {
 	private int NUM_PLAYERS = 2;
 	private int NUM_ITEMS = 2;
 	private PooledList<Vector2> object_list = new PooledList<>();
-	private float[] prev_hori_dir = new float[]{-1, -1};
-
 	private WorldModel worldModel;
-
-	private int[] playerWalkCounter = new int[] {0, 0};
 
 	/**
 	 * Creates a new game world
@@ -439,23 +435,23 @@ public class WorldController implements Screen {
 			// update player state // TODO film strip: needs player 1 film strip first
 			if (playerVertical != 0 || playerHorizontal != 0) {
 				p.setWalk();
-				if (playerWalkCounter[i] % 20 == 0) {
+				if (p.getPlayerWalkCounter() % 20 == 0) {
 					p.playerTexture.setFrame(1);
-					if (prev_hori_dir[i] == 1) {
+					if (p.getPrevHoriDir() == 1) {
 						p.playerTexture.flip(true, false);
 					}
-				} else if (playerWalkCounter[i] % 20 == 10) {
+				} else if (p.getPlayerWalkCounter() % 20 == 10) {
 					p.playerTexture.setFrame(0);
-					if (prev_hori_dir[i] == 1) {
+					if (p.getPrevHoriDir() == 1) {
 						p.playerTexture.flip(true, false);
 					}
 				}
-				playerWalkCounter[i]++;
+				p.incrPlayerWalkCounter();
 			} else {
 				p.setStatic();
-				playerWalkCounter[i] = 0;
+				p.resetPlayerWalkCounter();
 				p.playerTexture.setFrame(0);
-				if (prev_hori_dir[i] == 1) {
+				if (p.getPrevHoriDir() == 1) {
 					p.playerTexture.flip(true, false);
 				}
 			}
@@ -466,7 +462,7 @@ public class WorldController implements Screen {
 			}
 
 			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
+			if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
 				p.playerTexture.flip(true, false);
 			}
 
@@ -498,21 +494,20 @@ public class WorldController implements Screen {
 
 			/* IF FISH IN PLAYER HANDS */
 			if (p.hasItem()) {
-				for (int id: p.getItemId()) {
-					ItemModel heldItem = worldModel.getItem(id);
-					heldItem.setPosition(p.getX(), p.getY() + 1f);
+				float offset = 1;
+				for (ItemModel heldItem: p.getItems()) {
+					heldItem.setPosition(p.getX(), p.getY() + offset);
+					offset += 0.6;
 				}
 			}
 
 			/* IF PLAYER THROWS ITEM */
 			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem()) {
-				for (int id: p.getItemId()) {
-					ItemModel item = worldModel.getItem(id);
-					if (item.cooldownOver()) {
-						item.setUnheld();
-						item.startCooldown();
-						item.throwItem(p.getImpulse());
-					}
+				ItemModel lastItem = p.getItems().get(0);
+				if (lastItem.cooldownOver()) {
+					lastItem.setUnheld();
+					lastItem.startCooldown();
+					lastItem.throwItem(p.getImpulse());
 				}
 			}
 
@@ -521,7 +516,7 @@ public class WorldController implements Screen {
 
 			// update horizontal direction
 			if (playerHorizontal != 0) {
-				prev_hori_dir[i] = playerHorizontal;
+				p.setPrevHoriDir(playerHorizontal);
 			}
 		}
 	}
@@ -545,7 +540,6 @@ public class WorldController implements Screen {
 
 		// Turn the physics engine crank.
 		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
-
 
 		// TODO: Maybe move this to WorldController
 		// Garbage collect the deleted objects.

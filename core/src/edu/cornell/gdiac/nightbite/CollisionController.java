@@ -101,10 +101,9 @@ public class CollisionController implements ContactListener {
             player.setDead();
 
             if (player.hasItem()) { // TODO fix jank implementation
-                for (Integer id : player.getItemId()) {
-                    ItemModel item = worldModel.getItem(id);
-                    item.setUnheld();
-                    item.startRespawn();
+                for (ItemModel item_obj : player.getItems()) {
+                    item_obj.setUnheld();
+                    item_obj.startRespawn();
                 }
             }
 
@@ -121,13 +120,11 @@ public class CollisionController implements ContactListener {
             // If players went to their own home, drop off item and increment score
             if (player.getTeam().equals(homeObject.getTeam()) && player.hasItem()) {
 
-                int numCarriedItems = player.getItemId().size();
-                homeObject.incrementScore(numCarriedItems);
+                homeObject.incrementScore(player.numCarriedItems());
 
-                for (Integer id : player.getItemId()) {
-                    ItemModel item = worldModel.getItem(id);
-                    item.setUnheld();
-                    item.startRespawn();
+                for (ItemModel item_obj : player.getItems()) {
+                    item_obj.setUnheld();
+                    item_obj.startRespawn();
                 }
 
                 // win condition

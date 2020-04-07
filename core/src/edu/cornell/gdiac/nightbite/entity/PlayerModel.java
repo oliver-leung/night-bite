@@ -38,6 +38,9 @@ public class PlayerModel extends CapsuleObstacle {
     private int boosting;
     private int cooldown;
 
+    private float prevHoriDir;
+    private int playerWalkCounter;
+
     private Vector2 impulse;
     private Vector2 boost;
 
@@ -50,7 +53,7 @@ public class PlayerModel extends CapsuleObstacle {
     private Vector2 homeLoc;
 
     /** player-item */
-    public ArrayList<Boolean> item;
+    private ArrayList<ItemModel> item;
     private ArrayList<Boolean> overlapItem;
 
     /** player texture */
@@ -64,10 +67,10 @@ public class PlayerModel extends CapsuleObstacle {
         super.setTexture(value);
     }
 
-    public void resetTexture() { texture = defaultTexture;
-    }
+    public void resetTexture() { texture = defaultTexture; }
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
+
         super(2 * x + 1f, 2 * y + 1f, width, height);
         setOrientation(Orientation.VERTICAL);
         setBullet(true);
@@ -79,14 +82,16 @@ public class PlayerModel extends CapsuleObstacle {
         impulse = new Vector2();
         boost = new Vector2();
 
+        prevHoriDir = -1;
+        playerWalkCounter = 0;
+
         cooldown = 0;
         boosting = 0;
 
         isAlive = true;
-        item = new ArrayList<Boolean>();
+        item = new ArrayList<ItemModel>();
         overlapItem = new ArrayList<Boolean>();
         for (int i = 0; i < NUM_ITEMS; i++) {
-            item.add(false);
             overlapItem.add(false);
         }
 
@@ -143,6 +148,27 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     /** movement state */
+
+    public float getPrevHoriDir() {
+        return prevHoriDir;
+    }
+
+    public void setPrevHoriDir(float dir) {
+        prevHoriDir = dir;
+    }
+
+    public int getPlayerWalkCounter() {
+        return playerWalkCounter;
+    }
+
+    public void incrPlayerWalkCounter() {
+        playerWalkCounter++;
+    }
+
+    public void resetPlayerWalkCounter() {
+        playerWalkCounter = 0;
+    }
+
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
@@ -182,7 +208,6 @@ public class PlayerModel extends CapsuleObstacle {
             isAlive = true;
             draw = true;
         }
-        Collections.fill(item, false);
         resetTexture();
 
         setLinearVelocity(Vector2.Zero);
@@ -198,17 +223,23 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     public boolean hasItem() {
-        return item.contains(true);
+        return item.size() > 0;
     }
 
-    public ArrayList<Integer> getItemId() {
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (int i = 0; i < item.size(); i++) {
-            if (item.get(i)) {
-                ids.add(i);
-            }
-        }
-        return ids;
+    public int numCarriedItems() {
+        return item.size();
+    }
+
+    public ArrayList<ItemModel> getItems() {
+        return item;
+    }
+
+    public void unholdItem(ItemModel i) {
+        item.remove(i);
+    }
+
+    public void holdItem(ItemModel i) {
+        item.add(i);
     }
 }
 

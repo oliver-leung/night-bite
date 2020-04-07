@@ -99,7 +99,7 @@ public class ItemModel extends BoxObstacle {
     /** item held */
 
     public void setHeld(PlayerModel p) {
-        p.item.set(id, true);
+        p.holdItem(this);
         holdingPlayer = p;
         lastTouch = p;
 
@@ -108,7 +108,7 @@ public class ItemModel extends BoxObstacle {
 
     public void setUnheld() {
         if (holdingPlayer != null) {
-            holdingPlayer.item.set(id, false);
+            holdingPlayer.unholdItem(this);
             holdingPlayer = null;
         }
 
