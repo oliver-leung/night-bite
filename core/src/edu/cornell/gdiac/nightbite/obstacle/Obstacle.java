@@ -17,6 +17,7 @@
  */
 package edu.cornell.gdiac.nightbite.obstacle;
 
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -49,6 +50,8 @@ public abstract class Obstacle {
     private String nametag;
 	/** Drawing scale to convert physics units to pixels */
 	protected Vector2 drawScale;
+
+	protected Affine2 transformToPixel;
 
 	/// Track garbage collection status
 	/** Whether the object should be removed from the world on next pass */
@@ -879,7 +882,12 @@ public abstract class Obstacle {
     public void setDrawScale(Vector2 value) { 
     	setDrawScale(value.x,value.y); 
 	}
-    
+
+	public void setTransformToPixel(Affine2 value) {
+    	if (value == null) { return; }
+    	transformToPixel.set(value);
+	}
+
     /**
      * Sets the drawing scale for this physics object
      *
@@ -957,6 +965,8 @@ public abstract class Obstacle {
 		
 		// Set the default drawing scale
 		drawScale = new Vector2(1,1);
+
+		transformToPixel = new Affine2();
 	}
 
 	/// Abstract Methods

@@ -39,7 +39,8 @@ public class LevelController {
                     1, 1, Assets.FISH_ITEM
             );
             item.setName("item");
-            item.setDrawScale(world.scale);
+            item.setDrawScale(world.getScale());
+            item.setActualScale(world.getActualScale());
             world.addItem(item);
         }
     }
@@ -52,18 +53,20 @@ public class LevelController {
             float x = teamJson.getFloat("x");
             float y = teamJson.getFloat("y");
             FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
-            float pWidth = filmStrip.getRegionWidth() / world.scale.x;
-            float pHeight = filmStrip.getRegionHeight() / world.scale.y;
+            float pWidth = filmStrip.getRegionWidth() / world.getScale().x;
+            float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
             String teamName = teamJson.name;
 
             player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, teamName);
-            player.setDrawScale(world.scale);
+            player.setDrawScale(world.getScale());
+            player.setActualScale(world.getActualScale());
             player.setName("player " + teamName);
             world.addPlayer(player);
 
             home = new HomeModel(x, y, teamName);
             home.setName("home " + teamName);
-            home.setDrawScale(world.scale);
+            home.setDrawScale(world.getScale());
+            home.setActualScale(world.getActualScale());
             world.addStaticObject(home);
             playerNum++;
         }
@@ -76,7 +79,8 @@ public class LevelController {
                     wallJson.getFloat("x"),
                     wallJson.getFloat("y"),
                     wallJson.getInt("rotate"));
-            hole.setDrawScale(world.scale);
+            hole.setDrawScale(world.getScale());
+            hole.setActualScale(world.getActualScale());
             hole.setName(wallJson.name());
             world.addStaticObject(hole);
         }
@@ -89,7 +93,8 @@ public class LevelController {
                     wallJson.getFloat("x"),
                     wallJson.getFloat("y"),
                     wallJson.getInt("rotate"));
-            wall.setDrawScale(world.scale);
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
             wall.setName(wallJson.name());
             world.addStaticObject(wall);
         }
