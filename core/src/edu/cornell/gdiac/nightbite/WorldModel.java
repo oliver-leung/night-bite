@@ -517,14 +517,17 @@ public class WorldModel {
     /**
      * TODO allow passing in of different lighting parameters
      */
-    public void initLighting() {
-        raycamera = new OrthographicCamera(bounds.width,bounds.height);
-        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+    public void initLighting(GameCanvas canvas) {
+        // TODO; make all this work with non diagonal scaling
+        raycamera = new OrthographicCamera(canvas.getWidth() / scale.x, canvas.getHeight() / scale.y);
+        // raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+        raycamera.position.set(canvas.getWidth() / scale.x / 2, canvas.getHeight() / scale.y / 2, 0);
+        //         bounds.width/2.0f, bounds.height/2.0f, 0);
         raycamera.update();
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler = new RayHandler(world, canvas.getWidth(), canvas.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
         // All hard coded for now, to be changed with data-driven levels

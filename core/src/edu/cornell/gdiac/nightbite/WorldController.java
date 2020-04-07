@@ -360,7 +360,7 @@ public class WorldController implements Screen {
 		// world = new World(gravity,false);
 		// world.setContactListener(this);
 
-		worldModel.initLighting();
+		worldModel.initLighting(canvas);
 		worldModel.createPointLight();
 		populateLevel();
 
