@@ -5,39 +5,61 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
-import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.entity.ItemModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
-import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
+    /** Width of the game world in Box2d units. */
+    public static final float DEFAULT_WIDTH = 32.0f;
+    /** Height of the game world in Box2d units. */
+    public static final float DEFAULT_HEIGHT = 18.0f;
+
+    // TODO: Should this be here? Maybe this should be defined in Canvas instead
+    /** Width of the game world in pixel units. */
+    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
+    /** Height of the game world in units. */
+    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
+
     /** Immovable object parameters */
     private static final float IMMOVABLE_OBJ_DENSITY = 0f;
     private static final float IMMOVABLE_OBJ_FRICTION = 1f;
     private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
 
-    /** Movable object parameters */
-    private static final float MOVABLE_OBJ_DENSITY = 0.5f;
-    private static final float MOVABLE_OBJ_FRICTION = 0.1f;
-    private static final float MOVABLE_OBJ_RESTITUTION = 0.4f;
+    /**
+     * Player textures
+     */
+    public static FilmStrip player1FilmStrip;
 
+    public static FilmStrip player2FilmStrip;
+    /**
+     * Item parameters
+     */
+
+    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
     public String winner;
+
+    /**
+     * FOR AI
+     */
+    TextureRegion itemTexture;
+    // TODO: Maybe use a better data structure
+    private ArrayList<ItemModel> items;
 
     /**
      * How many frames after winning/losing do we continue?
@@ -46,25 +68,11 @@ public class WorldModel {
 
     /** World */
     protected World world;
-     /** World scale */
+
+    /** World scale */
     protected Vector2 scale;
-
-    // TODO: Maybe use a better data structure
-    private ItemModel[] items;
-
-    // TODO: This should be data driven
-    /** Item parameters */
-    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
-
-    // TODO: PLEASE remove this eventually
-    public Vector2 getITEMSTART() {
-        return ITEM_START_POSITION;
-    }
-
-    // TODO: PLEASE fix this
-    public ItemModel getItem() {
-        return items[0];
-    }
+    // TODO: should this be a float or v2?
+    protected Vector2 actualScale;
 
     /**
      * Whether we have completed this level
@@ -74,7 +82,6 @@ public class WorldModel {
      * Countdown active for winning or losing
      */
     private int countdown;
-
     /**
      * The camera defining the RayHandler view; scale is in physics coordinates
      */
@@ -90,20 +97,17 @@ public class WorldModel {
      */
     private Array<LightSource> lights = new Array<LightSource>();
 
-    /** FOR AI */
-
-    /** Objects that don't move during updates */
+    /**
+     * Objects that don't move during updates
+     */
     private PooledList<Obstacle> staticObjects;
-    /** Objects that move during updates */
-    private PooledList<Obstacle> dynamicObjects;
-
-    private PlayerModel[] player_list;
 
     private Rectangle bounds;
-
-    /** Player textures */
-    public static FilmStrip player1FilmStrip;
-    public static FilmStrip player2FilmStrip;
+    /**
+     * Objects that move during updates
+     */
+    private PooledList<Obstacle> dynamicObjects;
+    private ArrayList<PlayerModel> player_list;
 
 
     // TODO: REMOVE ALL THESE DUMB TEXTURES
@@ -112,7 +116,22 @@ public class WorldModel {
     TextureRegion backgroundTile;
     TextureRegion goalTile;
     TextureRegion holeTile;
-    TextureRegion itemTexture;
+    public WorldModel() {
+        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
+        // Actually technically not true since we can set this stuff in WorldController, but still
+        world = new World(Vector2.Zero, false);
+        // TODO: CollisionController
+        // TODO: Make this data driven
+        bounds = new Rectangle(0, 0, 32f, 18f);
+        scale = new Vector2(1f, 1f);
+        actualScale = new Vector2(1f, 1f);
+        dynamicObjects = new PooledList<>();
+        staticObjects = new PooledList<>();
+        complete = false;
+        countdown = -1;
+        player_list = new ArrayList<>();
+        items = new ArrayList<>();
+    }
 
     public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
         wallTile = textures[0];
@@ -129,23 +148,31 @@ public class WorldModel {
 
     // TODO: DO we need addQueue?
 
-    public WorldModel() {
-        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
-        // Actually technically not true since we can set this stuff in WorldController, but still
-        world = new World(Vector2.Zero, false);
-        // TODO: CollisionController
-        // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 32f, 18f);
-        scale = new Vector2(1f, 1f);
-        dynamicObjects = new PooledList<>();
-        staticObjects = new PooledList<>();
-        complete = false;
-        countdown = -1;
+    /**
+     * Returns a string equivalent to the COMPLEMENT of bits in s
+     * <p>
+     * This function assumes that s is a string of 0s and 1s of length < 16.
+     * This function allows the JSON file to specify exclusion bit arrays (for masking)
+     * in a readable format.
+     *
+     * @param s the string representation of the bit array
+     * @return a string equivalent to the COMPLEMENT of bits in s
+     */
+    public static short bitStringToComplement(String s) {
+        short value = 0;
+        short pos = 1;
+        for (int ii = s.length() - 1; ii >= 0; ii--) {
+            if (s.charAt(ii) == '0') {
+                value += pos;
+            }
+            pos *= 2;
+        }
+        return value;
     }
 
     /**
      * Returns true if the level is completed.
-     *
+     * <p>
      * If true, the level will advance after a countdown
      *
      * @return true if the level is completed.
@@ -154,9 +181,9 @@ public class WorldModel {
         return complete;
     }
 
-    public boolean isDone() {
-        countdown --;
-        return countdown <= 0 && complete;
+    // TODO: PLEASE fix this
+    public ItemModel getItem(int index) {
+        return items.get(index);
     }
 
     /**
@@ -243,176 +270,6 @@ public class WorldModel {
 
     }
 
-    public void populate() {
-        // TODO: PLEASE FIX HOW OBJECTS ARE INSTANTIATED PROPERLY
-        // TODO: WE NEED TO MAKE IT SO THAT THIS IS LIKE DATA DRIVEN OR SOME CRAP
-
-        // TODO: What are we going to do with assets
-
-        /* Add holes */
-        PolygonObstacle obj;
-        obj = new HoleModel(LevelController.WALL1, 16, 5);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(holeTile);
-        addStaticObject(obj);
-
-        obj = new HoleModel(LevelController.WALL2, 2, 4);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(holeTile);
-        addStaticObject(obj);
-
-        obj = new HoleModel(LevelController.WALL2, 30, 4);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(holeTile);
-        addStaticObject(obj);
-
-        /* Add walls */
-        obj = new WallModel(LevelController.WALL2, 9.5f, 8);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(wallTile);
-        obj.setName("wall1");
-        addStaticObject(obj);
-
-        obj = new WallModel(LevelController.WALL2, 22.5f, 8);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(wallTile);
-        obj.setName("wall2");
-        addStaticObject(obj);
-
-        BoxObstacle wall;
-        float ddwidth = wallTile.getRegionWidth() / scale.x;
-        float ddheight = wallTile.getRegionHeight() / scale.y;
-        wall = new BoxObstacle(16, 3.5f, ddwidth, ddheight);
-        wall.setDensity(IMMOVABLE_OBJ_DENSITY);
-        wall.setFriction(IMMOVABLE_OBJ_FRICTION);
-        wall.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        wall.setBodyType(BodyDef.BodyType.StaticBody);
-        wall.setDrawScale(scale);
-        wall.setTexture(standTile);
-        wall.setName("wall3");
-        addStaticObject(wall);
-
-        /* Add screen edges */
-
-        // left screen edge
-        obj = new WallModel(LevelController.VERT_WALL, 32.5f, 0);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(standTile);
-        obj.setName("wall1");
-        addStaticObject(obj);
-
-        // right screen edge
-        obj = new WallModel(LevelController.VERT_WALL, -0.5f, 0);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(standTile);
-        obj.setName("wall1");
-        addStaticObject(obj);
-
-        // top screen edge
-        obj = new WallModel(LevelController.HORI_WALL, 0.0f, -0.5f);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(standTile);
-        obj.setName("wall1");
-        addStaticObject(obj);
-
-        // bottom screen edge
-        obj = new WallModel(LevelController.HORI_WALL, 0.0f, 18.5f);
-        obj.setBodyType(BodyDef.BodyType.StaticBody);
-        obj.setDensity(IMMOVABLE_OBJ_DENSITY);
-        obj.setFriction(IMMOVABLE_OBJ_FRICTION);
-        obj.setRestitution(IMMOVABLE_OBJ_RESTITUTION);
-        obj.setDrawScale(scale);
-        obj.setTexture(standTile);
-        obj.setName("wall1");
-        addStaticObject(obj);
-
-        /* Add players */
-        // Team A
-        float pWidth = player1FilmStrip.getRegionWidth() / scale.x;
-        float pHeight = player1FilmStrip.getRegionHeight() / scale.y;
-        PlayerModel p1 = new PlayerModel(LevelController.p1_position.x, LevelController.p1_position.y, pWidth, pHeight, player1FilmStrip, "a");
-        p1.setDensity(MOVABLE_OBJ_DENSITY);
-        p1.setFriction(MOVABLE_OBJ_FRICTION);
-        p1.setRestitution(MOVABLE_OBJ_RESTITUTION);
-        p1.setDrawScale(scale);
-//        p1.setMovable(true);
-
-        /* Add home stalls */
-        // Team A
-        HomeModel home = new HomeModel(p1.getHomeLoc().x, p1.getHomeLoc().y, 2f, 2f, "a");
-        home.setBodyType(BodyDef.BodyType.StaticBody);
-        home.setDrawScale(scale);
-        home.setTexture(standTile);
-        home.setName("homeA");
-        addStaticObject(home);
-
-        /* Add players */
-        // Team B
-        PlayerModel p2 = new PlayerModel(LevelController.p2_position.x, LevelController.p2_position.y, pWidth, pHeight, player2FilmStrip, "b");
-        p2.setDensity(MOVABLE_OBJ_DENSITY);
-        p2.setFriction(MOVABLE_OBJ_FRICTION);
-        p2.setRestitution(MOVABLE_OBJ_RESTITUTION);
-        p2.setDrawScale(scale);
-//        p2.setMovable(true);
-
-        /* Add home stalls */
-        // Team B
-        home = new HomeModel(p2.getHomeLoc().x, p2.getHomeLoc().y, 2f, 2f, "b");
-        home.setBodyType(BodyDef.BodyType.StaticBody);
-        home.setDrawScale(scale);
-        home.setTexture(standTile);
-        home.setName("homeB");
-        addStaticObject(home);
-        addDynamicObject(p1);
-        addDynamicObject(p2);
-
-        // player list
-        player_list = new PlayerModel[] { p1, p2 };
-
-        /* Add items */
-        float itemWidth = itemTexture.getRegionWidth() / scale.x;
-        float itemHeight = itemTexture.getRegionHeight() / scale.y;
-        ItemModel item = new ItemModel(ITEM_START_POSITION.x, ITEM_START_POSITION.y, itemWidth, itemHeight, itemTexture);
-        item.setDensity(MOVABLE_OBJ_DENSITY);
-        item.setFriction(MOVABLE_OBJ_FRICTION);
-        item.setRestitution(MOVABLE_OBJ_RESTITUTION);
-        item.setDrawScale(scale);
-        items = new ItemModel[] {item};
-        addDynamicObject(item);
-    }
-
     public void setScale(Vector2 scale) {
         setScale(scale.x, scale.y);
     }
@@ -430,9 +287,9 @@ public class WorldModel {
         return bounds.width;
     }
 
-    // TODO: player model refactor
-    public PlayerModel[] getPlayers() {
-        return player_list;
+    public boolean isDone() {
+        countdown--;
+        return countdown <= 0 && complete;
     }
 
 
@@ -450,50 +307,74 @@ public class WorldModel {
         return lights;
     }
 
+    // TODO: player model refactor
+    public ArrayList<PlayerModel> getPlayers() {
+        return player_list;
+    }
+
+    public Vector2 getScale() {
+        return scale;
+    }
+
+    public Vector2 getActualScale() {
+        return actualScale;
+    }
+
+
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
     }
 
     /**
      * Returns true if the object is in bounds.
-     *
+     * <p>
      * This assertion is useful for debugging the physics.
      *
      * @param obj The object to check.
-     *
      * @return true if the object is in bounds.
      */
     public boolean inBounds(Obstacle obj) {
-        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
-        boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
+        boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x + bounds.width);
+        boolean vert = (bounds.y <= obj.getY() && obj.getY() <= bounds.y + bounds.height);
         return horiz && vert;
     }
 
-    protected void addStaticObject(Obstacle obj) {
+    public void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         staticObjects.add(obj);
         obj.activatePhysics(world);
     }
 
-    protected void addDynamicObject(Obstacle obj) {
+    public void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         dynamicObjects.add(obj);
         obj.activatePhysics(world);
     }
 
+    public void addPlayer(PlayerModel player) {
+        player_list.add(player);
+        addDynamicObject(player);
+    }
+
     // ******************** LIGHTING METHODS ********************
+
+    public void addItem(ItemModel item) {
+        items.add(item);
+        addDynamicObject(item);
+    }
 
     /**
      * TODO allow passing in of different lighting parameters
      */
-    public void initLighting() {
-        raycamera = new OrthographicCamera(bounds.width,bounds.height);
-        raycamera.position.set(bounds.width/2.0f, bounds.height/2.0f, 0);
+    public void initLighting(GameCanvas canvas) {
+        // TODO; make all this work with non diagonal scaling
+        raycamera = new OrthographicCamera(canvas.getWidth() / scale.x, canvas.getHeight() / scale.y);
+        raycamera.position.set(canvas.getWidth() / scale.x / 2, canvas.getHeight() / scale.y / 2, 0);
         raycamera.update();
 
         RayHandler.setGammaCorrection(true);
         RayHandler.useDiffuseLight(true);
-        rayhandler = new RayHandler(world, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        rayhandler = new RayHandler(world, canvas.getWidth(), canvas.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
         // All hard coded for now, to be changed with data-driven levels
@@ -512,13 +393,13 @@ public class WorldModel {
      */
     public void createPointLight() {
         // ALL HARDCODED!
-        float[] color = new float[]{ 1.0f, 0.2f, 0.0f, 1.0f };
-        float[] pos = new float[]{ 0.0f, 0.0f };
-        float dist  = 7.0f;
+        float[] color = new float[]{1.0f, 0.2f, 0.0f, 1.0f};
+        float[] pos = new float[]{0.0f, 0.0f};
+        float dist = 7.0f;
         int rays = 512;
 
         PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-        point.setColor(color[0],color[1],color[2],color[3]);
+        point.setColor(color[0], color[1], color[2], color[3]);
         point.setSoft(false);
 
         // Create a filter to exclude see through items
@@ -527,29 +408,6 @@ public class WorldModel {
         point.setContactFilter(f);
         point.setActive(false); // TURN ON LATER
         lights.add(point);
-    }
-
-    /**
-     * Returns a string equivalent to the COMPLEMENT of bits in s
-     *
-     * This function assumes that s is a string of 0s and 1s of length < 16.
-     * This function allows the JSON file to specify exclusion bit arrays (for masking)
-     * in a readable format.
-     *
-     * @param s the string representation of the bit array
-     *
-     * @return a string equivalent to the COMPLEMENT of bits in s
-     */
-    public static short bitStringToComplement(String s) {
-        short value = 0;
-        short pos = 1;
-        for(int ii = s.length()-1; ii >= 0; ii--) {
-            if (s.charAt(ii) == '0') {
-                value += pos;
-            }
-            pos *= 2;
-        }
-        return value;
     }
 
     public void reset() {
@@ -582,6 +440,56 @@ public class WorldModel {
         dynamicObjects = null;
         world = null;
         scale = null;
+    }
+
+    // TODO: This is experimental scaling code
+
+    // This padding might be approximate lol tbh
+    private static final float PADDING = 0f;
+
+    public void setPixelBounds(GameCanvas canvas) {
+        // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
+
+        // The whole point is that if the canvas is DEFAULT_PIXEL_WIDTH x DEFAULT_PIXEL_HEIGHT and
+        // the world is DEFAULT_WIDTH x DEFAULT_HEIGHT, everything is unscaled.
+        // These are called the canonical pixel space and canonical world space respectively.
+
+        // scaleWorld translates the levelspace to canonical world space
+        // (32 x 18, or otherwise indicated in WorldController)
+        float scaleWorldX = DEFAULT_WIDTH / bounds.width;
+        float scaleWorldY = DEFAULT_HEIGHT / bounds.height;
+
+        // World2Pixel translates from canonical world space to canonical pixel space
+        // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
+        // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
+        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
+
+        // scalePixel translate canonical pixel space to pixel space
+        // (1920 x 1080, or otherwise indicated in WorldController)
+        float scalePixelX = canvas.getWidth() / (DEFAULT_PIXEL_WIDTH - 2 * PADDING);
+        float scalePixelY = canvas.getHeight() / (DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
+
+        // Take the smaller scale so that we only scale diagonally or something
+        // This is for asset scaling
+        float finalAssetScale = Math.min(scaleWorldX * scalePixelX, scaleWorldY * scalePixelY);
+        // This is for converting things to pixel space?
+        float finalPosScale = finalAssetScale * world2Pixel;
+
+        scale.set(finalPosScale, finalPosScale);
+        actualScale.set(finalAssetScale, finalAssetScale);
+
+        // pixTransform = new Affine2();
+        // pixTransform.scale(finalPosScale, finalPosScale);
+
+        // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
+        // pixTransform.applyTo(pixelBoundsSize);
+
+        // System.out.println(pixelBoundsSize);
+        // System.out.println(canvas.getWidth());
+        // System.out.println((canvas.getWidth() - pixelBoundsSize.x) / 2);
+
+        // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
+
     }
 
 }

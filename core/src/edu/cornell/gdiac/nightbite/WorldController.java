@@ -1,10 +1,10 @@
 /*
  * WorldController.java
  *
- * This is the most important new class in this lab.  This class serves as a combination 
- * of the CollisionController and GameplayController from the previous lab.  There is not 
- * much to do for collisions; Box2d takes care of all of that for us.  This controller 
- * invokes Box2d and then performs any after the fact modifications to the data 
+ * This is the most important new class in this lab.  This class serves as a combination
+ * of the CollisionController and GameplayController from the previous lab.  There is not
+ * much to do for collisions; Box2d takes care of all of that for us.  This controller
+ * invokes Box2d and then performs any after the fact modifications to the data
  * (e.g. gameplay).
  *
  * If you study this class, and the contents of the edu.cornell.cs3152.physics.obstacles
@@ -17,42 +17,35 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.entity.HomeModel;
+import edu.cornell.gdiac.nightbite.entity.ItemModel;
+import edu.cornell.gdiac.nightbite.entity.LevelController;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.LightSource;
-import edu.cornell.gdiac.util.PointSource;
 
 import java.util.Iterator;
 
 /**
  * Base class for a world-specific controller.
- *
- *
- * A world has its own objects, assets, and input controller.  Thus this is 
+ * <p>
+ * <p>
+ * A world has its own objects, assets, and input controller.  Thus this is
  * really a mini-GameEngine in its own right.  The only thing that it does
  * not do is create a GameCanvas; that is shared with the main application.
- *
- * You will notice that asset loading is not done with static methods this time.  
- * Instance asset loading makes it easier to process our game modes in a loop, which 
+ * <p>
+ * You will notice that asset loading is not done with static methods this time.
+ * Instance asset loading makes it easier to process our game modes in a loop, which
  * is much more scalable. However, we still want the assets themselves to be static.
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
@@ -81,11 +74,6 @@ public class WorldController implements Screen {
 	public static final int WORLD_POSIT = 2;
 
 	/** GAME PARAMS */
-
-	/** Width of the game world in Box2d units. */
-	protected static final float DEFAULT_WIDTH = 32.0f;
-	/** Height of the game world in Box2d units. */
-	protected static final float DEFAULT_HEIGHT = 18.0f;
 
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
@@ -127,13 +115,9 @@ public class WorldController implements Screen {
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
+	private int NUM_ITEMS = 2;
 	private PooledList<Vector2> object_list = new PooledList<>();
-	private float[] prev_hori_dir = new float[]{-1, -1};
-
 	private WorldModel worldModel;
-
-	// TODO: Fix after item refactor
-	private boolean prevRespawning;
 
 	/**
 	 * Creates a new game world
@@ -142,11 +126,10 @@ public class WorldController implements Screen {
 	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
 	 * world, not the screen.
 	 *
-	 * @param bounds  The game bounds in Box2d coordinates
 	 * @param gravity The gravitational force on this Box2d world
 	 */
 	// TODO: Remove bounds and gravity parameter
-	protected WorldController(Rectangle bounds, Vector2 gravity) {
+	protected WorldController(Vector2 gravity) {
 		setDebug(false);
 		worldModel = new WorldModel();
 		// TODO: Refactor out collisions to another class?
@@ -162,24 +145,7 @@ public class WorldController implements Screen {
 	 * world, not the screen.
 	 */
 	protected WorldController() {
-		this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-				new Vector2(0, DEFAULT_GRAVITY));
-	}
-
-	/**
-	 * Creates a new game world
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param width   The width in Box2d coordinates
-	 * @param height  The height in Box2d coordinates
-	 * @param gravity The downward gravity
-	 */
-	// TODO: Remove Parameters
-	protected WorldController(float width, float height, float gravity) {
-		this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
+		this(new Vector2(0, DEFAULT_GRAVITY));
 	}
 
 	/**
@@ -224,7 +190,8 @@ public class WorldController implements Screen {
 	 */
 	public void setCanvas(GameCanvas canvas) {
 		this.canvas = canvas;
-		worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		// worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+		worldModel.setPixelBounds(canvas);
 	}
 
 	public void populateLevel() {
@@ -232,9 +199,9 @@ public class WorldController implements Screen {
 		backgroundTile = Assets.GAME_BACKGROUND;
 		displayFont = Assets.RETRO_FONT;
 
-		worldModel.setTextures(new TextureRegion[] {Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
-				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[] {Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
-	    worldModel.populate();
+		worldModel.setTextures(new TextureRegion[]{Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
+				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[]{Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
+		LevelController.getInstance().populate(worldModel);
 	}
 
 	/**
@@ -262,9 +229,9 @@ public class WorldController implements Screen {
 
 		for (Obstacle obj : worldModel.getObjects()) {
 			if (obj.draw) {
-				if (obj instanceof HomeModel && obj.getName().equals("homeB")) {
+				if (obj instanceof HomeModel && obj.getName().equals("home a")) {
 					message1.append(((HomeModel) obj).getScore());
-				} else if (obj instanceof HomeModel && obj.getName().equals("homeA")) {
+				} else if (obj instanceof HomeModel && obj.getName().equals("home b")) {
 					message2.append(((HomeModel) obj).getScore());
 				}
 				obj.draw(canvas);
@@ -294,13 +261,13 @@ public class WorldController implements Screen {
 			}
 			canvas.endDebug();
 		}
-    }
-	
+	}
+
 	/**
 	 * Dispose of all (non-static) resources allocated to this mode.
 	 */
 	public void dispose() {
-	    worldModel.dispose();
+		worldModel.dispose();
 
 		addQueue.clear();
 		addQueue = null;
@@ -312,7 +279,7 @@ public class WorldController implements Screen {
 	 *
 	 * Adds a physics object in to the insertion queue.
 	 *
-	 * Objects on the queue are added just before collision processing.  We do this to 
+	 * Objects on the queue are added just before collision processing.  We do this to
 	 * control object creation.
 	 *
 	 * param obj The object to add
@@ -336,7 +303,7 @@ public class WorldController implements Screen {
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
         worldModel = new WorldModel();
-        worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        worldModel.setPixelBounds(canvas);
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
         // TODO: WHAT
@@ -352,7 +319,7 @@ public class WorldController implements Screen {
 		// world = new World(gravity,false);
 		// world.setContactListener(this);
 
-		worldModel.initLighting();
+		worldModel.initLighting(canvas);
 		worldModel.createPointLight();
 		populateLevel();
 
@@ -360,7 +327,7 @@ public class WorldController implements Screen {
 		// Attaching lights to p1 is janky and serves mostly as demo code
 		// TODO make data-driven
 		Array<LightSource> lights = worldModel.getLights();
-		PlayerModel p1 = worldModel.getPlayers()[0];  //
+		PlayerModel p1 = worldModel.getPlayers().get(0);  //
 		for (LightSource light : lights) {
 			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
 		}
@@ -369,7 +336,7 @@ public class WorldController implements Screen {
 			lights.get(0).setActive(true);
 		}
 	}
-	
+
 	/**
 	 * Returns whether to process the update loop
 	 *
@@ -378,7 +345,7 @@ public class WorldController implements Screen {
 	 * normally.
 	 *
 	 * @param dt Number of seconds since last animation frame
-	 * 
+	 *
 	 * @return whether to process the update loop
 	 */
 	public boolean preUpdate(float dt) {
@@ -394,7 +361,7 @@ public class WorldController implements Screen {
 		if (input.didDebug()) {
 			debug = !debug;
 		}
-		
+
 		// Handle resets
 		if (input.didReset()) {
 			reset();
@@ -403,8 +370,8 @@ public class WorldController implements Screen {
 		if (input.didExit()) {
 			listener.exitScreen(this, EXIT_QUIT);
 			return false;
-		} else if (worldModel.isDone()){
-		    // TODO: Bruh i can actually just reset it here
+		} else if (worldModel.isDone()) {
+			// TODO: Bruh i can actually just reset it here
 			listener.exitScreen(this, EXIT_NEXT);
 			return false;
 		}
@@ -418,8 +385,11 @@ public class WorldController implements Screen {
 
 		// TODO peer review below
 		// TODO: Wait for item refactor
-		ItemModel item = worldModel.getItem();
-		item.update();
+
+		for (int i = 0; i < NUM_ITEMS; i++) {
+			ItemModel item = worldModel.getItem(i);
+			item.update();
+		}
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
@@ -433,37 +403,46 @@ public class WorldController implements Screen {
 		boolean playerDidThrow;
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 
-
 			playerHorizontal = manager.getVelX(i);
 			playerVertical = manager.getVelY(i);
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
 			// TODO: player model refactor
-			p = worldModel.getPlayers()[i];
-
-			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
-				p.playerTexture.flip(true, false);
-			}
+			p = worldModel.getPlayers().get(i);
 
 			// update player state // TODO film strip: needs player 1 film strip first
-//			if (playerVertical != 0 || playerHorizontal != 0) {
-//				p.setWalk();
-//				if (playerWalkCounter % 20 == 0) {
-//					PlayerModel.player2FilmStrip.setFrame(1);
-//				} else if (playerWalkCounter % 20 == 10) {
-//					PlayerModel.player2FilmStrip.setFrame(0);
-//				}
-//				playerWalkCounter++;
-//			} else {
-//				p.setStatic();
-//				playerWalkCounter = 0;
-//				PlayerModel.player2FilmStrip.setFrame(0);
-//			}
+			if (playerVertical != 0 || playerHorizontal != 0) {
+				p.setWalk();
+
+				if (p.getPlayerWalkCounter() % 20 == 0) {
+					p.playerTexture.setFrame(1);
+					if (p.getPrevHoriDir() == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				} else if (p.getPlayerWalkCounter() % 20 == 10) {
+					p.playerTexture.setFrame(0);
+					if (p.getPrevHoriDir() == 1) {
+						p.playerTexture.flip(true, false);
+					}
+				}
+				p.incrPlayerWalkCounter();
+			} else {
+				p.setStatic();
+				p.resetPlayerWalkCounter();
+				p.playerTexture.setFrame(0);
+				if (p.getPrevHoriDir() == 1) {
+					p.playerTexture.flip(true, false);
+				}
+			}
 			if (playerHorizontal != 0 || playerVertical != 0) {
 				p.setWalk();
 			} else {
 				p.setStatic();
+			}
+
+			// handle player facing left-right
+			if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+				p.playerTexture.flip(true, false);
 			}
 
 			// Set player movement impulse
@@ -481,22 +460,34 @@ public class WorldController implements Screen {
 
 			/* Items */
 
-			/* IF FISH IN PLAYER HANDS */
-			if (p.item) {
-				item.setPosition(p.getX(), p.getY() + 1f);
-			}
+			// TODO
 
 			/* IF PLAYER GRABS ITEM */
-			if (!item.isHeld() && p.getOverlapItem() && playerDidThrow && item.cooldownOver()) {
-				item.setHeld(p);
-				item.startCooldown();
+			for (int j = 0; j < NUM_ITEMS; j++) {
+				ItemModel item = worldModel.getItem(j);
+				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && item.cooldownOver()) {
+					item.setHeld(p);
+					item.startCooldown();
+				}
+			}
+
+			/* IF FISH IN PLAYER HANDS */
+			if (p.hasItem()) {
+				float offset = 1;
+				for (ItemModel heldItem: p.getItems()) {
+					heldItem.setPosition(p.getX(), p.getY() + offset);
+					offset += 0.6;
+				}
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownOver()) {
-				item.setUnheld();
-				item.startCooldown();
-				item.throwItem(p.getImpulse());
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem()) {
+				ItemModel lastItem = p.getItems().get(0);
+				if (lastItem.cooldownOver()) {
+					lastItem.setUnheld();
+					lastItem.startCooldown();
+					lastItem.throwItem(p.getImpulse());
+				}
 			}
 
 			// player updates (for respawn and dash cool down)
@@ -504,11 +495,11 @@ public class WorldController implements Screen {
 
 			// update horizontal direction
 			if (playerHorizontal != 0) {
-				prev_hori_dir[i] = playerHorizontal;
+				p.setPrevHoriDir(playerHorizontal);
 			}
 		}
 	}
-	
+
 	/**
 	 * Processes physics
 	 *
@@ -525,10 +516,9 @@ public class WorldController implements Screen {
 		// while (!addQueue.isEmpty()) {
 		// 	addObject(addQueue.poll());
 		// }
-		
+
 		// Turn the physics engine crank.
 		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
-
 
 		// TODO: Maybe move this to WorldController
 		// Garbage collect the deleted objects.
@@ -561,7 +551,7 @@ public class WorldController implements Screen {
 	public void resize(int width, int height) {
 		// IGNORE FOR NOW
 	}
-	
+
 	/**
 	 * Called when the Screen should render itself.
 	 *

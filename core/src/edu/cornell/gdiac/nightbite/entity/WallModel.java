@@ -1,11 +1,10 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-public class WallModel extends ImmovableModel {
-    public WallModel(float[] points, float x, float y) {
-        super(points, x, y);
-    }
+import edu.cornell.gdiac.nightbite.Assets;
 
-    public WallModel(int x, float y, float width, float height) {
-        super(x, y, width, height);
+public class WallModel extends ImmovableModel {
+    public WallModel(float x, float y, int rotate) {
+        super(x, y, rotate);
+        setTexture(Assets.WALL);
     }
 }

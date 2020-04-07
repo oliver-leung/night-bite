@@ -46,9 +46,11 @@ public class CollisionController implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
         if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
-            ((PlayerModel) a).setOverlapItem(false);
+            int itemId = ((ItemModel) b).getId();
+            ((PlayerModel) a).setOverlapItem(itemId, false);
         } else if (b instanceof PlayerModel && a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
-            ((PlayerModel) b).setOverlapItem(false);
+            int itemId = ((ItemModel) a).getId();
+            ((PlayerModel) b).setOverlapItem(itemId, false);
         }
     }
 
@@ -98,29 +100,32 @@ public class CollisionController implements ContactListener {
             // Player-Hole collision
             player.setDead();
 
-            if (player.item) {
-                ItemModel item = worldModel.getItem();
-                item.setUnheld();
-                item.startRespawn();
+            if (player.hasItem()) { // TODO fix jank implementation
+                for (ItemModel item_obj : player.getItems()) {
+                    item_obj.setUnheld();
+                    item_obj.startRespawn();
+                }
             }
 
-        } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
+        } else if (object instanceof ItemModel) {
 
             // Player-Item
-            player.setOverlapItem(true);
+            int id = ((ItemModel) object).getId();
+            player.setOverlapItem(id, true);
 
         } else if (object instanceof HomeModel) {
 
             // Player-Home
             HomeModel homeObject = (HomeModel) object;
             // If players went to their own home, drop off item and increment score
-            if (player.getTeam().equals(homeObject.getTeam()) && player.item) {
+            if (player.getTeam().equals(homeObject.getTeam()) && player.hasItem()) {
 
-                homeObject.incrementScore();
+                homeObject.incrementScore(player.numCarriedItems());
 
-                ItemModel item = worldModel.getItem();
-                item.setUnheld();
-                item.startRespawn();
+                for (ItemModel item_obj : player.getItems()) {
+                    item_obj.setUnheld();
+                    item_obj.startRespawn();
+                }
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -140,7 +145,7 @@ public class CollisionController implements ContactListener {
 
             // add score
             HomeModel homeObject = (HomeModel) object;
-            homeObject.incrementScore();
+            homeObject.incrementScore(1);
 
             // check win condition
             checkWinCondition(homeObject);
@@ -151,9 +156,9 @@ public class CollisionController implements ContactListener {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel();
             if (homeObject.getTeam().equals("a")) {
-                worldModel.winner = "PLAYER B ";
-            } else if (homeObject.getTeam().equals("b")) {
                 worldModel.winner = "PLAYER A ";
+            } else if (homeObject.getTeam().equals("b")) {
+                worldModel.winner = "PLAYER B ";
             }
         }
     }

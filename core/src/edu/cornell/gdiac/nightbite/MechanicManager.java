@@ -1,7 +1,6 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
 
 public class MechanicManager {
@@ -75,15 +74,19 @@ public class MechanicManager {
     }
 
     public boolean didDebug() {
-        for (int i = 0; i < controllers.length; i ++) {
-            if (controllers[i].isDebug()) { return true; }
+        for (MechanicController controller : controllers) {
+            if (controller.isDebug()) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean didReset() {
-        for (int i = 0; i < controllers.length; i ++) {
-            if (controllers[i].isReset()) { return true; }
+        for (MechanicController controller : controllers) {
+            if (controller.isReset()) {
+                return true;
+            }
         }
         return false;
     }
