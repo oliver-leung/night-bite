@@ -1,16 +1,18 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.Assets;
 
 public class HomeModel extends ImmovableModel {
-    private String team;
 
+    private String team;
     private int score;
 
-    public HomeModel(float x, float y, float width, float height, String team) {
-        super(x, y, width, height);
+    public HomeModel(float x, float y, String team) {
+        super(x, y, 0);
         this.team = team;
-        this.score = 0;
+        score = 0;
+        setTexture(Assets.STAND);
     }
 
     public int getScore() {
@@ -33,4 +35,5 @@ public class HomeModel extends ImmovableModel {
         setSensor(true);
         return true;
     }
+
 }

@@ -1,0 +1,47 @@
+{
+    "tiles": {
+        "height": 64,
+        // These tile parameters will likely stay the same - the current example fills a 1920 x 1080
+        "width": 64,
+        // screen nicely.
+        "rows": 16,
+        "columns": 30
+    },
+    "walls": {
+        "wall 1": {
+            // Give a unique name for each wall for easy debugging.
+            "x": 10,
+            // Give coordinates relative to the above tiling parameters, where the bottom left tile is
+            "y": 10,
+            // (0, 0).
+
+            "texture": "corner"
+            // Can also be "edge" (one edge), "middle" (no edges), or "narrow" (two
+            // parallel edges)
+            "rotate": 2
+            // Number of clockwise 90 degree rotations from the original texture
+        }
+    },
+    "holes": {
+        // Same format as with walls
+    },
+    "teams": {
+        "a": {
+            // Give a unique name for each team for easy debugging.
+            "x": 5,
+            // Give the location where the player and their home stall will spawn.
+            "y": 6
+        }
+    },
+    "items": {
+        "item 1": {
+            // Give a unique name for each item for easy debugging.
+            "x": 20,
+            // Give the item's default spawn location.
+            "y": 10,
+            "type": "fish"
+            // This hasn't been well defined, but use whichever items that have textures defined
+            // for them.
+        }
+    }
+}

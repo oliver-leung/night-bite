@@ -52,7 +52,14 @@ public class Assets {
 
     // Sound
 
-    /** LOADED ASSETS */
+    /*
+     * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
+     * data-driven.
+     */
+
+    /**
+     * LOADED ASSETS
+     */
     public static FilmStrip[] PLAYER_FILMSTRIPS;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;

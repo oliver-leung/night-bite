@@ -104,7 +104,7 @@ public class CollisionController implements ContactListener {
                 item.startRespawn();
             }
 
-        } else if (object instanceof BoxObstacle && ((BoxObstacle) object).getName().equals("item")) {
+        } else if (object instanceof ItemModel) {
 
             // Player-Item
             player.setOverlapItem(true);
@@ -151,9 +151,9 @@ public class CollisionController implements ContactListener {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel();
             if (homeObject.getTeam().equals("a")) {
-                worldModel.winner = "PLAYER B ";
-            } else if (homeObject.getTeam().equals("b")) {
                 worldModel.winner = "PLAYER A ";
+            } else if (homeObject.getTeam().equals("b")) {
+                worldModel.winner = "PLAYER B ";
             }
         }
     }

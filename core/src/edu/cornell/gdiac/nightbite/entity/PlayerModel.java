@@ -1,16 +1,19 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
+
 
 public class PlayerModel extends CapsuleObstacle {
 
-    /** player movement params */
+    /**
+     * player movement params
+     */
     private static final float DEFAULT_THRUST = 10.0f;
     private static final float BOOST_IMP = 100.0f;
     private static final float MOTION_DAMPING = 25f;
@@ -43,8 +46,10 @@ public class PlayerModel extends CapsuleObstacle {
     public boolean item;
     private boolean overlapItem;
 
-    /** player texture */
-    public final TextureRegion playerTexture;
+    /**
+     * player texture
+     */
+    public final FilmStrip playerTexture;
     private TextureRegion defaultTexture;
 
     @Override
@@ -55,10 +60,11 @@ public class PlayerModel extends CapsuleObstacle {
         super.setTexture(value);
     }
 
-    public void resetTexture() { texture = defaultTexture; }
+    public void resetTexture() { texture = defaultTexture;
+    }
 
-    public PlayerModel(float x, float y, float width, float height, TextureRegion texture, String playerTeam) {
-        super(x, y, width, height);
+    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
+        super(2 * x + 1f, 2 * y + 1f, width, height);
         setOrientation(Orientation.VERTICAL);
         setBullet(true);
         setName("ball");
@@ -75,8 +81,11 @@ public class PlayerModel extends CapsuleObstacle {
         isAlive = true;
         overlapItem = false;
 
-        homeLoc = new Vector2(x, y);
+        homeLoc = new Vector2(2 * x + 1f, 2 * y + 1f);
         team = playerTeam;
+        setDensity(MOVABLE_OBJ_DENSITY);
+        setFriction(MOVABLE_OBJ_FRICTION);
+        setRestitution(MOVABLE_OBJ_RESTITUTION);
     }
 
     /** player identification */
