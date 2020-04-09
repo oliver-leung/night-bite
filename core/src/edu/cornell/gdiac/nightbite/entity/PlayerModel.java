@@ -48,6 +48,10 @@ public class PlayerModel extends CapsuleObstacle {
     private boolean isAlive;
     private int spawnCooldown;
 
+    /** cooldown for grabbing and throwing items */
+    private int grabCooldown;
+    private static int GRAB_COOLDOWN_PERIOD = 15;
+
     /** player identification */
     private String team;
     private Vector2 homeLoc;
@@ -180,6 +184,7 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     public void update() {
+        updateGrabCooldown();
         cooldown = Math.max(0, cooldown - 1);
         boosting = Math.max(0, boosting - 1);
     }
@@ -244,6 +249,22 @@ public class PlayerModel extends CapsuleObstacle {
 
     public void holdItem(ItemModel i) {
         item.add(i);
+    }
+
+    /** cooldown between grabbing/throwing */
+
+    public void startgrabCooldown() {
+        grabCooldown = GRAB_COOLDOWN_PERIOD;
+    }
+
+    private void updateGrabCooldown() {
+        if (grabCooldown > 0) {
+            grabCooldown -= 1;
+        }
+    }
+
+    public boolean grabCooldownOver() {
+        return grabCooldown == 0;
     }
 }
 

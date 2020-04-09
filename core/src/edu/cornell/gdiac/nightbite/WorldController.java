@@ -401,16 +401,17 @@ public class WorldController implements Screen {
 		float playerVertical;
 		boolean playerDidBoost;
 		boolean playerDidThrow;
+
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 
 			playerHorizontal = manager.getVelX(i);
 			playerVertical = manager.getVelY(i);
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
-			// TODO: player model refactor
+
 			p = worldModel.getPlayers().get(i);
 
-			// update player state // TODO film strip: needs player 1 film strip first
+			// update player state
 			if (playerVertical != 0 || playerHorizontal != 0) {
 				p.setWalk();
 
@@ -460,14 +461,12 @@ public class WorldController implements Screen {
 
 			/* Items */
 
-			// TODO
-
 			/* IF PLAYER GRABS ITEM */
 			for (int j = 0; j < NUM_ITEMS; j++) {
 				ItemModel item = worldModel.getItem(j);
-				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && item.cooldownOver()) {
+				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
 					item.setHeld(p);
-					item.startCooldown();
+					p.startgrabCooldown();
 				}
 			}
 
@@ -481,13 +480,12 @@ public class WorldController implements Screen {
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem()) {
-				ItemModel lastItem = p.getItems().get(0);
-				if (lastItem.cooldownOver()) {
-					lastItem.setUnheld();
-					lastItem.startCooldown();
-					lastItem.throwItem(p.getImpulse());
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
+				for (ItemModel heldItem : p.getItems()) {
+					heldItem.throwItem(p.getImpulse());
 				}
+				p.clearInventory();
+				p.startgrabCooldown();
 			}
 
 			// player updates (for respawn and dash cool down)

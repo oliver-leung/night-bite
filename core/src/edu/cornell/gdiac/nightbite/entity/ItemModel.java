@@ -23,12 +23,6 @@ public class ItemModel extends BoxObstacle {
     private int RESPAWN_TIME = 150;
 
     /**
-     * cooldown for grabbing and throwing items
-     */
-    private int itemCooldown;
-    private static int ITEM_COOLDOWN_PERIOD = 15;
-
-    /**
      * throwing configs
      */
     private float THROW_FORCE = 500f;
@@ -51,7 +45,6 @@ public class ItemModel extends BoxObstacle {
     }
 
     public void update() {
-        updateCooldown();
         updateRespawn();
     }
 
@@ -60,25 +53,10 @@ public class ItemModel extends BoxObstacle {
         return id;
     }
 
-    /** cooldown between grabbing/throwing */
-
-    public void startCooldown() {
-        itemCooldown = ITEM_COOLDOWN_PERIOD;
-    }
-
-    private void updateCooldown() {
-        if (itemCooldown > 0) {
-            itemCooldown -= 1;
-        }
-    }
-
-    public boolean cooldownOver() {
-        return itemCooldown == 0;
-    }
-
     /** respawn */
 
     public void startRespawn() {
+        holdingPlayer = null;
         respawn = RESPAWN_TIME;
         draw = false;
     }
@@ -92,7 +70,7 @@ public class ItemModel extends BoxObstacle {
 
     private void addItem(Vector2 position) {
         draw = true;
-        setUnheld();
+        holdingPlayer = null;
         setPosition(position);
     }
 
@@ -112,7 +90,7 @@ public class ItemModel extends BoxObstacle {
             holdingPlayer = null;
         }
 
-        setSensor(false);
+
     }
 
     public boolean isHeld() {
@@ -122,6 +100,8 @@ public class ItemModel extends BoxObstacle {
     /** throw item */
     public void throwItem(Vector2 impulse) {
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
+        holdingPlayer = null;
+        setSensor(false);
     }
 
     /** physics */
