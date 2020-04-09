@@ -13,6 +13,7 @@
  */
  package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -88,6 +89,10 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		loading.setScreenListener(this);
 		setScreen(loading);
+
+		// Create logger
+		Gdx.app.setApplicationLogger(new Logger());
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 	}
 
 	/** 
