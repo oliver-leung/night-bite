@@ -64,7 +64,7 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
-        super(2 * x + 1f, 2 * y + 1f, width, height);
+        super(x, y, width, height);
         setOrientation(Orientation.VERTICAL);
         setBullet(true);
         setName("ball");
@@ -81,7 +81,7 @@ public class PlayerModel extends CapsuleObstacle {
         isAlive = true;
         overlapItem = false;
 
-        homeLoc = new Vector2(2 * x + 1f, 2 * y + 1f);
+        homeLoc = new Vector2(x, y);
         team = playerTeam;
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);

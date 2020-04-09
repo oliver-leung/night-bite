@@ -1,11 +1,9 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -25,21 +23,24 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    /** Width of the game world in Box2d units. */
-    public static final float DEFAULT_WIDTH = 32.0f;
-    /** Height of the game world in Box2d units. */
-    public static final float DEFAULT_HEIGHT = 18.0f;
+    /**
+     * Width of the game world in Box2d units.
+     */
+    public static final float DEFAULT_WIDTH = 32f;
+    /**
+     * Height of the game world in Box2d units.
+     */
+    public static final float DEFAULT_HEIGHT = 18f;
 
     // TODO: Should this be here? Maybe this should be defined in Canvas instead
-    /** Width of the game world in pixel units. */
-    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
-    /** Height of the game world in units. */
-    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
-
-    /** Immovable object parameters */
-    private static final float IMMOVABLE_OBJ_DENSITY = 0f;
-    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
-    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
+    /**
+     * Width of the game world in pixel units.
+     */
+    public static final float DEFAULT_PIXEL_WIDTH = 1920f;
+    /**
+     * Height of the game world in units.
+     */
+    public static final float DEFAULT_PIXEL_HEIGHT = 1080f;
 
     /**
      * Player textures
@@ -47,11 +48,6 @@ public class WorldModel {
     public static FilmStrip player1FilmStrip;
 
     public static FilmStrip player2FilmStrip;
-    /**
-     * Item parameters
-     */
-
-    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
     public String winner;
 
     /**
@@ -339,14 +335,31 @@ public class WorldModel {
         return horiz && vert;
     }
 
+    /**
+     * Transform an object from tile coordinates to canonical world coordinates.
+     * <p>
+     * Tile coordinates dictate that the bottom left tile is (0, 0), but in order to place an object in world
+     * coordinates, it must be centered on (0.5, 0.5).
+     *
+     * @param obj The obstacle to be transformed
+     */
+    private void transformTileToWorld(Obstacle obj) {
+        Vector2 pos = obj.getPosition();
+        pos.x += 0.5;
+        pos.y -= 0.5;
+        obj.setPosition(pos);
+    }
+
     public void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
+        transformTileToWorld(obj);
         staticObjects.add(obj);
         obj.activatePhysics(world);
     }
 
     public void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
+        transformTileToWorld(obj);
         dynamicObjects.add(obj);
         obj.activatePhysics(world);
     }
@@ -462,7 +475,8 @@ public class WorldModel {
         // World2Pixel translates from canonical world space to canonical pixel space
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
-        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
+        float world2Pixel = DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
+//        float world2Pixel = 1080f / 18f;
 
         // scalePixel translate canonical pixel space to pixel space
         // (1920 x 1080, or otherwise indicated in WorldController)
