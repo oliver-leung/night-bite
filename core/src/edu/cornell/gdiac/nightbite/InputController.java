@@ -94,7 +94,7 @@ public class InputController extends MechanicController {
 
         if (!sudo) { return; }
 
-        temp1 = isKeyPressed(keybinds.DEBUG);
+        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
         temp1 = isKeyPressed(keybinds.RESET);
@@ -129,14 +129,14 @@ public class InputController extends MechanicController {
 
         public Keymap(int mappingSet) {
             JsonReader jsonReader = new JsonReader();
-            this.UP = UP;
-            this.DOWN = DOWN;
-            this.LEFT = LEFT;
-            this.RIGHT = RIGHT;
-            this.DASH = DASH;
-            this.GRAB = GRAB;
-            this.DEBUG = DEBUG;
-            this.RESET = RESET;
+            this.UP = 0;
+            this.DOWN = 0;
+            this.LEFT = 0;
+            this.RIGHT = 0;
+            this.DASH = 0;
+            this.GRAB = 0;
+            this.DEBUG = 0;
+            this.RESET = 0;
         }
     }
 }
