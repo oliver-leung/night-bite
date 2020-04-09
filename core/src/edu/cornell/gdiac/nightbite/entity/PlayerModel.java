@@ -234,6 +234,10 @@ public class PlayerModel extends CapsuleObstacle {
         return item;
     }
 
+    public void clearInventory() {
+        item.clear();
+    }
+
     public void unholdItem(ItemModel i) {
         item.remove(i);
     }

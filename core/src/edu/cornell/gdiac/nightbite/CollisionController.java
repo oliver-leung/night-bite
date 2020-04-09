@@ -11,6 +11,8 @@ import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
+import java.util.ArrayList;
+
 
 public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
@@ -102,9 +104,9 @@ public class CollisionController implements ContactListener {
 
             if (player.hasItem()) { // TODO fix jank implementation
                 for (ItemModel item_obj : player.getItems()) {
-                    item_obj.setUnheld();
                     item_obj.startRespawn();
                 }
+                player.clearInventory();
             }
 
         } else if (object instanceof ItemModel) {
@@ -123,9 +125,9 @@ public class CollisionController implements ContactListener {
                 homeObject.incrementScore(player.numCarriedItems());
 
                 for (ItemModel item_obj : player.getItems()) {
-                    item_obj.setUnheld();
                     item_obj.startRespawn();
                 }
+                player.clearInventory(); // TODO
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -140,7 +142,6 @@ public class CollisionController implements ContactListener {
                 item.startRespawn();
             }
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
-            item.setUnheld();
             item.startRespawn();
 
             // add score
