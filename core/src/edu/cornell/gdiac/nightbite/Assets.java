@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -68,6 +70,7 @@ public class Assets {
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
     public static BitmapFont RETRO_FONT;
+    public static Music music;
 
     public Assets(AssetManager manager) {
         setManager(manager);
@@ -108,6 +111,9 @@ public class Assets {
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
         GOAL = createTexture(manager, GOAL_FILE, true);
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
+        music.setLooping(true);
+        music.play();
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
