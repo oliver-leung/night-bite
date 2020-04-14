@@ -378,7 +378,7 @@ public class WorldModel {
         rayhandler.setCombinedMatrix(raycamera);
 
         // All hard coded for now, to be changed with data-driven levels
-        float[] color = new float[]{ 0.5f, 0.5f, 0.5f, 1.0f };
+        float[] color = new float[]{ 0.85f, 0.75f, 0.75f, 1.0f };
         rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
         int blur = 2;
         // rayhandler.setBlur(blur > 0);
@@ -393,7 +393,7 @@ public class WorldModel {
      */
     public void createPointLight() {
         // ALL HARDCODED!
-        float[] color = new float[]{1.0f, 0.2f, 0.0f, 1.0f};
+        float[] color = new float[]{1.0f, 0f, 0.2f, 1.0f};
         float[] pos = new float[]{0.0f, 0.0f};
         float dist = 7.0f;
         int rays = 512;

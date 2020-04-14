@@ -35,18 +35,15 @@ public class Assets {
     static int PLAYER_FILMSTRIP_SIZE = 4;
 
     // Item
-    static  String FISH_ITEM_FILE = "item/fish.png";
+    static  String FISH_ITEM_FILE = "item/food1_64.png";
 
     // Obstacle
-    static String WALL_FILE = "environment/brick.png";
-    static String HOLE_FILE = "environment/hole2.png";
-    static String STAND_FILE = "environment/stand-border.png";
+    static String WALL_FILE = "environment/box_64.png";
+    static String HOLE_FILE = "environment/hole4_64.png";
+    static String STAND_FILE = "environment/StallItem1_64.png";
 
     // Background
-    static String GAME_BACKGROUND_FILE = "environment/cobble.png";
-
-    // Other
-    static String GOAL_FILE = "environment/goaldoor.png";
+    static String GAME_BACKGROUND_FILE = "background/ground_64.png";
 
     // Font
     static String RETRO_FONT_FILE = "font/RetroGame.ttf";
@@ -93,7 +90,6 @@ public class Assets {
         loadTexture(HOLE_FILE);
         loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
-        loadTexture(GOAL_FILE);
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
         }
@@ -110,7 +106,6 @@ public class Assets {
         HOLE = createTexture(manager, HOLE_FILE, true);
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
-        GOAL = createTexture(manager, GOAL_FILE, true);
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
