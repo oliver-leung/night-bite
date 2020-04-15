@@ -23,12 +23,35 @@ public class LevelController {
     }
 
     public void populate(WorldModel world, String level_file) {
-        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
+        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal("jsons/level_funnel.json"));
+        createGrounds(world, levelFormat.get("grounds"));
+
         createWalls(world, levelFormat.get("walls"));
         createHoles(world, levelFormat.get("holes"));
         createTeams(world, levelFormat.get("teams"));
         createItems(world, levelFormat.get("items"));
+
+        createGrounds(world, levelFormat.get("decorations"));
+
         createBounds(world);
+    }
+
+    //TODO: switch x/y back once it's fixed in the level builder
+    private void createGrounds(WorldModel world, JsonValue grounds) {
+        WallModel wall;
+        for (JsonValue groundJson : grounds.iterator()) {
+            wall = new WallModel(
+                    groundJson.getFloat("y"),
+                    11 - groundJson.getFloat("x"),
+                    groundJson.getInt("rotate")
+            );
+            wall.setTexture(Assets.FILES.get(groundJson.getString("texture")));
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
+            wall.setName(groundJson.name());
+            wall.setSensor(true);
+            world.addStaticObject(wall);
+        }
     }
 
     private void createBounds(WorldModel world) {
@@ -68,8 +91,8 @@ public class LevelController {
         int itemNum = 0;
         for (JsonValue itemJson : items.iterator()) {
             item = new ItemModel(
-                    itemJson.getFloat("x"),
                     itemJson.getFloat("y"),
+                    11 - itemJson.getFloat("x"),
                     1, 1, itemNum, Assets.FISH_ITEM
             );
             item.setName("item");
@@ -85,8 +108,8 @@ public class LevelController {
         HomeModel home;
         int playerNum = 0;
         for (JsonValue teamJson : teams.iterator()) {
-            float x = teamJson.getFloat("x");
-            float y = teamJson.getFloat("y");
+            float x = teamJson.getFloat("y");
+            float y = 11 - teamJson.getFloat("x");
             FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
             float pWidth = filmStrip.getRegionWidth() / world.getScale().x;
             float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
@@ -109,14 +132,17 @@ public class LevelController {
 
     private void createHoles(WorldModel world, JsonValue holes) {
         HoleModel hole;
-        for (JsonValue wallJson : holes.iterator()) {
+        for (JsonValue holeJson : holes.iterator()) {
             hole = new HoleModel(
-                    wallJson.getFloat("x"),
-                    wallJson.getFloat("y"),
-                    wallJson.getInt("rotate"));
+                    holeJson.getFloat("y"),
+                    11 - holeJson.getFloat("x"),
+                    holeJson.getInt("rotate"));
             hole.setDrawScale(world.getScale());
             hole.setActualScale(world.getActualScale());
-            hole.setName(wallJson.name());
+            hole.setName(holeJson.name());
+            String texture = holeJson.getString("texture");
+            System.out.println(texture);
+            hole.setTexture(Assets.FILES.get(texture));
             world.addStaticObject(hole);
         }
     }
@@ -125,12 +151,15 @@ public class LevelController {
         WallModel wall;
         for (JsonValue wallJson : walls.iterator()) {
             wall = new WallModel(
-                    wallJson.getFloat("x"),
                     wallJson.getFloat("y"),
+                    11 - wallJson.getFloat("x"),
                     wallJson.getInt("rotate"));
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName(wallJson.name());
+            String texture = wallJson.getString("texture");
+            Gdx.app.log("Texture", "Setting texture: " + texture);
+            wall.setTexture(Assets.FILES.get(texture));
             world.addStaticObject(wall);
         }
     }
