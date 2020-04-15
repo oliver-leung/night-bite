@@ -228,6 +228,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
         arrowTexture.dispose();
         backTexture.dispose();
         headerTexture.dispose();
+        Gdx.input.setInputProcessor(null);
 
         background = null;
         tile1Texture= null;
