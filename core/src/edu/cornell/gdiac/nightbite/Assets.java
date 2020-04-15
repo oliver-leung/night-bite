@@ -112,7 +112,8 @@ public class Assets {
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
         GOAL = createTexture(manager, GOAL_FILE, true);
-        music = createMusic(manager, MUSIC_FILE, true);
+
+        // Start music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
@@ -135,11 +136,6 @@ public class Assets {
         }
 
         this.isLoaded = true;
-    }
-
-    private Music createMusic(AssetManager manager, String filename, boolean loop) {
-        Music music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
-        
     }
 
     /** Unloads the assets for this game.*/
