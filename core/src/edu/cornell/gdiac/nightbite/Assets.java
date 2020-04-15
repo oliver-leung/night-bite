@@ -30,12 +30,12 @@ public class Assets {
     /** RESOURCES */
     // Character
     static String[] PLAYER_FILMSTRIP_FILES = {
-        "character/lin_walkcycle_64_fs_v2.png",
-        "character/granny_walkcycle_64_fs_v1.png"
+        "character/lin_dash_64_fs.png",
+        "character/granny_dash_64_fs.png"
     };
     static int PLAYER_FILMSTRIP_ROW = 1;
-    static int PLAYER_FILMSTRIP_COL = 4;
-    static int PLAYER_FILMSTRIP_SIZE = 4;
+    static int PLAYER_FILMSTRIP_COL = 8;
+    static int PLAYER_FILMSTRIP_SIZE = 8;
 
     // Item
     static String FISH_ITEM_FILE = "item/food1_64.png";
