@@ -2,10 +2,9 @@ package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -56,6 +55,11 @@ public class WorldModel {
      * FOR AI
      */
     TextureRegion itemTexture;
+
+    public ArrayList<ItemModel> getItems() {
+        return items;
+    }
+
     // TODO: Maybe use a better data structure
     private ArrayList<ItemModel> items;
 
@@ -64,7 +68,9 @@ public class WorldModel {
      */
     public static final int EXIT_COUNT = 120;
 
-    /** World */
+    /**
+     * World
+     */
     protected World world;
 
     /** World scale */

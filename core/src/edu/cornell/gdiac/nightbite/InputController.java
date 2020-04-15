@@ -1,8 +1,6 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.JsonReader;
-import edu.cornell.gdiac.util.XBox360Controller;
 import com.badlogic.gdx.Input;
 import edu.cornell.gdiac.util.XBox360Controller;
 
@@ -14,7 +12,6 @@ public class InputController extends MechanicController {
 
     private XBox360Controller xbox;
     private int keyboard;
-    private Keymap keymap;
 
     private boolean prevDash;
     private boolean prevThrow;
