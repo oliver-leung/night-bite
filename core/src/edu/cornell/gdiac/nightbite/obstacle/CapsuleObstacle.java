@@ -309,7 +309,6 @@ public class CapsuleObstacle extends SimpleObstacle {
 	    cap2 = null;
 	    orient = o;
 	    seamEpsilon = DEFAULT_EPSILON;
-
 		// Initialize
 		resize(width, height);	
 	}
@@ -328,7 +327,8 @@ public class CapsuleObstacle extends SimpleObstacle {
 		center.y =  -height/2.0f;
 		center.width  = width;
 		center.height = height;
-        
+		System.out.println(center.y);
+
         // Now adjust the core
         float r = 0;
         switch (orient) {
@@ -373,6 +373,10 @@ public class CapsuleObstacle extends SimpleObstacle {
         	center.height -= 2*seamEpsilon;
         	break;
         }
+
+        if (width == height) {
+        	center.height += seamEpsilon;
+		}
         
 		// Make the box with the center in the center
 		vertices[0] = center.x;
