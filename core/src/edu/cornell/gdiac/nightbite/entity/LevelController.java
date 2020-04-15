@@ -111,7 +111,7 @@ public class LevelController {
             float x = teamJson.getFloat("y");
             float y = 11 - teamJson.getFloat("x");
             FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
-            float pWidth = filmStrip.getRegionWidth() / world.getScale().x;
+            float pWidth = (filmStrip.getRegionWidth() -30f) / world.getScale().x;
             float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
             String teamName = teamJson.name;
 

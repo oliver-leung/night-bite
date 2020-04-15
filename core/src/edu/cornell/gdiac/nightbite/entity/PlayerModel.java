@@ -122,6 +122,7 @@ public class PlayerModel extends CapsuleObstacle {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
+        disableTop();
         return true;
     }
 
