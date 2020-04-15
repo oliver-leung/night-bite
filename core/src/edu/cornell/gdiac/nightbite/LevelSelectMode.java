@@ -109,7 +109,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
         startGame = false;
         levelChoiceindex = 1;
         moveCooldown = 0;
-        prevDir = 0;
+        prevDir = 1;
     }
 
     public String getSelectedLevelJSON () {
