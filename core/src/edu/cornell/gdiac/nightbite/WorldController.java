@@ -260,7 +260,16 @@ public class WorldController implements Screen {
 			for (Obstacle obj : worldModel.getObjects()) {
 				obj.drawDebug(canvas);
 			}
+			debugGrid();
 			canvas.endDebug();
+		}
+	}
+
+	private void debugGrid() {
+		for (int i = 0; i < worldModel.getWidth(); i++) {
+			for (int j = 0; j < worldModel.getHeight(); j ++) {
+				canvas.drawPoint(i* worldModel.scale.x, j * worldModel.scale.y, Color.GREEN);
+			}
 		}
 	}
 

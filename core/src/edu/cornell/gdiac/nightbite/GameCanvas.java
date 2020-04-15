@@ -29,6 +29,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
@@ -967,6 +968,11 @@ public class GameCanvas {
     	active = DrawPass.INACTIVE;
     }
 
+    public void drawPoint(float x, float y, Color color) {
+
+		debugRender.setColor(color);
+		debugRender.circle(x, y, 1, 12);
+	}
     /**
      * Draws the outline of the given shape in the specified color
      *
