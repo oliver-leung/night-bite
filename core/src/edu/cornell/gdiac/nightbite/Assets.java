@@ -38,7 +38,7 @@ public class Assets {
     static  String FISH_ITEM_FILE = "item/food1_64.png";
 
     // Obstacle
-    static String WALL_PA1_FILE = "environment/box_64.png";
+    static String WALL_PA1_FILE = "environment/Box_64.png";
     static String WALL_PA2_FILE = "environment/box_palette2_64.png";
     static String HOLE_FILE = "environment/hole4_64.png";
     static String STAND_FILE = "environment/StallItem1_64.png";
