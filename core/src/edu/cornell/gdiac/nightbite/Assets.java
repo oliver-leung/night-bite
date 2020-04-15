@@ -38,7 +38,7 @@ public class Assets {
     static int PLAYER_FILMSTRIP_SIZE = 4;
 
     // Item
-    static  String FISH_ITEM_FILE = "item/food1_64.png";
+    static String FISH_ITEM_FILE = "item/food1_64.png";
 
     // Obstacle
     static String WALL_PA1_FILE = "environment/Box_64.png";
