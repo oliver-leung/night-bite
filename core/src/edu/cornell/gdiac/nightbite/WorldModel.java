@@ -4,7 +4,6 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -319,6 +317,8 @@ public class WorldModel {
         return horiz && vert;
     }
 
+    // TODO: refactor this
+
     /**
      * Transform an object from tile coordinates to canonical world coordinates.
      * <p>
@@ -327,7 +327,7 @@ public class WorldModel {
      *
      * @param obj The obstacle to be transformed
      */
-    private void transformTileToWorld(Obstacle obj) {
+    public void transformTileToWorld(Obstacle obj) {
         Vector2 pos = obj.getPosition();
         pos.x -= 0.5;
         pos.y -= 0.5;

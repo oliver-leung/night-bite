@@ -17,7 +17,6 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -29,7 +28,6 @@ import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
@@ -234,9 +232,9 @@ public class WorldController implements Screen {
 		// Draw objects
 		for (Obstacle obj : worldModel.getObjects()) {
 			if (obj.draw) {
-				if (obj instanceof HomeModel && obj.getName().equals("home a")) {
+				if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
 					message1.append(((HomeModel) obj).getScore());
-				} else if (obj instanceof HomeModel && obj.getName().equals("home b")) {
+				} else if (obj instanceof HomeModel && obj.getName().equals("teamB")) {
 					message2.append(((HomeModel) obj).getScore());
 				}
 				obj.draw(canvas);

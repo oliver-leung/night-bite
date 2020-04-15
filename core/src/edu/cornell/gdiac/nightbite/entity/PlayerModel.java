@@ -1,14 +1,11 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
@@ -26,7 +23,7 @@ public class PlayerModel extends CapsuleObstacle {
     private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
-    private static final int COOLDOWN_FRAMES = 60;
+    private static final int COOLDOWN_FRAMES = 35;
 
     public enum MoveState {
         WALK,
@@ -54,6 +51,7 @@ public class PlayerModel extends CapsuleObstacle {
 
     /** player identification */
     private String team;
+
     private Vector2 homeLoc;
 
     /** player-item */
@@ -97,8 +95,8 @@ public class PlayerModel extends CapsuleObstacle {
         for (int i = 0; i < NUM_ITEMS; i++) {
             overlapItem.add(false);
         }
-
-        homeLoc = new Vector2(x, y);
+        // TODO Set this later on in a better way
+        homeLoc = new Vector2(x - 0.5f, y - 0.5f);
         team = playerTeam;
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);

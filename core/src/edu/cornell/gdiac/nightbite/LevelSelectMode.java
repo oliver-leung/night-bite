@@ -85,7 +85,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
     private int levelChoiceindex;
-    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_funnel.json", "jsons/level_hard.json"};
+    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_medium.json", "jsons/level_hard.json"};
     private int[] xposList;
 
     public LevelSelectMode(GameCanvas canvas) {

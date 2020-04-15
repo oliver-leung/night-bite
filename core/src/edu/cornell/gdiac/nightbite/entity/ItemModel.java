@@ -12,6 +12,7 @@ public class ItemModel extends BoxObstacle {
      */
     public PlayerModel holdingPlayer;
     public PlayerModel lastTouch;
+
     /**
      * item parameters
      */
@@ -25,22 +26,22 @@ public class ItemModel extends BoxObstacle {
     /**
      * throwing configs
      */
-    private float THROW_FORCE = 500f;
-    private float MOTION_DAMPING = 25f;
+    private float THROW_FORCE = 10f;
+    private float MOTION_DAMPING = 40f;
     /**
      * item identification
-     * */
+     */
     private int id;
 
 
     public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
-        setSensor(false);
+        setSensor(true);
         setBullet(true);
         setName("item");
 
-        item_init_position = new Vector2(x, y);
+        item_init_position = new Vector2(x - 0.5f, y - 0.5f);
         id = itemId;
     }
 
