@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.nightbite.obstacle;
+package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -24,8 +24,18 @@ public class LevelSelectMode implements Screen {
     private static final String HEADER_FILE = "level_select/Header.png";
     private static final String PLAYER_FILE = "level_select/Lin_128px.png";
 
-    /** Textures */
+    /** Textures */ // TODO refactor asset manager
     private Texture background;
+    private Texture tile1Texture;
+    private Texture tile2Texture;
+    private Texture tile3Texture;
+    private Texture store1Texture;
+    private Texture store2Texture;
+    private Texture store3Texture;
+    private Texture arrowTexture;
+    private Texture backTexture;
+    private Texture headerTexture;
+    private Texture playerTexture;
 
     /** Scaling factor for when player changes the resolution. */
     private float scale;
@@ -33,6 +43,12 @@ public class LevelSelectMode implements Screen {
     private static int STANDARD_WIDTH = 1920;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 1080;
+    /** Positioning stats */
+    private int xpos1 = 0;
+    private int xpos2 = 0;
+    private int xpos3 = 0;
+    private int yposStall = 0;
+    private int yposTile = 0;
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -46,16 +62,39 @@ public class LevelSelectMode implements Screen {
     /** Flags */
     private boolean startGame;
 
-    // TODO
+    /** For movement ugh */
+    private int moveCooldown;
+    private int MOVE_COOLDOWN_PERIOD = 15;
+
+    // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
+    private int levelChoiceindex;
+    private String[] levelJSONList = new String[] {"jsons/level.json", "jsons/level2.json", "jsons/level3.json"};
+    private int[] xposList;
 
     public LevelSelectMode(GameCanvas canvas) {
         this.canvas = canvas;
 
         background = new Texture(BACKGROUND_FILE);
+        tile1Texture = new Texture(LEVEL1_TILE_FILE);
+        tile2Texture = new Texture(LEVEL2_TILE_FILE);
+        tile3Texture = new Texture(LEVEL3_TILE_FILE);
+        store1Texture = new Texture(LEVEL1_STALL_FILE);
+        store2Texture = new Texture(LEVEL2_STALL_FILE);
+        store3Texture = new Texture(LEVEL3_STALL_FILE);
+        arrowTexture = new Texture(ARROW_BUTTON_FILE);
+        backTexture = new Texture(BACK_BUTTON_FILE);
+        headerTexture = new Texture(HEADER_FILE);
+        playerTexture = new Texture(PLAYER_FILE);
 
         active = true;
         startGame = false;
+        levelChoiceindex = 1;
+        moveCooldown = 0;
+    }
+
+    public String getSelectedLevelJSON () {
+        return levelJSONList[levelChoiceindex];
     }
 
     public void setScreenListener(ScreenListener listener) {
@@ -67,17 +106,52 @@ public class LevelSelectMode implements Screen {
         MechanicManager manager = MechanicManager.getInstance(object_list);
         manager.update();
         float playerHorizontal = manager.getVelX(0);
-        float playerVertical = manager.getVelY(0);
         boolean playerDidThrow = manager.isThrowing(0);
 
+        // move selection
+        updateMoveCooldown();
+        if (playerHorizontal != 0) {
+            if (!((playerHorizontal == -1 && levelChoiceindex == 0) || (playerHorizontal == 1 && levelChoiceindex == (levelJSONList.length-1))) && canMove()) {
+                levelChoiceindex += playerHorizontal;
+                startMoveCooldown();
+            }
+            // update player direction
+        }
+
+        // choose selection
         if (playerDidThrow) {
             startGame = true;
         }
     }
 
+    private void startMoveCooldown() {
+        moveCooldown = MOVE_COOLDOWN_PERIOD;
+    }
+
+    private void updateMoveCooldown() {
+        if (moveCooldown > 0) {
+            moveCooldown--;
+        }
+    }
+
+    private boolean canMove() {
+        return moveCooldown == 0;
+    }
+
     private void draw() {
         canvas.begin();
+
         canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+        canvas.draw(tile1Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
+        canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
+        canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+
+        canvas.draw(store1Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos1, yposStall, 0, scale, scale);
+        canvas.draw(store2Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos2, yposStall, 0, scale, scale);
+        canvas.draw(store3Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos3, yposStall, 0, scale, scale);
+
+        canvas.draw(playerTexture, Color.WHITE, playerTexture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, 0, xposList[levelChoiceindex], yposTile, 0, scale, scale);
+
         canvas.end();
     }
 
@@ -99,6 +173,12 @@ public class LevelSelectMode implements Screen {
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (Math.min(sx, sy));
+        xpos1 = width/4;
+        xpos2 = width/2;
+        xpos3 = width * 3/4;
+        yposStall = height/2;
+        yposTile = height/4;
+        xposList = new int[] {xpos1, xpos2, xpos3};
     }
 
     @Override

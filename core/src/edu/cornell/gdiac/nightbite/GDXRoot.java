@@ -24,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import edu.cornell.gdiac.nightbite.obstacle.LevelSelectMode;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -155,6 +154,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			assets.loadContent(manager);
 			controller.setScreenListener(this);
 			controller.setCanvas(canvas);
+			controller.setLevel(levelSelect.getSelectedLevelJSON());
 
 			controller.reset();
 			setScreen(controller);
