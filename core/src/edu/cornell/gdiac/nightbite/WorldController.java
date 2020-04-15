@@ -16,6 +16,7 @@
  */
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -320,20 +321,25 @@ public class WorldController implements Screen {
 		// world.setContactListener(this);
 
 		worldModel.initLighting(canvas);
-		worldModel.createPointLight();
+		worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}); // for player 1
+		worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}); // for player 2
 		populateLevel();
 
 
-		// Attaching lights to p1 is janky and serves mostly as demo code
+		// Attaching lights to players is janky and serves mostly as demo code
 		// TODO make data-driven
 		Array<LightSource> lights = worldModel.getLights();
-		PlayerModel p1 = worldModel.getPlayers().get(0);  //
-		for (LightSource light : lights) {
-			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
-		}
+		PlayerModel p1 = worldModel.getPlayers().get(0);
+		PlayerModel p2 = worldModel.getPlayers().get(1);
 
-		if (lights.size > 0) {
-			lights.get(0).setActive(true);
+		LightSource l1 = lights.get(0);
+		LightSource l2 = lights.get(1);
+
+		l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
+		l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
+
+		for (LightSource l : lights) {
+			l.setActive(true);
 		}
 	}
 
