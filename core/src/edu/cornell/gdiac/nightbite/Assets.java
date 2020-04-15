@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.HashMap;
+
 // The whole point of this class is to get all textures in a unified location.
 // This makes it easier for assets to be data driven (defining assets in json files)
 
@@ -50,10 +52,119 @@ public class Assets {
     // Home stall
     static String STAND_FILE = "environment/StallHome1_64.png";
     static String[] HOME_STALL_FILES = {
-        "environment/StallHome1_64.png",
-        "environment/StallHome2_64.png",
-        "environment/StallHome3_64.png",
-        "environment/StallHome4_64.png",
+            "environment/StallHome1_64.png",
+            "environment/StallHome2_64.png",
+            "environment/StallHome3_64.png",
+            "environment/StallHome4_64.png",
+    };
+
+    public static HashMap<String, TextureRegion> FILES;
+    static String[] FILE_NAMES = {
+            "background/ground_64.png",
+            "background/ground_palette2_64.png",
+            "background/groundbrick_64.png",
+            "background/groundbrick_palette2_64.png",
+            "background/grounddark1_64.png",
+            "background/grounddark1_palette2_64.png",
+            "background/grounddark2_64.png",
+            "background/grounddark2_palette2_64.png",
+            "background/groundgrass_64.png",
+            "background/groundgrass_palette2_64.png",
+
+            "environment/Box_32.png",
+            "environment/Box_64.png",
+            "environment/box_palette2_32.png",
+            "environment/box_palette2_64.png",
+            "environment/brick.png",
+            "environment/car.psd",
+            "environment/car_32.png",
+            "environment/car_64.png",
+            "environment/carfront.psd",
+            "environment/carfront_32.png",
+            "environment/carfront_64.png",
+            "environment/cobble.png",
+            "environment/DirectionsSign_32.png",
+            "environment/DirectionsSign_64.png",
+            "environment/DirectionsSign_small_64.png",
+            "environment/firecracker_filmstrip.png",
+            "environment/goaldoor.png",
+            "environment/Hanging_Lantern_32_FS_30.png",
+            "environment/HangingLantern_32.png",
+            "environment/HangingLantern_64.png",
+            "environment/HangingLantern_64_Filmstrip_30.png",
+            "environment/hole0_64.png",
+            "environment/hole0_palette2_64.png",
+            "environment/hole1_64.png",
+            "environment/hole1_palette2_64.png",
+            "environment/hole2.png",
+            "environment/hole2adj_64.png",
+            "environment/hole2adj_palette2_64.png",
+            "environment/hole2opp_64.png",
+            "environment/hole2opp_palette2_64.png",
+            "environment/hole3_64.png",
+            "environment/hole3_palette2_64.png",
+            "environment/hole4_64.png",
+            "environment/hole4_palette2_64.png",
+            "environment/redcar_32.png",
+            "environment/redcar_64.png",
+            "environment/redcarfront_32.png",
+            "environment/redcarfront_64.png",
+            "environment/Shrub_32.png",
+            "environment/Shrub_32_Filmstrip_30.png",
+            "environment/Shrub_64.png",
+            "environment/Shrub_64_Filmstrip_30.png",
+            "environment/Shrub_64_palette3.png",
+            "environment/Shrub_palette2_64.png",
+            "environment/shrub_palette2_filmstrip.png",
+            "environment/StallHome1_64.png",
+            "environment/StallHome2_64.png",
+            "environment/StallHome3_64.png",
+            "environment/StallHome4_64.png",
+            "environment/StallItem1_64.png",
+            "environment/StallOther1_64.png",
+            "environment/StallOther2_64.png",
+            "environment/StallOther_palette2_64.png",
+            "environment/StallOtherWide_64.png",
+            "environment/Stalls_32.png",
+            "environment/Stalls_32_Grid.png",
+            "environment/Stalls_64.png",
+            "environment/Stalls_64_Darkbg.png",
+            "environment/stand-border.png",
+            "environment/Tree_32.png",
+            "environment/Tree_64_palette2.png",
+
+            "background/Box_64.png",
+            "background/box_palette2_64.png",
+            "background/brick.png",
+            "background/Box_64.png",
+            "background/box_palette2_64.png",
+            "background/brick.png",
+            "background/cobble.png",
+            "background/DirectionsSign_small_64.png",
+            "background/goaldoor.png",
+            "background/HangingLantern_32.png",
+            "background/hole0_64.png",
+            "background/hole0_palette2_64.png",
+            "background/hole1_64.png",
+            "background/hole1_palette2_64.png",
+            "background/hole2.png",
+            "background/hole2adj_64.png",
+            "background/hole2adj_palette2_64.png",
+            "background/hole2opp_64.png",
+            "background/hole2opp_palette2_64.png",
+            "background/hole3_64.png",
+            "background/hole3_palette2_64.png",
+            "background/hole4_64.png",
+            "background/hole4_palette2_64.png",
+            "background/StallHome1_64.png",
+            "background/StallHome2_64.png",
+            "background/StallHome3_64.png",
+            "background/StallHome4_64.png",
+            "background/StallItem1_64.png",
+            "background/StallOther1_64.png",
+            "background/StallOther2_64.png",
+            "background/StallOther_palette2_64.png",
+            "background/stand-border.png"
     };
 
     // Background
@@ -113,6 +224,13 @@ public class Assets {
             loadTexture(player_file);
         }
 
+        for (String filename : FILE_NAMES) {
+            try {
+                loadTexture(filename);
+            } catch (Exception ignored) {
+            }
+        }
+
         // Load Font
         loadFont(RETRO_FONT_FILE, RETRO_FONT_SIZE);
     }
@@ -132,6 +250,15 @@ public class Assets {
         music.setLooping(true);
         music.play();
         music.setVolume(0.1f);
+
+        FILES = new HashMap<>();
+        // Make background textures
+        for (String filename : FILE_NAMES) {
+            if (filename.equals("background/hole1_64.png")) {
+                System.out.println("done");
+            }
+            FILES.put(filename, createTexture(manager, filename, false));
+        }
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
