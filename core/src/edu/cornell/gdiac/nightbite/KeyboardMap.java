@@ -28,7 +28,7 @@ public class KeyboardMap {
     }
 
     private static Player PLAYER0 = new Player(
-            Keys.UP,
+            Keys.valueOf("Up"),
             Keys.DOWN,
             Keys.LEFT,
             Keys.RIGHT,

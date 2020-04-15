@@ -11,10 +11,7 @@ public abstract class ImmovableModel extends BoxObstacle {
 
     public ImmovableModel(float x, float y, int rotate) {
         // TODO: Changing the width and height does nothing right now.
-        // TODO: Oliver please make this use x and y please if you need
-        // TODO: me to adjust the canonical scale so that it works better
-        // TODO: I can do that ok bye
-        super(2 * x + 1f, 2 * y + 1f, 2, 2);
+        super(x, y, 1, 1);
         setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);

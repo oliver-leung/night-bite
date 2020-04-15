@@ -1,12 +1,10 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -26,21 +24,24 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    /** Width of the game world in Box2d units. */
-    public static final float DEFAULT_WIDTH = 32.0f;
-    /** Height of the game world in Box2d units. */
-    public static final float DEFAULT_HEIGHT = 18.0f;
+    /**
+     * Width of the game world in Box2d units.
+     */
+    public static final float DEFAULT_WIDTH = 20f;
+    /**
+     * Height of the game world in Box2d units.
+     */
+    public static final float DEFAULT_HEIGHT = 10f;
 
     // TODO: Should this be here? Maybe this should be defined in Canvas instead
-    /** Width of the game world in pixel units. */
-    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
-    /** Height of the game world in units. */
-    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
-
-    /** Immovable object parameters */
-    private static final float IMMOVABLE_OBJ_DENSITY = 0f;
-    private static final float IMMOVABLE_OBJ_FRICTION = 1f;
-    private static final float IMMOVABLE_OBJ_RESTITUTION = 0f;
+    /**
+     * Width of the game world in pixel units.
+     */
+    public static final float DEFAULT_PIXEL_WIDTH = 1280f;
+    /**
+     * Height of the game world in units.
+     */
+    public static final float DEFAULT_PIXEL_HEIGHT = 640f;
 
     /**
      * Player textures
@@ -48,17 +49,17 @@ public class WorldModel {
     public static FilmStrip player1FilmStrip;
 
     public static FilmStrip player2FilmStrip;
-    /**
-     * Item parameters
-     */
-
-    protected static Vector2 ITEM_START_POSITION = new Vector2(16, 12);
     public String winner;
 
     /**
      * FOR AI
      */
     TextureRegion itemTexture;
+
+    public ArrayList<ItemModel> getItems() {
+        return items;
+    }
+
     // TODO: Maybe use a better data structure
     private ArrayList<ItemModel> items;
 
@@ -67,7 +68,9 @@ public class WorldModel {
      */
     public static final int EXIT_COUNT = 120;
 
-    /** World */
+    /**
+     * World
+     */
     protected World world;
 
     /** World scale */
@@ -103,6 +106,10 @@ public class WorldModel {
      */
     private PooledList<Obstacle> staticObjects;
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
     private Rectangle bounds;
     /**
      * Objects that move during updates
@@ -123,7 +130,7 @@ public class WorldModel {
         world = new World(Vector2.Zero, false);
         // TODO: CollisionController
         // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 32f, 18f);
+        bounds = new Rectangle(0, 0, 20f, 10f);
         scale = new Vector2(1f, 1f);
         actualScale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
@@ -340,14 +347,31 @@ public class WorldModel {
         return horiz && vert;
     }
 
+    /**
+     * Transform an object from tile coordinates to canonical world coordinates.
+     * <p>
+     * Tile coordinates dictate that the bottom left tile is (0, 0), but in order to place an object in world
+     * coordinates, it must be centered on (0.5, 0.5).
+     *
+     * @param obj The obstacle to be transformed
+     */
+    private void transformTileToWorld(Obstacle obj) {
+        Vector2 pos = obj.getPosition();
+        pos.x -= 0.5;
+        pos.y -= 0.5;
+        obj.setPosition(pos);
+    }
+
     public void addStaticObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
+        transformTileToWorld(obj);
         staticObjects.add(obj);
         obj.activatePhysics(world);
     }
 
     public void addDynamicObject(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
+        transformTileToWorld(obj);
         dynamicObjects.add(obj);
         obj.activatePhysics(world);
     }

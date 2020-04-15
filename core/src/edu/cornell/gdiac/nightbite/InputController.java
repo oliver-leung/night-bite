@@ -96,7 +96,7 @@ public class InputController extends MechanicController {
             return;
         }
 
-        temp1 = isKeyPressed(keybinds.DEBUG);
+        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
         temp1 = isKeyPressed(keybinds.RESET);
