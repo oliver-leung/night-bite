@@ -67,11 +67,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Standard window size (for scaling)
 	 */
-	private static int STANDARD_WIDTH = 1024;
+	private static int STANDARD_WIDTH = 1920;
 	/**
 	 * Standard window height (for scaling)
 	 */
-	private static int STANDARD_HEIGHT = 576;
+	private static int STANDARD_HEIGHT = 960;
 
 	private static float TITLE_X_RATIO = 0.5f;
 	private static float TITLE_Y_RATIO = 0.55f;

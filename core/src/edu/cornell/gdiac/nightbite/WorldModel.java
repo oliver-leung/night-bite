@@ -37,11 +37,11 @@ public class WorldModel {
     /**
      * Width of the game world in pixel units.
      */
-    public static final float DEFAULT_PIXEL_WIDTH = 1024f;
+    public static final float DEFAULT_PIXEL_WIDTH = 1280f;
     /**
      * Height of the game world in units.
      */
-    public static final float DEFAULT_PIXEL_HEIGHT = 576f;
+    public static final float DEFAULT_PIXEL_HEIGHT = 640f;
 
     /**
      * Player textures
