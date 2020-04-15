@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import edu.cornell.gdiac.nightbite.obstacle.LevelSelectMode;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -52,6 +53,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * Player mode for the asset loading screen (CONTROLLER CLASS)
 	 */
 	private LoadingMode loading;
+	/**
+	 * Player mode for the asset loading screen (CONTROLLER CLASS)
+	 */
+	private LevelSelectMode levelSelect;
 	/**
 	 * List of all WorldControllers
 	 */
@@ -82,6 +87,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		canvas = new GameCanvas();
 		loading = new LoadingMode(canvas, manager, 1);
+		levelSelect = new LevelSelectMode(canvas);
 
 		assets = new Assets(manager);
 		assets.preLoadContent(manager);
@@ -140,6 +146,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
+			levelSelect.setScreenListener(this);
+			setScreen(levelSelect);
+
+			loading.dispose();
+			loading = null;
+		} else if (screen == levelSelect) {
 			assets.loadContent(manager);
 			controller.setScreenListener(this);
 			controller.setCanvas(canvas);
@@ -147,8 +159,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			controller.reset();
 			setScreen(controller);
 
-			loading.dispose();
-			loading = null;
+			levelSelect.dispose();
+			levelSelect = null;
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
