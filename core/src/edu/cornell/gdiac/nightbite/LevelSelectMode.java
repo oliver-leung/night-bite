@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,7 +12,7 @@ import edu.cornell.gdiac.nightbite.MechanicManager;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class LevelSelectMode implements Screen {
+public class LevelSelectMode implements Screen, InputProcessor {
 
     /** Resources */
     private static final String BACKGROUND_FILE = "level_select/Background.png";
@@ -48,8 +50,13 @@ public class LevelSelectMode implements Screen {
     private int xpos1 = 0;
     private int xpos2 = 0;
     private int xpos3 = 0;
+    private int xLeftEnd = 0;
+    private int xRightEnd = 0;
     private int yposStall = 0;
     private int yposTile = 0;
+    private int yposHeader = 0;
+    private int yposTop = 0;
+    private int heightY = 0;
 
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -59,6 +66,15 @@ public class LevelSelectMode implements Screen {
 
     /** Whether or not this player mode is still active */
     private boolean active;
+
+    /** The current state of the play button */
+    private int pressState;
+
+    /** Exit code for starting the game */
+    public static final int EXIT_START = 0;
+    /** Exit code for heading back to game menu */
+    public static final int EXIT_MENU = 1;
+
 
     /** Flags */
     private boolean startGame;
@@ -102,6 +118,7 @@ public class LevelSelectMode implements Screen {
 
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
+        Gdx.input.setInputProcessor(this);
     }
 
     private void update(float delta) {
@@ -150,6 +167,10 @@ public class LevelSelectMode implements Screen {
         canvas.begin();
 
         canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+        canvas.draw(headerTexture, Color.WHITE, headerTexture.getWidth()/2.0f, headerTexture.getHeight()/2.0f, xpos2, yposHeader, 0, scale, scale);
+        canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile+5, 0, scale, scale);
+        canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
+
         canvas.draw(tile1Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
         canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
         canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
@@ -170,7 +191,9 @@ public class LevelSelectMode implements Screen {
             draw();
 
             if (startGame && listener != null) {
-                listener.exitScreen(this, 0);
+                listener.exitScreen(this, EXIT_START);
+            } else if (pressState == 2) {
+                listener.exitScreen(this, EXIT_MENU);
             }
         }
     }
@@ -184,14 +207,40 @@ public class LevelSelectMode implements Screen {
         xpos1 = width/4;
         xpos2 = width/2;
         xpos3 = width * 3/4;
+        xLeftEnd = width/16;
+        xRightEnd = width * 15/16;
         yposStall = height/2;
         yposTile = height/4;
+        yposHeader = height * 13/16;
+        yposTop = height * 7/8;
+        heightY = height;
         xposList = new int[] {xpos1, xpos2, xpos3};
     }
 
     @Override
     public void dispose() {
         // TODO
+        background.dispose();
+        tile1Texture.dispose();
+        tile2Texture.dispose();
+        tile3Texture.dispose();
+        store1Texture.dispose();
+        store2Texture.dispose();
+        store3Texture.dispose();
+        arrowTexture.dispose();
+        backTexture.dispose();
+        headerTexture.dispose();
+
+        background = null;
+        tile1Texture= null;
+        tile2Texture= null;
+        tile3Texture= null;
+        store1Texture= null;
+        store2Texture= null;
+        store3Texture= null;
+        arrowTexture= null;
+        backTexture= null;
+        headerTexture= null;
     }
 
     @Override
@@ -211,4 +260,51 @@ public class LevelSelectMode implements Screen {
 
     @Override
     public void resume() { }
+
+    public boolean keyDown(int i) {
+        return true;
+    }
+
+    public boolean keyUp(int i) {
+        return true;
+    }
+
+    public boolean keyTyped(char c) {
+        return true;
+    }
+
+    public boolean touchDown(int screenX, int screenY, int i2, int i3) {
+        if (pressState == 2) {
+            return true;
+        }
+        // Flip to match graphics coordinates
+        screenY = heightY-screenY;
+
+        float radius = backTexture.getWidth()/2.0f;
+        float dist = (screenX-xLeftEnd)*(screenX-xLeftEnd)+(screenY-yposTop)*(screenY-yposTop);
+        if (dist < radius*radius) {
+            pressState = 1;
+        }
+        return false;
+    }
+
+    public boolean touchUp(int i, int i1, int i2, int i3) {
+        if (pressState == 1) {
+            pressState = 2;
+            return false;
+        }
+        return true;
+    }
+
+    public boolean touchDragged(int i, int i1, int i2) {
+        return true;
+    }
+
+    public boolean mouseMoved(int i, int i1) {
+        return true;
+    }
+
+    public boolean scrolled(int i) {
+        return true;
+    }
 }

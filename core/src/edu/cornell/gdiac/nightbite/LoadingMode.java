@@ -448,6 +448,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Called when the Screen is resumed from a paused state.
 	 *
+	 *
 	 * This is usually when it regains focus.
 	 */
 	public void resume() {
