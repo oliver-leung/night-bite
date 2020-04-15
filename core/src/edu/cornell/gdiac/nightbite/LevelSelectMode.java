@@ -87,7 +87,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
     private int levelChoiceindex;
-    private String[] levelJSONList = new String[] {"jsons/level.json", "jsons/level2.json", "jsons/level3.json"};
+    private String[] levelJSONList = new String[] {"jsons/asym_level.json", "jsons/level_funnel.json", "jsons/level_zigzag.json"};
     private int[] xposList;
 
     public LevelSelectMode(GameCanvas canvas) {
@@ -230,6 +230,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
         arrowTexture.dispose();
         backTexture.dispose();
         headerTexture.dispose();
+        Gdx.input.setInputProcessor(null);
 
         background = null;
         tile1Texture= null;
