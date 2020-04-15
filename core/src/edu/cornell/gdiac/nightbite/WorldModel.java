@@ -276,7 +276,7 @@ public class WorldModel {
 
     public void setScale(float sx, float sy) {
         scale.set(sx, sy);
-        System.out.println(scale);
+        // System.out.println(scale);
     }
 
     public float getHeight() {

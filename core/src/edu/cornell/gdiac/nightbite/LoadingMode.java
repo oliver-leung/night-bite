@@ -56,9 +56,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Resources for loading screen
 	 */
-	private static final String BACKGROUND_FILE = "loading/loading.png";
+	private static final String BACKGROUND_FILE = "loading/Background_w_Title.png";
     private static final String PROGRESS_FILE = "loading/progressbar.png";
-    private static final String PLAY_BTN_FILE = "loading/play.png";
+    private static final String PLAY_BTN_FILE = "loading/PlayButton.png";
 	/**
 	 * Default budget for asset loader (do nothing but load 60 fps)
 	 */
@@ -66,11 +66,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Standard window size (for scaling)
 	 */
-	private static int STANDARD_WIDTH = 800;
+	private static int STANDARD_WIDTH = 1920;
 	/**
 	 * Standard window height (for scaling)
 	 */
-	private static int STANDARD_HEIGHT = 700;
+	private static int STANDARD_HEIGHT = 1080;
 
 	// statusBar is a "texture atlas." Break it up into parts.
 	/**
@@ -342,7 +342,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	private void draw() {
 		canvas.begin();
-		canvas.draw(background, 0, 0);
+		canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
 		if (playButton == null) {
 			drawProgress(canvas);
 		} else {
@@ -412,6 +412,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		float sx = ((float)width)/STANDARD_WIDTH;
 		float sy = ((float)height)/STANDARD_HEIGHT;
 		scale = (Math.min(sx, sy));
+		System.out.println(scale);
 		
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
