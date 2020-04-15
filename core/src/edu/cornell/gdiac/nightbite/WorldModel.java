@@ -27,11 +27,11 @@ public class WorldModel {
     /**
      * Width of the game world in Box2d units.
      */
-    public static final float DEFAULT_WIDTH = 32f;
+    public static final float DEFAULT_WIDTH = 20f;
     /**
      * Height of the game world in Box2d units.
      */
-    public static final float DEFAULT_HEIGHT = 18f;
+    public static final float DEFAULT_HEIGHT = 10f;
 
     // TODO: Should this be here? Maybe this should be defined in Canvas instead
     /**
@@ -126,7 +126,7 @@ public class WorldModel {
         world = new World(Vector2.Zero, false);
         // TODO: CollisionController
         // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 32f, 18f);
+        bounds = new Rectangle(0, 0, 20f, 10f);
         scale = new Vector2(1f, 1f);
         actualScale = new Vector2(1f, 1f);
         dynamicObjects = new PooledList<>();
@@ -353,7 +353,7 @@ public class WorldModel {
      */
     private void transformTileToWorld(Obstacle obj) {
         Vector2 pos = obj.getPosition();
-        pos.x += 0.5;
+        pos.x -= 0.5;
         pos.y -= 0.5;
         obj.setPosition(pos);
     }
