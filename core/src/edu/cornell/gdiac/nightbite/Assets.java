@@ -29,28 +29,44 @@ public class Assets {
 
     /** RESOURCES */
     // Character
-    static String[] PLAYER_FILMSTRIP_FILES = {"character/granny_walkcycle_64_fs_v1.png", "character/lin_walkcycle_64_fs_v2.png"};
+    static String[] PLAYER_FILMSTRIP_FILES = {
+        "character/lin_dash_64_fs.png",
+        "character/granny_dash_64_fs.png"
+    };
     static int PLAYER_FILMSTRIP_ROW = 1;
-    static int PLAYER_FILMSTRIP_COL = 4;
-    static int PLAYER_FILMSTRIP_SIZE = 4;
+    static int PLAYER_FILMSTRIP_COL = 8;
+    static int PLAYER_FILMSTRIP_SIZE = 8;
 
     // Item
-    static  String FISH_ITEM_FILE = "item/food1_64.png";
+    static String FISH_ITEM_FILE = "item/food1_64.png";
 
     // Obstacle
     static String WALL_PA1_FILE = "environment/Box_64.png";
     static String WALL_PA2_FILE = "environment/box_palette2_64.png";
+
+    // Hole
     static String HOLE_FILE = "environment/hole4_64.png";
-    static String STAND_FILE = "environment/StallItem1_64.png";
+
+    // Home stall
+    static String[] HOME_STALL_FILES = {
+        "environment/StallHome1_64.png",
+        "environment/StallHome2_64.png",
+        "environment/StallHome3_64.png",
+        "environment/StallHome4_64.png",
+    };
 
     // Background
     static String GAME_BACKGROUND_FILE = "background/ground_64.png";
+
+    // Other
+    static String GOAL_FILE = "environment/goaldoor.png";
 
     // Font
     static String RETRO_FONT_FILE = "font/RetroGame.ttf";
     static int RETRO_FONT_SIZE = 12;
 
     // Sound
+    static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
 
     /*
      * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
@@ -61,10 +77,10 @@ public class Assets {
      * LOADED ASSETS
      */
     public static FilmStrip[] PLAYER_FILMSTRIPS;
+    public static TextureRegion[] HOME_STALLS;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
     public static TextureRegion HOLE;
-    public static TextureRegion STAND;
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
     public static BitmapFont RETRO_FONT;
@@ -89,10 +105,13 @@ public class Assets {
         loadTexture(FISH_ITEM_FILE);
         loadTexture(WALL_PA1_FILE);
         loadTexture(HOLE_FILE);
-        loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
+        loadTexture(GOAL_FILE);
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
+        }
+        for (String stall_file : HOME_STALL_FILES) {
+            loadTexture(stall_file);
         }
 
         // Load Font
@@ -105,11 +124,14 @@ public class Assets {
         FISH_ITEM = createTexture(manager, FISH_ITEM_FILE, true);
         WALL = createTexture(manager, WALL_PA1_FILE, true);
         HOLE = createTexture(manager, HOLE_FILE, true);
-        STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
+        GOAL = createTexture(manager, GOAL_FILE, true);
+
+        // Start music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
+        music.setVolume(0.1f);
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
@@ -118,6 +140,14 @@ public class Assets {
             FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
                     PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
+        }
+
+        // Home stall textures
+        int num_stalls = HOME_STALL_FILES.length;
+        HOME_STALLS = new TextureRegion[num_stalls];
+        for (int i = 0; i < num_stalls; i++) {
+            TextureRegion stall = createTexture(manager, HOME_STALL_FILES[i], true);
+            HOME_STALLS[i] = stall;
         }
 
         // Allocate Font

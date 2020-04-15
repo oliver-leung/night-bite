@@ -1,8 +1,8 @@
 package edu.cornell.gdiac.nightbite;
 
-import com.badlogic.gdx.controllers.mappings.Xbox;
-import edu.cornell.gdiac.util.XBox360Controller;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
     // TODO: Configurable controls
@@ -21,6 +21,7 @@ public class InputController extends MechanicController {
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
+        isMuted = false;
         this.xbox = new XBox360Controller(xbox);
         this.keyboard = keyboard;
     }
@@ -91,13 +92,27 @@ public class InputController extends MechanicController {
         temp1 = isKeyPressed(keybinds.GRAB);
         isThrowing = isThrowing || (!prevThrow && temp1);
 
-        if (!sudo) { return; }
+        if (!sudo) {
+            return;
+        }
 
-        temp1 = isKeyPressed(keybinds.DEBUG);
+        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
+
+        // Music
+        // TODO: Remove reference to Assets class
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            if (isMuted) {
+                isMuted = false;
+                Assets.music.setVolume(0);
+            } else {
+                isMuted = true;
+                Assets.music.setVolume(0.3f);
+            }
+        }
     }
 
     private boolean isKeyPressed(int key) {

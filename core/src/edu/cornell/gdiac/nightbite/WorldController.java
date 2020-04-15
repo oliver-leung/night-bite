@@ -16,13 +16,11 @@
  */
 package edu.cornell.gdiac.nightbite;
 
-import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
@@ -234,6 +232,7 @@ public class WorldController implements Screen {
 		StringBuilder message1 = new StringBuilder("Player A score: ");
 		StringBuilder message2 = new StringBuilder("Player B score: ");
 
+		// Draw objects
 		for (Obstacle obj : worldModel.getObjects()) {
 			if (obj.draw) {
 				if (obj instanceof HomeModel && obj.getName().equals("home a")) {
@@ -266,7 +265,16 @@ public class WorldController implements Screen {
 			for (Obstacle obj : worldModel.getObjects()) {
 				obj.drawDebug(canvas);
 			}
+			debugGrid();
 			canvas.endDebug();
+		}
+	}
+
+	private void debugGrid() {
+		for (int i = 0; i < worldModel.getWidth(); i++) {
+			for (int j = 0; j < worldModel.getHeight(); j ++) {
+				canvas.drawPoint(i* worldModel.scale.x, j * worldModel.scale.y, Color.GREEN);
+			}
 		}
 	}
 
@@ -398,8 +406,7 @@ public class WorldController implements Screen {
 		// TODO peer review below
 		// TODO: Wait for item refactor
 
-		for (int i = 0; i < NUM_ITEMS; i++) {
-			ItemModel item = worldModel.getItem(i);
+		for (ItemModel item : worldModel.getItems()) {
 			item.update();
 		}
 
@@ -468,13 +475,15 @@ public class WorldController implements Screen {
 			p.applyImpulse();
 
 			/* Play state */
-			if (!p.isAlive()) { p.respawn(); }
+			if (!p.isAlive()) {
+				p.respawn();
+			}
 			p.setActive(p.isAlive());
 
 			/* Items */
 
 			/* IF PLAYER GRABS ITEM */
-			for (int j = 0; j < NUM_ITEMS; j++) {
+			for (int j = 0; j < worldModel.getItems().size(); j++) {
 				ItemModel item = worldModel.getItem(j);
 				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
 					item.setHeld(p);

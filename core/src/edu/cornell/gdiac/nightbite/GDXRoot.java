@@ -84,7 +84,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
-		canvas = new GameCanvas();
+		canvas = GameCanvas.getInstance();
 		loading = new LoadingMode(canvas, manager, 1);
 		levelSelect = new LevelSelectMode(canvas);
 

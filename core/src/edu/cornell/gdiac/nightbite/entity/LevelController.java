@@ -28,6 +28,39 @@ public class LevelController {
         createHoles(world, levelFormat.get("holes"));
         createTeams(world, levelFormat.get("teams"));
         createItems(world, levelFormat.get("items"));
+        createBounds(world);
+    }
+
+    private void createBounds(WorldModel world) {
+        float width = world.getBounds().width;
+        float height = world.getBounds().height;
+        WallModel wall;
+        for (int i = 0; i < width; i++) {
+            wall = new WallModel(i, -1, 0);
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
+            wall.setName("bound");
+            world.addStaticObject(wall);
+
+            wall = new WallModel(i, height + 1, 0);
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
+            wall.setName("bound");
+            world.addStaticObject(wall);
+        }
+        for (int i = 0; i < height; i++) {
+            wall = new WallModel(-1, i, 0);
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
+            wall.setName("bound");
+            world.addStaticObject(wall);
+
+            wall = new WallModel(width + 1, i, 0);
+            wall.setDrawScale(world.getScale());
+            wall.setActualScale(world.getActualScale());
+            wall.setName("bound");
+            world.addStaticObject(wall);
+        }
     }
 
     private void createItems(WorldModel world, JsonValue items) {
@@ -65,7 +98,7 @@ public class LevelController {
             player.setName("player " + teamName);
             world.addPlayer(player);
 
-            home = new HomeModel(x, y, teamName);
+            home = new HomeModel(x, y, teamName, playerNum);
             home.setName("home " + teamName);
             home.setDrawScale(world.getScale());
             home.setActualScale(world.getActualScale());

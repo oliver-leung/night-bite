@@ -86,6 +86,15 @@ public class GameCanvas {
 	 */
 	private TextureRegion holder;
 
+	private static GameCanvas instance;
+
+	public static GameCanvas getInstance() {
+		if (instance == null) {
+			instance = new GameCanvas();
+		}
+		return instance;
+	}
+
 	/**
 	 * Creates a new GameCanvas determined by the application configuration.
 	 * <p>
@@ -967,6 +976,11 @@ public class GameCanvas {
     	active = DrawPass.INACTIVE;
     }
 
+    public void drawPoint(float x, float y, Color color) {
+
+		debugRender.setColor(color);
+		debugRender.circle(x, y, 1, 12);
+	}
     /**
      * Draws the outline of the given shape in the specified color
      *

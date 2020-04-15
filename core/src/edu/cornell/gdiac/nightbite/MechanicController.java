@@ -1,7 +1,5 @@
 package edu.cornell.gdiac.nightbite;
 
-import edu.cornell.gdiac.util.XBox360Controller;
-
 public abstract class MechanicController {
     protected float velX;
     protected float velY;
@@ -14,6 +12,7 @@ public abstract class MechanicController {
     protected boolean isDebug;
     protected boolean isReset;
     protected boolean isExit;
+    protected boolean isMuted;
 
     public float getVelX() {
         return velX;
@@ -41,6 +40,10 @@ public abstract class MechanicController {
 
     public boolean isExit() {
         return isExit && sudo;
+    }
+
+    public boolean isMuted() {
+        return isMuted;
     }
 
     public abstract void poll();
