@@ -106,6 +106,10 @@ public class WorldModel {
      */
     private PooledList<Obstacle> staticObjects;
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
     private Rectangle bounds;
     /**
      * Objects that move during updates
