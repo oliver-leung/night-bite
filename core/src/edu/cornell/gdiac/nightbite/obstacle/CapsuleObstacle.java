@@ -546,4 +546,9 @@ public class CapsuleObstacle extends SimpleObstacle {
 		}
 	}
 
+	public void disableTop() {
+		body.destroyFixture(cap1);
+		body.destroyFixture(core);
+	}
+
 }
