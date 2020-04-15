@@ -6,10 +6,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 
 public class PlayerModel extends CapsuleObstacle {
+
+    // TODO
+    private int NUM_ITEMS = 2;
 
     /**
      * player movement params
@@ -31,6 +38,9 @@ public class PlayerModel extends CapsuleObstacle {
     private int boosting;
     private int cooldown;
 
+    private float prevHoriDir;
+    private int playerWalkCounter;
+
     private Vector2 impulse;
     private Vector2 boost;
 
@@ -38,30 +48,30 @@ public class PlayerModel extends CapsuleObstacle {
     private boolean isAlive;
     private int spawnCooldown;
 
+    /** cooldown for grabbing and throwing items */
+    private int grabCooldown;
+    private static int GRAB_COOLDOWN_PERIOD = 15;
+
     /** player identification */
     private String team;
     private Vector2 homeLoc;
 
     /** player-item */
-    public boolean item;
-    private boolean overlapItem;
+    private ArrayList<ItemModel> item;
+    private ArrayList<Boolean> overlapItem;
 
-    /**
-     * player texture
-     */
+    /** player texture */
     public final FilmStrip playerTexture;
-    private TextureRegion defaultTexture;
+    private FilmStrip defaultTexture;
 
-    @Override
-    public void setTexture(TextureRegion value) {
+    public void setTexture(FilmStrip value) {
         if (defaultTexture == null) {
             defaultTexture = value;
         }
         super.setTexture(value);
     }
 
-    public void resetTexture() { texture = defaultTexture;
-    }
+    public void resetTexture() { texture = defaultTexture; }
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
         super(x, y, width, height);
@@ -75,11 +85,18 @@ public class PlayerModel extends CapsuleObstacle {
         impulse = new Vector2();
         boost = new Vector2();
 
+        prevHoriDir = -1;
+        playerWalkCounter = 0;
+
         cooldown = 0;
         boosting = 0;
 
         isAlive = true;
-        overlapItem = false;
+        item = new ArrayList<ItemModel>();
+        overlapItem = new ArrayList<Boolean>();
+        for (int i = 0; i < NUM_ITEMS; i++) {
+            overlapItem.add(false);
+        }
 
         homeLoc = new Vector2(x, y);
         team = playerTeam;
@@ -117,7 +134,7 @@ public class PlayerModel extends CapsuleObstacle {
     public void setIY(float value) { impulse.y = value; }
 
     public void setBoostImpulse(float hori, float vert) {
-        if (cooldown > 0 || item) { return; }
+        if (cooldown > 0 || hasItem()) { return; }
         state = MoveState.RUN;
         boosting = BOOST_FRAMES;
         cooldown = COOLDOWN_FRAMES;
@@ -134,6 +151,27 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     /** movement state */
+
+    public float getPrevHoriDir() {
+        return prevHoriDir;
+    }
+
+    public void setPrevHoriDir(float dir) {
+        prevHoriDir = dir;
+    }
+
+    public int getPlayerWalkCounter() {
+        return playerWalkCounter;
+    }
+
+    public void incrPlayerWalkCounter() {
+        playerWalkCounter++;
+    }
+
+    public void resetPlayerWalkCounter() {
+        playerWalkCounter = 0;
+    }
+
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
@@ -145,6 +183,7 @@ public class PlayerModel extends CapsuleObstacle {
     }
 
     public void update() {
+        updateGrabCooldown();
         cooldown = Math.max(0, cooldown - 1);
         boosting = Math.max(0, boosting - 1);
     }
@@ -173,19 +212,58 @@ public class PlayerModel extends CapsuleObstacle {
             isAlive = true;
             draw = true;
         }
-        item = false;
         resetTexture();
 
         setLinearVelocity(Vector2.Zero);
     }
 
     /** player-item */
-    public void setOverlapItem(boolean b) {
-        overlapItem = b;
+    public void setOverlapItem(int id, boolean b) {
+        overlapItem.set(id, b);
     }
 
-    public boolean getOverlapItem() {
-        return overlapItem;
+    public boolean getOverlapItem(int id) {
+        return overlapItem.get(id);
+    }
+
+    public boolean hasItem() {
+        return item.size() > 0;
+    }
+
+    public int numCarriedItems() {
+        return item.size();
+    }
+
+    public ArrayList<ItemModel> getItems() {
+        return item;
+    }
+
+    public void clearInventory() {
+        item.clear();
+    }
+
+    public void unholdItem(ItemModel i) {
+        item.remove(i);
+    }
+
+    public void holdItem(ItemModel i) {
+        item.add(i);
+    }
+
+    /** cooldown between grabbing/throwing */
+
+    public void startgrabCooldown() {
+        grabCooldown = GRAB_COOLDOWN_PERIOD;
+    }
+
+    private void updateGrabCooldown() {
+        if (grabCooldown > 0) {
+            grabCooldown -= 1;
+        }
+    }
+
+    public boolean grabCooldownOver() {
+        return grabCooldown == 0;
     }
 }
 

@@ -3,42 +3,42 @@
         "wall 1": {
             "x": 4,
             "y": 6,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 2": {
             "x": 4,
             "y": 5,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 3": {
             "x": 4,
             "y": 4,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 4": {
             "x": 4,
             "y": 3,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 5": {
             "x": 10,
             "y": 6,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 6": {
             "x": 10,
             "y": 5,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 7": {
             "x": 10,
             "y": 4,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 8": {
             "x": 10,
             "y": 3,
-            "rotate": 1
+            "rotate": 0
         },
         "wall 9": {
             "x": 7,
@@ -75,17 +75,21 @@
     },
     "teams": {
         "a": {
-            "x": 3,
+            "x": 11,
             "y": 1
         },
         "b": {
-            "x": 11,
+            "x": 3,
             "y": 1
         }
     },
     "items": {
         "fish": {
-            "x": 15,
+            "x": 17,
+            "y": 11
+        },
+        "fish": {
+            "x": 13,
             "y": 11
         }
     }

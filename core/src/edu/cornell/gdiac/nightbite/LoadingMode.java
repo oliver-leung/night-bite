@@ -56,9 +56,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Resources for loading screen
 	 */
-	private static final String BACKGROUND_FILE = "loading/loading.png";
+	private static final String BACKGROUND_FILE = "loading/Background_Plain.png";
+	private static final String TITLE_FILE = "loading/Title.png";
+	private static final String STUDIO_FILE = "loading/SOYA_Logo.png";
     private static final String PROGRESS_FILE = "loading/progressbar.png";
-    private static final String PLAY_BTN_FILE = "loading/play.png";
+    private static final String PLAY_BTN_FILE = "loading/PlayButton.png";
 	/**
 	 * Default budget for asset loader (do nothing but load 60 fps)
 	 */
@@ -66,11 +68,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Standard window size (for scaling)
 	 */
-	private static int STANDARD_WIDTH = 800;
+	private static int STANDARD_WIDTH = 1920;
 	/**
 	 * Standard window height (for scaling)
 	 */
-	private static int STANDARD_HEIGHT = 700;
+	private static int STANDARD_HEIGHT = 1080;
+
+	private static float TITLE_X_RATIO = 0.5f;
+	private static float TITLE_Y_RATIO = 0.55f;
 
 	// statusBar is a "texture atlas." Break it up into parts.
 	/**
@@ -109,6 +114,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Background texture for start-up
 	 */
 	private Texture background;
+
+	private Texture title;
+
 	/**
 	 * Play button to display when done
 	 */
@@ -170,6 +178,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * The height of the canvas window (necessary since sprite origin != screen origin)
 	 */
 	private int heightY;
+
+	private int titleY;
 	/**
 	 * Scaling factor for when the student changes the resolution.
 	 */
@@ -227,7 +237,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		// Load the next two images immediately.
 		playButton = null;
 		background = new Texture(BACKGROUND_FILE);
-		statusBar = new Texture(PROGRESS_FILE);
+		title = new Texture(TITLE_FILE);
+
+		// statusBar = new Texture(PROGRESS_FILE);
 
 		// No progress so far.
 		progress = 0;
@@ -235,14 +247,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		active = false;
 
 		// Break up the status bar texture into regions
-		statusBkgLeft = new TextureRegion(statusBar, 0, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
-		statusBkgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
-		statusBkgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, 0, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
+		// statusBkgLeft = new TextureRegion(statusBar, 0, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
+		// statusBkgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, 0, PROGRESS_CAP, PROGRESS_HEIGHT);
+		// statusBkgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, 0, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
 
-		int offset = statusBar.getHeight() - PROGRESS_HEIGHT;
-		statusFrgLeft = new TextureRegion(statusBar, 0, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
-		statusFrgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
-		statusFrgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, offset, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
+		// int offset = statusBar.getHeight() - PROGRESS_HEIGHT;
+		// statusFrgLeft = new TextureRegion(statusBar, 0, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
+		// statusFrgRight = new TextureRegion(statusBar, statusBar.getWidth() - PROGRESS_CAP, offset, PROGRESS_CAP, PROGRESS_HEIGHT);
+		// statusFrgMiddle = new TextureRegion(statusBar, PROGRESS_CAP, offset, PROGRESS_MIDDLE, PROGRESS_HEIGHT);
 
 		startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
 		Gdx.input.setInputProcessor(this);
@@ -303,9 +315,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		 statusFrgMiddle = null;
 
 		 background.dispose();
-		 statusBar.dispose();
+		 // statusBar.dispose();
 		 background = null;
-		 statusBar  = null;
+		 // statusBar  = null;
 		 if (playButton != null) {
 			 playButton.dispose();
 			 playButton = null;
@@ -342,7 +354,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 */
 	private void draw() {
 		canvas.begin();
-		canvas.draw(background, 0, 0);
+		canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+		canvas.draw(title, Color.WHITE, 536, 157, centerX, titleY, 0, scale, scale);
 		if (playButton == null) {
 			drawProgress(canvas);
 		} else {
@@ -363,18 +376,19 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param canvas The drawing context
 	 */	
 	private void drawProgress(GameCanvas canvas) {
-		canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2.0f-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2.0f-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
 
-		canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		if (progress > 0) {
-			float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
-			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-			canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
-		} else {
-			canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-		}
+		// canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2.0f, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// if (progress > 0) {
+		// 	float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+		// 	canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// 	canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+		// } else {
+		// 	canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2.0f+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+		// }
+
 	}
 
 	// ADDITIONAL SCREEN METHODS
@@ -412,11 +426,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		float sx = ((float)width)/STANDARD_WIDTH;
 		float sy = ((float)height)/STANDARD_HEIGHT;
 		scale = (Math.min(sx, sy));
+		System.out.println(scale);
 		
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
 		centerX = width/2;
 		heightY = height;
+		titleY = (int) (height * TITLE_Y_RATIO);
 	}
 
 	/**

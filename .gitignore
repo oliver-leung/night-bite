@@ -126,3 +126,6 @@ Thumbs.db
 !.idea/artifacts
 /desktop/out/
 /core/resources/
+
+# Debugging
+log.txt

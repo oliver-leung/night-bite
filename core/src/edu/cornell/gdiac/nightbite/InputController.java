@@ -3,6 +3,8 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import edu.cornell.gdiac.util.XBox360Controller;
+import com.badlogic.gdx.Input;
+import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
     // TODO: Configurable controls
@@ -92,13 +94,27 @@ public class InputController extends MechanicController {
         temp1 = isKeyPressed(keybinds.GRAB);
         isThrowing = isThrowing || (!prevThrow && temp1);
 
-        if (!sudo) { return; }
+        if (!sudo) {
+            return;
+        }
 
         temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
+
+        // Music
+        // TODO: Remove reference to Assets class
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            if (isMuted) {
+                isMuted = false;
+                Assets.music.setVolume(0);
+            } else {
+                isMuted = true;
+                Assets.music.setVolume(0.3f);
+            }
+        }
     }
 
     private boolean isKeyPressed(int key) {
@@ -117,26 +133,4 @@ public class InputController extends MechanicController {
         pollKeyboard();
     }
 
-    private static class Keymap {
-        public final int UP;
-        public final int DOWN;
-        public final int LEFT;
-        public final int RIGHT;
-        public final int DASH;
-        public final int GRAB;
-        public final int DEBUG;
-        public final int RESET;
-
-        public Keymap(int mappingSet) {
-            JsonReader jsonReader = new JsonReader();
-            this.UP = 0;
-            this.DOWN = 0;
-            this.LEFT = 0;
-            this.RIGHT = 0;
-            this.DASH = 0;
-            this.GRAB = 0;
-            this.DEBUG = 0;
-            this.RESET = 0;
-        }
-    }
 }

@@ -4,6 +4,8 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -178,8 +180,8 @@ public class WorldModel {
     }
 
     // TODO: PLEASE fix this
-    public ItemModel getItem() {
-        return items.get(0);
+    public ItemModel getItem(int index) {
+        return items.get(index);
     }
 
     /**
@@ -272,7 +274,7 @@ public class WorldModel {
 
     public void setScale(float sx, float sy) {
         scale.set(sx, sy);
-        System.out.println(scale);
+        // System.out.println(scale);
     }
 
     public float getHeight() {
@@ -390,30 +392,33 @@ public class WorldModel {
         rayhandler = new RayHandler(world, canvas.getWidth(), canvas.getWidth());
         rayhandler.setCombinedMatrix(raycamera);
 
+        // See https://www.informit.com/articles/article.aspx?p=1616796&seqNum=5
+        rayhandler.diffuseBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+
         // All hard coded for now, to be changed with data-driven levels
-        float[] color = new float[]{ 0.5f, 0.5f, 0.5f, 1.0f };
-        rayhandler.setAmbientLight(color[0], color[0], color[0], color[0]);
+        float[] color = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+        rayhandler.setAmbientLight(color[0], color[1], color[2], color[3]);
         int blur = 2;
-        // rayhandler.setBlur(blur > 0);
-        rayhandler.setBlur(true);
+        rayhandler.setBlur(blur > 0);
         rayhandler.setBlurNum(blur);
     }
 
     /**
      * Creates one point light, which goes in all directions.
      *
-     * TODO allow parameters to be passed
+     * @param color The rgba value of the light color.
+     * @param dist The radius of the light.
      */
-    public void createPointLight() {
+    public void createPointLight(float[] color, float dist) {
         // ALL HARDCODED!
-        float[] color = new float[]{1.0f, 0.2f, 0.0f, 1.0f};
+        float[] c = color;
         float[] pos = new float[]{0.0f, 0.0f};
-        float dist = 7.0f;
+        float d = dist;
         int rays = 512;
 
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
-        point.setColor(color[0], color[1], color[2], color[3]);
-        point.setSoft(false);
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, d, pos[0], pos[1]);
+        point.setColor(c[0], c[1], c[2], c[3]);
+        point.setSoft(true);
 
         // Create a filter to exclude see through items
         Filter f = new Filter();
@@ -475,8 +480,7 @@ public class WorldModel {
         // World2Pixel translates from canonical world space to canonical pixel space
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
-        float world2Pixel = DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
-//        float world2Pixel = 1080f / 18f;
+        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
 
         // scalePixel translate canonical pixel space to pixel space
         // (1920 x 1080, or otherwise indicated in WorldController)

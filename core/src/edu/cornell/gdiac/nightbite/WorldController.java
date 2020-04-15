@@ -16,6 +16,7 @@
  */
 package edu.cornell.gdiac.nightbite;
 
+import box2dLight.Light;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -115,12 +116,9 @@ public class WorldController implements Screen {
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
+	private int NUM_ITEMS = 2;
 	private PooledList<Vector2> object_list = new PooledList<>();
-	private float[] prev_hori_dir = new float[]{-1, -1};
-
 	private WorldModel worldModel;
-
-	private int[] playerWalkCounter = new int[] {0, 0};
 
 	/**
 	 * Creates a new game world
@@ -323,20 +321,25 @@ public class WorldController implements Screen {
 		// world.setContactListener(this);
 
 		worldModel.initLighting(canvas);
-		worldModel.createPointLight();
+		worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
+		worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
 		populateLevel();
 
 
-		// Attaching lights to p1 is janky and serves mostly as demo code
+		// Attaching lights to players is janky and serves mostly as demo code
 		// TODO make data-driven
 		Array<LightSource> lights = worldModel.getLights();
-		PlayerModel p1 = worldModel.getPlayers().get(0);  //
-		for (LightSource light : lights) {
-			light.attachToBody(p1.getBody(), light.getX(), light.getY(), light.getDirection());
-		}
+		PlayerModel p1 = worldModel.getPlayers().get(0);
+		PlayerModel p2 = worldModel.getPlayers().get(1);
 
-		if (lights.size > 0) {
-			lights.get(0).setActive(true);
+		LightSource l1 = lights.get(0);
+		LightSource l2 = lights.get(1);
+
+		l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
+		l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
+
+		for (LightSource l : lights) {
+			l.setActive(true);
 		}
 	}
 
@@ -388,8 +391,11 @@ public class WorldController implements Screen {
 
 		// TODO peer review below
 		// TODO: Wait for item refactor
-		ItemModel item = worldModel.getItem();
-		item.update();
+
+		for (int i = 0; i < NUM_ITEMS; i++) {
+			ItemModel item = worldModel.getItem(i);
+			item.update();
+		}
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
@@ -401,36 +407,37 @@ public class WorldController implements Screen {
 		float playerVertical;
 		boolean playerDidBoost;
 		boolean playerDidThrow;
-		for (int i = 0; i < NUM_PLAYERS; i++) {
 
+		for (int i = 0; i < NUM_PLAYERS; i++) {
 
 			playerHorizontal = manager.getVelX(i);
 			playerVertical = manager.getVelY(i);
 			playerDidBoost = manager.isDashing(i);
 			playerDidThrow = manager.isThrowing(i);
-			// TODO: player model refactor
+
 			p = worldModel.getPlayers().get(i);
 
-			// update player state // TODO film strip: needs player 1 film strip first
+			// update player state
 			if (playerVertical != 0 || playerHorizontal != 0) {
 				p.setWalk();
-				if (playerWalkCounter[i] % 20 == 0) {
-					// p.playerTexture.setFrame(1);
-					if (prev_hori_dir[i] == 1) {
+
+				if (p.getPlayerWalkCounter() % 20 == 0) {
+					p.playerTexture.setFrame(1);
+					if (p.getPrevHoriDir() == 1) {
 						p.playerTexture.flip(true, false);
 					}
-				} else if (playerWalkCounter[i] % 20 == 10) {
-					// p.playerTexture.setFrame(0);
-					if (prev_hori_dir[i] == 1) {
+				} else if (p.getPlayerWalkCounter() % 20 == 10) {
+					p.playerTexture.setFrame(0);
+					if (p.getPrevHoriDir() == 1) {
 						p.playerTexture.flip(true, false);
 					}
 				}
-				playerWalkCounter[i]++;
+				p.incrPlayerWalkCounter();
 			} else {
 				p.setStatic();
-				playerWalkCounter[i] = 0;
-				// p.playerTexture.setFrame(0);
-				if (prev_hori_dir[i] == 1) {
+				p.resetPlayerWalkCounter();
+				p.playerTexture.setFrame(0);
+				if (p.getPrevHoriDir() == 1) {
 					p.playerTexture.flip(true, false);
 				}
 			}
@@ -441,7 +448,7 @@ public class WorldController implements Screen {
 			}
 
 			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != prev_hori_dir[i]) {
+			if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
 				p.playerTexture.flip(true, false);
 			}
 
@@ -460,22 +467,31 @@ public class WorldController implements Screen {
 
 			/* Items */
 
-			/* IF FISH IN PLAYER HANDS */
-			if (p.item) {
-				item.setPosition(p.getX(), p.getY() + 1f);
+			/* IF PLAYER GRABS ITEM */
+			for (int j = 0; j < NUM_ITEMS; j++) {
+				ItemModel item = worldModel.getItem(j);
+				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+					item.setHeld(p);
+					p.startgrabCooldown();
+				}
 			}
 
-			/* IF PLAYER GRABS ITEM */
-			if (!item.isHeld() && p.getOverlapItem() && playerDidThrow && item.cooldownOver()) {
-				item.setHeld(p);
-				item.startCooldown();
+			/* IF FISH IN PLAYER HANDS */
+			if (p.hasItem()) {
+				float offset = 1;
+				for (ItemModel heldItem: p.getItems()) {
+					heldItem.setPosition(p.getX(), p.getY() + offset);
+					offset += 0.6;
+				}
 			}
 
 			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.item && item.cooldownOver()) {
-				item.setUnheld();
-				item.startCooldown();
-				item.throwItem(p.getImpulse());
+			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
+				for (ItemModel heldItem : p.getItems()) {
+					heldItem.throwItem(p.getImpulse());
+				}
+				p.clearInventory();
+				p.startgrabCooldown();
 			}
 
 			// player updates (for respawn and dash cool down)
@@ -483,7 +499,7 @@ public class WorldController implements Screen {
 
 			// update horizontal direction
 			if (playerHorizontal != 0) {
-				prev_hori_dir[i] = playerHorizontal;
+				p.setPrevHoriDir(playerHorizontal);
 			}
 		}
 	}
@@ -507,7 +523,6 @@ public class WorldController implements Screen {
 
 		// Turn the physics engine crank.
 		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
-
 
 		// TODO: Maybe move this to WorldController
 		// Garbage collect the deleted objects.

@@ -8,10 +8,6 @@ import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 public class ItemModel extends BoxObstacle {
 
     /**
-     * item texture
-     */
-    public static TextureRegion itemTexture;
-    /**
      * item-player
      */
     public PlayerModel holdingPlayer;
@@ -27,19 +23,17 @@ public class ItemModel extends BoxObstacle {
     private int RESPAWN_TIME = 150;
 
     /**
-     * cooldown for grabbing and throwing items
-     */
-    private int itemCooldown;
-    private static int ITEM_COOLDOWN_PERIOD = 15;
-
-    /**
      * throwing configs
      */
     private float THROW_FORCE = 500f;
     private float MOTION_DAMPING = 25f;
+    /**
+     * item identification
+     * */
+    private int id;
 
 
-    public ItemModel(float x, float y, float width, float height, TextureRegion itemTexture) {
+    public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
         setSensor(true);
@@ -47,32 +41,22 @@ public class ItemModel extends BoxObstacle {
         setName("item");
 
         item_init_position = new Vector2(x, y);
+        id = itemId;
     }
 
     public void update() {
-        updateCooldown();
         updateRespawn();
     }
 
-    /** cooldown between grabbing/throwing */
-
-    public void startCooldown() {
-        itemCooldown = ITEM_COOLDOWN_PERIOD;
-    }
-
-    private void updateCooldown() {
-        if (itemCooldown > 0) {
-            itemCooldown -= 1;
-        }
-    }
-
-    public boolean cooldownOver() {
-        return itemCooldown == 0;
+    /** item identification */
+    public int getId() {
+        return id;
     }
 
     /** respawn */
 
     public void startRespawn() {
+        holdingPlayer = null;
         respawn = RESPAWN_TIME;
         draw = false;
     }
@@ -86,14 +70,14 @@ public class ItemModel extends BoxObstacle {
 
     private void addItem(Vector2 position) {
         draw = true;
-        setUnheld();
+        holdingPlayer = null;
         setPosition(position);
     }
 
     /** item held */
 
     public void setHeld(PlayerModel p) {
-        p.item = true;
+        p.holdItem(this);
         holdingPlayer = p;
         lastTouch = p;
 
@@ -102,11 +86,11 @@ public class ItemModel extends BoxObstacle {
 
     public void setUnheld() {
         if (holdingPlayer != null) {
-            holdingPlayer.item = false;
+            holdingPlayer.unholdItem(this);
             holdingPlayer = null;
         }
 
-        setSensor(false);
+
     }
 
     public boolean isHeld() {
@@ -116,6 +100,8 @@ public class ItemModel extends BoxObstacle {
     /** throw item */
     public void throwItem(Vector2 impulse) {
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
+        holdingPlayer = null;
+        setSensor(false);
     }
 
     /** physics */

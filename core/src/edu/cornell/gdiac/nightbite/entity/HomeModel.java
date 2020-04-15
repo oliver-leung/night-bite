@@ -19,8 +19,8 @@ public class HomeModel extends ImmovableModel {
         return score;
     }
 
-    public void incrementScore() {
-        score++;
+    public void incrementScore(int increase) {
+        score = score + increase;
     }
 
     public String getTeam() {
