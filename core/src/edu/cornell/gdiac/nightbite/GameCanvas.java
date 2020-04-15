@@ -29,7 +29,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
@@ -86,6 +85,15 @@ public class GameCanvas {
 	 * Cache object to handle raw textures
 	 */
 	private TextureRegion holder;
+
+	private static GameCanvas instance;
+
+	public static GameCanvas getInstance() {
+		if (instance == null) {
+			instance = new GameCanvas();
+		}
+		return instance;
+	}
 
 	/**
 	 * Creates a new GameCanvas determined by the application configuration.
