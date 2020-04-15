@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.MechanicManager;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -87,7 +85,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
     private int levelChoiceindex;
-    private String[] levelJSONList = new String[] {"jsons/level.json", "jsons/level2.json", "jsons/level3.json"};
+    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_funnel.json", "jsons/level_hard.json"};
     private int[] xposList;
 
     public LevelSelectMode(GameCanvas canvas) {
