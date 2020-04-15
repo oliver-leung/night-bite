@@ -53,6 +53,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private LoadingMode loading;
 	/**
+	 * Player mode for the asset loading screen (CONTROLLER CLASS)
+	 */
+	private LevelSelectMode levelSelect;
+	/**
 	 * List of all WorldControllers
 	 */
 	private WorldController controller;
@@ -82,6 +86,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		canvas = new GameCanvas();
 		loading = new LoadingMode(canvas, manager, 1);
+		levelSelect = new LevelSelectMode(canvas);
 
 		assets = new Assets(manager);
 		assets.preLoadContent(manager);
@@ -138,17 +143,36 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param screen   The screen requesting to exit
 	 * @param exitCode The state of the screen upon exit
 	 */
-	public void exitScreen(Screen screen, int exitCode) {
+	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
 		if (screen == loading) {
-			assets.loadContent(manager);
-			controller.setScreenListener(this);
-			controller.setCanvas(canvas);
-
-			controller.reset();
-			setScreen(controller);
+			if (levelSelect == null) {
+				levelSelect = new LevelSelectMode(canvas);
+			}
+			levelSelect.setScreenListener(this);
+			setScreen(levelSelect);
 
 			loading.dispose();
 			loading = null;
+		} else if (screen == levelSelect) {
+			if (exitCode == levelSelect.EXIT_START) {
+				assets.loadContent(manager);
+				controller.setScreenListener(this);
+				controller.setCanvas(canvas);
+				controller.setLevel(levelSelect.getSelectedLevelJSON());
+
+				controller.reset();
+				setScreen(controller);
+
+				levelSelect.dispose();
+				levelSelect = null;
+			} else if (exitCode == levelSelect.EXIT_MENU) {
+				loading = new LoadingMode(canvas, manager, 1);
+				loading.setScreenListener(this);
+				setScreen(loading);
+
+				levelSelect.dispose();
+				levelSelect = null;
+			}
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();

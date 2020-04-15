@@ -22,8 +22,8 @@ public class LevelController {
         return instance;
     }
 
-    public void populate(WorldModel world) {
-        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal("jsons/level.json"));
+    public void populate(WorldModel world, String level_file) {
+        JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
         createWalls(world, levelFormat.get("walls"));
         createHoles(world, levelFormat.get("holes"));
         createTeams(world, levelFormat.get("teams"));

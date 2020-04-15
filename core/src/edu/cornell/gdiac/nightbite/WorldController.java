@@ -116,9 +116,11 @@ public class WorldController implements Screen {
 
 	// TODO for refactoring update
 	private int NUM_PLAYERS = 2;
-	private int NUM_ITEMS = 2;
+	private int NUM_ITEMS = 1;
 	private PooledList<Vector2> object_list = new PooledList<>();
 	private WorldModel worldModel;
+
+	private String selectedLevelJSON;
 
 	/**
 	 * Creates a new game world
@@ -195,6 +197,10 @@ public class WorldController implements Screen {
 		worldModel.setPixelBounds(canvas);
 	}
 
+	public void setLevel(String selectedLevelJSON) {
+		this.selectedLevelJSON = selectedLevelJSON;
+	}
+
 	public void populateLevel() {
 		/** Populate asset textures */
 		backgroundTile = Assets.GAME_BACKGROUND;
@@ -202,7 +208,7 @@ public class WorldController implements Screen {
 
 		worldModel.setTextures(new TextureRegion[]{Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
 				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[]{Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
-		LevelController.getInstance().populate(worldModel);
+		LevelController.getInstance().populate(worldModel, selectedLevelJSON);
 	}
 
 	/**

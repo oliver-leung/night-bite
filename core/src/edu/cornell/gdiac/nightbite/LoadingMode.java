@@ -426,8 +426,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 		float sx = ((float)width)/STANDARD_WIDTH;
 		float sy = ((float)height)/STANDARD_HEIGHT;
 		scale = (Math.min(sx, sy));
-		System.out.println(scale);
-		
+
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);
 		centerX = width/2;
@@ -448,6 +447,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
 	/**
 	 * Called when the Screen is resumed from a paused state.
+	 *
 	 *
 	 * This is usually when it regains focus.
 	 */
