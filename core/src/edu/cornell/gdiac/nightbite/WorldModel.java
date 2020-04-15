@@ -24,14 +24,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    /**
-     * Width of the game world in Box2d units.
-     */
-    public static final float DEFAULT_WIDTH = 20f;
-    /**
-     * Height of the game world in Box2d units.
-     */
-    public static final float DEFAULT_HEIGHT = 10f;
+    public static final float DEFAULT_ASSET_WIDTH = 64f;
+    public static final float DEFAULT_ASSET_HEIGHT = 64f;
 
     // TODO: Should this be here? Maybe this should be defined in Canvas instead
     /**
@@ -454,15 +448,10 @@ public class WorldModel {
         // the world is DEFAULT_WIDTH x DEFAULT_HEIGHT, everything is unscaled.
         // These are called the canonical pixel space and canonical world space respectively.
 
-        // scaleWorld translates the levelspace to canonical world space
-        // (32 x 18, or otherwise indicated in WorldController)
-        float scaleWorldX = DEFAULT_WIDTH / bounds.width;
-        float scaleWorldY = DEFAULT_HEIGHT / bounds.height;
-
         // World2Pixel translates from canonical world space to canonical pixel space
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
-        float world2Pixel =  DEFAULT_PIXEL_HEIGHT / DEFAULT_HEIGHT;
+        float world2Pixel =  Math.min(DEFAULT_ASSET_HEIGHT, DEFAULT_ASSET_WIDTH);
         System.out.println(world2Pixel);
 
         // scalePixel translate canonical pixel space to pixel space
@@ -472,7 +461,7 @@ public class WorldModel {
 
         // Take the smaller scale so that we only scale diagonally or something
         // This is for asset scaling
-        float finalAssetScale = Math.min(scaleWorldX * scalePixelX, scaleWorldY * scalePixelY);
+        float finalAssetScale = Math.min(scalePixelX, scalePixelY);
         // This is for converting things to pixel space?
         float finalPosScale = finalAssetScale * world2Pixel;
 
