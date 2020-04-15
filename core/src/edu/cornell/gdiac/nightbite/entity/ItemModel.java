@@ -36,7 +36,7 @@ public class ItemModel extends BoxObstacle {
     public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
-        setSensor(true);
+        setSensor(false);
         setBullet(true);
         setName("item");
 
@@ -80,17 +80,6 @@ public class ItemModel extends BoxObstacle {
         p.holdItem(this);
         holdingPlayer = p;
         lastTouch = p;
-
-        setSensor(true);
-    }
-
-    public void setUnheld() {
-        if (holdingPlayer != null) {
-            holdingPlayer.unholdItem(this);
-            holdingPlayer = null;
-        }
-
-
     }
 
     public boolean isHeld() {
@@ -101,7 +90,6 @@ public class ItemModel extends BoxObstacle {
     public void throwItem(Vector2 impulse) {
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
         holdingPlayer = null;
-        setSensor(false);
     }
 
     /** physics */
