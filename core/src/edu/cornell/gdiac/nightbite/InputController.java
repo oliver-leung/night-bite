@@ -21,6 +21,7 @@ public class InputController extends MechanicController {
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
+        isMuted = false;
         this.xbox = new XBox360Controller(xbox);
         this.keyboard = keyboard;
     }
