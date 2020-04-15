@@ -59,11 +59,15 @@ public class Assets {
     // Background
     static String GAME_BACKGROUND_FILE = "background/ground_64.png";
 
+    // Other
+    static String GOAL_FILE = "environment/goaldoor.png";
+
     // Font
     static String RETRO_FONT_FILE = "font/RetroGame.ttf";
     static int RETRO_FONT_SIZE = 12;
 
     // Sound
+    static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
 
     /*
      * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
@@ -104,6 +108,7 @@ public class Assets {
         loadTexture(HOLE_FILE);
         loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
+        loadTexture(GOAL_FILE);
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
         }
@@ -120,9 +125,13 @@ public class Assets {
         HOLE = createTexture(manager, HOLE_FILE, true);
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
+        GOAL = createTexture(manager, GOAL_FILE, true);
+
+        // Start music
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
+        music.setVolume(0.3f);
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
