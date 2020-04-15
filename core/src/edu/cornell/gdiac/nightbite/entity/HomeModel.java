@@ -8,11 +8,18 @@ public class HomeModel extends ImmovableModel {
     private String team;
     private int score;
 
-    public HomeModel(float x, float y, String team) {
+    /**
+     *
+     * @param x
+     * @param y
+     * @param team
+     * @param player The player number that belongs to this home stall, 1-4 inclusive.
+     */
+    public HomeModel(float x, float y, String team, int player) {
         super(x, y, 0);
         this.team = team;
         score = 0;
-        setTexture(Assets.STAND);
+        setTexture(Assets.HOME_STALLS[player]);
     }
 
     public int getScore() {

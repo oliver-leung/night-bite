@@ -98,7 +98,7 @@ public class LevelController {
             player.setName("player " + teamName);
             world.addPlayer(player);
 
-            home = new HomeModel(x, y, teamName);
+            home = new HomeModel(x, y, teamName, playerNum);
             home.setName("home " + teamName);
             home.setDrawScale(world.getScale());
             home.setActualScale(world.getActualScale());

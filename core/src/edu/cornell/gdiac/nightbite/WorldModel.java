@@ -44,17 +44,9 @@ public class WorldModel {
     public static final float DEFAULT_PIXEL_HEIGHT = 640f;
 
     /**
-     * Player textures
+     * The winner of the level.
      */
-    public static FilmStrip player1FilmStrip;
-
-    public static FilmStrip player2FilmStrip;
     public String winner;
-
-    /**
-     * FOR AI
-     */
-    TextureRegion itemTexture;
 
     public ArrayList<ItemModel> getItems() {
         return items;
@@ -117,13 +109,6 @@ public class WorldModel {
     private PooledList<Obstacle> dynamicObjects;
     private ArrayList<PlayerModel> player_list;
 
-
-    // TODO: REMOVE ALL THESE DUMB TEXTURES
-    TextureRegion wallTile;
-    TextureRegion standTile;
-    TextureRegion backgroundTile;
-    TextureRegion goalTile;
-    TextureRegion holeTile;
     public WorldModel() {
         // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
         // Actually technically not true since we can set this stuff in WorldController, but still
@@ -140,19 +125,6 @@ public class WorldModel {
         player_list = new ArrayList<>();
         items = new ArrayList<>();
     }
-
-    public void setTextures(TextureRegion[] textures, FilmStrip[] filmStrips) {
-        wallTile = textures[0];
-        standTile = textures[1];
-        backgroundTile = textures[2];
-        goalTile = textures[3];
-        holeTile = textures[4];
-        itemTexture = textures[5];
-        player1FilmStrip = filmStrips[0];
-        player2FilmStrip = filmStrips[1];
-    }
-
-    // TODO: END REMOVE ALL THESE DUMB TEXTURES
 
     // TODO: DO we need addQueue?
 

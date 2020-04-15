@@ -48,7 +48,6 @@ public class Assets {
     static String HOLE_FILE = "environment/hole4_64.png";
 
     // Home stall
-    static String STAND_FILE = "environment/StallHome1_64.png";
     static String[] HOME_STALL_FILES = {
         "environment/StallHome1_64.png",
         "environment/StallHome2_64.png",
@@ -78,10 +77,10 @@ public class Assets {
      * LOADED ASSETS
      */
     public static FilmStrip[] PLAYER_FILMSTRIPS;
+    public static TextureRegion[] HOME_STALLS;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
     public static TextureRegion HOLE;
-    public static TextureRegion STAND;
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
     public static BitmapFont RETRO_FONT;
@@ -106,11 +105,13 @@ public class Assets {
         loadTexture(FISH_ITEM_FILE);
         loadTexture(WALL_PA1_FILE);
         loadTexture(HOLE_FILE);
-        loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
         loadTexture(GOAL_FILE);
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
+        }
+        for (String stall_file : HOME_STALL_FILES) {
+            loadTexture(stall_file);
         }
 
         // Load Font
@@ -123,7 +124,6 @@ public class Assets {
         FISH_ITEM = createTexture(manager, FISH_ITEM_FILE, true);
         WALL = createTexture(manager, WALL_PA1_FILE, true);
         HOLE = createTexture(manager, HOLE_FILE, true);
-        STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
         GOAL = createTexture(manager, GOAL_FILE, true);
 
@@ -140,6 +140,14 @@ public class Assets {
             FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
                     PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
+        }
+
+        // Home stall textures
+        int num_stalls = HOME_STALL_FILES.length;
+        HOME_STALLS = new TextureRegion[num_stalls];
+        for (int i = 0; i < num_stalls; i++) {
+            TextureRegion stall = createTexture(manager, HOME_STALL_FILES[i], true);
+            HOME_STALLS[i] = stall;
         }
 
         // Allocate Font
