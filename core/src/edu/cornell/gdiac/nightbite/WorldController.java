@@ -204,8 +204,6 @@ public class WorldController implements Screen {
 		backgroundTile = Assets.GAME_BACKGROUND;
 		displayFont = Assets.RETRO_FONT;
 
-		worldModel.setTextures(new TextureRegion[]{Assets.WALL, Assets.STAND, Assets.GAME_BACKGROUND, Assets.GOAL,
-				Assets.HOLE, Assets.FISH_ITEM}, new FilmStrip[]{Assets.PLAYER_FILMSTRIPS[0], Assets.PLAYER_FILMSTRIPS[1]});
 		LevelController.getInstance().populate(worldModel, selectedLevelJSON);
 	}
 

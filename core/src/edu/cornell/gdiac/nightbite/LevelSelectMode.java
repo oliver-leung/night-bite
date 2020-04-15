@@ -45,7 +45,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH = 1920;
     /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 1080;
+    private static int STANDARD_HEIGHT = 960;
     /** Positioning stats */
     private int xpos1 = 0;
     private int xpos2 = 0;
@@ -166,7 +166,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     private void draw() {
         canvas.begin();
 
-        canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+        canvas.draw(background, Color.WHITE, 0, 30, 0, 0, 0, scale, scale);
         canvas.draw(headerTexture, Color.WHITE, headerTexture.getWidth()/2.0f, headerTexture.getHeight()/2.0f, xpos2, yposHeader, 0, scale, scale);
         canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile+5, 0, scale, scale);
         canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
@@ -179,7 +179,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
         canvas.draw(store2Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos2, yposStall, 0, scale, scale);
         canvas.draw(store3Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos3, yposStall, 0, scale, scale);
 
-        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth()/2.0f - tile1Texture.getWidth()/2.0f, 0, xposList[levelChoiceindex], yposTile, 0, scale, scale);
+        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth()/2.0f - tile1Texture.getWidth()/2.0f, -playerTexture.getRegionHeight()/4.0f, xposList[levelChoiceindex], yposTile, 0, scale, scale);
 
         canvas.end();
     }
@@ -209,7 +209,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
         xpos3 = width * 3/4;
         xLeftEnd = width/16;
         xRightEnd = width * 15/16;
-        yposStall = height/2;
+        yposStall = height * 17/32;
         yposTile = height/4;
         yposHeader = height * 13/16;
         yposTop = height * 7/8;
