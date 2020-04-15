@@ -117,7 +117,7 @@ public class Assets {
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
-        music.setVolume(0.3f);
+        music.setVolume(0.1f);
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;

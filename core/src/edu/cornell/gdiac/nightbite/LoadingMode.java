@@ -36,7 +36,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -68,11 +67,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Standard window size (for scaling)
 	 */
-	private static int STANDARD_WIDTH = 1920;
+	private static int STANDARD_WIDTH = 1024;
 	/**
 	 * Standard window height (for scaling)
 	 */
-	private static int STANDARD_HEIGHT = 1080;
+	private static int STANDARD_HEIGHT = 576;
 
 	private static float TITLE_X_RATIO = 0.5f;
 	private static float TITLE_Y_RATIO = 0.55f;
