@@ -393,15 +393,16 @@ public class WorldModel {
      * Creates one point light, which goes in all directions.
      *
      * @param color The rgba value of the light color.
+     * @param dist The radius of the light.
      */
-    public void createPointLight(float[] color) {
+    public void createPointLight(float[] color, float dist) {
         // ALL HARDCODED!
         float[] c = color;
         float[] pos = new float[]{0.0f, 0.0f};
-        float dist = 7.0f;
+        float d = dist;
         int rays = 512;
 
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, d, pos[0], pos[1]);
         point.setColor(c[0], c[1], c[2], c[3]);
         point.setSoft(true);
 

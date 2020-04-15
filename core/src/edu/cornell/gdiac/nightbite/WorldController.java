@@ -321,8 +321,8 @@ public class WorldController implements Screen {
 		// world.setContactListener(this);
 
 		worldModel.initLighting(canvas);
-		worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}); // for player 1
-		worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}); // for player 2
+		worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
+		worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
 		populateLevel();
 
 
