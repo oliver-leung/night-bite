@@ -35,22 +35,25 @@ public class Assets {
     static int PLAYER_FILMSTRIP_SIZE = 4;
 
     // Item
-    static  String FISH_ITEM_FILE = "item/food1_64.png";
+    static  String FISH_ITEM_FILE = "item/fish.png";
 
     // Obstacle
-    static String WALL_PA1_FILE = "environment/Box_64.png";
-    static String WALL_PA2_FILE = "environment/box_palette2_64.png";
-    static String HOLE_FILE = "environment/hole4_64.png";
-    static String STAND_FILE = "environment/StallItem1_64.png";
+    static String WALL_FILE = "environment/brick.png";
+    static String HOLE_FILE = "environment/hole2.png";
+    static String STAND_FILE = "environment/stand-border.png";
 
     // Background
-    static String GAME_BACKGROUND_FILE = "background/ground_64.png";
+    static String GAME_BACKGROUND_FILE = "environment/cobble.png";
+
+    // Other
+    static String GOAL_FILE = "environment/goaldoor.png";
 
     // Font
     static String RETRO_FONT_FILE = "font/RetroGame.ttf";
     static int RETRO_FONT_SIZE = 12;
 
     // Sound
+    static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
 
     /*
      * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
@@ -87,10 +90,11 @@ public class Assets {
     public void preLoadContent(AssetManager manager) {
         // Load Textures
         loadTexture(FISH_ITEM_FILE);
-        loadTexture(WALL_PA1_FILE);
+        loadTexture(WALL_FILE);
         loadTexture(HOLE_FILE);
         loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
+        loadTexture(GOAL_FILE);
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
         }
@@ -103,13 +107,16 @@ public class Assets {
      *  extracting assets from the manager after it has finished loading them */
     public void loadContent(AssetManager manager) {
         FISH_ITEM = createTexture(manager, FISH_ITEM_FILE, true);
-        WALL = createTexture(manager, WALL_PA1_FILE, true);
+        WALL = createTexture(manager, WALL_FILE, true);
         HOLE = createTexture(manager, HOLE_FILE, true);
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
+        GOAL = createTexture(manager, GOAL_FILE, true);
+        music = createMusic(manager, MUSIC_FILE, true);
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();
+        music.setVolume(0.3f);
 
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
@@ -128,6 +135,11 @@ public class Assets {
         }
 
         this.isLoaded = true;
+    }
+
+    private Music createMusic(AssetManager manager, String filename, boolean loop) {
+        Music music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
+        
     }
 
     /** Unloads the assets for this game.*/
