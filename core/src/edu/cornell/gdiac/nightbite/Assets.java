@@ -29,21 +29,35 @@ public class Assets {
 
     /** RESOURCES */
     // Character
-    static String[] PLAYER_FILMSTRIP_FILES = {"character/granny_walkcycle_64_fs_v1.png", "character/lin_walkcycle_64_fs_v2.png"};
+    static String[] PLAYER_FILMSTRIP_FILES = {
+        "character/lin_walkcycle_64_fs_v2.png",
+        "character/granny_walkcycle_64_fs_v1.png"
+    };
     static int PLAYER_FILMSTRIP_ROW = 1;
     static int PLAYER_FILMSTRIP_COL = 4;
     static int PLAYER_FILMSTRIP_SIZE = 4;
 
     // Item
-    static  String FISH_ITEM_FILE = "item/fish.png";
+    static  String FISH_ITEM_FILE = "item/food1_64.png";
 
     // Obstacle
-    static String WALL_FILE = "environment/brick.png";
-    static String HOLE_FILE = "environment/hole2.png";
-    static String STAND_FILE = "environment/stand-border.png";
+    static String WALL_PA1_FILE = "environment/Box_64.png";
+    static String WALL_PA2_FILE = "environment/box_palette2_64.png";
+
+    // Hole
+    static String HOLE_FILE = "environment/hole4_64.png";
+
+    // Home stall
+    static String STAND_FILE = "environment/StallHome1_64.png";
+    static String[] HOME_STALL_FILES = {
+        "environment/StallHome1_64.png",
+        "environment/StallHome2_64.png",
+        "environment/StallHome3_64.png",
+        "environment/StallHome4_64.png",
+    };
 
     // Background
-    static String GAME_BACKGROUND_FILE = "environment/cobble.png";
+    static String GAME_BACKGROUND_FILE = "background/ground_64.png";
 
     // Other
     static String GOAL_FILE = "environment/goaldoor.png";
@@ -90,7 +104,7 @@ public class Assets {
     public void preLoadContent(AssetManager manager) {
         // Load Textures
         loadTexture(FISH_ITEM_FILE);
-        loadTexture(WALL_FILE);
+        loadTexture(WALL_PA1_FILE);
         loadTexture(HOLE_FILE);
         loadTexture(STAND_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
@@ -107,7 +121,7 @@ public class Assets {
      *  extracting assets from the manager after it has finished loading them */
     public void loadContent(AssetManager manager) {
         FISH_ITEM = createTexture(manager, FISH_ITEM_FILE, true);
-        WALL = createTexture(manager, WALL_FILE, true);
+        WALL = createTexture(manager, WALL_PA1_FILE, true);
         HOLE = createTexture(manager, HOLE_FILE, true);
         STAND = createTexture(manager, STAND_FILE, true);
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
