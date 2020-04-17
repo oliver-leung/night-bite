@@ -15,8 +15,8 @@
             "Down": "S",
             "Left": "A",
             "Right": "D",
-            "Dash": "L-Shift",
-            "Grab": "E"
+            "Dash": "C",
+            "Grab": "V"
         }
     ],
     "Comment": "See com.badlogic.gdx.Input for the exact key button names above"
