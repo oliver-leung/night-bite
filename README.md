@@ -7,6 +7,7 @@ Presented by SOYA Studios! (CS/INFO 3152 Group 11)
 ## Controls
 - Debug: `Y`
 - Reset level: `R`
+- (Un)mute music: `M`
 
 ### Player 1
 - Walk: `arrow keys`
