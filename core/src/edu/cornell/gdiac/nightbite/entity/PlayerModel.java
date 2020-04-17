@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -120,7 +122,10 @@ public class PlayerModel extends CapsuleObstacle {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
-        disableTop();
+        Filter f = cap1.getFilterData();
+        f.groupIndex = -1;
+        cap1.setFilterData(f);
+        core.setFilterData(f);
         return true;
     }
 

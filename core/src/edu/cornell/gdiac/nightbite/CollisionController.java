@@ -10,8 +10,10 @@ import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
+// TODO: Refactor into Collision Filters probably
 public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
@@ -28,13 +30,15 @@ public class CollisionController implements ContactListener {
         Object b = contact.getFixtureB().getBody().getUserData();
 
         // Player-Object Contact
-        if (a instanceof PlayerModel) {
+        if (a instanceof PlayerModel && contact.getFixtureA().getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
+            System.out.println(contact.getFixtureA().getUserData());
             handlePlayerToObjectContact((PlayerModel) a, b);
-        } else if (b instanceof PlayerModel) {
+        } else if (b instanceof PlayerModel && contact.getFixtureB().getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
             handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
         if (a instanceof ItemModel) {
+            System.out.println(contact.getFixtureB().getUserData());
             handleItemToObjectContact((ItemModel) a, b);
         } else if (b instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) b, a);
@@ -96,6 +100,7 @@ public class CollisionController implements ContactListener {
 
 
     public void handlePlayerToObjectContact(PlayerModel player, Object object) {
+        System.out.println(object);
 
         if (object instanceof HoleModel) {
 

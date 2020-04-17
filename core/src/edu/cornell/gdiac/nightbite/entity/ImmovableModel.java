@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
@@ -25,6 +27,9 @@ public abstract class ImmovableModel extends BoxObstacle {
             return false;
         }
         body.setFixedRotation(true);
+        Filter f = geometry.getFilterData();
+        f.groupIndex = -1;
+        geometry.setFilterData(f);
         return true;
     }
 }
