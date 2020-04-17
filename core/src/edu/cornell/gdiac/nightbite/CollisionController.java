@@ -155,9 +155,9 @@ public class CollisionController implements ContactListener {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel();
             if (homeObject.getTeam().equals("teamA")) {
-                worldModel.winner = "PLAYER A ";
+                worldModel.winner = "PLAYER 1 ";
             } else if (homeObject.getTeam().equals("teamB")) {
-                worldModel.winner = "PLAYER B ";
+                worldModel.winner = "PLAYER 2 ";
             }
         }
     }
