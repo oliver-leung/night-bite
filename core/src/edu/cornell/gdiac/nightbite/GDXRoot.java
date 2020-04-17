@@ -145,17 +145,20 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
 		if (screen == loading) {
-			if (levelSelect == null) {
-				levelSelect = new LevelSelectMode(canvas);
-			}
+//			if (levelSelect == null) {
+//				levelSelect = new LevelSelectMode(canvas);
+//			}
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
 
 			loading.dispose();
-			loading = null;
+//			loading = null;
 		} else if (screen == levelSelect) {
 			if (exitCode == levelSelect.EXIT_START) {
+				Gdx.input.setInputProcessor(null);
+
 				assets.loadContent(manager);
+
 				controller.setScreenListener(this);
 				controller.setCanvas(canvas);
 				controller.setLevel(levelSelect.getSelectedLevelJSON());
@@ -164,14 +167,14 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(controller);
 
 				levelSelect.dispose();
-				levelSelect = null;
+//				levelSelect = null;
 			} else if (exitCode == levelSelect.EXIT_MENU) {
-				loading = new LoadingMode(canvas, manager, 1);
+//				loading = new LoadingMode(canvas, manager, 1);
 				loading.setScreenListener(this);
 				setScreen(loading);
 
 				levelSelect.dispose();
-				levelSelect = null;
+//				levelSelect = null;
 			}
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application

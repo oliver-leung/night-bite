@@ -218,28 +218,30 @@ public class LevelSelectMode implements Screen, InputProcessor {
     @Override
     public void dispose() {
         // TODO
-        background.dispose();
-        tile1Texture.dispose();
-        tile2Texture.dispose();
-        tile3Texture.dispose();
-        store1Texture.dispose();
-        store2Texture.dispose();
-        store3Texture.dispose();
-        arrowTexture.dispose();
-        backTexture.dispose();
-        headerTexture.dispose();
-        Gdx.input.setInputProcessor(null);
+//        background.dispose();
+//        tile1Texture.dispose();
+//        tile2Texture.dispose();
+//        tile3Texture.dispose();
+//        store1Texture.dispose();
+//        store2Texture.dispose();
+//        store3Texture.dispose();
+//        arrowTexture.dispose();
+//        backTexture.dispose();
+//        headerTexture.dispose();
 
-        background = null;
-        tile1Texture= null;
-        tile2Texture= null;
-        tile3Texture= null;
-        store1Texture= null;
-        store2Texture= null;
-        store3Texture= null;
-        arrowTexture= null;
-        backTexture= null;
-        headerTexture= null;
+//        Gdx.input.setInputProcessor(null);
+        pressState = 0;
+
+//        background = null;
+//        tile1Texture= null;
+//        tile2Texture= null;
+//        tile3Texture= null;
+//        store1Texture= null;
+//        store2Texture= null;
+//        store3Texture= null;
+//        arrowTexture= null;
+//        backTexture= null;
+//        headerTexture= null;
     }
 
     @Override

@@ -305,22 +305,23 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * Called when this screen should release all resources.
 	 */
 	public void dispose() {
-		 statusBkgLeft = null;
-		 statusBkgRight = null;
-		 statusBkgMiddle = null;
-
-		 statusFrgLeft = null;
-		 statusFrgRight = null;
-		 statusFrgMiddle = null;
-
-		 background.dispose();
-		 // statusBar.dispose();
-		 background = null;
-		 // statusBar  = null;
-		 if (playButton != null) {
-			 playButton.dispose();
-			 playButton = null;
-		 }
+//		 statusBkgLeft = null;
+//		 statusBkgRight = null;
+//		 statusBkgMiddle = null;
+//
+//		 statusFrgLeft = null;
+//		 statusFrgRight = null;
+//		 statusFrgMiddle = null;
+//
+//		 background.dispose();
+//		 // statusBar.dispose();
+//		 background = null;
+//		 // statusBar  = null;
+//		 if (playButton != null) {
+//			 playButton.dispose();
+//			 playButton = null;
+//		 }
+		pressState = 0;
 	}
 	
 	/**
@@ -477,6 +478,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * The ScreenListener will respond to requests to quit.
 	 */
 	public void setScreenListener(ScreenListener listener) {
+		Gdx.input.setInputProcessor(this);
 		this.listener = listener;
 	}
 	
