@@ -21,7 +21,6 @@ public class InputController extends MechanicController {
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
-        isMuted = false;
         this.xbox = new XBox360Controller(xbox);
         this.keyboard = keyboard;
     }
@@ -105,12 +104,10 @@ public class InputController extends MechanicController {
         // Music
         // TODO: Remove reference to Assets class
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            if (isMuted) {
-                isMuted = false;
+            if (Assets.music.getVolume() > 0) {
                 Assets.music.setVolume(0);
             } else {
-                isMuted = true;
-                Assets.music.setVolume(0.3f);
+                Assets.music.setVolume(0.1f);
             }
         }
     }
