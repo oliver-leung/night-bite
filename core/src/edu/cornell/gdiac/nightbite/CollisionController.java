@@ -144,7 +144,6 @@ public class CollisionController implements ContactListener {
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
-                p.clearInventory();
                 item.startRespawn();
             }
 

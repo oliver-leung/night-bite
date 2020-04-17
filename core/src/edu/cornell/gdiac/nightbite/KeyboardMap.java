@@ -42,8 +42,8 @@ public class KeyboardMap {
             Keys.S,
             Keys.A,
             Keys.D,
-            Keys.SHIFT_LEFT,
-            Keys.E,
+            Keys.V,
+            Keys.C,
             Keys.UNKNOWN,
             Keys.UNKNOWN);
 
