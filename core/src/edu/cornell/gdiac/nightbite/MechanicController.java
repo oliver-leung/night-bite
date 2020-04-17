@@ -12,7 +12,6 @@ public abstract class MechanicController {
     protected boolean isDebug;
     protected boolean isReset;
     protected boolean isExit;
-    protected boolean isMuted;
 
     public float getVelX() {
         return velX;
@@ -40,10 +39,6 @@ public abstract class MechanicController {
 
     public boolean isExit() {
         return isExit && sudo;
-    }
-
-    public boolean isMuted() {
-        return isMuted;
     }
 
     public abstract void poll();

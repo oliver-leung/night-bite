@@ -340,4 +340,12 @@ public class Assets {
         }
         return null;
     }
+
+    /**
+     * @param filename Name of the file
+     * @return The TextureRegion from the given filename
+     */
+    public static TextureRegion get(String filename) {
+        return FILES.get(filename);
+    }
 }

@@ -18,7 +18,7 @@ public abstract class ImmovableModel extends BoxObstacle {
         setRestitution(DEFAULT_RESTITUTION);
         setAngle((float) (rotate * Math.PI / -2.0f));
     }
-    
+
     public boolean activatePhysics(World world) {
         boolean ret = super.activatePhysics(world);
         if (!ret) {

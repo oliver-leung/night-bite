@@ -1,16 +1,23 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class LevelController {
     private static LevelController instance;
     private static JsonReader jsonReader;
+
+    // TODO: Refactor these to be stored in arrays
+    public JsonValue background;
+    public JsonValue decorations;
 
     private LevelController() {
         jsonReader = new JsonReader();
@@ -25,33 +32,36 @@ public class LevelController {
 
     public void populate(WorldModel world, String level_file) {
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
-        createGrounds(world, levelFormat.get("grounds"));
+        background = levelFormat.get("grounds");
 
         createWalls(world, levelFormat.get("walls"));
         createHoles(world, levelFormat.get("holes"));
         createTeams(world, levelFormat.get("teams"));
         createItems(world, levelFormat.get("items"));
 
-        createGrounds(world, levelFormat.get("decorations"));
+        decorations = levelFormat.get("decorations");
 
         createBounds(world);
     }
 
+    public void drawBackground(WorldModel world) {
+        drawNonObject(world, background);
+    }
+
+    public void drawDecorations(WorldModel world) {
+        drawNonObject(world, decorations);
+    }
+
     //TODO: switch x/y back once it's fixed in the level builder
-    private void createGrounds(WorldModel world, JsonValue grounds) {
-        WallModel wall;
-        for (JsonValue groundJson : grounds.iterator()) {
-            wall = new WallModel(
-                    1 + groundJson.getFloat("y"),
-                    10 - groundJson.getFloat("x"),
-                    groundJson.getInt("rotate")
+    private void drawNonObject(WorldModel world, JsonValue jsonValue) {
+        for (JsonValue groundJson : jsonValue.iterator()) {
+            Vector2 pos = new Vector2(
+                    groundJson.getFloat("y"),
+                    9 - groundJson.getFloat("x")
             );
-            wall.setTexture(Assets.FILES.get(groundJson.getString("texture")));
-            wall.setDrawScale(world.getScale());
-            wall.setActualScale(world.getActualScale());
-            wall.setName(groundJson.name());
-            wall.setSensor(true);
-            world.addStaticObject(wall);
+            TextureRegion texture = Assets.get(groundJson.getString("texture"));
+            GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x * world.getScale().x,
+                    pos.y * world.getScale().y, 0, world.getActualScale().x, world.getActualScale().y);
         }
     }
 
