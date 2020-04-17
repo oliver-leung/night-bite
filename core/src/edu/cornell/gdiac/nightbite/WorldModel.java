@@ -4,6 +4,7 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -322,10 +323,21 @@ public class WorldModel {
      * @param obj The obstacle to be transformed
      */
     public void transformTileToWorld(Obstacle obj) {
-        Vector2 pos = obj.getPosition();
-        pos.x -= 0.5;
-        pos.y -= 0.5;
+        Vector2 pos = transformTileToWorld(obj.getPosition());
         obj.setPosition(pos);
+    }
+
+    /**
+     * Transform an vector from tile coordinates to canonical world coordinates.
+     *
+     * @param pos
+     * @return
+     */
+    public Vector2 transformTileToWorld(Vector2 pos) {
+        Affine2 transformation = new Affine2();
+        transformation.setToTranslation(-0.5f, -0.5f);
+        transformation.applyTo(pos);
+        return pos;
     }
 
     public void addStaticObject(Obstacle obj) {
@@ -484,5 +496,4 @@ public class WorldModel {
         // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
 
     }
-
 }

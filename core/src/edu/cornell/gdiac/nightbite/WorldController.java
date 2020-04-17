@@ -222,9 +222,10 @@ public class WorldController implements Screen {
 		canvas.begin();
 
 		// Draw background
-		backgroundTile.setRegionHeight(canvas.getHeight());
-		backgroundTile.setRegionWidth(canvas.getWidth());
-		canvas.draw(backgroundTile, 0, 0);
+//		backgroundTile.setRegionHeight(canvas.getHeight());
+//		backgroundTile.setRegionWidth(canvas.getWidth());
+//		canvas.draw(backgroundTile, 0, 0);
+		LevelController.getInstance().drawBackground(worldModel);
 
 		StringBuilder message1 = new StringBuilder("Player A score: ");
 		StringBuilder message2 = new StringBuilder("Player B score: ");
