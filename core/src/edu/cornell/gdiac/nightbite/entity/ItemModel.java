@@ -33,11 +33,21 @@ public class ItemModel extends BoxObstacle {
      */
     private int id;
 
+    // TODO temp
+    private static final float MOVABLE_OBJECT_DENSITY = 1.0f;
+    private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
+    private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
     public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
         super(x, y, width, height);
         setTexture(itemTexture);
-        setSensor(true);
+
+        setTexture(itemTexture);
+        setDensity(MOVABLE_OBJECT_DENSITY);
+        setFriction(MOVABLE_OBJECT_FRICTION);
+        setRestitution(MOVABLE_OBJECT_RESTITUTION);
+
+        setSensor(false);
         setBullet(true);
         setName("item");
 
