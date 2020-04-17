@@ -171,6 +171,8 @@ public class WorldModel {
         world.setContactListener(c);
     }
 
+    // TODO: Do this for player, item, and all other objects in the thing
+    // TODO: Basically collapse all of those data structures into one giant iterable
     public Iterable<Obstacle> getObjects() {
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
