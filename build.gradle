@@ -17,9 +17,9 @@ buildscript {
 
 allprojects {
 
-    version = '0.0'
+    version = '0.1'
     ext {
-        appName = "NightBite"
+        appName = "NightBite" as Object
         gdxVersion = '1.9.10'
         roboVMVersion = '2.3.8'
         box2DLightsVersion = '1.4'
