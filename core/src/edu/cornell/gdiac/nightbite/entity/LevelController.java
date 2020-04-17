@@ -14,8 +14,10 @@ import edu.cornell.gdiac.util.FilmStrip;
 public class LevelController {
     private static LevelController instance;
     private static JsonReader jsonReader;
-    private JsonValue background;
-    private JsonValue decorations;
+
+    // TODO: Refactor these to be stored in arrays
+    public JsonValue background;
+    public JsonValue decorations;
 
     private LevelController() {
         jsonReader = new JsonReader();
@@ -42,14 +44,21 @@ public class LevelController {
         createBounds(world);
     }
 
-    //TODO: switch x/y back once it's fixed in the level builder
     public void drawBackground(WorldModel world) {
-        for (JsonValue groundJson : background.iterator()) {
+        drawNonObject(world, background);
+    }
+
+    public void drawDecorations(WorldModel world) {
+        drawNonObject(world, decorations);
+    }
+
+    //TODO: switch x/y back once it's fixed in the level builder
+    private void drawNonObject(WorldModel world, JsonValue jsonValue) {
+        for (JsonValue groundJson : jsonValue.iterator()) {
             Vector2 pos = new Vector2(
                     groundJson.getFloat("y"),
                     9 - groundJson.getFloat("x")
             );
-            System.out.println(pos);
             TextureRegion texture = Assets.get(groundJson.getString("texture"));
             GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x * world.getScale().x,
                     pos.y * world.getScale().y, 0, world.getActualScale().x, world.getActualScale().y);

@@ -62,16 +62,24 @@ public class WorldController implements Screen {
 	 */
 	public static final int EXIT_NEXT = 1;
 
-	/** PHYSICS ENGINE STEP */
+	/* PHYSICS ENGINE STEP */
 
-	/** The amount of time for a physics engine step. */
+	/**
+	 * The amount of time for a physics engine step.
+	 */
 	public static final float WORLD_STEP = 1 / 60.0f;
-	/** Number of velocity iterations for the constrain solvers. */
+	/**
+	 * Number of velocity iterations for the constrain solvers.
+	 */
 	public static final int WORLD_VELOC = 6;
-	/** Number of position iterations for the constrain solvers. */
+	/**
+	 * Number of position iterations for the constrain solvers.
+	 */
 	public static final int WORLD_POSIT = 2;
 
-	/** GAME PARAMS */
+	/**
+	 * GAME PARAMS
+	 */
 
 
 	protected static final float DEFAULT_GRAVITY = -4.9f;
@@ -82,12 +90,6 @@ public class WorldController implements Screen {
 	 * The font for giving messages to the player
 	 */
 	protected BitmapFont displayFont;
-
-	/**
-	 * Item
-	 */
-	// protected ItemModel item;
-	// protected boolean prevRespawning = false;
 
 	/**
 	 * Reference to the game canvas
@@ -199,7 +201,7 @@ public class WorldController implements Screen {
 	}
 
 	public void populateLevel() {
-		/** Populate asset textures */
+		// Populate asset textures
 		backgroundTile = Assets.GAME_BACKGROUND;
 		displayFont = Assets.RETRO_FONT;
 
@@ -222,9 +224,6 @@ public class WorldController implements Screen {
 		canvas.begin();
 
 		// Draw background
-//		backgroundTile.setRegionHeight(canvas.getHeight());
-//		backgroundTile.setRegionWidth(canvas.getWidth());
-//		canvas.draw(backgroundTile, 0, 0);
 		LevelController.getInstance().drawBackground(worldModel);
 
 		StringBuilder message1 = new StringBuilder("Player A score: ");
@@ -241,6 +240,8 @@ public class WorldController implements Screen {
 				obj.draw(canvas);
 			}
 		}
+
+		LevelController.getInstance().drawDecorations(worldModel);
 
 		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
