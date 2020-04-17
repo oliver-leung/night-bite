@@ -69,6 +69,7 @@ public class LevelController {
         float width = world.getBounds().width;
         float height = world.getBounds().height;
         WallModel wall;
+        // TODO: Use four walls rather than n X m
         for (int i = 0; i < width; i++) {
             wall = new WallModel(i, 0, 0);
             wall.setDrawScale(world.getScale());
@@ -136,6 +137,12 @@ public class LevelController {
             home.setName(teamName);
             home.setDrawScale(world.getScale());
             home.setActualScale(world.getActualScale());
+            Vector2 pos = home.getPosition();
+            pos.x += 0.5f;
+            pos.y -= 0.5f;
+            home.setPosition(pos);
+            home.setWidth(2);
+            home.setHeight(2);
             world.addStaticObject(home);
             playerNum++;
         }
