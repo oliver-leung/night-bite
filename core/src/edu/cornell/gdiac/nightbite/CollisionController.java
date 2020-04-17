@@ -1,10 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.entity.HoleModel;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
@@ -30,11 +27,11 @@ public class CollisionController implements ContactListener {
         Object b = contact.getFixtureB().getBody().getUserData();
 
         // Player-Object Contact
-        if (a instanceof PlayerModel && contact.getFixtureA().getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
+        if (a instanceof PlayerModel) {
             System.out.println(contact.getFixtureA().getUserData());
-            handlePlayerToObjectContact((PlayerModel) a, b);
-        } else if (b instanceof PlayerModel && contact.getFixtureB().getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
-            handlePlayerToObjectContact((PlayerModel) b, a);
+            handlePlayerToObjectContact((PlayerModel) a, b, contact.getFixtureA());
+        } else if (b instanceof PlayerModel) {
+            handlePlayerToObjectContact((PlayerModel) b, a, contact.getFixtureB());
         }
 
         if (a instanceof ItemModel) {
@@ -99,10 +96,8 @@ public class CollisionController implements ContactListener {
     }
 
 
-    public void handlePlayerToObjectContact(PlayerModel player, Object object) {
-        System.out.println(object);
-
-        if (object instanceof HoleModel) {
+    public void handlePlayerToObjectContact(PlayerModel player, Object object, Fixture playerFixture) {
+        if (object instanceof HoleModel && playerFixture.getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
 
             // Player-Hole collision
             player.setDead();

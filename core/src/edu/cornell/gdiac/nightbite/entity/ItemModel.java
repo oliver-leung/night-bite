@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 
@@ -111,6 +112,9 @@ public class ItemModel extends BoxObstacle {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
+        Filter f = geometry.getFilterData();
+        f.groupIndex = 1;
+        geometry.setFilterData(f);
         return true;
     }
 
