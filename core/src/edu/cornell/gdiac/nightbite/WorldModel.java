@@ -452,7 +452,7 @@ public class WorldModel {
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
         float world2Pixel =  Math.min(DEFAULT_ASSET_HEIGHT, DEFAULT_ASSET_WIDTH);
-        System.out.println(world2Pixel);
+//        System.out.println(world2Pixel);
 
         // scalePixel translate canonical pixel space to pixel space
         // (1920 x 1080, or otherwise indicated in WorldController)
@@ -468,8 +468,8 @@ public class WorldModel {
         scale.set(finalPosScale, finalPosScale);
         actualScale.set(finalAssetScale, finalAssetScale);
 
-        System.out.println(scale);
-        System.out.println(actualScale);
+//        System.out.println(scale);
+//        System.out.println(actualScale);
 
         // pixTransform = new Affine2();
         // pixTransform.scale(finalPosScale, finalPosScale);

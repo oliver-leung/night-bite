@@ -327,7 +327,7 @@ public class CapsuleObstacle extends SimpleObstacle {
 		center.y =  -height/2.0f;
 		center.width  = width;
 		center.height = height;
-		System.out.println(center.y);
+//		System.out.println(center.y);
 
         // Now adjust the core
         float r = 0;

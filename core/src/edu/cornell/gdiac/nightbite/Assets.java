@@ -254,9 +254,6 @@ public class Assets {
         FILES = new HashMap<>();
         // Make background textures
         for (String filename : FILE_NAMES) {
-            if (filename.equals("background/hole1_64.png")) {
-                System.out.println("done");
-            }
             FILES.put(filename, createTexture(manager, filename, false));
         }
 

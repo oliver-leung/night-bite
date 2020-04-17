@@ -142,7 +142,6 @@ public class LevelController {
             hole.setActualScale(world.getActualScale());
             hole.setName(holeJson.name());
             String texture = holeJson.getString("texture");
-            System.out.println(texture);
             hole.setTexture(Assets.FILES.get(texture));
             world.addStaticObject(hole);
         }
