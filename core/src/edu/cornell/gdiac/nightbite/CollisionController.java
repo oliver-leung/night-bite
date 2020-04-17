@@ -89,6 +89,8 @@ public class CollisionController implements ContactListener {
 
         if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
             contact.setEnabled(false);
+        } else if ((a instanceof ItemModel && ((ItemModel) a).holdingPlayer != null) || (b instanceof ItemModel && ((ItemModel) b).holdingPlayer != null)) {
+            contact.setEnabled(false);
         }
     }
 
@@ -140,7 +142,11 @@ public class CollisionController implements ContactListener {
                 item.startRespawn();
             }
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
-            item.startRespawn();
+            PlayerModel p = item.holdingPlayer;
+            if (p == null) {
+                p.clearInventory();
+                item.startRespawn();
+            }
 
             // add score
             HomeModel homeObject = (HomeModel) object;
