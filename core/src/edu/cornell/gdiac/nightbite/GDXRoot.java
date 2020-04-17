@@ -97,7 +97,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 	}
 
 	/** 
@@ -154,7 +154,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 //			loading = null;
 		} else if (screen == levelSelect) {
-			if (exitCode == levelSelect.EXIT_START) {
+			if (exitCode == LevelSelectMode.EXIT_START) {
 				Gdx.input.setInputProcessor(null);
 
 				assets.loadContent(manager);
@@ -168,7 +168,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 				levelSelect.dispose();
 //				levelSelect = null;
-			} else if (exitCode == levelSelect.EXIT_MENU) {
+			} else if (exitCode == LevelSelectMode.EXIT_MENU) {
 //				loading = new LoadingMode(canvas, manager, 1);
 				loading.setScreenListener(this);
 				setScreen(loading);
