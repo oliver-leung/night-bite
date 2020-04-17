@@ -226,8 +226,8 @@ public class WorldController implements Screen {
 		backgroundTile.setRegionWidth(canvas.getWidth());
 		canvas.draw(backgroundTile, 0, 0);
 
-		StringBuilder message1 = new StringBuilder("Player A score: ");
-		StringBuilder message2 = new StringBuilder("Player B score: ");
+		StringBuilder message1 = new StringBuilder("Player 1 score: ");
+		StringBuilder message2 = new StringBuilder("Player 2 score: ");
 
 		// Draw objects
 		for (Obstacle obj : worldModel.getObjects()) {
