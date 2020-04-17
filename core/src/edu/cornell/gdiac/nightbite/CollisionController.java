@@ -28,14 +28,12 @@ public class CollisionController implements ContactListener {
 
         // Player-Object Contact
         if (a instanceof PlayerModel) {
-            System.out.println(contact.getFixtureA().getUserData());
             handlePlayerToObjectContact((PlayerModel) a, b, contact.getFixtureA());
         } else if (b instanceof PlayerModel) {
             handlePlayerToObjectContact((PlayerModel) b, a, contact.getFixtureB());
         }
 
         if (a instanceof ItemModel) {
-            System.out.println(contact.getFixtureB().getUserData());
             handleItemToObjectContact((ItemModel) a, b);
         } else if (b instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) b, a);
