@@ -46,12 +46,13 @@ public class LevelController {
     public void drawBackground(WorldModel world) {
         for (JsonValue groundJson : background.iterator()) {
             Vector2 pos = new Vector2(
-                    1 + groundJson.getFloat("y"),
-                    10 - groundJson.getFloat("x")
+                    groundJson.getFloat("y"),
+                    9 - groundJson.getFloat("x")
             );
-            world.transformTileToWorld(pos);
+            System.out.println(pos);
             TextureRegion texture = Assets.get(groundJson.getString("texture"));
-            GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x, pos.y, 0, world.getActualScale().x, world.getActualScale().y);
+            GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x * world.getScale().x,
+                    pos.y * world.getScale().y, 0, world.getActualScale().x, world.getActualScale().y);
         }
     }
 
