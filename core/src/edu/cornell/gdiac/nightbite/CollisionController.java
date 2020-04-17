@@ -122,12 +122,12 @@ public class CollisionController implements ContactListener {
             // If players went to their own home, drop off item and increment score
             if (player.getTeam().equals(homeObject.getTeam()) && player.hasItem()) {
 
-//                homeObject.incrementScore(1);
+                homeObject.incrementScore(1);
 
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
                 }
-                player.clearInventory(); // TODO
+                player.clearInventory();
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -145,14 +145,13 @@ public class CollisionController implements ContactListener {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
+                // add score
+                HomeModel homeObject = (HomeModel) object;
+                homeObject.incrementScore(1);
+
+                // check win condition
+                checkWinCondition(homeObject);
             }
-
-            // add score
-            HomeModel homeObject = (HomeModel) object;
-            homeObject.incrementScore(1);
-
-            // check win condition
-            checkWinCondition(homeObject);
         }
     }
 
