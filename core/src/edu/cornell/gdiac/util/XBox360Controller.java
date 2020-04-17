@@ -47,6 +47,7 @@ import com.badlogic.gdx.math.Vector3;
  * controller.
  */
 public class XBox360Controller implements ControllerListener {
+	// TODO: this class is pretty ugh
 	/** The controller id number */
 	private int deviceid;
 	/** Reference to base controller object wrapped by this instance. */

@@ -34,7 +34,7 @@ public class BoxObstacle extends SimpleObstacle {
 	/** A cache value for when the user wants to access the dimensions */
 	private Vector2 sizeCache;
 	/** A cache value for the fixture (for resizing) */
-	private Fixture geometry;
+	public Fixture geometry;
 	/** Cache of the polygon vertices (for resizing) */
 	private float[] vertices;
 	
@@ -115,7 +115,7 @@ public class BoxObstacle extends SimpleObstacle {
 	/**
 	 * Creates a new box at the origin.
 	 *
-	 * The size is expressed in physics units NOT pixels.  In order for 
+	 * The size is expressed in physics units NOT pixels.  In order for
 	 * drawing to work properly, you MUST set the drawScale. The drawScale 
 	 * converts the physics units to pixels.
 	 *
@@ -149,7 +149,14 @@ public class BoxObstacle extends SimpleObstacle {
 		// Initialize
 		resize(width, height);
 	}
-	
+
+	@Override
+	public void setActualScale(Vector2 actualScale) {
+	    setDimension(actualScale.x / this.actualScale.x * dimension.x,
+				actualScale.y / this.actualScale.y * dimension.y);
+		super.setActualScale(actualScale);
+	}
+
 	/**
 	 * Reset the polygon vertices in the shape to match the dimension.
 	 */
@@ -166,6 +173,10 @@ public class BoxObstacle extends SimpleObstacle {
 		shape.set(vertices);
 	}
 
+	protected void defineFixtures() {
+		fixture.shape = shape;
+	}
+
 	/**
 	 * Create new fixtures for this body, defining the shape
 	 *
@@ -179,7 +190,7 @@ public class BoxObstacle extends SimpleObstacle {
 	    releaseFixtures();
 
 		// Create the fixture
-		fixture.shape = shape;
+		defineFixtures();
 		geometry = body.createFixture(fixture);
 		markDirty(false);
 	}

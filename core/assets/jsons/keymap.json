@@ -1,0 +1,23 @@
+{
+    "Debug": "Y",
+    "Reset": "R",
+    "Keyboard mappings": [
+        {
+            "Up": "Up",
+            "Down": "Down",
+            "Left": "Left",
+            "Right": "Right",
+            "Dash": "Slash",
+            "Grab": "Period"
+        },
+        {
+            "Up": "W",
+            "Down": "S",
+            "Left": "A",
+            "Right": "D",
+            "Dash": "C",
+            "Grab": "V"
+        }
+    ],
+    "Comment": "See com.badlogic.gdx.Input for the exact key button names above"
+}

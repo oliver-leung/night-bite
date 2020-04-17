@@ -13,6 +13,7 @@
  */
  package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -23,7 +24,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import edu.cornell.gdiac.nightbite.ball.BallController;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -41,6 +41,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private AssetManager manager;
 	/**
+	 * Asset handler
+	 */
+	private Assets assets;
+	/**
 	 * Drawing context to display graphics (VIEW CLASS)
 	 */
 	private GameCanvas canvas;
@@ -49,14 +53,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private LoadingMode loading;
 	/**
-	 * Player mode for the the game proper (CONTROLLER CLASS)
+	 * Player mode for the asset loading screen (CONTROLLER CLASS)
 	 */
-	private int current;
+	private LevelSelectMode levelSelect;
 	/**
 	 * List of all WorldControllers
 	 */
-	private WorldController[] controllers;
-	private BallController controller;
+	private WorldController controller;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -81,21 +84,20 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
-		canvas = new GameCanvas();
+		canvas = GameCanvas.getInstance();
 		loading = new LoadingMode(canvas, manager, 1);
+		levelSelect = new LevelSelectMode(canvas);
 
-		controller = new BallController();
-		controller.preLoadContent(manager);
+		assets = new Assets(manager);
+		assets.preLoadContent(manager);
+		controller = new WorldController();
 
-		// Initialize the three game worlds
-		controllers = new WorldController[1];
-		controllers[0] = new BallController();
-		for (WorldController worldController : controllers) {
-			worldController.preLoadContent(manager);
-		}
-		current = 0;
 		loading.setScreenListener(this);
 		setScreen(loading);
+
+		// Create logger
+		Gdx.app.setApplicationLogger(new Logger());
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 	}
 
 	/** 
@@ -106,10 +108,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void dispose() {
 		// Call dispose on our children
 		setScreen(null);
-		for (WorldController worldController : controllers) {
-			worldController.unloadContent(manager);
-			worldController.dispose();
-		}
+		assets.unloadContent(manager);
+		controller.dispose();
 
 		canvas.dispose();
 		canvas = null;
@@ -130,8 +130,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param height The new height in pixels
 	 */
 	public void resize(int width, int height) {
+		// TODO: Add logic for affine-transforming objects and hitboxes when resizing. Perhaps GameCanvas.computeTransform would be useful for this?
 		canvas.resize();
-		super.resize(width,height);
+		super.resize(width, height);
 	}
 	
 	/**
@@ -142,32 +143,44 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param screen   The screen requesting to exit
 	 * @param exitCode The state of the screen upon exit
 	 */
-	public void exitScreen(Screen screen, int exitCode) {
+	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
 		if (screen == loading) {
-			for (WorldController worldController : controllers) {
-				worldController.loadContent(manager);
-				worldController.setScreenListener(this);
-				worldController.setCanvas(canvas);
-			}
-			controller.loadContent(manager);
-			controller.setScreenListener(this);
-
-			controllers[current].reset();
-			setScreen(controllers[current]);
+//			if (levelSelect == null) {
+//				levelSelect = new LevelSelectMode(canvas);
+//			}
+			levelSelect.setScreenListener(this);
+			setScreen(levelSelect);
 
 			loading.dispose();
-			loading = null;
-		} else if (exitCode == WorldController.EXIT_NEXT) {
-			current = (current+1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.EXIT_PREV) {
-			current = (current+controllers.length-1) % controllers.length;
-			controllers[current].reset();
-			setScreen(controllers[current]);
+//			loading = null;
+		} else if (screen == levelSelect) {
+			if (exitCode == levelSelect.EXIT_START) {
+				Gdx.input.setInputProcessor(null);
+
+				assets.loadContent(manager);
+
+				controller.setScreenListener(this);
+				controller.setCanvas(canvas);
+				controller.setLevel(levelSelect.getSelectedLevelJSON());
+
+				controller.reset();
+				setScreen(controller);
+
+				levelSelect.dispose();
+//				levelSelect = null;
+			} else if (exitCode == levelSelect.EXIT_MENU) {
+//				loading = new LoadingMode(canvas, manager, 1);
+				loading.setScreenListener(this);
+				setScreen(loading);
+
+				levelSelect.dispose();
+//				levelSelect = null;
+			}
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
+		} else if (exitCode == WorldController.EXIT_NEXT) {
+			controller.reset();
 		}
 	}
 
