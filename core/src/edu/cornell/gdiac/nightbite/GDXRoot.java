@@ -51,11 +51,11 @@ public class GDXRoot extends Game implements ScreenListener {
 	/**
 	 * Player mode for the asset loading screen (CONTROLLER CLASS)
 	 */
-	private LoadingMode loading;
+	private LoadController loading;
 	/**
 	 * Player mode for the asset loading screen (CONTROLLER CLASS)
 	 */
-	private LevelSelectMode levelSelect;
+	private LevelSelectController levelSelect;
 	/**
 	 * List of all WorldControllers
 	 */
@@ -85,8 +85,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		canvas = GameCanvas.getInstance();
-		loading = new LoadingMode(canvas, manager, 1);
-		levelSelect = new LevelSelectMode(canvas);
+		loading = new LoadController(canvas, manager, 1);
+		levelSelect = new LevelSelectController(canvas);
 
 		assets = new Assets(manager);
 		assets.preLoadContent(manager);
@@ -154,7 +154,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 //			loading = null;
 		} else if (screen == levelSelect) {
-			if (exitCode == LevelSelectMode.EXIT_START) {
+			if (exitCode == LevelSelectController.EXIT_START) {
 				Gdx.input.setInputProcessor(null);
 
 				assets.loadContent(manager);
@@ -168,7 +168,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 				levelSelect.dispose();
 //				levelSelect = null;
-			} else if (exitCode == LevelSelectMode.EXIT_MENU) {
+			} else if (exitCode == LevelSelectController.EXIT_MENU) {
 //				loading = new LoadingMode(canvas, manager, 1);
 				loading.setScreenListener(this);
 				setScreen(loading);

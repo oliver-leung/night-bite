@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
-public class LevelSelectMode implements Screen, InputProcessor {
+public class LevelSelectController implements Screen, InputProcessor {
 
     /** Resources */
     private static final String BACKGROUND_FILE = "level_select/Background.png";
@@ -88,7 +88,7 @@ public class LevelSelectMode implements Screen, InputProcessor {
     private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_medium.json", "jsons/level_hard.json"};
     private int[] xposList;
 
-    public LevelSelectMode(GameCanvas canvas) {
+    public LevelSelectController(GameCanvas canvas) {
         this.canvas = canvas;
 
         background = new Texture(BACKGROUND_FILE);

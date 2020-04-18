@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
-
 public class PlayerModel extends CapsuleObstacle {
 
     // TODO
