@@ -51,7 +51,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class LoadingMode implements Screen, InputProcessor, ControllerListener {
+public class LoadController implements Screen, InputProcessor, ControllerListener {
 	/**
 	 * Resources for loading screen
 	 */
@@ -210,7 +210,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 *
 	 * @param manager The AssetManager to load in the background
 	 */
-	public LoadingMode(GameCanvas canvas, AssetManager manager) {
+	public LoadController(GameCanvas canvas, AssetManager manager) {
 		this(canvas, manager, DEFAULT_BUDGET);
 	}
 
@@ -225,7 +225,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	 * @param manager The AssetManager to load in the background
 	 * @param millis  The loading budget in milliseconds
 	 */
-	public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
+	public LoadController(GameCanvas canvas, AssetManager manager, int millis) {
 		this.manager = manager;
 		this.canvas = canvas;
 		budget = millis;
@@ -300,7 +300,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 	public boolean isReady() {
 		return pressState == 2;
 	}
-	
+
 	/**
 	 * Called when this screen should release all resources.
 	 */

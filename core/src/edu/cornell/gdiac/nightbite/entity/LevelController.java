@@ -137,10 +137,6 @@ public class LevelController {
             home.setName(teamName);
             home.setDrawScale(world.getScale());
             home.setActualScale(world.getActualScale());
-            Vector2 pos = home.getPosition();
-            pos.x += 0.5f;
-            pos.y -= 0.5f;
-            home.setPosition(pos);
             home.setWidth(2);
             home.setHeight(2);
             world.addStaticObject(home);

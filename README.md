@@ -19,9 +19,6 @@ Presented by SOYA Studios! (CS/INFO 3152 Group 11)
 - Dash: While walking, `V`
 - Grab/throw: While walking, `C`
 
-## Selecting Level
-Navigate the levels using `left` and `right` arrow keys. Press `.` to select a level. There is currently no way to return to level select from a level.
-
 ## Goal
 - Run to the food item and bring it back to your home stall to get a point
 - Dash into your opponent to push them into holes, knocking them out
