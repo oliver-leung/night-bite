@@ -300,7 +300,7 @@ public class LoadController implements Screen, InputProcessor, ControllerListene
 	public boolean isReady() {
 		return pressState == 2;
 	}
-	
+
 	/**
 	 * Called when this screen should release all resources.
 	 */
