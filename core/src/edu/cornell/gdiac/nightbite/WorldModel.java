@@ -392,9 +392,10 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator[] iters = {staticObjects.entryIterator()};
+        Iterator[] cullAndUpdate = {staticObjects.entryIterator()};
+        Iterator[] updateOnly = {player_list.iterator(), items.iterator()};
 
-        for (Iterator iterator : iters) {
+        for (Iterator iterator : cullAndUpdate) {
             while (iterator.hasNext()) {
                 PooledList.Entry entry = (PooledList.Entry) iterator.next();
                 Obstacle obj = (Obstacle) entry.getValue();
@@ -405,6 +406,12 @@ public class WorldModel {
                     // Note that update is called last!
                     obj.update(dt);
                 }
+            }
+        }
+
+        for (Iterator iterator : updateOnly) {
+            while (iterator.hasNext()) {
+                iterator.next().update();
             }
         }
     }
