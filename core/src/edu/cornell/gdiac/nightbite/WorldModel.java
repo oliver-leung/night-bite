@@ -234,47 +234,12 @@ public class WorldModel {
         return new objectIterator();
     }
 
-    // TODO: Garbage collection for objects
-    // public Iterator<PooledList<Obstacle>.Entry> objectEntryIter() {
-    //     // Overkill, but I'm bored. Also this will probably help like a lot.
-    //     class objectIterable implements Iterator<PooledList<Obstacle>.Entry> {
-    //         Iterator<PooledList<Obstacle>.Entry> statIter = staticObjects.entryIterator();
-    //         boolean finishedStat = false;
-    //         @Override
-    //         public boolean hasNext() {
-    //             return !statIter.hasNext() && ! dynIter.hasNext();
-    //         }
-
-    //         @Override
-    //         public PooledList<Obstacle>.Entry next() {
-    //             if (statIter.hasNext()) {
-    //                 return statIter.next();
-    //             }
-
-    //             if (dynIter.hasNext()) {
-    //                 return dynIter.next();
-    //             }
-
-    //             throw new NoSuchElementException();
-    //         }
-
-    //         @Override
-    //         public void remove() {
-    //             throw new UnsupportedOperationException();
-    //         }
-    //     }
-
-    //     return new objectIterable();
-
-    // }
-
     public void setScale(Vector2 scale) {
         setScale(scale.x, scale.y);
     }
 
     public void setScale(float sx, float sy) {
         scale.set(sx, sy);
-        // System.out.println(scale);
     }
 
     public Rectangle getBounds() {
