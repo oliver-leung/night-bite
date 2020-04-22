@@ -20,8 +20,6 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
@@ -31,8 +29,6 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-
-import java.util.Iterator;
 
 /**
  * Base class for a world-specific controller.
@@ -45,566 +41,458 @@ import java.util.Iterator;
  * You will notice that asset loading is not done with static methods this time.
  * Instance asset loading makes it easier to process our game modes in a loop, which
  * is much more scalable. However, we still want the assets themselves to be static.
- * This is the purpose of our AssetState variable; it ensures that multiple instances
+ * This is the purpose of our AssetState variable; it censures that multiple instances
  * place nicely with the static assets.
  */
 public class WorldController implements Screen {
+    /** Exit code for quitting the game */
+    public static final int EXIT_QUIT = 0;
+    /** Exit code for advancing to next level */
+    public static final int EXIT_NEXT = 1;
 
-	public static final int ITEMS_TO_WIN = 3;
+    /** The amount of time for a physics engine step. */
+    public static final float WORLD_STEP = 1 / 60.0f;
+    /** Number of velocity iterations for the constrain solvers. */
+    public static final int WORLD_VELOC = 6;
+    /** Number of position iterations for the constrain solvers. */
+    public static final int WORLD_POSIT = 2;
 
-	/**
-	 * Exit code for quitting the game
-	 */
-	public static final int EXIT_QUIT = 0;
+    /** Reference to the game canvas */
+    protected GameCanvas canvas;
+    /** Queue for adding objects */
+    protected PooledList<Obstacle> addQueue = new PooledList<>();
+    /** The font for giving messages to the player */
+    protected BitmapFont displayFont;
+    /** Listener that will update the player mode when we are done */
+    private ScreenListener listener;
+    /** Reference to custom Box2D physics world */
+    private WorldModel worldModel;
+    /** Whether or not this is an active controller */
+    private boolean active;
+    /** Whether or not debug mode is active */
+    private boolean debug;
+    /** Path to the level JSON that is currently loaded */
+    private String selectedLevelJSON;
 
-	/**
-	 * Exit code for advancing to next level
-	 */
-	public static final int EXIT_NEXT = 1;
+    /** Create a new game world */
+    protected WorldController() {
+        setDebug(false);
+        worldModel = new WorldModel();
+        debug = false;
+        active = false;
+    }
 
-	/* PHYSICS ENGINE STEP */
+    /**
+     * Returns true if debug mode is active.
+     * <p>
+     * If true, all objects will display their physics bodies.
+     *
+     * @return true if debug mode is active.
+     */
+    public boolean isDebug() {
+        return debug;
+    }
 
-	/**
-	 * The amount of time for a physics engine step.
-	 */
-	public static final float WORLD_STEP = 1 / 60.0f;
-	/**
-	 * Number of velocity iterations for the constrain solvers.
-	 */
-	public static final int WORLD_VELOC = 6;
-	/**
-	 * Number of position iterations for the constrain solvers.
-	 */
-	public static final int WORLD_POSIT = 2;
+    /**
+     * Sets whether debug mode is active.
+     * <p>
+     * If true, all objects will display their physics bodies.
+     *
+     * @param value whether debug mode is active.
+     */
+    public void setDebug(boolean value) {
+        debug = value;
+    }
 
-	/**
-	 * GAME PARAMS
-	 */
+    /**
+     * Returns the canvas associated with this controller
+     * <p>
+     * The canvas is shared across all controllers
+     */
+    public GameCanvas getCanvas() {
+        return canvas;
+    }
 
+    /**
+     * Sets the canvas associated with this controller
+     * <p>
+     * The canvas is shared across all controllers.  Setting this value will compute
+     * the drawing scale from the canvas size.
+     *
+     * @param canvas the canvas associated with this controller
+     */
+    public void setCanvas(GameCanvas canvas) {
+        this.canvas = canvas;
+        // worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
+        worldModel.setPixelBounds(canvas);
+    }
 
-	protected static final float DEFAULT_GRAVITY = -4.9f;
+    public void setLevel(String selectedLevelJSON) {
+        this.selectedLevelJSON = selectedLevelJSON;
+    }
 
+    public void populateLevel() {
+        // TODO: Add this to the Assets HashMap
+        displayFont = Assets.RETRO_FONT;
+        LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+    }
 
-	public TextureRegion backgroundTile;
-	/**
-	 * The font for giving messages to the player
-	 */
-	protected BitmapFont displayFont;
+    /**
+     * Draw the physics objects to the canvas in the following order:
+     * <p>
+     * 1. Background tiles
+     * 2. Box2D objects
+     * 3. Decorations
+     *
+     * @param delta time from last frame
+     */
+    public void draw(float delta) {
+        canvas.clear();
+        canvas.begin();
 
-	/**
-	 * Reference to the game canvas
-	 */
-	protected GameCanvas canvas;
-	/**
-	 * Queue for adding objects
-	 */
-	protected PooledList<Obstacle> addQueue = new PooledList<>();
-	/**
-	 * Listener that will update the player mode when we are done
-	 */
-	private ScreenListener listener;
-	/**
-	 * Whether or not this is an active controller
-	 */
-	private boolean active;
+        LevelController.getInstance().drawBackground(worldModel);
 
-	/**
-	 * Whether or not debug mode is active
-	 */
-	private boolean debug;
+        StringBuilder message1 = new StringBuilder("Player 1 score: ");
+        StringBuilder message2 = new StringBuilder("Player 2 score: ");
 
-	// TODO for refactoring update
-	private int NUM_PLAYERS = 2;
-	private int NUM_ITEMS = 1;
-	private PooledList<Vector2> object_list = new PooledList<>();
-	private WorldModel worldModel;
+        // Draw objects
+        for (Obstacle obj : worldModel.getObjects()) {
+            if (obj.draw) {
+                obj.draw(canvas);
 
-	private String selectedLevelJSON;
+                // Add player scores
+                if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
+                    message1.append(((HomeModel) obj).getScore());
+                } else if (obj instanceof HomeModel && obj.getName().equals("teamB")) {
+                    message2.append(((HomeModel) obj).getScore());
+                }
+            }
+        }
 
-	/**
-	 * Creates a new game world
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 *
-	 * @param gravity The gravitational force on this Box2d world
-	 */
-	// TODO: Remove bounds and gravity parameter
-	protected WorldController(Vector2 gravity) {
-		setDebug(false);
-		worldModel = new WorldModel();
-		// TODO: Refactor out collisions to another class?
-		debug = false;
-		active = false;
-	}
+        LevelController.getInstance().drawDecorations(worldModel);
 
-	/**
-	 * Creates a new game world with the default values.
-	 * <p>
-	 * The game world is scaled so that the screen coordinates do not agree
-	 * with the Box2d coordinates.  The bounds are in terms of the Box2d
-	 * world, not the screen.
-	 */
-	protected WorldController() {
-		this(new Vector2(0, DEFAULT_GRAVITY));
-	}
+        // Draw player scores
+        canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
+        canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
 
-	/**
-	 * Returns true if debug mode is active.
-	 *
-	 * If true, all objects will display their physics bodies.
-	 *
-	 * @return true if debug mode is active.
-	 */
-	public boolean isDebug() {
-		return debug;
-	}
+        if (worldModel.isComplete()) {
+            displayFont.setColor(Color.YELLOW);
+            canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+        }
 
-	/**
-	 * Sets whether debug mode is active.
-	 * <p>
-	 * If true, all objects will display their physics bodies.
-	 *
-	 * @param value whether debug mode is active.
-	 */
-	public void setDebug(boolean value) {
-		debug = value;
-	}
+        canvas.end();
 
+        // Draw with rayhandler
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.render();
+        }
 
-	/**
-	 * Returns the canvas associated with this controller
-	 *
-	 * The canvas is shared across all controllers
-	 */
-	public GameCanvas getCanvas() {
-		return canvas;
-	}
+        if (debug) {
+            canvas.beginDebug();
+            for (Obstacle obj : worldModel.getObjects()) {
+                obj.drawDebug(canvas);
+            }
+            debugGrid();
+            canvas.endDebug();
+        }
+    }
 
-	/**
-	 * Sets the canvas associated with this controller
-	 *
-	 * The canvas is shared across all controllers.  Setting this value will compute
-	 * the drawing scale from the canvas size.
-	 *
-	 * @param canvas the canvas associated with this controller
-	 */
-	public void setCanvas(GameCanvas canvas) {
-		this.canvas = canvas;
-		// worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
-		worldModel.setPixelBounds(canvas);
-	}
+    /**
+     * Draw points at the corners of each tile in the world.
+     */
+    private void debugGrid() {
+        for (int i = 0; i < worldModel.getWidth(); i++) {
+            for (int j = 0; j < worldModel.getHeight(); j++) {
+                canvas.drawPoint(i * worldModel.scale.x, j * worldModel.scale.y, Color.GREEN);
+            }
+        }
+    }
 
-	public void setLevel(String selectedLevelJSON) {
-		this.selectedLevelJSON = selectedLevelJSON;
-	}
+    /**
+     * Dispose of all (non-static) resources allocated to this mode.
+     */
+    public void dispose() {
+        worldModel.dispose();
+        addQueue.clear();
+        addQueue = null;
+        canvas = null;
+    }
 
-	public void populateLevel() {
-		// Populate asset textures
-		backgroundTile = Assets.GAME_BACKGROUND;
-		displayFont = Assets.RETRO_FONT;
-
-		LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-	}
-
-	/**
-	 * Draw the physics objects to the canvas
-	 * <p>
-	 * For simple worlds, this method is enough by itself.  It will need
-	 * to be overriden if the world needs fancy backgrounds or the like.
-	 * <p>
-	 * The method draws all objects in the order that they were added.
-	 *
-	 * @param delta time from last frame
-	 */
-	public void draw(float delta) {
-		canvas.clear();
-
-		canvas.begin();
-
-		// Draw background
-		LevelController.getInstance().drawBackground(worldModel);
-
-		StringBuilder message1 = new StringBuilder("Player 1 score: ");
-		StringBuilder message2 = new StringBuilder("Player 2 score: ");
-
-		// Draw objects
-		for (Obstacle obj : worldModel.getObjects()) {
-			if (obj.draw) {
-				if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
-					message1.append(((HomeModel) obj).getScore());
-				} else if (obj instanceof HomeModel && obj.getName().equals("teamB")) {
-					message2.append(((HomeModel) obj).getScore());
-				}
-				obj.draw(canvas);
-			}
-		}
-
-		LevelController.getInstance().drawDecorations(worldModel);
-
-		canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
-		canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
-
-		if (worldModel.isComplete()) {
-			displayFont.setColor(Color.YELLOW);
-			canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
-		}
-
-		canvas.end();
-
-		// Draw with rayhandler
-		RayHandler rayhandler = worldModel.getRayhandler();
-		if (rayhandler != null) {
-			rayhandler.render();
-		}
-
-		if (debug) {
-			canvas.beginDebug();
-			for (Obstacle obj : worldModel.getObjects()) {
-				obj.drawDebug(canvas);
-			}
-			debugGrid();
-			canvas.endDebug();
-		}
-	}
-
-	private void debugGrid() {
-		for (int i = 0; i < worldModel.getWidth(); i++) {
-			for (int j = 0; j < worldModel.getHeight(); j ++) {
-				canvas.drawPoint(i* worldModel.scale.x, j * worldModel.scale.y, Color.GREEN);
-			}
-		}
-	}
-
-	/**
-	 * Dispose of all (non-static) resources allocated to this mode.
-	 */
-	public void dispose() {
-		worldModel.dispose();
-
-		addQueue.clear();
-		addQueue = null;
-		canvas = null;
-	}
-
-	// TODO: QUEUED OBJECT (Should probably move this to WorldModel)
-	/**
-	 *
-	 * Adds a physics object in to the insertion queue.
-	 *
-	 * Objects on the queue are added just before collision processing.  We do this to
-	 * control object creation.
-	 *
-	 * param obj The object to add
-	 */
-	// public void addQueuedObject(Obstacle obj) {
-	// 	assert inBounds(obj) : "Object is not in bounds";
-	// 	addQueue.add(obj);
-	// }
-
-	/**
-	 * Immediately adds the object to the physics world
-	 *
-	 * param obj The object to add
-	 */
-	// protected void addObject(Obstacle obj) {
-	// 	assert inBounds(obj) : "Object is not in bounds";
-	// 	objects.add(obj);
-	// 	obj.activatePhysics(world);
-	// }
-
-	public void reset() {
-		// TODO: Reset should basically throw away WorldModel and make a new one
-		if (worldModel != null) {
-			worldModel.dispose();
-		}
+    public void reset() {
+        // TODO: Reset should basically throw away WorldModel and make a new one
+        if (worldModel != null) {
+            worldModel.dispose();
+        }
         worldModel = new WorldModel();
         worldModel.setPixelBounds(canvas);
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
-        // TODO: WHAT
-		// Vector2 gravity = new Vector2( world.getGravity() );
+        worldModel.initLighting(canvas);
+        worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
+        worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
+        populateLevel();
 
-		// for(Obstacle obj : objects) {
-		// 	obj.deactivatePhysics(world);
-		// }
-		// objects.clear();
-		// addQueue.clear();
-		// world.dispose();
+        // Attaching lights to players is janky and serves mostly as demo code
+        // TODO make data-driven
+        Array<LightSource> lights = worldModel.getLights();
+        PlayerModel p1 = worldModel.getPlayers().get(0);
+        PlayerModel p2 = worldModel.getPlayers().get(1);
 
-		// world = new World(gravity,false);
-		// world.setContactListener(this);
+        LightSource l1 = lights.get(0);
+        LightSource l2 = lights.get(1);
 
-		worldModel.initLighting(canvas);
-		worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
-		worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
-		populateLevel();
+        l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
+        l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
 
+        for (LightSource l : lights) {
+            l.setActive(true);
+        }
+    }
 
-		// Attaching lights to players is janky and serves mostly as demo code
-		// TODO make data-driven
-		Array<LightSource> lights = worldModel.getLights();
-		PlayerModel p1 = worldModel.getPlayers().get(0);
-		PlayerModel p2 = worldModel.getPlayers().get(1);
+    /**
+     * Returns whether to process the update loop
+     * <p>
+     * At the start of the update loop, we check if it is time
+     * to switch to a new game mode.  If not, the update proceeds
+     * normally.
+     *
+     * @param dt Number of seconds since last animation frame
+     * @return whether to process the update loop
+     */
+    public boolean preUpdate(float dt) {
+        MechanicManager input = MechanicManager.getInstance();
+        input.update(); // TODO: do we need bounds and scale?
 
-		LightSource l1 = lights.get(0);
-		LightSource l2 = lights.get(1);
+        // TODO: use listener properly? maybe?
+        if (listener == null) {
+            return true;
+        }
 
-		l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
-		l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
+        // Toggle debug
+        if (input.didDebug()) {
+            debug = !debug;
+        }
 
-		for (LightSource l : lights) {
-			l.setActive(true);
-		}
-	}
+        // Handle resets
+        if (input.didReset()) {
+            reset();
+        }
 
-	/**
-	 * Returns whether to process the update loop
-	 *
-	 * At the start of the update loop, we check if it is time
-	 * to switch to a new game mode.  If not, the update proceeds
-	 * normally.
-	 *
-	 * @param dt Number of seconds since last animation frame
-	 *
-	 * @return whether to process the update loop
-	 */
-	public boolean preUpdate(float dt) {
-		MechanicManager input = MechanicManager.getInstance(object_list);
-		input.update(); // TODO: do we need bounds and scale?
-
-		// TODO: use listener properly? maybe?
-		if (listener == null) {
-			return true;
-		}
-
-		// Toggle debug
-		if (input.didDebug()) {
-			debug = !debug;
-		}
-
-		// Handle resets
-		if (input.didReset()) {
-			reset();
-		}
-
-		if (input.didExit()) {
-			listener.exitScreen(this, EXIT_QUIT);
+        if (input.didExit()) {
+            listener.exitScreen(this, EXIT_QUIT);
 			return false;
 		} else if (worldModel.isDone()) {
-			// TODO: Bruh i can actually just reset it here
 			listener.exitScreen(this, EXIT_NEXT);
 			return false;
 		}
 		return true;
-	}
+    }
 
-	public void update(float dt) {
-		// TODO: Refactor all player movement
+    public void update(float dt) {
+        // TODO: Refactor all player movement
 
-		MechanicManager manager = MechanicManager.getInstance(object_list);
-
-		// TODO peer review below
-		// TODO: Wait for item refactor
+        MechanicManager manager = MechanicManager.getInstance();
 
         // TODO: IMPORTANT: All UPDATE METHODS FOR OBJECTS SHOULD NOT BE CALLED HERE
-		// TODO: BUT IN POST UPDATE
-		// I love abusing todos so stuff i write is highlighted
+        // TODO: BUT IN POST UPDATE
+        // I love abusing todos so stuff i write is highlighted
 
-		RayHandler rayhandler = worldModel.getRayhandler();
-		if (rayhandler != null) {
-			rayhandler.update();
-		}
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
-		PlayerModel p;
-		float playerHorizontal;
-		float playerVertical;
-		boolean playerDidBoost;
-		boolean playerDidThrow;
+        PlayerModel p;
+        float playerHorizontal;
+        float playerVertical;
+        boolean playerDidBoost;
+        boolean playerDidThrow;
 
-		for (int i = 0; i < NUM_PLAYERS; i++) {
+        // TODO for refactoring update
+        int NUM_PLAYERS = 2;
+        for (int i = 0; i < NUM_PLAYERS; i++) {
 
-			playerHorizontal = manager.getVelX(i);
-			playerVertical = manager.getVelY(i);
-			playerDidBoost = manager.isDashing(i);
-			playerDidThrow = manager.isThrowing(i);
+            playerHorizontal = manager.getVelX(i);
+            playerVertical = manager.getVelY(i);
+            playerDidBoost = manager.isDashing(i);
+            playerDidThrow = manager.isThrowing(i);
 
-			p = worldModel.getPlayers().get(i);
+            p = worldModel.getPlayers().get(i);
 
-			// update player state
-			if (playerVertical != 0 || playerHorizontal != 0) {
-				p.setWalk();
+            // update player state
+            if (playerVertical != 0 || playerHorizontal != 0) {
+                p.setWalk();
 
-				if (p.getPlayerWalkCounter() % 20 == 0) {
-					p.playerTexture.setFrame(1);
-					if (p.getPrevHoriDir() == 1) {
-						p.playerTexture.flip(true, false);
-					}
-				} else if (p.getPlayerWalkCounter() % 20 == 10) {
-					p.playerTexture.setFrame(0);
-					if (p.getPrevHoriDir() == 1) {
-						p.playerTexture.flip(true, false);
-					}
-				}
-				p.incrPlayerWalkCounter();
-			} else {
-				p.setStatic();
-				p.resetPlayerWalkCounter();
-				p.playerTexture.setFrame(0);
-				if (p.getPrevHoriDir() == 1) {
-					p.playerTexture.flip(true, false);
-				}
-			}
-			if (playerHorizontal != 0 || playerVertical != 0) {
-				p.setWalk();
-			} else {
+                if (p.getPlayerWalkCounter() % 20 == 0) {
+                    p.getTexture().setFrame(1);
+                    if (p.getPrevHoriDir() == 1) {
+                        p.getTexture().flip(true, false);
+                    }
+                } else if (p.getPlayerWalkCounter() % 20 == 10) {
+                    p.getTexture().setFrame(0);
+                    if (p.getPrevHoriDir() == 1) {
+                        p.getTexture().flip(true, false);
+                    }
+                }
+                p.incrPlayerWalkCounter();
+            } else {
+                p.setStatic();
+                p.resetPlayerWalkCounter();
+                p.getTexture().setFrame(0);
+                if (p.getPrevHoriDir() == 1) {
+                    p.getTexture().flip(true, false);
+                }
+            }
+            if (playerHorizontal != 0 || playerVertical != 0) {
+                p.setWalk();
+            } else {
 				p.setStatic();
 			}
 
 			// handle player facing left-right
-			if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-				p.playerTexture.flip(true, false);
-			}
+            if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+                p.getTexture().flip(true, false);
+            }
 
-			// Set player movement impulse
-			p.setIX(playerHorizontal);
-			p.setIY(playerVertical);
-			// If player dashed whiled moving, set boost impulse
-			if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
-				p.setBoostImpulse(playerHorizontal, playerVertical);
-			}
-			p.applyImpulse();
+            // Set player movement impulse
+            p.setIX(playerHorizontal);
+            p.setIY(playerVertical);
+            // If player dashed whiled moving, set boost impulse
+            if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
+                p.setBoostImpulse(playerHorizontal, playerVertical);
+            }
+            p.applyImpulse();
 
-			/* Play state */
-			if (!p.isAlive()) {
-				p.respawn();
-			}
-			p.setActive(p.isAlive());
+            /* Play state */
+            if (!p.isAlive()) {
+                p.respawn();
+            }
+            p.setActive(p.isAlive());
 
-			/* Items */
+            /* Items */
 
-			/* IF PLAYER GRABS ITEM */
-            for (int j = 0; j < worldModel.itemSize(); j ++) {
-				ItemModel item = worldModel.getItem(j);
-				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
-					item.setHeld(p);
-					p.startgrabCooldown();
-				}
-				j ++;
-			}
+            /* IF PLAYER GRABS ITEM */
+            for (int j = 0; j < worldModel.itemSize(); j++) {
+                ItemModel item = worldModel.getItem(j);
+                if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+                    item.setHeld(p);
+                    p.startgrabCooldown();
+                }
+                j++;
+            }
 
-			/* IF FISH IN PLAYER HANDS */
-			if (p.hasItem()) {
-				float offset = 1;
-				for (ItemModel heldItem: p.getItems()) {
-					heldItem.setPosition(p.getX(), p.getY() + offset);
-					offset += 0.6;
-				}
-			}
+            /* IF FISH IN PLAYER HANDS */
+            if (p.hasItem()) {
+                float offset = 1;
+                for (ItemModel heldItem : p.getItems()) {
+                    heldItem.setPosition(p.getX(), p.getY() + offset);
+                    offset += 0.6;
+                }
+            }
 
-			/* IF PLAYER THROWS ITEM */
-			if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
-				for (ItemModel heldItem : p.getItems()) {
-					heldItem.throwItem(p.getImpulse());
-				}
-				p.clearInventory();
-				p.startgrabCooldown();
-			}
+            /* IF PLAYER THROWS ITEM */
+            if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
+                for (ItemModel heldItem : p.getItems()) {
+                    heldItem.throwItem(p.getImpulse());
+                }
+                p.clearInventory();
+                p.startgrabCooldown();
+            }
 
-			// player updates (for respawn and dash cool down)
-			p.update();
+            // player updates (for respawn and dash cool down)
+            p.update();
 
-			// update horizontal direction
-			if (playerHorizontal != 0) {
-				p.setPrevHoriDir(playerHorizontal);
-			}
-		}
-	}
+            // update horizontal direction
+            if (playerHorizontal != 0) {
+                p.setPrevHoriDir(playerHorizontal);
+            }
+        }
+    }
 
-	/**
-	 * Processes physics
-	 *
-	 * Once the update phase is over, but before we draw, we are ready to handle
-	 * physics.  The primary method is the step() method in world.  This implementation
-	 * works for all applications and should not need to be overwritten.
-	 *
-	 * @param dt Number of seconds since last animation frame
-	 */
-	public void postUpdate(float dt) {
-		// TODO: ADDQUEUE
-		// TODO: Although if we do implement this probably don't do it here and do it in worldmodel
-		// Add any objects created by actions
-		// while (!addQueue.isEmpty()) {
-		// 	addObject(addQueue.poll());
-		// }
+    /**
+     * Processes physics
+     * <p>
+     * Once the update phase is over, but before we draw, we are ready to handle
+     * physics.  The primary method is the step() method in world.  This implementation
+     * works for all applications and should not need to be overwritten.
+     *
+     * @param dt Number of seconds since last animation frame
+     */
+    public void postUpdate(float dt) {
+        // TODO: ADDQUEUE
+        // TODO: Although if we do implement this probably don't do it here and do it in worldmodel
+        // Add any objects created by actions
+        // while (!addQueue.isEmpty()) {
+        // 	addObject(addQueue.poll());
+        // }
 
-		// Turn the physics engine crank.
-		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
+        // Turn the physics engine crank.
+        worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
-		// Garbage collect the deleted objects.
-		// Note how we use the linked list nodes to delete O(1) in place.
-		// This is O(n) without copying.
+        // Garbage collect the deleted objects.
+        // Note how we use the linked list nodes to delete O(1) in place.
+        // This is O(n) without copying.
         // Also update all objects lol
         worldModel.updateAndCullObjects(dt);
-	}
+    }
 
 
-	/**
-	 * Called when the Screen is resized.
-	 *
-	 * This can happen at any point during a non-paused state but will never happen
-	 * before a call to show().
-	 *
-	 * @param width  The new width in pixels
-	 * @param height The new height in pixels
-	 */
-	public void resize(int width, int height) {
-		// IGNORE FOR NOW
-	}
+    /**
+     * Called when the Screen is resized.
+     * <p>
+     * This can happen at any point during a non-paused state but will never happen
+     * before a call to show().
+     *
+     * @param width  The new width in pixels
+     * @param height The new height in pixels
+     */
+    public void resize(int width, int height) {
+        // IGNORE FOR NOW
+    }
 
-	/**
-	 * Called when the Screen should render itself.
-	 *
-	 * We defer to the other methods update() and draw().  However, it is VERY important
-	 * that we only quit AFTER a draw.
-	 *
-	 * @param delta Number of seconds since last animation frame
-	 */
-	public void render(float delta) {
-		if (active) {
-			if (preUpdate(delta)) {
-				update(delta); // This is the one that must be defined.
-				postUpdate(delta);
-			}
-			draw(delta);
-		}
-	}
+    /**
+     * Called when the Screen should render itself.
+     * <p>
+     * We defer to the other methods update() and draw().  However, it is VERY important
+     * that we only quit AFTER a draw.
+     *
+     * @param delta Number of seconds since last animation frame
+     */
+    public void render(float delta) {
+        if (active) {
+            if (preUpdate(delta)) {
+                update(delta);
+                postUpdate(delta);
+            }
+            draw(delta);
+        }
+    }
 
-	/**
-	 * Called when the Screen is paused.
-	 *
-	 * This is usually when it's not active or visible on screen. An Application is
-	 * also paused before it is destroyed.
-	 */
-	public void pause() {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * Called when the Screen is paused.
+     * <p>
+     * This is usually when it's not active or visible on screen. An Application is
+     * also paused before it is destroyed.
+     */
+    public void pause() {
+        // TODO Auto-generated method stub
+    }
 
-	/**
-	 * Called when the Screen is resumed from a paused state.
-	 *
-	 * This is usually when it regains focus.
-	 */
-	public void resume() {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * Called when the Screen is resumed from a paused state.
+     * <p>
+     * This is usually when it regains focus.
+     */
+    public void resume() {
+        // TODO Auto-generated method stub
+    }
 
-	/**
-	 * Called when this screen becomes the current screen for a Game.
-	 */
-	public void show() {
-		// Useless if called in outside animation loop
+    /**
+     * Called when this screen becomes the current screen for a Game.
+     */
+    public void show() {
+        // Useless if called in outside animation loop
 		active = true;
 	}
 
@@ -624,17 +512,4 @@ public class WorldController implements Screen {
 	public void setScreenListener(ScreenListener listener) {
 		this.listener = listener;
 	}
-
-	/**
-	 * Tracks the asset state.  Otherwise subclasses will try to load assets
-	 */
-	protected enum AssetState {
-		/** No assets loaded */
-		EMPTY,
-		/** Still loading assets */
-		LOADING,
-		/** Assets are complete */
-		COMPLETE
-	}
-
 }
