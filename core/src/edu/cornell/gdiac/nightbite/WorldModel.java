@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
+import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
@@ -20,6 +22,7 @@ import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
@@ -40,13 +43,6 @@ public class WorldModel {
      * The winner of the level.
      */
     public String winner;
-
-    public ArrayList<ItemModel> getItems() {
-        return items;
-    }
-
-    // TODO: Maybe use a better data structure
-    private ArrayList<ItemModel> items;
 
     /**
      * How many frames after winning/losing do we continue?
@@ -86,21 +82,25 @@ public class WorldModel {
      */
     private Array<LightSource> lights = new Array<LightSource>();
 
+
+    // /**
+    //  * Objects that move during updates
+    //  */
+    // private PooledList<Obstacle> dynamicObjects;
+
+    private Rectangle bounds;
+
+    // TODO: Maybe use a better data structure
+    // TODO: The only reason why these are arraylists is because
+    // TODO: they don't need to be culled/garbage collected
+    private ArrayList<PlayerModel> player_list;
+
+    private ArrayList<ItemModel> items;
+
     /**
      * Objects that don't move during updates
      */
     private PooledList<Obstacle> staticObjects;
-
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
-    private Rectangle bounds;
-    /**
-     * Objects that move during updates
-     */
-    private PooledList<Obstacle> dynamicObjects;
-    private ArrayList<PlayerModel> player_list;
 
     public WorldModel() {
         // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
@@ -111,12 +111,11 @@ public class WorldModel {
         bounds = new Rectangle(0, 0, 20f, 10f);
         scale = new Vector2(1f, 1f);
         actualScale = new Vector2(1f, 1f);
-        dynamicObjects = new PooledList<>();
-        staticObjects = new PooledList<>();
         complete = false;
         countdown = -1;
         player_list = new ArrayList<>();
         items = new ArrayList<>();
+        staticObjects = new PooledList<>();
     }
 
     // TODO: DO we need addQueue?
@@ -154,9 +153,23 @@ public class WorldModel {
         return complete;
     }
 
-    // TODO: PLEASE fix this
+    public Iterable<ItemModel> getItmesIter() {
+        class ItemIterable implements Iterable<ItemModel> {
+            @Override
+            public Iterator<ItemModel> iterator() {
+                return items.iterator();
+            }
+        }
+        return new ItemIterable();
+    }
+
+
     public ItemModel getItem(int index) {
         return items.get(index);
+    }
+
+    public int itemSize() {
+        return items.size();
     }
 
     /**
@@ -174,23 +187,33 @@ public class WorldModel {
     // TODO: Do this for player, item, and all other objects in the thing
     // TODO: Basically collapse all of those data structures into one giant iterable
     public Iterable<Obstacle> getObjects() {
+
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
-            // private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
-            private Iterator<Obstacle> list0 = staticObjects.iterator();
-            private Iterator<Obstacle> list1 = dynamicObjects.iterator();
+            // Raw iterator. I love unsafe code.
+            // Make sure each of the iterators inside iters extend Obstacle.
+            // Please.
+            Iterator[] iters = {
+                    player_list.iterator(),
+                    items.iterator(),
+                    staticObjects.iterator()
+            };
+
+            // TODO: Do i want to make this more efficient?
             @Override
             public boolean hasNext() {
-                return list0.hasNext() || list1.hasNext();
+                for (int j = 0; j < iters.length; j ++) {
+                    if (iters[j].hasNext()) { return true; }
+                }
+                return false;
             }
 
             @Override
             public Obstacle next() {
-                if (list0.hasNext()) {
-                    return list0.next();
-                }
-                if (list1.hasNext()) {
-                    return list1.next();
+                for (int j = 0; j < iters.length; j ++) {
+                    if (iters[j].hasNext()) {
+                        return (Obstacle)iters[j].next();
+                    }
                 }
                 throw new NoSuchElementException();
             }
@@ -211,39 +234,39 @@ public class WorldModel {
         return new objectIterator();
     }
 
-    public Iterator<PooledList<Obstacle>.Entry> objectEntryIter() {
-        // Overkill, but I'm bored. Also this will probably help like a lot.
-        class objectIterable implements Iterator<PooledList<Obstacle>.Entry> {
-            Iterator<PooledList<Obstacle>.Entry> statIter = staticObjects.entryIterator();
-            Iterator<PooledList<Obstacle>.Entry> dynIter = dynamicObjects.entryIterator();
-            boolean finishedStat = false;
-            @Override
-            public boolean hasNext() {
-                return !statIter.hasNext() && ! dynIter.hasNext();
-            }
+    // TODO: Garbage collection for objects
+    // public Iterator<PooledList<Obstacle>.Entry> objectEntryIter() {
+    //     // Overkill, but I'm bored. Also this will probably help like a lot.
+    //     class objectIterable implements Iterator<PooledList<Obstacle>.Entry> {
+    //         Iterator<PooledList<Obstacle>.Entry> statIter = staticObjects.entryIterator();
+    //         boolean finishedStat = false;
+    //         @Override
+    //         public boolean hasNext() {
+    //             return !statIter.hasNext() && ! dynIter.hasNext();
+    //         }
 
-            @Override
-            public PooledList<Obstacle>.Entry next() {
-                if (statIter.hasNext()) {
-                    return statIter.next();
-                }
+    //         @Override
+    //         public PooledList<Obstacle>.Entry next() {
+    //             if (statIter.hasNext()) {
+    //                 return statIter.next();
+    //             }
 
-                if (dynIter.hasNext()) {
-                    return dynIter.next();
-                }
+    //             if (dynIter.hasNext()) {
+    //                 return dynIter.next();
+    //             }
 
-                throw new NoSuchElementException();
-            }
+    //             throw new NoSuchElementException();
+    //         }
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        }
+    //         @Override
+    //         public void remove() {
+    //             throw new UnsupportedOperationException();
+    //         }
+    //     }
 
-        return new objectIterable();
+    //     return new objectIterable();
 
-    }
+    // }
 
     public void setScale(Vector2 scale) {
         setScale(scale.x, scale.y);
@@ -254,6 +277,10 @@ public class WorldModel {
         // System.out.println(scale);
     }
 
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
     public float getHeight() {
         return bounds.height;
     }
@@ -262,11 +289,11 @@ public class WorldModel {
         return bounds.width;
     }
 
+
     public boolean isDone() {
         countdown--;
         return countdown <= 0 && complete;
     }
-
 
     /**
      * Returns the world's rayhandler.
@@ -294,7 +321,6 @@ public class WorldModel {
     public Vector2 getActualScale() {
         return actualScale;
     }
-
 
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
@@ -342,31 +368,42 @@ public class WorldModel {
         return pos;
     }
 
-    public void addStaticObject(Obstacle obj) {
-        assert inBounds(obj) : "Object is not in bounds";
-        transformTileToWorld(obj);
-        staticObjects.add(obj);
-        obj.activatePhysics(world);
-    }
+    // public void addStaticObject(Obstacle obj) {
+    //     assert inBounds(obj) : "Object is not in bounds";
+    //     transformTileToWorld(obj);
+    //     staticObjects.add(obj);
+    //     obj.activatePhysics(world);
+    // }
 
-    public void addDynamicObject(Obstacle obj) {
-        assert inBounds(obj) : "Object is not in bounds";
+    // public void addDynamicObject(Obstacle obj) {
+    //     assert inBounds(obj) : "Object is not in bounds";
+    //     transformTileToWorld(obj);
+    //     dynamicObjects.add(obj);
+    //     obj.activatePhysics(world);
+    // }
+
+    private void initializeObject(Obstacle obj) {
+        assert inBounds(obj);
         transformTileToWorld(obj);
-        dynamicObjects.add(obj);
         obj.activatePhysics(world);
     }
 
     public void addPlayer(PlayerModel player) {
+        initializeObject(player);
         player_list.add(player);
-        addDynamicObject(player);
+    }
+
+    public void addStaticObject(ImmovableModel obj) {
+        initializeObject(obj);
+        staticObjects.add(obj);
+    }
+
+    public void addItem(ItemModel item) {
+        initializeObject(item);
+        items.add(item);
     }
 
     // ******************** LIGHTING METHODS ********************
-
-    public void addItem(ItemModel item) {
-        items.add(item);
-        addDynamicObject(item);
-    }
 
     /**
      * TODO allow passing in of different lighting parameters
@@ -418,11 +455,28 @@ public class WorldModel {
         lights.add(point);
     }
 
+    public void updateAndCullObjects(float dt) {
+        // TODO: Do we need to cull staticObjects?
+        // TODO: This is also unsafe
+        Iterator[] iters = {staticObjects.entryIterator()};
+
+        for (Iterator iterator : iters) {
+            while (iterator.hasNext()) {
+                PooledList.Entry entry = (PooledList.Entry) iterator.next();
+                Obstacle obj = (Obstacle) entry.getValue();
+                if (obj.isRemoved()) {
+                    obj.deactivatePhysics(world);
+                    entry.remove();
+                } else {
+                    // Note that update is called last!
+                    obj.update(dt);
+                }
+            }
+        }
+    }
+
     public void reset() {
-        // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
-        // TODO: isn't really necessary
-        staticObjects.clear();
-        dynamicObjects.clear();
+        // TODO: Why do we need reset if we are just remaking WorldModel
     }
 
     public void dispose() {
@@ -440,12 +494,11 @@ public class WorldModel {
             rayhandler = null;
         }
 
+        // TODO: Clear other stuff
         staticObjects.clear();
-        dynamicObjects.clear();
         // Honestly this is kind of dumb.
         // We can literally just dereference the WorldModel and all this should go away.
         staticObjects = null;
-        dynamicObjects = null;
         world = null;
         scale = null;
     }
@@ -481,21 +534,5 @@ public class WorldModel {
 
         scale.set(finalPosScale, finalPosScale);
         actualScale.set(finalAssetScale, finalAssetScale);
-
-//        System.out.println(scale);
-//        System.out.println(actualScale);
-
-        // pixTransform = new Affine2();
-        // pixTransform.scale(finalPosScale, finalPosScale);
-
-        // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
-        // pixTransform.applyTo(pixelBoundsSize);
-
-        // System.out.println(pixelBoundsSize);
-        // System.out.println(canvas.getWidth());
-        // System.out.println((canvas.getWidth() - pixelBoundsSize.x) / 2);
-
-        // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
-
     }
 }

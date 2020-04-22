@@ -316,6 +316,9 @@ public class WorldController implements Screen {
 
 	public void reset() {
 		// TODO: Reset should basically throw away WorldModel and make a new one
+		if (worldModel != null) {
+			worldModel.dispose();
+		}
         worldModel = new WorldModel();
         worldModel.setPixelBounds(canvas);
         CollisionController c = new CollisionController(worldModel);
@@ -405,9 +408,9 @@ public class WorldController implements Screen {
 		// TODO peer review below
 		// TODO: Wait for item refactor
 
-		for (ItemModel item : worldModel.getItems()) {
-			item.update();
-		}
+        // TODO: IMPORTANT: All UPDATE METHODS FOR OBJECTS SHOULD NOT BE CALLED HERE
+		// TODO: BUT IN POST UPDATE
+		// I love abusing todos so stuff i write is highlighted
 
 		RayHandler rayhandler = worldModel.getRayhandler();
 		if (rayhandler != null) {
@@ -482,12 +485,13 @@ public class WorldController implements Screen {
 			/* Items */
 
 			/* IF PLAYER GRABS ITEM */
-			for (int j = 0; j < worldModel.getItems().size(); j++) {
+            for (int j = 0; j < worldModel.itemSize(); j ++) {
 				ItemModel item = worldModel.getItem(j);
 				if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
 					item.setHeld(p);
 					p.startgrabCooldown();
 				}
+				j ++;
 			}
 
 			/* IF FISH IN PLAYER HANDS */
@@ -538,22 +542,11 @@ public class WorldController implements Screen {
 		// Turn the physics engine crank.
 		worldModel.worldStep(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
 
-		// TODO: Maybe move this to WorldController
 		// Garbage collect the deleted objects.
 		// Note how we use the linked list nodes to delete O(1) in place.
 		// This is O(n) without copying.
-		Iterator<PooledList<Obstacle>.Entry> iterator = worldModel.objectEntryIter();
-		while (iterator.hasNext()) {
-			PooledList<Obstacle>.Entry entry = iterator.next();
-			Obstacle obj = entry.getValue();
-			if (obj.isRemoved()) {
-				obj.deactivatePhysics(worldModel.world);
-				entry.remove();
-			} else {
-				// Note that update is called last!
-				obj.update(dt);
-			}
-		}
+        // Also update all objects lol
+        worldModel.updateAndCullObjects(dt);
 	}
 
 
