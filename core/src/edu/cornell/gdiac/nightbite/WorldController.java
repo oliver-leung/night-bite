@@ -124,7 +124,7 @@ public class WorldController implements Screen {
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
         // worldModel.setScale(canvas.getWidth()/worldModel.getWidth(), canvas.getHeight()/worldModel.getHeight());
-        worldModel.setPixelBounds(canvas);
+        worldModel.setPixelBounds();
     }
 
     public void setLevel(String selectedLevelJSON) {
@@ -225,7 +225,7 @@ public class WorldController implements Screen {
             worldModel.dispose();
         }
         worldModel = new WorldModel();
-        worldModel.setPixelBounds(canvas);
+        worldModel.setPixelBounds();
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
         worldModel.initLighting(canvas);
@@ -373,7 +373,7 @@ public class WorldController implements Screen {
             /* Items */
 
             /* IF PLAYER GRABS ITEM */
-            for (int j = 0; j < worldModel.itemSize(); j++) {
+            for (int j = 0; j < worldModel.getNumItems(); j++) {
                 ItemModel item = worldModel.getItem(j);
                 if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
