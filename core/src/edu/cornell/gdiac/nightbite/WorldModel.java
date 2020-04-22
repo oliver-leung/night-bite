@@ -333,20 +333,6 @@ public class WorldModel {
         return pos;
     }
 
-    // public void addStaticObject(Obstacle obj) {
-    //     assert inBounds(obj) : "Object is not in bounds";
-    //     transformTileToWorld(obj);
-    //     staticObjects.add(obj);
-    //     obj.activatePhysics(world);
-    // }
-
-    // public void addDynamicObject(Obstacle obj) {
-    //     assert inBounds(obj) : "Object is not in bounds";
-    //     transformTileToWorld(obj);
-    //     dynamicObjects.add(obj);
-    //     obj.activatePhysics(world);
-    // }
-
     private void initializeObject(Obstacle obj) {
         assert inBounds(obj);
         transformTileToWorld(obj);
