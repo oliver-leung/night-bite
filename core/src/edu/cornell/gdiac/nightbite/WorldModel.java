@@ -177,9 +177,9 @@ public class WorldModel {
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
             Iterator[] iters = {
-                    player_list.iterator(),
                     items.iterator(),
-                    staticObjects.iterator()
+                    staticObjects.iterator(),
+                    player_list.iterator(),
             };
 
             // TODO: Do i want to make this more efficient?
