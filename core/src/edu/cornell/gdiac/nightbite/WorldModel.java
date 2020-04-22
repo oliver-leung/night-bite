@@ -155,9 +155,9 @@ public class WorldModel {
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
             Iterator<?>[] iters = {
-                    players.iterator(),
                     items.iterator(),
-                    staticObjects.iterator()
+                    staticObjects.iterator(),
+                    players.iterator(),
             };
 
             // TODO: Do i want to make this more efficient?
@@ -366,9 +366,10 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] iters = {staticObjects.entryIterator()};
+        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator()};
+        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
 
-        for (Iterator<?> iterator : iters) {
+        for (Iterator<?> iterator : cullAndUpdate) {
             while (iterator.hasNext()) {
                 PooledList<?>.Entry entry = (PooledList<?>.Entry) iterator.next();
                 Obstacle obj = (Obstacle) entry.getValue();
@@ -379,6 +380,12 @@ public class WorldModel {
                     // Note that update is called last!
                     obj.update(dt);
                 }
+            }
+        }
+
+        for (Iterator iterator : updateOnly) {
+            while (iterator.hasNext()) {
+                ((Obstacle) iterator.next()).update(dt);
             }
         }
     }
