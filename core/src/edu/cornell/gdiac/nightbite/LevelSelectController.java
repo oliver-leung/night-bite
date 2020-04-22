@@ -121,7 +121,7 @@ public class LevelSelectController implements Screen, InputProcessor {
 
     private void update(float delta) {
         // TODO only controlled by player one
-        MechanicManager manager = MechanicManager.getInstance(object_list);
+        MechanicManager manager = MechanicManager.getInstance();
         manager.update();
         int playerHorizontal = (int) manager.getVelX(0);
         boolean playerDidThrow = manager.isThrowing(0);
@@ -190,7 +190,7 @@ public class LevelSelectController implements Screen, InputProcessor {
 
             if (startGame && listener != null) {
                 listener.exitScreen(this, EXIT_START);
-            } else if (pressState == 2) {
+            } else if (pressState == 2 && listener != null) {
                 listener.exitScreen(this, EXIT_MENU);
             }
         }

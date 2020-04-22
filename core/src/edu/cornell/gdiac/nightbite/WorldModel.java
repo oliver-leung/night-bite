@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
@@ -23,103 +25,59 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class WorldModel {
-    public static final float DEFAULT_ASSET_WIDTH = 64f;
-    public static final float DEFAULT_ASSET_HEIGHT = 64f;
-
-    // TODO: Should this be here? Maybe this should be defined in Canvas instead
-    /**
-     * Width of the game world in pixel units.
-     */
-    public static final float DEFAULT_PIXEL_WIDTH = 1280f;
-    /**
-     * Height of the game world in units.
-     */
-    public static final float DEFAULT_PIXEL_HEIGHT = 640f;
-
-    /**
-     * The winner of the level.
-     */
-    public String winner;
-
-    public ArrayList<ItemModel> getItems() {
-        return items;
-    }
-
-    // TODO: Maybe use a better data structure
-    private ArrayList<ItemModel> items;
-
-    /**
-     * How many frames after winning/losing do we continue?
-     */
+    /** World width in Box2D units */
+    public static final float WORLD_WIDTH = 20f;
+    /** World height in Box2D units */
+    public static final float WORLD_HEIGHT = 12f;
+    /** Canonical view width in pixels */
+    public static final float CANONICAL_WIDTH = 1280f;
+    /** Canonical view height in pixels */
+    public static final float CANONICAL_HEIGHT = 768f;
+    /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
+    /** Padding for actual view in pixels */
+    private static final float PADDING = 0f;
 
-    /**
-     * World
-     */
+    /** The winner of the level. */
+    public String winner;
+    /** The Box2D world for physics objects */
     protected World world;
+    /** The camera defining the RayHandler view; scale is in physics coordinates */
+    protected OrthographicCamera raycamera;
+    /** The rayhandler for storing lights, and drawing them */
+    protected RayHandler rayhandler;
 
     /** World scale */
     protected Vector2 scale;
-    // TODO: should this be a float or v2?
+    /** Scale of actual displayed window */
     protected Vector2 actualScale;
-
-    /**
-     * Whether we have completed this level
-     */
-    private boolean complete;
-    /**
-     * Countdown active for winning or losing
-     */
-    private int countdown;
-    /**
-     * The camera defining the RayHandler view; scale is in physics coordinates
-     */
-    protected OrthographicCamera raycamera;
-
-    /**
-     * The rayhandler for storing lights, and drawing them
-     */
-    protected RayHandler rayhandler;
-
-    /**
-     * All of the lights that we loaded from the JSON file
-     */
-    private Array<LightSource> lights = new Array<LightSource>();
-
-    /**
-     * Objects that don't move during updates
-     */
-    private PooledList<Obstacle> staticObjects;
-
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
+    /** World bounds */
     private Rectangle bounds;
-    /**
-     * Objects that move during updates
-     */
-    private PooledList<Obstacle> dynamicObjects;
-    private ArrayList<PlayerModel> player_list;
+    /** Whether we have completed this level */
+    private boolean complete;
+    /** Countdown active for winning or losing */
+    private int countdown;
+
+    /** List of players */
+    private ArrayList<PlayerModel> players;
+    /** List of items */
+    private ArrayList<ItemModel> items;
+    /** Objects that don't move during updates */
+    private PooledList<Obstacle> staticObjects;
+    /** All of the lights that we loaded from the JSON file */
+    private Array<LightSource> lights = new Array<>();
 
     public WorldModel() {
-        // TODO: We need a contact listener for WorldModel, which means we need to have a CollisionManager
-        // Actually technically not true since we can set this stuff in WorldController, but still
         world = new World(Vector2.Zero, false);
-        // TODO: CollisionController
-        // TODO: Make this data driven
-        bounds = new Rectangle(0, 0, 20f, 10f);
+        bounds = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         scale = new Vector2(1f, 1f);
         actualScale = new Vector2(1f, 1f);
-        dynamicObjects = new PooledList<>();
-        staticObjects = new PooledList<>();
         complete = false;
         countdown = -1;
-        player_list = new ArrayList<>();
+        players = new ArrayList<>();
         items = new ArrayList<>();
+        staticObjects = new PooledList<>();
     }
-
-    // TODO: DO we need addQueue?
 
     /**
      * Returns a string equivalent to the COMPLEMENT of bits in s
@@ -154,9 +112,22 @@ public class WorldModel {
         return complete;
     }
 
-    // TODO: PLEASE fix this
+    public Iterable<ItemModel> getItemIter() {
+        class ItemIterable implements Iterable<ItemModel> {
+            @Override
+            public Iterator<ItemModel> iterator() {
+                return items.iterator();
+            }
+        }
+        return new ItemIterable();
+    }
+
     public ItemModel getItem(int index) {
         return items.get(index);
+    }
+
+    public int getNumItems() {
+        return items.size();
     }
 
     /**
@@ -171,26 +142,41 @@ public class WorldModel {
         world.setContactListener(c);
     }
 
-    // TODO: Do this for player, item, and all other objects in the thing
-    // TODO: Basically collapse all of those data structures into one giant iterable
+    /**
+     * Basically collapse all of those data structures into one giant iterable.
+     *
+     * @return Combined iterable of all obstacles in the world
+     */
     public Iterable<Obstacle> getObjects() {
+
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
-            // private PooledList<Obstacle>[] lists = new PooledList[] {staticObjects, dynamicObjects};
-            private Iterator<Obstacle> list0 = staticObjects.iterator();
-            private Iterator<Obstacle> list1 = dynamicObjects.iterator();
+            // Raw iterator. I love unsafe code.
+            // Make sure each of the iterators inside iters extend Obstacle.
+            // Please.
+            Iterator<?>[] iters = {
+                    items.iterator(),
+                    staticObjects.iterator(),
+                    players.iterator(),
+            };
+
+            // TODO: Do i want to make this more efficient?
             @Override
             public boolean hasNext() {
-                return list0.hasNext() || list1.hasNext();
+                for (Iterator<?> iter : iters) {
+                    if (iter.hasNext()) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Override
             public Obstacle next() {
-                if (list0.hasNext()) {
-                    return list0.next();
-                }
-                if (list1.hasNext()) {
-                    return list1.next();
+                for (Iterator<?> iter : iters) {
+                    if (iter.hasNext()) {
+                        return (Obstacle) iter.next();
+                    }
                 }
                 throw new NoSuchElementException();
             }
@@ -211,47 +197,12 @@ public class WorldModel {
         return new objectIterator();
     }
 
-    public Iterator<PooledList<Obstacle>.Entry> objectEntryIter() {
-        // Overkill, but I'm bored. Also this will probably help like a lot.
-        class objectIterable implements Iterator<PooledList<Obstacle>.Entry> {
-            Iterator<PooledList<Obstacle>.Entry> statIter = staticObjects.entryIterator();
-            Iterator<PooledList<Obstacle>.Entry> dynIter = dynamicObjects.entryIterator();
-            boolean finishedStat = false;
-            @Override
-            public boolean hasNext() {
-                return !statIter.hasNext() && ! dynIter.hasNext();
-            }
-
-            @Override
-            public PooledList<Obstacle>.Entry next() {
-                if (statIter.hasNext()) {
-                    return statIter.next();
-                }
-
-                if (dynIter.hasNext()) {
-                    return dynIter.next();
-                }
-
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        return new objectIterable();
-
-    }
-
-    public void setScale(Vector2 scale) {
-        setScale(scale.x, scale.y);
-    }
-
     public void setScale(float sx, float sy) {
         scale.set(sx, sy);
-        // System.out.println(scale);
+    }
+
+    public Rectangle getBounds() {
+        return bounds;
     }
 
     public float getHeight() {
@@ -262,11 +213,11 @@ public class WorldModel {
         return bounds.width;
     }
 
+
     public boolean isDone() {
         countdown--;
         return countdown <= 0 && complete;
     }
-
 
     /**
      * Returns the world's rayhandler.
@@ -284,17 +235,20 @@ public class WorldModel {
 
     // TODO: player model refactor
     public ArrayList<PlayerModel> getPlayers() {
-        return player_list;
+        return players;
     }
 
     public Vector2 getScale() {
         return scale;
     }
 
+    public void setScale(Vector2 scale) {
+        setScale(scale.x, scale.y);
+    }
+
     public Vector2 getActualScale() {
         return actualScale;
     }
-
 
     public void worldStep(float step, int vel, int posit) {
         world.step(step, vel, posit);
@@ -314,8 +268,6 @@ public class WorldModel {
         return horiz && vert;
     }
 
-    // TODO: refactor this
-
     /**
      * Transform an object from tile coordinates to canonical world coordinates.
      * <p>
@@ -332,8 +284,8 @@ public class WorldModel {
     /**
      * Transform an vector from tile coordinates to canonical world coordinates.
      *
-     * @param pos
-     * @return
+     * @param pos Position of the tile
+     * @return New position of the tile using the transformation
      */
     public Vector2 transformTileToWorld(Vector2 pos) {
         Affine2 transformation = new Affine2();
@@ -342,30 +294,25 @@ public class WorldModel {
         return pos;
     }
 
-    public void addStaticObject(Obstacle obj) {
-        assert inBounds(obj) : "Object is not in bounds";
+    private void initializeObject(Obstacle obj) {
+        assert inBounds(obj);
         transformTileToWorld(obj);
-        staticObjects.add(obj);
-        obj.activatePhysics(world);
-    }
-
-    public void addDynamicObject(Obstacle obj) {
-        assert inBounds(obj) : "Object is not in bounds";
-        transformTileToWorld(obj);
-        dynamicObjects.add(obj);
         obj.activatePhysics(world);
     }
 
     public void addPlayer(PlayerModel player) {
-        player_list.add(player);
-        addDynamicObject(player);
+        initializeObject(player);
+        players.add(player);
     }
 
-    // ******************** LIGHTING METHODS ********************
+    public void addStaticObject(ImmovableModel obj) {
+        initializeObject(obj);
+        staticObjects.add(obj);
+    }
 
     public void addItem(ItemModel item) {
+        initializeObject(item);
         items.add(item);
-        addDynamicObject(item);
     }
 
     /**
@@ -386,7 +333,7 @@ public class WorldModel {
         rayhandler.diffuseBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 
         // All hard coded for now, to be changed with data-driven levels
-        float[] color = new float[]{ 0.0f, 0.0f, 0.0f, 1.0f };
+        float[] color = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
         rayhandler.setAmbientLight(color[0], color[1], color[2], color[3]);
         int blur = 2;
         rayhandler.setBlur(blur > 0);
@@ -397,17 +344,15 @@ public class WorldModel {
      * Creates one point light, which goes in all directions.
      *
      * @param color The rgba value of the light color.
-     * @param dist The radius of the light.
+     * @param dist  The radius of the light.
      */
     public void createPointLight(float[] color, float dist) {
         // ALL HARDCODED!
-        float[] c = color;
         float[] pos = new float[]{0.0f, 0.0f};
-        float d = dist;
         int rays = 512;
 
-        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, d, pos[0], pos[1]);
-        point.setColor(c[0], c[1], c[2], c[3]);
+        PointSource point = new PointSource(rayhandler, rays, Color.WHITE, dist, pos[0], pos[1]);
+        point.setColor(color[0], color[1], color[2], color[3]);
         point.setSoft(true);
 
         // Create a filter to exclude see through items
@@ -418,11 +363,31 @@ public class WorldModel {
         lights.add(point);
     }
 
-    public void reset() {
-        // TODO: Theoretically reset is just throwing away this WorldModel and remaking it right? This
-        // TODO: isn't really necessary
-        staticObjects.clear();
-        dynamicObjects.clear();
+    public void updateAndCullObjects(float dt) {
+        // TODO: Do we need to cull staticObjects?
+        // TODO: This is also unsafe
+        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator()};
+        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
+
+        for (Iterator<?> iterator : cullAndUpdate) {
+            while (iterator.hasNext()) {
+                PooledList<?>.Entry entry = (PooledList<?>.Entry) iterator.next();
+                Obstacle obj = (Obstacle) entry.getValue();
+                if (obj.isRemoved()) {
+                    obj.deactivatePhysics(world);
+                    entry.remove();
+                } else {
+                    // Note that update is called last!
+                    obj.update(dt);
+                }
+            }
+        }
+
+        for (Iterator iterator : updateOnly) {
+            while (iterator.hasNext()) {
+                ((Obstacle) iterator.next()).update(dt);
+            }
+        }
     }
 
     public void dispose() {
@@ -430,7 +395,7 @@ public class WorldModel {
             obj.deactivatePhysics(world);
         }
 
-        for(LightSource light : lights) {
+        for (LightSource light : lights) {
             light.remove();
         }
         lights.clear();
@@ -440,22 +405,16 @@ public class WorldModel {
             rayhandler = null;
         }
 
+        // TODO: Clear other stuff
         staticObjects.clear();
-        dynamicObjects.clear();
         // Honestly this is kind of dumb.
         // We can literally just dereference the WorldModel and all this should go away.
         staticObjects = null;
-        dynamicObjects = null;
         world = null;
         scale = null;
     }
 
-    // TODO: This is experimental scaling code
-
-    // This padding might be approximate lol tbh
-    private static final float PADDING = 0f;
-
-    public void setPixelBounds(GameCanvas canvas) {
+    public void setPixelBounds() {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
         // The whole point is that if the canvas is DEFAULT_PIXEL_WIDTH x DEFAULT_PIXEL_HEIGHT and
@@ -465,37 +424,37 @@ public class WorldModel {
         // World2Pixel translates from canonical world space to canonical pixel space
         // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
         // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
-        float world2Pixel =  Math.min(DEFAULT_ASSET_HEIGHT, DEFAULT_ASSET_WIDTH);
-//        System.out.println(world2Pixel);
+        float scaleWorldToCanonical = Math.min(CANONICAL_WIDTH / WORLD_WIDTH, CANONICAL_HEIGHT / WORLD_HEIGHT);
 
         // scalePixel translate canonical pixel space to pixel space
         // (1920 x 1080, or otherwise indicated in WorldController)
-        float scalePixelX = canvas.getWidth() / (DEFAULT_PIXEL_WIDTH - 2 * PADDING);
-        float scalePixelY = canvas.getHeight() / (DEFAULT_PIXEL_HEIGHT - 2 * PADDING);
+        float scaleCanonicalToActualWidth = Gdx.graphics.getWidth() / (CANONICAL_WIDTH - 2 * PADDING);
+        float scaleCanonicalToActualHeight = Gdx.graphics.getHeight() / (CANONICAL_HEIGHT - 2 * PADDING);
 
         // Take the smaller scale so that we only scale diagonally or something
         // This is for asset scaling
-        float finalAssetScale = Math.min(scalePixelX, scalePixelY);
+        float finalAssetScale = Math.min(scaleCanonicalToActualWidth, scaleCanonicalToActualHeight);
         // This is for converting things to pixel space?
-        float finalPosScale = finalAssetScale * world2Pixel;
-
+        float finalPosScale = finalAssetScale * scaleWorldToCanonical;
         scale.set(finalPosScale, finalPosScale);
         actualScale.set(finalAssetScale, finalAssetScale);
 
-//        System.out.println(scale);
-//        System.out.println(actualScale);
-
-        // pixTransform = new Affine2();
-        // pixTransform.scale(finalPosScale, finalPosScale);
-
-        // Vector2 pixelBoundsSize = new Vector2(bounds.width, bounds.height);
-        // pixTransform.applyTo(pixelBoundsSize);
-
-        // System.out.println(pixelBoundsSize);
-        // System.out.println(canvas.getWidth());
-        // System.out.println((canvas.getWidth() - pixelBoundsSize.x) / 2);
-
-        // pixTransform.translate((canvas.getWidth() - pixelBoundsSize.x) / 2, (canvas.getHeight() - pixelBoundsSize.y) / 2);
-
+        // TODO: Try applying Affine2's to scaling
+//        Affine2 worldToCanonical = new Affine2();
+//        worldToCanonical.setToScaling(
+//                CANONICAL_WIDTH / WORLD_WIDTH,
+//                CANONICAL_HEIGHT / WORLD_HEIGHT
+//        );
+//
+//        Affine2 canonicalToActual = new Affine2();
+//        canonicalToActual.setToScaling(
+//                Gdx.graphics.getWidth() / (CANONICAL_WIDTH - 2 * PADDING),
+//                Gdx.graphics.getHeight() / (CANONICAL_HEIGHT - 2 * PADDING)
+//        );
+//
+//        worldToCanonical.applyTo(scale);
+//        canonicalToActual.applyTo(scale);
+//
+//        canonicalToActual.applyTo(actualScale);
     }
 }

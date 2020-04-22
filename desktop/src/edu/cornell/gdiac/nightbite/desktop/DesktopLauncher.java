@@ -36,7 +36,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		// These are the configuration attributes
 		config.width = 1280;
-		config.height = 640;
+		config.height = 768;
 		config.resizable = true;
 		config.foregroundFPS = 60;
 

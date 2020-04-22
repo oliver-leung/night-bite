@@ -1,8 +1,5 @@
 package edu.cornell.gdiac.nightbite;
 
-import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.util.PooledList;
-
 public class MechanicManager {
     // TODO: exit doesn't work
 
@@ -10,7 +7,7 @@ public class MechanicManager {
 
     public static MechanicManager instance;
 
-    public static MechanicManager getInstance(PooledList<Vector2> objects) {
+    public static MechanicManager getInstance() {
         if (instance == null) {
             instance = new MechanicManager();
         }
@@ -41,11 +38,11 @@ public class MechanicManager {
 
 
     public void update() {
-        for (int i = 0; i < controllers.length; i ++) {
-            if (controllers[i] instanceof AIController) {
-                ((AIController) controllers[i]).updateAI();
+        for (MechanicController controller : controllers) {
+            if (controller instanceof AIController) {
+                ((AIController) controller).updateAI();
             }
-            controllers[i].poll();
+            controller.poll();
         }
     }
 

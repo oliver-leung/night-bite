@@ -2,7 +2,6 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -60,17 +59,7 @@ public class PlayerModel extends CapsuleObstacle {
     private ArrayList<Boolean> overlapItem;
 
     /** player texture */
-    public final FilmStrip playerTexture;
     private FilmStrip defaultTexture;
-
-    public void setTexture(FilmStrip value) {
-        if (defaultTexture == null) {
-            defaultTexture = value;
-        }
-        super.setTexture(value);
-    }
-
-    public void resetTexture() { texture = defaultTexture; }
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
         super(x, y, width, height);
@@ -78,8 +67,8 @@ public class PlayerModel extends CapsuleObstacle {
         setBullet(true);
         setName("ball");
 
-        playerTexture = texture;
-        setTexture(playerTexture);
+        this.texture = texture;
+        setTexture(texture);
 
         impulse = new Vector2();
         boost = new Vector2();
@@ -91,8 +80,8 @@ public class PlayerModel extends CapsuleObstacle {
         boosting = 0;
 
         isAlive = true;
-        item = new ArrayList<ItemModel>();
-        overlapItem = new ArrayList<Boolean>();
+        item = new ArrayList<>();
+        overlapItem = new ArrayList<>();
         for (int i = 0; i < NUM_ITEMS; i++) {
             overlapItem.add(false);
         }
@@ -102,6 +91,21 @@ public class PlayerModel extends CapsuleObstacle {
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
+    }
+
+    public void resetTexture() {
+        texture = defaultTexture;
+    }
+
+    public FilmStrip getTexture() {
+        return (FilmStrip) texture;
+    }
+
+    public void setTexture(FilmStrip value) {
+        if (defaultTexture == null) {
+            defaultTexture = value;
+        }
+        super.setTexture(value);
     }
 
     /** player identification */
