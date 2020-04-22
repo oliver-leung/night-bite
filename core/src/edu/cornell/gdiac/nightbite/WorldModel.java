@@ -411,7 +411,7 @@ public class WorldModel {
 
         for (Iterator iterator : updateOnly) {
             while (iterator.hasNext()) {
-                iterator.next().update();
+                ((Obstacle) iterator.next()).update(dt);
             }
         }
     }
