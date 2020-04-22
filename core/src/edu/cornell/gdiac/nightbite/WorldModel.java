@@ -71,11 +71,6 @@ public class WorldModel {
      */
     private int countdown;
 
-
-    // /**
-    //  * Objects that move during updates
-    //  */
-    // private PooledList<Obstacle> dynamicObjects;
     /**
      * All of the lights that we loaded from the JSON file
      */
@@ -452,8 +447,6 @@ public class WorldModel {
         // These are called the canonical pixel space and canonical world space respectively.
 
         // World2Pixel translates from canonical world space to canonical pixel space
-        // Assumes the ratio from DEFAULT_HEIGHT and DEFAULT_PIXEL_HEIGHT is the same as the ratio from
-        // DEFAULT_WIDTH and DEFAULT_PIXEL_WIDTH
         float world2Pixel = Math.min(DEFAULT_TILE_HEIGHT, DEFAULT_TILE_WIDTH);
 //        System.out.println(world2Pixel);
 
