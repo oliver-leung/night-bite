@@ -53,11 +53,6 @@ public class CapsuleObstacle extends SimpleObstacle {
 		 * A half-capsule with a rounded end at the right
 		 */
 		RIGHT,
-
-		/**
-		 * Used only for makring the CORE
-		 */
-		MIDDLE
 	}
 
 	/**
@@ -436,8 +431,7 @@ public class CapsuleObstacle extends SimpleObstacle {
 		// Create the fixture
 		fixture.shape = shape;
 		core = body.createFixture(fixture);
-		core.setUserData(Orientation.MIDDLE);
-		    
+
 		fixture.density = fixture.density/2.0f;
 		posCache.set(0,0);
 		switch (orient) {
@@ -446,7 +440,6 @@ public class CapsuleObstacle extends SimpleObstacle {
 			end1.setPosition(posCache);
 			fixture.shape = end1;
 			cap1 = body.createFixture(fixture);
-			cap1.setUserData(Orientation.TOP);
 			cap2 = null;
 			break;
 		case VERTICAL:
@@ -454,12 +447,10 @@ public class CapsuleObstacle extends SimpleObstacle {
 			end1.setPosition(posCache);
 			fixture.shape = end1;
 			cap1 = body.createFixture(fixture);
-			cap1.setUserData(Orientation.TOP);
 			posCache.y = center.y;
 			end2.setPosition(posCache);
 			fixture.shape = end2;
 			cap2 = body.createFixture(fixture);
-			cap2.setUserData(Orientation.BOTTOM);
 			break;
 		case BOTTOM:
 			cap1 = null;
@@ -467,27 +458,23 @@ public class CapsuleObstacle extends SimpleObstacle {
 			end2.setPosition(posCache);
 			fixture.shape = end2;
 			cap2 = body.createFixture(fixture);
-			cap2.setUserData(Orientation.BOTTOM);
 			break;
 		case LEFT:
 			posCache.x = center.x;
 			end1.setPosition(posCache);
 			fixture.shape = end1;
 			cap1 = body.createFixture(fixture);
-			cap1.setUserData(Orientation.LEFT);
-			cap2 = null;		
+			cap2 = null;
 			break;
 		case HORIZONTAL:
 			posCache.x = center.x;
 			end1.setPosition(posCache);
 			fixture.shape = end1;
 			cap1 = body.createFixture(fixture);
-			cap1.setUserData(Orientation.LEFT);
 			posCache.x = center.x+center.width;
 			end2.setPosition(posCache);
 			fixture.shape = end2;
 			cap2 = body.createFixture(fixture);
-			cap2.setUserData(Orientation.RIGHT);
 			break;
 		case RIGHT:
 			cap1 = null;
@@ -495,7 +482,6 @@ public class CapsuleObstacle extends SimpleObstacle {
 			end2.setPosition(posCache);
 			fixture.shape = end2;
 			cap2 = body.createFixture(fixture);
-			cap1.setUserData(Orientation.RIGHT);
 			break;
 		}
 

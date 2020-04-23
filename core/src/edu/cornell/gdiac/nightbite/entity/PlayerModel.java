@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
-public class PlayerModel extends CapsuleObstacle {
+public class PlayerModel extends HumanoidModel {
 
     // TODO
     private int NUM_ITEMS = 2;
@@ -74,7 +74,6 @@ public class PlayerModel extends CapsuleObstacle {
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
         super(x, y, width, height);
-        setOrientation(Orientation.VERTICAL);
         setBullet(true);
         setName("ball");
 
@@ -121,10 +120,10 @@ public class PlayerModel extends CapsuleObstacle {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
-        Filter f = cap1.getFilterData();
-        f.groupIndex = -1;
-        cap1.setFilterData(f);
-        core.setFilterData(f);
+        // Filter f = cap1.getFilterData();
+        // f.groupIndex = -1;
+        // cap1.setFilterData(f);
+        // core.setFilterData(f);
         return true;
     }
 
