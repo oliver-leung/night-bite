@@ -28,9 +28,9 @@ public class CollisionController implements ContactListener {
 
         // Player-Object Contact
         if (a instanceof PlayerModel) {
-            handlePlayerToObjectContact((PlayerModel) a, b, contact.getFixtureA());
+            handlePlayerToObjectContact((PlayerModel) a, b);
         } else if (b instanceof PlayerModel) {
-            handlePlayerToObjectContact((PlayerModel) b, a, contact.getFixtureB());
+            handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
         if (a instanceof ItemModel) {
@@ -94,8 +94,8 @@ public class CollisionController implements ContactListener {
     }
 
 
-    public void handlePlayerToObjectContact(PlayerModel player, Object object, Fixture playerFixture) {
-        if (object instanceof HoleModel && playerFixture.getUserData() == CapsuleObstacle.Orientation.BOTTOM) {
+    public void handlePlayerToObjectContact(PlayerModel player, Object object) {
+        if (object instanceof HoleModel) {
 
             // Player-Hole collision
             player.setDead();
