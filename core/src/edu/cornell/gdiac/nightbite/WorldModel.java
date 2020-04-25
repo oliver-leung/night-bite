@@ -67,6 +67,8 @@ public class WorldModel {
     /** All of the lights that we loaded from the JSON file */
     private Array<LightSource> lights = new Array<>();
 
+    private AIController aiController;
+
     public WorldModel() {
         world = new World(Vector2.Zero, false);
         bounds = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -315,6 +317,16 @@ public class WorldModel {
         items.add(item);
     }
 
+    public void initializeAI() {
+        System.out.println(bounds);
+        aiController = new AIController((int) bounds.width, (int) bounds.height);
+        aiController.populateStatic(staticObjects);
+    }
+
+    public void debugAI(GameCanvas canvas) {
+        aiController.drawDebug(canvas, scale);
+    }
+
     /**
      * TODO allow passing in of different lighting parameters
      */
@@ -388,6 +400,38 @@ public class WorldModel {
                 ((Obstacle) iterator.next()).update(dt);
             }
         }
+
+        aiController.populateDynamic(downcastIterable(players));
+    }
+
+    private Iterable<Obstacle> downcastIterable(Iterable iter) {
+        // AGAIN, unsafe
+        class ObsIterator implements Iterator<Obstacle> {
+            Iterator iterator;
+
+            public ObsIterator(Iterator iter) {
+                iterator = iter;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Obstacle next() {
+                return (Obstacle) iterator.next();
+            }
+        }
+
+        class ObsIterable implements Iterable<Obstacle> {
+            @Override
+            public Iterator<Obstacle> iterator() {
+                return new ObsIterator(iter.iterator());
+            }
+        }
+
+        return new ObsIterable();
     }
 
     public void dispose() {

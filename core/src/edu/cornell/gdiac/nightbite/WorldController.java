@@ -135,6 +135,7 @@ public class WorldController implements Screen {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.RETRO_FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+        worldModel.initializeAI();
     }
 
     /**
@@ -193,7 +194,8 @@ public class WorldController implements Screen {
             for (Obstacle obj : worldModel.getObjects()) {
                 obj.drawDebug(canvas);
             }
-            debugGrid();
+            // debugGrid();
+            worldModel.debugAI(canvas);
             canvas.endDebug();
         }
     }

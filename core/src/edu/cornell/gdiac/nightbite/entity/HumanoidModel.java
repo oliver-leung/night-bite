@@ -67,7 +67,7 @@ public class HumanoidModel extends SimpleObstacle {
         hitBoxCore.set(vertices);
 
         hitBoxEdge[0].setRadius(radius);
-        cache.set(0, y+height);
+        cache.set(0, y+capHeight);
         hitBoxEdge[0].setPosition(cache);
         cache.set(0, y);
         hitBoxEdge[1].setRadius(radius);
@@ -167,6 +167,14 @@ public class HumanoidModel extends SimpleObstacle {
         }
 
         canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y/2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+    }
+
+    public float getWidth() {
+        return dimension.x;
+    }
+
+    public float getHeight() {
+        return dimension.y;
     }
 
 }
