@@ -327,7 +327,11 @@ public class PlayerModel extends HumanoidModel {
     public void startSwing(float swingAngle) {
         startSwingCooldown();
 //        angleOffset = clickAngle - (float)Math.PI/4;
-        clickAngle = swingAngle - (float)Math.PI/4;
+        if (!flipHandheld) {
+            clickAngle = swingAngle - (float)Math.PI/4;
+        } else {
+            clickAngle = swingAngle - (float)Math.PI * 3/4;
+        }
         angleOffset = clickAngle - SWING_RADIUS;
         swinging = true;
     }
