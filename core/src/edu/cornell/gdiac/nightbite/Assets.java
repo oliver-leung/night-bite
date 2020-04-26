@@ -38,6 +38,9 @@ public class Assets {
     static int PLAYER_FILMSTRIP_ROW = 1;
     static int PLAYER_FILMSTRIP_COL = 8;
     static int PLAYER_FILMSTRIP_SIZE = 8;
+    static String WOK_FILE = "character/wok_64_nohand.png";
+    static String PLAYER_SHADOW_FILE = "character/shadow.png";
+    static String PLAYER_ARROW_FILE = "character/arrow.png";
 
     // Item
     static String FISH_ITEM_FILE = "item/food1_64.png";
@@ -188,6 +191,9 @@ public class Assets {
      * LOADED ASSETS
      */
     public static FilmStrip[] PLAYER_FILMSTRIPS;
+    public static TextureRegion[] WOK_LIST;
+    public static TextureRegion[] PLAYER_SHADOW_LIST;
+    public static TextureRegion[] PLAYER_ARROW_LIST;
     public static TextureRegion[] HOME_STALLS;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
@@ -214,6 +220,9 @@ public class Assets {
     public void preLoadContent(AssetManager manager) {
         // Load Textures
         loadTexture(FISH_ITEM_FILE);
+        loadTexture(WOK_FILE);
+        loadTexture(PLAYER_SHADOW_FILE);
+        loadTexture(PLAYER_ARROW_FILE);
         loadTexture(WALL_PA1_FILE);
         loadTexture(HOLE_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
@@ -260,10 +269,16 @@ public class Assets {
         // Player Filmstrips
         int num_players = PLAYER_FILMSTRIP_FILES.length;
         PLAYER_FILMSTRIPS = new FilmStrip[num_players];
+        WOK_LIST = new TextureRegion[num_players];
+        PLAYER_SHADOW_LIST = new TextureRegion[num_players];
+        PLAYER_ARROW_LIST = new TextureRegion[num_players];
         for (int i = 0; i < num_players; i++) {
             FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
                     PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
+            WOK_LIST[i] = createTexture(manager, WOK_FILE, true);
+            PLAYER_SHADOW_LIST[i] = createTexture(manager, PLAYER_SHADOW_FILE, true);
+            PLAYER_ARROW_LIST[i] = createTexture(manager, PLAYER_ARROW_FILE, true);
         }
 
         // Home stall textures

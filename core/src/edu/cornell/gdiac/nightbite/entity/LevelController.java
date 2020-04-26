@@ -123,11 +123,14 @@ public class LevelController {
             float x = 1.5f + teamJson.getFloat("y");
             float y = 9.5f - teamJson.getFloat("x");
             FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
+            TextureRegion wokTexture = Assets.WOK_LIST[playerNum];
+            TextureRegion shadowTexture = Assets.PLAYER_SHADOW_LIST[playerNum];
+            TextureRegion arrowTexture = Assets.PLAYER_ARROW_LIST[playerNum];
             float pWidth = (filmStrip.getRegionWidth() - 30f) / world.getScale().x;
             float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
             String teamName = teamJson.name;
 
-            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, teamName);
+            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, wokTexture, shadowTexture, arrowTexture, teamName);
             player.setDrawScale(world.getScale());
             player.setActualScale(world.getActualScale());
             player.setName("player " + teamName);
