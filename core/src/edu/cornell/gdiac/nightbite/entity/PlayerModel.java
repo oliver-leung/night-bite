@@ -79,8 +79,12 @@ public class PlayerModel extends HumanoidModel {
     private TextureRegion handheld;
     private boolean flipHandheld;
     private float angleOffset;
+    private float clickAngle;
     private float SWING_RADIUS = 0.7f;
     private boolean swinging;
+    private int swingCooldown;
+    private int SWING_COOLDOWN_PERIOD = 30;
+
     private TextureRegion shadow;
     private TextureRegion arrow;
     private DirectionState dirState;
@@ -124,6 +128,7 @@ public class PlayerModel extends HumanoidModel {
         swinging = false;
         shadow = shadowTexture;
         arrow = arrowTexture;
+        swingCooldown = 0;
     }
 
     public void resetTexture() {
@@ -233,6 +238,7 @@ public class PlayerModel extends HumanoidModel {
 
     public void update() {
         updateGrabCooldown();
+        updateSwingCooldown();
         cooldown = Math.max(0, cooldown - 1);
         boosting = Math.max(0, boosting - 1);
         if (swinging) {
@@ -312,22 +318,36 @@ public class PlayerModel extends HumanoidModel {
 
     /** swings wok */
     public void swingWok(Vector2 clickPos) {
-        Vector2 difference = clickPos.sub(getPosition());
-        startSwing();
-//        getBody().applyLinearImpulse(difference.scl(50), getPosition(), true);
+        clickPos.sub(getPosition());
+        if (swingCooldown == 0) {
+            startSwing(clickPos.angleRad());
+        }
     }
 
-    public void startSwing() {
-        angleOffset = -1*SWING_RADIUS;
+    public void startSwing(float swingAngle) {
+        startSwingCooldown();
+//        angleOffset = clickAngle - (float)Math.PI/4;
+        clickAngle = swingAngle - (float)Math.PI/4;
+        angleOffset = clickAngle - SWING_RADIUS;
         swinging = true;
     }
 
     public void updateSwing() {
-        if (angleOffset < SWING_RADIUS) {
-            angleOffset += 0.2;
+        if (angleOffset < clickAngle + SWING_RADIUS) {
+            angleOffset += 0.1;
         } else {
             angleOffset = 0;
             swinging = false;
+        }
+    }
+
+    private void startSwingCooldown() {
+        swingCooldown = SWING_COOLDOWN_PERIOD;
+    }
+
+    private void updateSwingCooldown() {
+        if (swingCooldown > 0) {
+            swingCooldown--;
         }
     }
 
@@ -353,7 +373,7 @@ public class PlayerModel extends HumanoidModel {
     @Override
     public void draw(GameCanvas canvas) {
         canvas.draw(shadow, Color.WHITE,origin.x-texture.getRegionWidth()/4,origin.y+texture.getRegionHeight()/15,getX() * drawScale.x, getY() * drawScale.y,
-                getAngle() + angleOffset,actualScale.x,actualScale.y);
+                getAngle(),actualScale.x,actualScale.y);
 
         canvas.draw(arrow, Color.WHITE,arrow.getRegionWidth()/2,arrow.getRegionHeight()/2,getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
                 arrowAngle,actualScale.x,actualScale.y);
@@ -362,18 +382,23 @@ public class PlayerModel extends HumanoidModel {
 
         float originX;
         float originY;
+        float ox;
         if (flipHandheld) {
-            originX = origin.x+texture.getRegionWidth()/2;
+            originX = -texture.getRegionWidth()/5;
+            ox = handheld.getRegionWidth();
         } else {
-            originX = origin.x-texture.getRegionWidth() * 2/3;
+            originX = texture.getRegionWidth()/5;
+            ox = 0;
         }
 
         if (((FilmStrip) texture).getFrame() == 1) {
-            originY = origin.y-texture.getRegionHeight()/5;
+            originY = -texture.getRegionHeight()/3;
         } else {
-            originY = origin.y-texture.getRegionHeight()/3;
+            originY = -texture.getRegionHeight()/5;
         }
-        canvas.draw(handheld, Color.WHITE,originX,originY,getX() * drawScale.x, getY() * drawScale.y,
+//        canvas.draw(handheld, Color.WHITE,originX,originY,getX() * drawScale.x, getY() * drawScale.y,
+//                getAngle() + angleOffset + 2,actualScale.x,actualScale.y);
+        canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
                 getAngle() + angleOffset,actualScale.x,actualScale.y);
     }
 }
