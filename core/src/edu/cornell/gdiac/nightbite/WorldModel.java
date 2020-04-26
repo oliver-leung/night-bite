@@ -40,6 +40,10 @@ public class WorldModel {
 
     /** The winner of the level. */
     public String winner;
+
+    /** Reference to the player */
+    private PlayerModel player;
+
     /** The Box2D world for physics objects */
     protected World world;
     /** The camera defining the RayHandler view; scale is in physics coordinates */
@@ -60,6 +64,19 @@ public class WorldModel {
 
     /** List of players */
     private ArrayList<PlayerModel> players;
+
+    public World getWorld() {
+        return world;
+    }
+
+    public PlayerModel getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerModel player) {
+        this.player = player;
+    }
+
     /** List of items */
     private ArrayList<ItemModel> items;
     /** Objects that don't move during updates */

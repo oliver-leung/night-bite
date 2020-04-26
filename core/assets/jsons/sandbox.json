@@ -1,0 +1,20 @@
+{
+    "rows": [
+        [
+            [
+                {
+                    "name": "hole",
+                    "texture": "some/file.png",
+                    "type": "hole"
+                }
+            ],
+            [
+                {
+                    "name": "wall",
+                    "texture": "some/file.png",
+                    "type": "hole"
+                }
+            ]
+        ]
+    ]
+}
