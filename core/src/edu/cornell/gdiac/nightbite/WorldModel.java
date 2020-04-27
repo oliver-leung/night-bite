@@ -84,7 +84,11 @@ public class WorldModel {
     /** All of the lights that we loaded from the JSON file */
     private Array<LightSource> lights = new Array<>();
 
-    private AIController aiController;
+    private AILattice aiLattice;
+
+
+    // TODO: REMOVE
+    public Debug debug;
 
     public WorldModel() {
         world = new World(Vector2.Zero, false);
@@ -96,6 +100,9 @@ public class WorldModel {
         players = new ArrayList<>();
         items = new ArrayList<>();
         staticObjects = new PooledList<>();
+
+        // TODO: REMOVE
+        debug = new Debug();
     }
 
     /**
@@ -336,12 +343,16 @@ public class WorldModel {
 
     public void initializeAI() {
         System.out.println(bounds);
-        aiController = new AIController((int) bounds.width, (int) bounds.height);
-        aiController.populateStatic(staticObjects);
+        aiLattice = new AILattice((int) bounds.width, (int) bounds.height);
+        aiLattice.populateStatic(staticObjects);
     }
 
     public void debugAI(GameCanvas canvas) {
-        aiController.drawDebug(canvas, scale);
+        aiLattice.drawDebug(canvas, scale);
+    }
+
+    public void updateAI() {
+        
     }
 
     /**
@@ -418,7 +429,11 @@ public class WorldModel {
             }
         }
 
-        aiController.populateDynamic(downcastIterable(players));
+        aiLattice.populateDynamic(downcastIterable(players));
+
+        // TODO: REMOVE
+        debug.updatePathfinding(aiLattice);
+
     }
 
     private Iterable<Obstacle> downcastIterable(Iterable iter) {

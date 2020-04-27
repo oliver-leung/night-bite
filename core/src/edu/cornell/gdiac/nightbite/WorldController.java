@@ -196,6 +196,7 @@ public class WorldController implements Screen {
             }
             // debugGrid();
             worldModel.debugAI(canvas);
+            worldModel.debug.drawPathfinding(canvas, worldModel.scale);
             canvas.endDebug();
         }
     }
