@@ -31,13 +31,17 @@ public class Assets {
 
     /** RESOURCES */
     // Character
-    static String[] PLAYER_FILMSTRIP_FILES = {
-        "character/lin_dash_64_fs.png",
-        "character/granny_dash_64_fs.png"
-    };
+    static String PLAYER_FILMSTRIP_FILE = "character/lin_dash_64_fs.png";
     static int PLAYER_FILMSTRIP_ROW = 1;
     static int PLAYER_FILMSTRIP_COL = 8;
     static int PLAYER_FILMSTRIP_SIZE = 8;
+    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/P1_Holding_8.png";
+    static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
+    static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
+    static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
+    static String WOK_FILE = "character/wok_64_nohand.png";
+    static String PLAYER_SHADOW_FILE = "character/shadow.png";
+    static String PLAYER_ARROW_FILE = "character/arrow.png";
 
     /* Firecracker filmstrip files */
     static String FIRECRACKER_FILE = "item/firecracker_64.png";
@@ -55,12 +59,7 @@ public class Assets {
     static String HOLE_FILE = "environment/hole4_64.png";
 
     // Home stall
-    static String[] HOME_STALL_FILES = {
-            "environment/StallHome1_64.png",
-            "environment/StallHome2_64.png",
-            "environment/StallHome3_64.png",
-            "environment/StallHome4_64.png",
-    };
+    static String HOME_STALL_FILE = "environment/StallHome1_64.png";
 
     public static HashMap<String, TextureRegion> FILES;
     static String[] FILE_NAMES = {
@@ -192,8 +191,12 @@ public class Assets {
     /**
      * LOADED ASSETS
      */
-    public static FilmStrip[] PLAYER_FILMSTRIPS;
-    public static TextureRegion[] HOME_STALLS;
+    public static FilmStrip PLAYER_FILMSTRIP;
+    public static FilmStrip PLAYER_HOLD_FILMSTRIP;
+    public static TextureRegion WOK;
+    public static TextureRegion PLAYER_SHADOW;
+    public static TextureRegion PLAYER_ARROW;
+    public static TextureRegion HOME_STALL;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
     public static TextureRegion HOLE;
@@ -224,6 +227,9 @@ public class Assets {
     public void preLoadContent(AssetManager manager) {
         // Load Textures
         loadTexture(FISH_ITEM_FILE);
+        loadTexture(WOK_FILE);
+        loadTexture(PLAYER_SHADOW_FILE);
+        loadTexture(PLAYER_ARROW_FILE);
         loadTexture(WALL_PA1_FILE);
         loadTexture(HOLE_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
@@ -233,12 +239,9 @@ public class Assets {
         loadTexture(FIRECRACKER_LIT_FILE);
         loadTexture(FIRECRACKER_DET_FILE);
 
-        for (String player_file : PLAYER_FILMSTRIP_FILES) {
-            loadTexture(player_file);
-        }
-        for (String stall_file : HOME_STALL_FILES) {
-            loadTexture(stall_file);
-        }
+        loadTexture(PLAYER_FILMSTRIP_FILE);
+        loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
+        loadTexture(HOME_STALL_FILE);
 
         for (String filename : FILE_NAMES) {
             try {
@@ -272,14 +275,15 @@ public class Assets {
             FILES.put(filename, createTexture(manager, filename, false));
         }
 
-        // Player Filmstrips
-        int num_players = PLAYER_FILMSTRIP_FILES.length;
-        PLAYER_FILMSTRIPS = new FilmStrip[num_players];
-        for (int i = 0; i < num_players; i++) {
-            FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
-                    PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
-            PLAYER_FILMSTRIPS[i] = player;
-        }
+        // Player & Items
+//        int num_players = PLAYER_FILMSTRIP_FILES.length;
+        PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
+                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);;
+        PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
+                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);;
+        WOK = createTexture(manager, WOK_FILE, true);
+        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
+        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
 
         // Firecracker filmstrip
         // TODO don't hardcode the rows/cols/size
@@ -289,12 +293,7 @@ public class Assets {
 
 
         // Home stall textures
-        int num_stalls = HOME_STALL_FILES.length;
-        HOME_STALLS = new TextureRegion[num_stalls];
-        for (int i = 0; i < num_stalls; i++) {
-            TextureRegion stall = createTexture(manager, HOME_STALL_FILES[i], true);
-            HOME_STALLS[i] = stall;
-        }
+        HOME_STALL = createTexture(manager, HOME_STALL_FILE, true);
 
         // Allocate Font
         if (manager.isLoaded(RETRO_FONT_FILE)) {

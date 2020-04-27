@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -41,6 +42,10 @@ public class WorldModel {
 
     /** The winner of the level. */
     public String winner;
+
+    /** Reference to the player */
+    private PlayerModel player;
+
     /** The Box2D world for physics objects */
     protected World world;
     /** The camera defining the RayHandler view; scale is in physics coordinates */
@@ -61,6 +66,19 @@ public class WorldModel {
 
     /** List of players */
     private ArrayList<PlayerModel> players;
+
+    public World getWorld() {
+        return world;
+    }
+
+    public PlayerModel getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerModel player) {
+        this.player = player;
+    }
+
     /** List of items */
     private ArrayList<ItemModel> items;
     /** List of firecrackers */
