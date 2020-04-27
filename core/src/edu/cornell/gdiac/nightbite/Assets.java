@@ -22,19 +22,19 @@ import java.util.HashMap;
 public class Assets {
     /** Asset Manager */
     private AssetManager manager;
-
     /** Track load status */
     private boolean isLoaded = false;
-
-    /** Track all loaded assets (for unloading purposes */
-    protected Array<String> assets = new Array<>();
 
     /** RESOURCES */
     // Character
     static String[] PLAYER_FILMSTRIP_FILES = {
-        "character/lin_dash_64_fs.png",
-        "character/granny_dash_64_fs.png"
+            "player/P1_Dash_5.png",
+            "player/P1_Falling_5.png",
+            "player/P1_Holding_8.png",
+            "player/P1_Walk_8.png"
     };
+    /** Track all loaded assets (for unloading purposes) */
+    protected Array<String> assets = new Array<>();
     static int PLAYER_FILMSTRIP_ROW = 1;
     static int PLAYER_FILMSTRIP_COL = 8;
     static int PLAYER_FILMSTRIP_SIZE = 8;
@@ -265,6 +265,7 @@ public class Assets {
                     PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
         }
+
 
         // Home stall textures
         int num_stalls = HOME_STALL_FILES.length;

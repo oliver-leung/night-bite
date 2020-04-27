@@ -30,18 +30,41 @@ public class LevelController {
         return instance;
     }
 
-    public void populate(WorldModel world, String level_file) {
+    /**
+     * Populate this world as specified in the level file
+     *
+     * @param world      WorldModel to be populated
+     * @param level_file Level specification
+     * @param schema     JSON schema to use
+     */
+    public void populate(WorldModel world, String level_file, int schema) {
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
-        background = levelFormat.get("grounds");
+        switch (schema) {
+            case 0:
+                background = levelFormat.get("grounds");
 
-        createWalls(world, levelFormat.get("walls"));
-        createHoles(world, levelFormat.get("holes"));
-        createTeams(world, levelFormat.get("teams"));
-        createItems(world, levelFormat.get("items"));
+                createWalls(world, levelFormat.get("walls"));
+                createHoles(world, levelFormat.get("holes"));
+                createTeams(world, levelFormat.get("teams"));
+                createItems(world, levelFormat.get("items"));
 
-        decorations = levelFormat.get("decorations");
+                decorations = levelFormat.get("decorations");
 
-        createBounds(world);
+                createBounds(world);
+            case 1:
+                JsonValue cellArray = levelFormat.get("assets");
+                int row = 0, col = 0;
+                // Yeah, I know this is ugly
+                for (JsonValue cellRow : cellArray) {
+                    for (JsonValue cell : cellRow) {
+                        for (JsonValue asset : cell) {
+
+                        }
+                        col++;
+                    }
+                    row++;
+                }
+        }
     }
 
     public void drawBackground(WorldModel world) {
