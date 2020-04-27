@@ -12,11 +12,11 @@ import edu.cornell.gdiac.util.FilmStrip;
 public class FirecrackerModel extends BoxObstacle {
 
     /* Expected timestep age of firecracker before becoming lit */
-    private static final int AGE = 20;
+    private static final int AGE = 128;
     /* Expected timestep age of firecracker before detonating */
-    private static final int LIT_AGE = 5;
+    private static final int LIT_AGE = 112;
     /* Expected timestep age of firecracker before becoming destroyed */
-    private static final int DETONATING_AGE = 5;
+    private static final int DETONATING_AGE = 80;
 
     /* Physics constants */
     private static final float MOVABLE_OBJECT_DENSITY = 1.0f;
@@ -24,6 +24,13 @@ public class FirecrackerModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
     private static final float THROW_FORCE = 6f;
     private static final float MOTION_DAMPING = 30f;
+
+    /* How fast we change frames (one frame per 16 calls to update */
+    private static final float ANIMATION_SPEED = 0.0625f;
+    /* The number of animation frames in our fuse filmstrip */
+    private static final float NUM_FRAMES_LIT = 5;
+    /* The number of animation frames in our detonating filmstrip */
+    private static final float NUM_FRAMES_DET = 7;
 
     /* Age counter of firecracker while cold */
     private int age;
@@ -36,13 +43,15 @@ public class FirecrackerModel extends BoxObstacle {
     private boolean lit;
     /* Whether this firecracker is detonating */
     private boolean detonating;
-    /* TODO Whether this firecracker should be removed at the next timestep */
-    private boolean destroyed;
 
     /* Textures */
-    // this.texture is used as the default texture, part of SimpleObstacle
+    private FilmStrip defaultTexture;
     private FilmStrip litTexture;
     private FilmStrip detTexture;
+
+    /* Current animation frame */
+    private float frame;
+
 
     /**
      * Get whether this firecracker is lit or not
@@ -55,15 +64,10 @@ public class FirecrackerModel extends BoxObstacle {
     public boolean isDetonating() { return this.detonating; }
 
     /**
-     * Set that this firecracker is destroyed
-     */
-    public void setDestroyed() { this.destroyed = true; }
-
-    /**
      * Set the texture of this firecracker
      */
     public void setTexture(FilmStrip texture) {
-        if (this.texture == null) { this.texture = texture; }
+        if (defaultTexture == null) { defaultTexture = texture; }
         super.setTexture(texture);
     }
 
@@ -73,23 +77,28 @@ public class FirecrackerModel extends BoxObstacle {
     public FirecrackerModel(float x, float y, float width, float height) {
         super(x, y, width, height);
 
-        texture = Assets.FIRECRACKER;
+        this.texture = Assets.FIRECRACKER;
         litTexture = Assets.FIRECRACKER_LIT;
         detTexture = Assets.FIRECRACKER_DET;
-        setTexture(texture);
+        setTexture(this.texture);
 
         setDensity(MOVABLE_OBJECT_DENSITY);
         setFriction(MOVABLE_OBJECT_FRICTION);
         setRestitution(MOVABLE_OBJECT_RESTITUTION);
 
+        setSensor(false);
         // TODO shouldn't need - firecracker should move relatively slowly
         setBullet(true);
-        setSensor(false);
         setName("firecracker");
 
         age = AGE;
         lit_age = LIT_AGE;
         detonating_age = DETONATING_AGE;
+
+        lit = false;
+        detonating = false;
+
+        frame = 0f;
     }
 
     /**
@@ -127,19 +136,40 @@ public class FirecrackerModel extends BoxObstacle {
         // Cold age countdown
         if (!lit && !detonating) {
             age--;
-            if (age == 0) { lit = true; detonating = false; }
+            if (age == 0) {
+                lit = true;
+                detonating = false;
+                frame = 0f;
+                setTexture(litTexture);
+            }
         }
 
         // Lit age countdown
         else if (lit) {
             lit_age--;
-            if (lit_age == 0) { lit = false; detonating = true; }
+            if (lit_age == 0) {
+                lit = false;
+                detonating = true;
+                setTexture(detTexture);
+            } else {
+                frame += ANIMATION_SPEED;
+                if (frame >= NUM_FRAMES_LIT) { frame -= NUM_FRAMES_LIT; }
+                ((FilmStrip) texture).setFrame((int) frame);
+            }
+
         }
 
         // Detonating age countdown
         else {
             detonating_age--;
-            if (detonating_age == 0) { detonating = false; destroyed = true; }
+            if (detonating_age == 0) {
+                detonating = false;
+                markRemoved(true);
+            } else {
+                frame += ANIMATION_SPEED;
+                if (frame >= NUM_FRAMES_DET) { frame -= NUM_FRAMES_DET; }
+                ((FilmStrip) texture).setFrame((int) frame);
+            }
         }
     }
 }

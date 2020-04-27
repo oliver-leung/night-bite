@@ -295,11 +295,6 @@ public class WorldController implements Screen {
         // TODO: BUT IN POST UPDATE
         // I love abusing todos so stuff i write is highlighted
 
-        RayHandler rayhandler = worldModel.getRayhandler();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
-
         PlayerModel p;
         float playerHorizontal;
         float playerVertical;
@@ -423,6 +418,11 @@ public class WorldController implements Screen {
         // while (!addQueue.isEmpty()) {
         // 	addObject(addQueue.poll());
         // }
+
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);

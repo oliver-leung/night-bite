@@ -64,7 +64,7 @@ public class WorldModel {
     /** List of items */
     private ArrayList<ItemModel> items;
     /** List of firecrackers */
-    private ArrayList<FirecrackerModel> firecrackers;
+    private PooledList<FirecrackerModel> firecrackers;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -79,7 +79,7 @@ public class WorldModel {
         countdown = -1;
         players = new ArrayList<>();
         items = new ArrayList<>();
-        firecrackers = new ArrayList<>();
+        firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
     }
 
@@ -322,13 +322,15 @@ public class WorldModel {
 
     /**
      * Creates a firecracker at the specified position, usually the position of the enemy (in tiles)
-     * TODO where do we call world.addFirecracker?
+     * TODO currently called in levelcontroller... may want to change
      *
      * @param x The x position of the firecracker enemy
      * @param y The y position of the firecracker enemy
      */
     public void addFirecracker(float x, float y) {
         FirecrackerModel firecracker = new FirecrackerModel(x, y, 1, 1);
+        firecracker.setDrawScale(getScale());
+        firecracker.setActualScale(getActualScale());
         initializeObject(firecracker);
         firecrackers.add(firecracker);
     }
@@ -384,8 +386,8 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator()};
-        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
+        Iterator<?>[] cullAndUpdate = { staticObjects.entryIterator(), firecrackers.entryIterator() };
+        Iterator<?>[] updateOnly = { players.iterator(), items.iterator() };
 
         for (Iterator<?> iterator : cullAndUpdate) {
             while (iterator.hasNext()) {

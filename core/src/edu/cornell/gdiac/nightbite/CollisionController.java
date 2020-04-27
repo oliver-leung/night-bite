@@ -38,7 +38,6 @@ public class CollisionController implements ContactListener {
         } else if (b instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) b, a);
         }
-
     }
 
     /**
@@ -47,6 +46,7 @@ public class CollisionController implements ContactListener {
     public void endContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
+
         if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
             int itemId = ((ItemModel) b).getId();
             ((PlayerModel) a).setOverlapItem(itemId, false);
@@ -63,11 +63,23 @@ public class CollisionController implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
+        // Firecracker-Object Contact
+        // TODO Will only kill the player if player was not already colliding with firecracker beforehand
+        if (a instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) a, b);
+        } else if (b instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) b, a);
+        }
+
+        // Players walk through items and firecrackers
         if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
             contact.setEnabled(false);
         } else if ((a instanceof ItemModel && ((ItemModel) a).holdingPlayer != null) || (b instanceof ItemModel && ((ItemModel) b).holdingPlayer != null)) {
             contact.setEnabled(false);
+        } else if ((a instanceof PlayerModel && b instanceof FirecrackerModel) || (b instanceof PlayerModel && a instanceof FirecrackerModel)) {
+            contact.setEnabled(false);
         }
+
     }
 
     /**
@@ -100,6 +112,7 @@ public class CollisionController implements ContactListener {
                 playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
             }
         }
+
     }
 
     public void handlePlayerToObjectContact(PlayerModel player, Object object) {
@@ -146,7 +159,6 @@ public class CollisionController implements ContactListener {
 
             // If the firecracker is detonating, player dies
             if (firecracker.isDetonating()) {
-                System.out.println("oh fuck me");
                 player.setDead();
 
                 if (player.hasItem()) {  // see above about jankness
@@ -184,7 +196,7 @@ public class CollisionController implements ContactListener {
      */
     public void handleFirecrackerToObjectContact(FirecrackerModel firecracker, Object object) {
         if (object instanceof HoleModel) {
-            firecracker.setDestroyed();
+            firecracker.markRemoved(true);
         }
     }
 

@@ -39,6 +39,9 @@ public class LevelController {
         createTeams(world, levelFormat.get("teams"));
         createItems(world, levelFormat.get("items"));
 
+        // TODO remove
+        world.addFirecracker(3, 3);
+
         decorations = levelFormat.get("decorations");
 
         createBounds(world);
