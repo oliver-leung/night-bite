@@ -85,7 +85,9 @@ public class LevelSelectController implements Screen, InputProcessor {
     // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
     private int levelChoiceindex;
-    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_medium.json", "jsons/level_hard.json"};
+
+    // TODO: switch to levels made with new JSON schema
+    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_easy_funnel (1).json", "jsons/level_hard.json"};
     private int[] xposList;
 
     public LevelSelectController(GameCanvas canvas) {

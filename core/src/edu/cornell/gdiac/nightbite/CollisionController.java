@@ -1,13 +1,14 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import edu.cornell.gdiac.nightbite.entity.HoleModel;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
 // TODO: Refactor into Collision Filters probably
@@ -44,12 +45,12 @@ public class CollisionController implements ContactListener {
     public void endContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
-        if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
+        if (a instanceof PlayerModel && b instanceof ItemModel) {
             int itemId = ((ItemModel) b).getId();
-            ((PlayerModel) a).setOverlapItem(itemId, false);
-        } else if (b instanceof PlayerModel && a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
+            worldModel.setOverlapItem(itemId, false);
+        } else if (b instanceof PlayerModel && a instanceof ItemModel) {
             int itemId = ((ItemModel) a).getId();
-            ((PlayerModel) b).setOverlapItem(itemId, false);
+            worldModel.setOverlapItem(itemId, false);
         }
     }
 
@@ -111,7 +112,7 @@ public class CollisionController implements ContactListener {
 
             // Player-Item
             int id = ((ItemModel) object).getId();
-            player.setOverlapItem(id, true);
+            worldModel.setOverlapItem(id, true);
 
         } else if (object instanceof HomeModel) {
 

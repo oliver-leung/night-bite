@@ -39,8 +39,8 @@ public class ItemModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
-    public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
-        super(x, y, width, height);
+    public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
+        super(x, y, 1, 1);
         setTexture(itemTexture);
 
         setTexture(itemTexture);

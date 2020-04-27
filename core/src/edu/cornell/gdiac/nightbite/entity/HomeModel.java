@@ -9,19 +9,18 @@ public class HomeModel extends ImmovableModel {
     private int score;
 
     /**
-     *
-     * @param x
-     * @param y
-     * @param team
-     * @param player The player number that belongs to this home stall, 1-4 inclusive.
+     * @param x    X position of the home
+     * @param y    Y position of the home
+     * @param team Team that the home belongs to
      */
-    public HomeModel(float x, float y, String team, int player) {
+    public HomeModel(float x, float y, String team) {
         super(x, y, 0);
         this.team = team;
         score = 0;
         setTexture(Assets.TEXTURES.get("environment/StallHome1_64.png"));
         setWidth(2);
         setHeight(2);
+        setName(team);
     }
 
     public int getScore() {
@@ -30,6 +29,7 @@ public class HomeModel extends ImmovableModel {
 
     public void incrementScore(int increase) {
         score = score + increase;
+        //TODO: add animation
     }
 
     public String getTeam() {

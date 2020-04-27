@@ -20,7 +20,6 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
@@ -150,7 +149,7 @@ public class WorldController implements Screen {
         canvas.clear();
         canvas.begin();
 
-        LevelController.getInstance().drawBackground(worldModel);
+        worldModel.drawBackground();
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
         StringBuilder message2 = new StringBuilder("Player 2 score: ");
@@ -169,7 +168,7 @@ public class WorldController implements Screen {
             }
         }
 
-        LevelController.getInstance().drawDecorations(worldModel);
+        worldModel.drawDecorations();
 
         // Draw player scores
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
@@ -229,23 +228,9 @@ public class WorldController implements Screen {
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
         worldModel.initLighting(canvas);
-        worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
-        worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
         populateLevel();
 
-        // Attaching lights to players is janky and serves mostly as demo code
-        // TODO make data-driven
-        Array<LightSource> lights = worldModel.getLights();
-        PlayerModel p1 = worldModel.getPlayers().get(0);
-        PlayerModel p2 = worldModel.getPlayers().get(1);
-
-        LightSource l1 = lights.get(0);
-        LightSource l2 = lights.get(1);
-
-        l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
-        l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
-
-        for (LightSource l : lights) {
+        for (LightSource l : worldModel.getLights()) {
             l.setActive(true);
         }
 
@@ -314,7 +299,7 @@ public class WorldController implements Screen {
         boolean playerDidThrow;
 
         // TODO for refactoring update
-        int NUM_PLAYERS = 2;
+        int NUM_PLAYERS = 1;
         for (int i = 0; i < NUM_PLAYERS; i++) {
 
             playerHorizontal = manager.getVelX(i);
@@ -379,7 +364,7 @@ public class WorldController implements Screen {
             /* IF PLAYER GRABS ITEM */
             for (int j = 0; j < worldModel.getNumItems(); j++) {
                 ItemModel item = worldModel.getItem(j);
-                if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+                if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
                 }

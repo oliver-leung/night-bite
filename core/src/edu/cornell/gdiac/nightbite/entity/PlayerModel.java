@@ -12,13 +12,10 @@ import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 public class PlayerModel extends HumanoidModel {
 
+    /** Regular walking impulse as a scalar */
+    private static final float WALK_IMPULSE = 10.0f;
     // TODO
-    private int NUM_ITEMS = 2;
-
-    /**
-     * player movement params
-     */
-    private static final float DEFAULT_THRUST = 10.0f;
+    private int NUM_ITEMS = 1;
     private static final float BOOST_IMP = 100.0f;
     private static final float MOTION_DAMPING = 25f;
 
@@ -48,22 +45,19 @@ public class PlayerModel extends HumanoidModel {
     /** player identification */
     private String team;
 
-    private Vector2 homeLoc;
-
     /** player-item */
     private ArrayList<ItemModel> item;
-    private ArrayList<Boolean> overlapItem;
 
     /** player texture */
     private FilmStrip defaultTexture;
 
     private TextureRegion currentTexture;
+    private HomeModel home;
 
-    public PlayerModel(float x, float y, String playerTeam) {
-        super(x, y, 1, 1);
+    public PlayerModel(float x, float y, float width, float height, String playerTeam, HomeModel home) {
+        super(x, y, width, height);
         setBullet(true);
-        setName("ball");
-        setTexture(texture);
+        setTexture(Assets.TEXTURES.get("character/Filmstrip/Player 1/P1_Walk_8.png"));
 
         impulse = new Vector2();
         boost = new Vector2();
@@ -76,12 +70,8 @@ public class PlayerModel extends HumanoidModel {
 
         isAlive = true;
         item = new ArrayList<>();
-        overlapItem = new ArrayList<>();
-        for (int i = 0; i < NUM_ITEMS; i++) {
-            overlapItem.add(false);
-        }
-        // TODO Set this later on in a better way
-        homeLoc = new Vector2(x - 0.5f, y - 0.5f);
+
+        this.home = home;
         team = playerTeam;
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
@@ -110,10 +100,6 @@ public class PlayerModel extends HumanoidModel {
     /** player identification */
     public String getTeam() {
         return team;
-    }
-
-    public Vector2 getHomeLoc() {
-        return homeLoc;
     }
 
     /** physics */
@@ -152,7 +138,7 @@ public class PlayerModel extends HumanoidModel {
         if (!isActive()) {
             return;
         }
-        body.applyLinearImpulse(impulse.nor().scl(DEFAULT_THRUST).add(boost.nor().scl(BOOST_IMP)), getPosition(), true);
+        body.applyLinearImpulse(impulse.nor().scl(WALK_IMPULSE).add(boost.nor().scl(BOOST_IMP)), getPosition(), true);
         boost.setZero();
     }
 
@@ -221,22 +207,13 @@ public class PlayerModel extends HumanoidModel {
         }
         spawnCooldown--;
         if (spawnCooldown == 0) {
-            setPosition(homeLoc);
+            setPosition(home.getPosition());
             isAlive = true;
             draw = true;
         }
         resetTexture();
 
         setLinearVelocity(Vector2.Zero);
-    }
-
-    /** player-item */
-    public void setOverlapItem(int id, boolean b) {
-        overlapItem.set(id, b);
-    }
-
-    public boolean getOverlapItem(int id) {
-        return overlapItem.get(id);
     }
 
     public boolean hasItem() {

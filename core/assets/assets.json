@@ -81,7 +81,8 @@
         "environment/StallOther4_64.png",
         "environment/StallOther5_64.png",
         "environment/StallOther5-1_64.png",
-        "environment/StallOtherWide_64.png"
+        "environment/StallOtherWide_64.png",
+        "environment/Seat1_64.png"
     ],
     "item": [
         "item/food1_64.png"
