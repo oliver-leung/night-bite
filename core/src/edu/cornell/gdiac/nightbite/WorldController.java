@@ -380,7 +380,7 @@ public class WorldController implements Screen, InputProcessor {
             /* IF PLAYER THROWS ITEM */
             if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
                 for (ItemModel heldItem : p.getItems()) {
-                    heldItem.throwItem(p.getImpulse());
+                    heldItem.throwItem(p.getPosition(), p.getImpulse());
                 }
                 p.clearInventory();
                 p.startgrabCooldown();
