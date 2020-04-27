@@ -13,6 +13,7 @@ import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
@@ -27,11 +28,13 @@ public class PlayerModel extends HumanoidModel {
 
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
+    private static final int SLIDE_FRAMES=80;
 
     public enum MoveState {
         WALK,
         RUN,
-        STATIC
+        STATIC,
+        SLIDE
     }
 
     public enum DirectionState {
@@ -48,11 +51,19 @@ public class PlayerModel extends HumanoidModel {
     public MoveState state;
     private int boosting;
     private int cooldown;
+    private int sliding;
 
     private int ticks;
 
     private Vector2 impulse;
     private Vector2 boost;
+
+    private float slideHorizontal;
+    private float slideVertical;
+
+    /** player respawn */
+    private boolean isAlive;
+    private int spawnCooldown;
 
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
@@ -198,16 +209,30 @@ public class PlayerModel extends HumanoidModel {
     }
 
     public void setWalk() {
-        if (boosting > 0) return;
+        if (boosting > 0 || sliding > 0) { return; }
         state = MoveState.WALK;
         setWalkTexture();
     }
 
     public void setStatic() {
-        if (boosting > 0) return;
+        if (boosting > 0 || sliding > 0) { return; }
         state = MoveState.STATIC;
         resetTicks();
         setStaticTexture();
+    }
+
+    public boolean isSliding(){
+        return sliding > 0;
+    }
+
+    public Vector2 setSlide(float horizontal, float vertical) {
+        if (state != MoveState.SLIDE) { // player wasn't sliding before
+            state = MoveState.SLIDE;
+            slideHorizontal = horizontal;
+            slideVertical = vertical;
+            sliding = SLIDE_FRAMES;
+        }
+        return new Vector2(slideHorizontal, slideVertical);
     }
 
     public void update() {
@@ -223,10 +248,15 @@ public class PlayerModel extends HumanoidModel {
         if (swinging) {
             updateSwing();
         }
+        sliding = Math.max(0, sliding - 1);
     }
 
     public void resetBoosting() {
         boosting = 0;
+    }
+
+    public void resetSliding() {
+        sliding = 0;
     }
 
     public boolean hasItem() {

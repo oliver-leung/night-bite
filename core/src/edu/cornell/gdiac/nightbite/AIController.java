@@ -27,6 +27,10 @@ public class AIController implements RayCastCallback {
 
     private int replanCountdown;
 
+    public HumanoidModel getEnemy() {
+        return enemy;
+    }
+
 
     public AIController(WorldModel worldModel, HumanoidModel enemy) {
         this.worldModel = worldModel;

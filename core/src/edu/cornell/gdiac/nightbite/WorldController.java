@@ -302,6 +302,7 @@ public class WorldController implements Screen, InputProcessor {
         float playerVertical;
         boolean playerDidBoost;
         boolean playerDidThrow;
+        Vector2 slideDirection;
 
         // TODO for refactoring update
         int NUM_PLAYERS = 1;
@@ -314,32 +315,66 @@ public class WorldController implements Screen, InputProcessor {
 
             p = worldModel.getPlayers().get(i);
 
-            // update player state
-            if (playerVertical != 0 || playerHorizontal != 0) {
-                p.setWalk();
-                p.updateDirectionState(playerVertical, playerHorizontal);
+
+            if (onOilTile || p.isSliding()) { // if player reaches oil or has been sliding, disregard user input
+                slideDirection = p.setSlide(playerHorizontal, playerVertical);
+                p.setIX(slideDirection.x);
+                p.setIY(slideDirection.y);
+                playerDidBoost = false;
+                playerDidThrow = false;
             } else {
-                p.setStatic();
-            }
+                if (playerVertical != 0 || playerHorizontal != 0) {
+                    p.setWalk();
 
-			// handle player facing left-right
-            if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                p.flipTexture();
-            }
+                    if (p.getPlayerWalkCounter() % 20 == 0) {
+                        p.getTexture().setFrame(1);
+                        if (p.getPrevHoriDir() == 1) {
+                            p.getTexture().flip(true, false);
+                        }
+                    } else if (p.getPlayerWalkCounter() % 20 == 10) {
+                        p.getTexture().setFrame(0);
+                        if (p.getPrevHoriDir() == 1) {
+                            p.getTexture().flip(true, false);
+                        }
+                    }
+                    p.incrPlayerWalkCounter();
+                } else {
+                    p.setStatic();
+                    p.resetPlayerWalkCounter();
+                    p.getTexture().setFrame(0);
+                    if (p.getPrevHoriDir() == 1) {
+                        p.getTexture().flip(true, false);
+                    }
+                }
 
-            // Set player movement impulse
-            p.setIX(playerHorizontal);
-            p.setIY(playerVertical);
-            // If player dashed whiled moving, set boost impulse
-            if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
-                p.setBoostImpulse(playerHorizontal, playerVertical);
+                // update player state
+                if (playerVertical != 0 || playerHorizontal != 0) {
+                    p.setWalk();
+                    p.updateDirectionState(playerVertical, playerHorizontal);
+                } else {
+                    p.setStatic();
+                }
+
+                // handle player facing left-right
+                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+                    p.flipTexture();
+                }
+
+                // Set player movement impulse
+                p.setIX(playerHorizontal);
+                p.setIY(playerVertical);
+                // If player dashed whiled moving, set boost impulse
+                if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
+                    p.setBoostImpulse(playerHorizontal, playerVertical);
+                }
+                p.applyImpulse();
             }
-            p.applyImpulse();
 
             /* Play state */
             if (!p.isAlive()) {
                 p.respawn();
                 p.setFallingTexture();
+                p.resetSliding();
             }
             p.setActive(p.isAlive());
 
