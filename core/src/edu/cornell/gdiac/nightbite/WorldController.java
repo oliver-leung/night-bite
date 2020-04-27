@@ -245,13 +245,10 @@ public class WorldController implements Screen, InputProcessor {
         // TODO make data-driven
         Array<LightSource> lights = worldModel.getLights();
         PlayerModel p1 = worldModel.getPlayers().get(0);
-        PlayerModel p2 = worldModel.getPlayers().get(1);
 
         LightSource l1 = lights.get(0);
-        LightSource l2 = lights.get(1);
 
         l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
-        l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
 
         for (LightSource l : lights) {
             l.setActive(true);
@@ -318,7 +315,7 @@ public class WorldController implements Screen, InputProcessor {
         boolean playerDidThrow;
 
         // TODO for refactoring update
-        int NUM_PLAYERS = 2;
+        int NUM_PLAYERS = 1;
         for (int i = 0; i < NUM_PLAYERS; i++) {
 
             playerHorizontal = manager.getVelX(i);

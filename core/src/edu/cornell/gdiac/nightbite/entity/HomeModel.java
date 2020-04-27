@@ -19,7 +19,7 @@ public class HomeModel extends ImmovableModel {
         super(x, y, 0);
         this.team = team;
         score = 0;
-        setTexture(Assets.HOME_STALLS[player]);
+        setTexture(Assets.HOME_STALL);
     }
 
     public int getScore() {

@@ -74,6 +74,7 @@ public class PlayerModel extends HumanoidModel {
 
     /** player texture */
     private FilmStrip defaultTexture;
+    private FilmStrip holdTexture;
 
     /** player extra textures */
     private TextureRegion handheld;
@@ -87,12 +88,11 @@ public class PlayerModel extends HumanoidModel {
 
     private TextureRegion shadow;
     private TextureRegion arrow;
-    private DirectionState dirState;
     private float arrowAngle;
     private float arrowXOffset;
     private float arrowYOffset;
 
-    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
+    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
         super(x, y, width, height);
         setBullet(true);
         setName("ball");
@@ -129,6 +129,8 @@ public class PlayerModel extends HumanoidModel {
         shadow = shadowTexture;
         arrow = arrowTexture;
         swingCooldown = 0;
+
+        this.holdTexture = holdTexture;
     }
 
     public void resetTexture() {
@@ -294,10 +296,12 @@ public class PlayerModel extends HumanoidModel {
 
     public void clearInventory() {
         item.clear();
+        texture = defaultTexture;
     }
 
     public void holdItem(ItemModel i) {
         item.add(i);
+        texture = holdTexture;
     }
 
     /** cooldown between grabbing/throwing */
@@ -400,9 +404,10 @@ public class PlayerModel extends HumanoidModel {
         } else {
             originY = -texture.getRegionHeight()/5;
         }
-//        canvas.draw(handheld, Color.WHITE,originX,originY,getX() * drawScale.x, getY() * drawScale.y,
-//                getAngle() + angleOffset + 2,actualScale.x,actualScale.y);
-        canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
-                getAngle() + angleOffset,actualScale.x,actualScale.y);
+
+        if (!hasItem()) {
+            canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
+                    getAngle() + angleOffset,actualScale.x,actualScale.y);
+        }
     }
 }
