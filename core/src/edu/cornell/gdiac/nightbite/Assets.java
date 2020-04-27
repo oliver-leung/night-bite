@@ -39,6 +39,11 @@ public class Assets {
     static int PLAYER_FILMSTRIP_COL = 8;
     static int PLAYER_FILMSTRIP_SIZE = 8;
 
+    /* Firecracker filmstrip files */
+    static String FIRECRACKER_FILE = "item/firecracker_64.png";
+    static String FIRECRACKER_LIT_FILE = "item/firecracker_fuse_64_fs.png";
+    static String FIRECRACKER_DET_FILE = "item/firecracker_detonating_64_fs.png";
+
     // Item
     static String FISH_ITEM_FILE = "item/food1_64.png";
 
@@ -194,6 +199,11 @@ public class Assets {
     public static TextureRegion HOLE;
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
+
+    public static FilmStrip FIRECRACKER;
+    public static FilmStrip FIRECRACKER_LIT;
+    public static FilmStrip FIRECRACKER_DET;
+
     public static BitmapFont RETRO_FONT;
     public static Music music;
 
@@ -218,6 +228,11 @@ public class Assets {
         loadTexture(HOLE_FILE);
         loadTexture(GAME_BACKGROUND_FILE);
         loadTexture(GOAL_FILE);
+
+        loadTexture(FIRECRACKER_FILE);
+        loadTexture(FIRECRACKER_LIT_FILE);
+        loadTexture(FIRECRACKER_DET_FILE);
+
         for (String player_file : PLAYER_FILMSTRIP_FILES) {
             loadTexture(player_file);
         }
@@ -265,6 +280,13 @@ public class Assets {
                     PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
             PLAYER_FILMSTRIPS[i] = player;
         }
+
+        // Firecracker filmstrip
+        // TODO don't hardcode the rows/cols/size
+        FIRECRACKER = createFilmStrip(manager, FIRECRACKER_FILE, 1, 1, 1);
+        FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
+        FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
+
 
         // Home stall textures
         int num_stalls = HOME_STALL_FILES.length;
