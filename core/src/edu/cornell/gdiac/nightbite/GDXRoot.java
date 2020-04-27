@@ -84,21 +84,21 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
-		canvas = GameCanvas.getInstance();
-		loading = new LoadController(canvas, manager, 1);
-		levelSelect = new LevelSelectController(canvas);
+        canvas = GameCanvas.getInstance();
+        loading = new LoadController(canvas, manager, 1);
+        levelSelect = new LevelSelectController(canvas);
 
-		assets = new Assets(manager);
-		assets.preLoadContent(manager);
-		controller = new WorldController();
+        assets = new Assets(manager);
+        assets.preLoadContent();
+        controller = new WorldController();
 
-		loading.setScreenListener(this);
-		setScreen(loading);
+        loading.setScreenListener(this);
+        setScreen(loading);
 
-		// Create logger
-		Gdx.app.setApplicationLogger(new Logger());
-		Gdx.app.setLogLevel(Application.LOG_NONE);
-	}
+        // Create logger
+        Gdx.app.setApplicationLogger(new Logger());
+        Gdx.app.setLogLevel(Application.LOG_NONE);
+    }
 
 	/** 
 	 * Called when the Application is destroyed. 

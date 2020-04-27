@@ -3,11 +3,14 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.HashMap;
@@ -20,294 +23,37 @@ import java.util.HashMap;
 // drawing/other functions
 
 public class Assets {
+    /** Mapping from file names to in-game texture assets */
+    public static HashMap<String, TextureRegion> TEXTURES = new HashMap<>();
+    /** In-game music asset */
+    public static Music MUSIC;
+    /** Mapping from file names to in-game sound effects */
+    public static HashMap<String, Sound> SOUND_EFFECTS = new HashMap<>();
+    /** In-game font asset */
+    public static BitmapFont FONT;
     /** Asset Manager */
     private AssetManager manager;
+    /** Categorized file names of all assets */
+    private final String FILE_NAMES = "assets.json";
     /** Track load status */
     private boolean isLoaded = false;
-
-    /** RESOURCES */
-    // Character
-    static String[] PLAYER_FILMSTRIP_FILES = {
-            "player/P1_Dash_5.png",
-            "player/P1_Falling_5.png",
-            "player/P1_Holding_8.png",
-            "player/P1_Walk_8.png"
-    };
+    /** Keys that map to static texture file names */
+    private final String[] textureKeys = new String[]{"ground", "decoration", "hole", "character", "team", "wall", "item"};
+    // TODO: Delete these filmstrip constants
+    int PLAYER_FILMSTRIP_ROW = 1;
+    int PLAYER_FILMSTRIP_COL = 8;
+    int PLAYER_FILMSTRIP_SIZE = 8;
     /** Track all loaded assets (for unloading purposes) */
-    protected Array<String> assets = new Array<>();
-    static int PLAYER_FILMSTRIP_ROW = 1;
-    static int PLAYER_FILMSTRIP_COL = 8;
-    static int PLAYER_FILMSTRIP_SIZE = 8;
-
-    // Item
-    static String FISH_ITEM_FILE = "item/food1_64.png";
-
-    // Obstacle
-    static String WALL_PA1_FILE = "environment/Box_64.png";
-    static String WALL_PA2_FILE = "environment/box_palette2_64.png";
-
-    // Hole
-    static String HOLE_FILE = "environment/hole4_64.png";
-
-    // Home stall
-    static String[] HOME_STALL_FILES = {
-            "environment/StallHome1_64.png",
-            "environment/StallHome2_64.png",
-            "environment/StallHome3_64.png",
-            "environment/StallHome4_64.png",
-    };
-
-    public static HashMap<String, TextureRegion> FILES;
-    static String[] FILE_NAMES = {
-            "background/ground_64.png",
-            "background/ground_palette2_64.png",
-            "background/groundbrick_64.png",
-            "background/groundbrick_palette2_64.png",
-            "background/grounddark1_64.png",
-            "background/grounddark1_palette2_64.png",
-            "background/grounddark2_64.png",
-            "background/grounddark2_palette2_64.png",
-            "background/groundgrass_64.png",
-            "background/groundgrass_palette2_64.png",
-
-            "environment/Box_32.png",
-            "environment/Box_64.png",
-            "environment/box_palette2_32.png",
-            "environment/box_palette2_64.png",
-            "environment/brick.png",
-            "environment/car.psd",
-            "environment/car_32.png",
-            "environment/car_64.png",
-            "environment/carfront.psd",
-            "environment/carfront_32.png",
-            "environment/carfront_64.png",
-            "environment/cobble.png",
-            "environment/DirectionsSign_32.png",
-            "environment/DirectionsSign_64.png",
-            "environment/DirectionsSign_small_64.png",
-            "environment/firecracker_filmstrip.png",
-            "environment/goaldoor.png",
-            "environment/Hanging_Lantern_32_FS_30.png",
-            "environment/HangingLantern_32.png",
-            "environment/HangingLantern_64.png",
-            "environment/HangingLantern_64_Filmstrip_30.png",
-            "environment/hole0_64.png",
-            "environment/hole0_palette2_64.png",
-            "environment/hole1_64.png",
-            "environment/hole1_palette2_64.png",
-            "environment/hole2.png",
-            "environment/hole2adj_64.png",
-            "environment/hole2adj_palette2_64.png",
-            "environment/hole2opp_64.png",
-            "environment/hole2opp_palette2_64.png",
-            "environment/hole3_64.png",
-            "environment/hole3_palette2_64.png",
-            "environment/hole4_64.png",
-            "environment/hole4_palette2_64.png",
-            "environment/redcar_32.png",
-            "environment/redcar_64.png",
-            "environment/redcarfront_32.png",
-            "environment/redcarfront_64.png",
-            "environment/Shrub_32.png",
-            "environment/Shrub_32_Filmstrip_30.png",
-            "environment/Shrub_64.png",
-            "environment/Shrub_64_Filmstrip_30.png",
-            "environment/Shrub_64_palette3.png",
-            "environment/Shrub_palette2_64.png",
-            "environment/shrub_palette2_filmstrip.png",
-            "environment/StallHome1_64.png",
-            "environment/StallHome2_64.png",
-            "environment/StallHome3_64.png",
-            "environment/StallHome4_64.png",
-            "environment/StallItem1_64.png",
-            "environment/StallOther1_64.png",
-            "environment/StallOther2_64.png",
-            "environment/StallOther_palette2_64.png",
-            "environment/StallOtherWide_64.png",
-            "environment/Stalls_32.png",
-            "environment/Stalls_32_Grid.png",
-            "environment/Stalls_64.png",
-            "environment/Stalls_64_Darkbg.png",
-            "environment/stand-border.png",
-            "environment/Tree_32.png",
-            "environment/Tree_64_palette2.png",
-
-            "background/Box_64.png",
-            "background/box_palette2_64.png",
-            "background/brick.png",
-            "background/Box_64.png",
-            "background/box_palette2_64.png",
-            "background/brick.png",
-            "background/cobble.png",
-            "background/DirectionsSign_small_64.png",
-            "background/goaldoor.png",
-            "background/HangingLantern_32.png",
-            "background/hole0_64.png",
-            "background/hole0_palette2_64.png",
-            "background/hole1_64.png",
-            "background/hole1_palette2_64.png",
-            "background/hole2.png",
-            "background/hole2adj_64.png",
-            "background/hole2adj_palette2_64.png",
-            "background/hole2opp_64.png",
-            "background/hole2opp_palette2_64.png",
-            "background/hole3_64.png",
-            "background/hole3_palette2_64.png",
-            "background/hole4_64.png",
-            "background/hole4_palette2_64.png",
-            "background/StallHome1_64.png",
-            "background/StallHome2_64.png",
-            "background/StallHome3_64.png",
-            "background/StallHome4_64.png",
-            "background/StallItem1_64.png",
-            "background/StallOther1_64.png",
-            "background/StallOther2_64.png",
-            "background/StallOther_palette2_64.png",
-            "background/stand-border.png"
-    };
-
-    // Background
-    static String GAME_BACKGROUND_FILE = "background/ground_64.png";
-
-    // Other
-    static String GOAL_FILE = "environment/goaldoor.png";
-
-    // Font
-    static String RETRO_FONT_FILE = "font/RetroGame.ttf";
-    static int RETRO_FONT_SIZE = 12;
-
-    // Sound
-    static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
-
-    /*
-     * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
-     * data-driven.
-     */
-
-    /**
-     * LOADED ASSETS
-     */
-    public static FilmStrip[] PLAYER_FILMSTRIPS;
-    public static TextureRegion[] HOME_STALLS;
-    public static TextureRegion FISH_ITEM;
-    public static TextureRegion WALL;
-    public static TextureRegion HOLE;
-    public static TextureRegion GAME_BACKGROUND;
-    public static TextureRegion GOAL;
-    public static BitmapFont RETRO_FONT;
-    public static Music music;
+    private Array<String> assets = new Array<>();
+    /** JSON Reader */
+    private JsonReader jsonReader = new JsonReader();
+    /** JSON of asset file names */
+    private JsonValue FILE_NAMES_JSON;
 
     public Assets(AssetManager manager) {
         setManager(manager);
+        FILE_NAMES_JSON = jsonReader.parse(Gdx.files.internal(FILE_NAMES));
     }
-
-    public void setManager(AssetManager manager) {
-        this.manager = manager;
-    }
-
-    public boolean getLoaded() {
-        return isLoaded;
-    }
-
-    /** Preloads the texture and sound information for the game :
-     *  telling manager what to load */
-    public void preLoadContent(AssetManager manager) {
-        // Load Textures
-        loadTexture(FISH_ITEM_FILE);
-        loadTexture(WALL_PA1_FILE);
-        loadTexture(HOLE_FILE);
-        loadTexture(GAME_BACKGROUND_FILE);
-        loadTexture(GOAL_FILE);
-        for (String player_file : PLAYER_FILMSTRIP_FILES) {
-            loadTexture(player_file);
-        }
-        for (String stall_file : HOME_STALL_FILES) {
-            loadTexture(stall_file);
-        }
-
-        for (String filename : FILE_NAMES) {
-            try {
-                loadTexture(filename);
-            } catch (Exception ignored) {
-            }
-        }
-
-        // Load Font
-        loadFont(RETRO_FONT_FILE, RETRO_FONT_SIZE);
-    }
-
-    /** Preloads the texture and sound information for the game :
-     *  extracting assets from the manager after it has finished loading them */
-    public void loadContent(AssetManager manager) {
-        FISH_ITEM = createTexture(manager, FISH_ITEM_FILE, true);
-        WALL = createTexture(manager, WALL_PA1_FILE, true);
-        HOLE = createTexture(manager, HOLE_FILE, true);
-        GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
-        GOAL = createTexture(manager, GOAL_FILE, true);
-
-        // Start music
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
-        music.setLooping(true);
-        music.play();
-        music.setVolume(0.1f);
-
-        FILES = new HashMap<>();
-        // Make background textures
-        for (String filename : FILE_NAMES) {
-            FILES.put(filename, createTexture(manager, filename, false));
-        }
-
-        // Player Filmstrips
-        int num_players = PLAYER_FILMSTRIP_FILES.length;
-        PLAYER_FILMSTRIPS = new FilmStrip[num_players];
-        for (int i = 0; i < num_players; i++) {
-            FilmStrip player = createFilmStrip(manager, PLAYER_FILMSTRIP_FILES[i], PLAYER_FILMSTRIP_ROW,
-                    PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
-            PLAYER_FILMSTRIPS[i] = player;
-        }
-
-
-        // Home stall textures
-        int num_stalls = HOME_STALL_FILES.length;
-        HOME_STALLS = new TextureRegion[num_stalls];
-        for (int i = 0; i < num_stalls; i++) {
-            TextureRegion stall = createTexture(manager, HOME_STALL_FILES[i], true);
-            HOME_STALLS[i] = stall;
-        }
-
-        // Allocate Font
-        if (manager.isLoaded(RETRO_FONT_FILE)) {
-            RETRO_FONT = manager.get(RETRO_FONT_FILE, BitmapFont.class);
-        } else {
-            RETRO_FONT = null;
-        }
-
-        this.isLoaded = true;
-    }
-
-    /** Unloads the assets for this game.*/
-    public void unloadContent(AssetManager manager) {
-        for(String s : assets) {
-            if (manager.isLoaded(s)) {
-                manager.unload(s);
-            }
-        }
-        this.isLoaded = false;
-    }
-
-    public void loadTexture(String filePath) {
-        manager.load(filePath, Texture.class);
-        assets.add(filePath);
-    }
-
-    public void loadFont(String fontPath, int fontSize) {
-        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size2Params.fontFileName = fontPath;
-        size2Params.fontParameters.size = fontSize;
-        manager.load(fontPath, BitmapFont.class, size2Params);
-        assets.add(fontPath);
-    }
-
 
     /**
      * Returns a newly loaded filmstrip for the given file.
@@ -330,23 +76,113 @@ public class Assets {
      * This helper methods is used to set texture settings (such as scaling, and
      * whether or not the texture should repeat) after loading.
      */
-    protected static TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
+    protected static TextureRegion createTexture(AssetManager manager, String file) {
         if (manager.isLoaded(file)) {
             TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
             region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            if (repeat) {
-                region.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-            }
             return region;
         }
         return null;
     }
 
+    public void setManager(AssetManager manager) {
+        this.manager = manager;
+    }
+
+    public boolean getLoaded() {
+        return isLoaded;
+    }
+
+    /** Preload the texture and sound information for the game */
+    public void preLoadContent() {
+        // Static textures
+        for (String key : textureKeys) {
+            for (String fileName : FILE_NAMES_JSON.get(key).asStringArray()) {
+                loadTexture(fileName);
+            }
+        }
+
+        // Filmstrips
+        for (String fileName : FILE_NAMES_JSON.get("character filmstrip").asStringArray()) {
+            loadTexture(fileName);
+        }
+
+        loadMusic(FILE_NAMES_JSON.getString("music"));
+
+        // Sound effects
+        for (String fileName : FILE_NAMES_JSON.get("sound effect").asStringArray()) {
+            loadSound(fileName);
+        }
+
+        loadFont(FILE_NAMES_JSON.getString("font"), 12);
+    }
+
+    /** Preloads the texture and sound information for the game :
+     *  extracting assets from the manager after it has finished loading them */
+    public void loadContent(AssetManager manager) {
+        // Static textures
+        for (String key : textureKeys) {
+            for (String fileName : FILE_NAMES_JSON.get(key).asStringArray()) {
+                TEXTURES.put(fileName, createTexture(manager, fileName));
+            }
+        }
+
+        for (String fileName : FILE_NAMES_JSON.get("character filmstrip").asStringArray()) {
+            TextureRegion rawTexture = new TextureRegion(manager.get(fileName, Texture.class));
+            int[] dims = getFilmStripDimensions(rawTexture, 64);
+            TEXTURES.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
+        }
+
+        FONT = manager.get(FILE_NAMES_JSON.getString("font"));
+        MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
+
+        isLoaded = true;
+    }
+
+    /** Unloads the assets for this game. */
+    public void unloadContent(AssetManager manager) {
+        for (String s : assets) {
+            if (manager.isLoaded(s)) {
+                manager.unload(s);
+            }
+        }
+        this.isLoaded = false;
+    }
+
     /**
-     * @param filename Name of the file
-     * @return The TextureRegion from the given filename
+     * Get the dimensions a film strip, given its raw texture size (assuming that tiles are 64 x 64 pixels).
+     *
+     * @param textureRegion Raw texture region
+     * @return [rows, cols, size]
      */
-    public static TextureRegion get(String filename) {
-        return FILES.get(filename);
+    private int[] getFilmStripDimensions(TextureRegion textureRegion, int pixels) {
+        int rows = textureRegion.getRegionWidth() / pixels;
+        int cols = textureRegion.getRegionHeight() / pixels;
+        int size = rows * cols;
+
+        return new int[]{rows, cols, size};
+    }
+
+    public void loadSound(String filePath) {
+        manager.load(filePath, Sound.class);
+        assets.add(filePath);
+    }
+
+    public void loadMusic(String filePath) {
+        manager.load(filePath, Music.class);
+        assets.add(filePath);
+    }
+
+    public void loadTexture(String filePath) {
+        manager.load(filePath, Texture.class);
+        assets.add(filePath);
+    }
+
+    public void loadFont(String fontPath, int fontSize) {
+        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        size2Params.fontFileName = fontPath;
+        size2Params.fontParameters.size = fontSize;
+        manager.load(fontPath, BitmapFont.class, size2Params);
+        assets.add(fontPath);
     }
 }

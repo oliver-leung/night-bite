@@ -81,12 +81,23 @@
         "environment/StallOther4_64.png",
         "environment/StallOther5_64.png",
         "environment/StallOther5-1_64.png",
-        "environment/StallOther_palette2_64.png",
         "environment/StallOtherWide_64.png"
     ],
     "item": [
         "item/food1_64.png"
     ],
-    "filmstrip": [
-    ]
+    "character filmstrip": [
+        "character/Filmstrip/Player 1/P1_Dash_5.png",
+        "character/Filmstrip/Player 1/P1_Falling_5.png",
+        "character/Filmstrip/Player 1/P1_Holding_8.png",
+        "character/Filmstrip/Player 1/P1_Walk_8.png"
+    ],
+    "music": "audio/Night_Bite_(Theme).mp3",
+    "sound effect": [
+        "audio/delivered.wav",
+        "audio/falling.wav",
+        "audio/firecracker.wav",
+        "audio/pickup.wav"
+    ],
+    "font": "font/RetroGame.ttf"
 }

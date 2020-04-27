@@ -1,9 +1,9 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
@@ -25,18 +25,14 @@ public class PlayerModel extends HumanoidModel {
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 35;
 
-    public enum MoveState {
-        WALK,
-        RUN,
-        STATIC
-    }
+    private final TextureRegion idleTexture = Assets.TEXTURES.get("character/P1_64.png");
 
     public MoveState state;
     private int boosting;
     private int cooldown;
 
     private float prevHoriDir;
-    private int playerWalkCounter;
+    private int ticks;
 
     private Vector2 impulse;
     private Vector2 boost;
@@ -61,19 +57,19 @@ public class PlayerModel extends HumanoidModel {
     /** player texture */
     private FilmStrip defaultTexture;
 
-    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
-        super(x, y, width, height);
+    private TextureRegion currentTexture;
+
+    public PlayerModel(float x, float y, String playerTeam) {
+        super(x, y, 1, 1);
         setBullet(true);
         setName("ball");
-
-        this.texture = texture;
         setTexture(texture);
 
         impulse = new Vector2();
         boost = new Vector2();
 
         prevHoriDir = -1;
-        playerWalkCounter = 0;
+        ticks = 0;
 
         cooldown = 0;
         boosting = 0;
@@ -90,6 +86,10 @@ public class PlayerModel extends HumanoidModel {
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
+    }
+
+    public int getTicks() {
+        return ticks;
     }
 
     public void resetTexture() {
@@ -166,25 +166,32 @@ public class PlayerModel extends HumanoidModel {
         prevHoriDir = dir;
     }
 
-    public int getPlayerWalkCounter() {
-        return playerWalkCounter;
-    }
-
     public void incrPlayerWalkCounter() {
-        playerWalkCounter++;
+        ticks++;
     }
 
     public void resetPlayerWalkCounter() {
-        playerWalkCounter = 0;
+        ticks = 0;
+    }
+
+    public enum MoveState {
+        WALK,
+        RUN,
+        STATIC,
+        DYING
     }
 
     public void setWalk() {
-        if (boosting > 0) { return; }
+        if (boosting > 0) {
+            return;
+        }
         state = MoveState.WALK;
     }
 
     public void setStatic() {
-        if (boosting > 0) { return; }
+        if (boosting > 0) {
+            return;
+        }
         state = MoveState.STATIC;
     }
 

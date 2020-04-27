@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
-import edu.cornell.gdiac.util.FilmStrip;
 
 public class LevelController {
     private static LevelController instance;
@@ -82,7 +81,7 @@ public class LevelController {
                     groundJson.getFloat("y"),
                     9 - groundJson.getFloat("x")
             );
-            TextureRegion texture = Assets.get(groundJson.getString("texture"));
+            TextureRegion texture = Assets.TEXTURES.get((groundJson.getString("texture")));
             GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x * world.getScale().x,
                     pos.y * world.getScale().y, 0, world.getActualScale().x, world.getActualScale().y);
         }
@@ -128,7 +127,7 @@ public class LevelController {
             item = new ItemModel(
                     itemJson.getFloat("y") + 1,
                     10 - itemJson.getFloat("x"),
-                    1, 1, itemNum, Assets.FISH_ITEM
+                    1, 1, itemNum, Assets.TEXTURES.get("item/food1_64.png")
             );
             item.setName("item");
             item.setDrawScale(world.getScale());
@@ -145,12 +144,9 @@ public class LevelController {
         for (JsonValue teamJson : teams.iterator()) {
             float x = 1.5f + teamJson.getFloat("y");
             float y = 9.5f - teamJson.getFloat("x");
-            FilmStrip filmStrip = Assets.PLAYER_FILMSTRIPS[playerNum];
-            float pWidth = (filmStrip.getRegionWidth() - 30f) / world.getScale().x;
-            float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
             String teamName = teamJson.name;
 
-            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, teamName);
+            player = new PlayerModel(x, y, teamName);
             player.setDrawScale(world.getScale());
             player.setActualScale(world.getActualScale());
             player.setName("player " + teamName);
@@ -160,8 +156,6 @@ public class LevelController {
             home.setName(teamName);
             home.setDrawScale(world.getScale());
             home.setActualScale(world.getActualScale());
-            home.setWidth(2);
-            home.setHeight(2);
             world.addStaticObject(home);
             playerNum++;
         }
@@ -178,7 +172,7 @@ public class LevelController {
             hole.setActualScale(world.getActualScale());
             hole.setName(holeJson.name());
             String texture = holeJson.getString("texture");
-            hole.setTexture(Assets.FILES.get(texture));
+            hole.setTexture(Assets.TEXTURES.get(texture));
             world.addStaticObject(hole);
         }
     }
@@ -195,7 +189,7 @@ public class LevelController {
             wall.setName(wallJson.name());
             String texture = wallJson.getString("texture");
             Gdx.app.log("Texture", "Setting texture: " + texture);
-            wall.setTexture(Assets.FILES.get(texture));
+            wall.setTexture(Assets.TEXTURES.get(texture));
             if (wall.getTexture().getRegionWidth() > 65) {
                 Vector2 pos = wall.getPosition();
                 pos.x += 0.5f;

@@ -133,8 +133,8 @@ public class WorldController implements Screen {
 
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
-        displayFont = Assets.RETRO_FONT;
-        LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+        displayFont = Assets.FONT;
+        LevelController.getInstance().populate(worldModel, selectedLevelJSON, 0);
     }
 
     /**
@@ -248,6 +248,10 @@ public class WorldController implements Screen {
         for (LightSource l : lights) {
             l.setActive(true);
         }
+
+        Assets.MUSIC.setLooping(true);
+        Assets.MUSIC.play();
+        Assets.MUSIC.setVolume(0.1f);
     }
 
     /**
@@ -324,12 +328,12 @@ public class WorldController implements Screen {
             if (playerVertical != 0 || playerHorizontal != 0) {
                 p.setWalk();
 
-                if (p.getPlayerWalkCounter() % 20 == 0) {
+                if (p.getTicks() % 20 == 0) {
                     p.getTexture().setFrame(1);
                     if (p.getPrevHoriDir() == 1) {
                         p.getTexture().flip(true, false);
                     }
-                } else if (p.getPlayerWalkCounter() % 20 == 10) {
+                } else if (p.getTicks() % 20 == 10) {
                     p.getTexture().setFrame(0);
                     if (p.getPrevHoriDir() == 1) {
                         p.getTexture().flip(true, false);

@@ -19,7 +19,9 @@ public class HomeModel extends ImmovableModel {
         super(x, y, 0);
         this.team = team;
         score = 0;
-        setTexture(Assets.HOME_STALLS[player]);
+        setTexture(Assets.TEXTURES.get("environment/StallHome1_64.png"));
+        setWidth(2);
+        setHeight(2);
     }
 
     public int getScore() {
