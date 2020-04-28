@@ -22,7 +22,7 @@ public class TestEnemy extends HumanoidModel {
 
     public TestEnemy(float x, float y, float width, float height, WorldModel world) {
         super(x, y, width, height);
-        this.texture = Assets.get("character/P3_64_v2.png");
+        this.texture = Assets.TEXTURES.get("character/P3_64_v2.png");
         setTexture(texture);
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);

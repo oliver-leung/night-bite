@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,6 +20,7 @@ import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -53,7 +55,6 @@ public class WorldModel {
     protected OrthographicCamera raycamera;
     /** The rayhandler for storing lights, and drawing them */
     protected RayHandler rayhandler;
-
     /** World scale */
     protected Vector2 scale;
     /** Scale of actual displayed window */
@@ -70,26 +71,20 @@ public class WorldModel {
 
     private PooledList<HumanoidModel> enemies;
 
-    public World getWorld() {
-        return world;
-    }
-
-    public PlayerModel getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(PlayerModel player) {
-        this.player = player;
-    }
-
     /** List of items */
     private ArrayList<ItemModel> items;
+    /** Whether the player is overlapping the items */
+    private ArrayList<Boolean> overlapItem = new ArrayList<>();
     /** List of firecrackers */
     private PooledList<FirecrackerModel> firecrackers;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
     private Array<LightSource> lights = new Array<>();
+    /** Bottom layer background textures */
+    private TextureRegion[][] background = new TextureRegion[20][12];
+    /** Top layer foreground textures */
+    private Sprite[][] decorations = new Sprite[20][12];
 
     private AILattice aiLattice;
 
@@ -134,6 +129,18 @@ public class WorldModel {
             pos *= 2;
         }
         return value;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public PlayerModel getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerModel player) {
+        this.player = player;
     }
 
     /**
@@ -328,7 +335,7 @@ public class WorldModel {
      */
     public Vector2 transformTileToWorld(Vector2 pos) {
         Affine2 transformation = new Affine2();
-        transformation.setToTranslation(-0.5f, -0.5f);
+        transformation.setToTranslation(0.5f, 0.5f);
         transformation.applyTo(pos);
         return pos;
     }
@@ -352,6 +359,7 @@ public class WorldModel {
     public void addItem(ItemModel item) {
         initializeObject(item);
         items.add(item);
+        overlapItem.add(false);
     }
 
     public void addEnemy(HumanoidModel enemy) {
@@ -426,7 +434,7 @@ public class WorldModel {
      * @param color The rgba value of the light color.
      * @param dist  The radius of the light.
      */
-    public void createPointLight(float[] color, float dist) {
+    public PointSource createPointLight(float[] color, float dist) {
         // ALL HARDCODED!
         float[] pos = new float[]{0.0f, 0.0f};
         int rays = 512;
@@ -441,6 +449,7 @@ public class WorldModel {
         point.setContactFilter(f);
         point.setActive(false); // TURN ON LATER
         lights.add(point);
+        return point;
     }
 
     public void updateAndCullObjects(float dt) {
@@ -463,7 +472,7 @@ public class WorldModel {
             }
         }
 
-        for (Iterator iterator : updateOnly) {
+        for (Iterator<?> iterator : updateOnly) {
             while (iterator.hasNext()) {
                 ((Obstacle) iterator.next()).update(dt);
             }
@@ -532,6 +541,14 @@ public class WorldModel {
         scale = null;
     }
 
+    public void setBackground(TextureRegion textureRegion, int x, int y) {
+        background[x][y] = textureRegion;
+    }
+
+    public void setDecorations(Sprite sprite, int x, int y) {
+        decorations[x][y] = sprite;
+    }
+
     public void setPixelBounds() {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
@@ -574,5 +591,57 @@ public class WorldModel {
 //        canonicalToActual.applyTo(scale);
 //
 //        canonicalToActual.applyTo(actualScale);
+    }
+
+    public void drawDecorations() {
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                Sprite sprite = decorations[i][j];
+                if (sprite != null) {
+                    sprite.draw(GameCanvas.getInstance().getSpriteBatch());
+                }
+            }
+        }
+    }
+
+    public void drawBackground() {
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                TextureRegion texture = background[i][j];
+                if (texture != null) {
+                    GameCanvas.getInstance().draw(
+                            texture, Color.WHITE,
+                            0, 0,
+                            i * getScale().x, j * getScale().y,
+                            0, getActualScale().x, getActualScale().y);
+                }
+            }
+        }
+    }
+
+    public boolean getOverlapItem(int j) {
+        return overlapItem.get(j);
+    }
+
+    public void setOverlapItem(int itemId, boolean b) {
+        overlapItem.set(itemId, b);
+    }
+
+    /** Create a small physics body to attach a white light to */
+    public void addLightBody(int x, int y) {
+        PolygonObstacle body = new PolygonObstacle(
+                new float[]{
+                        0.1f, 0.1f,
+                        -0.1f, 0.1f,
+                        -0.1f, -0.1f,
+                        0.1f, -0.1f},
+                x, y);
+        body.setSensor(true);
+        body.setActive(true);
+        transformTileToWorld(body);
+        body.activatePhysics(world);
+
+        PointSource light = createPointLight(new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 4.0f);
+        light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }

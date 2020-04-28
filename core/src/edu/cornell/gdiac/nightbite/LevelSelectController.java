@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.PooledList;
@@ -72,7 +71,12 @@ public class LevelSelectController implements Screen, InputProcessor {
     // TODO whack shit
     private PooledList<Vector2> object_list = new PooledList<>();
     private int levelChoiceindex;
-    private String[] levelJSONList = new String[]{"jsons/level_easy.json", "jsons/level_medium.json", "jsons/level_hard.json"};
+
+    // TODO: switch to levels made with new JSON schema
+    private String[] levelJSONList = new String[]{
+            "jsons/beta_easy_funnel.json",
+            "jsons/beta_medium.json",
+            "jsons/beta_hard.json"};
     private int[] xposList;
 
     public LevelSelectController(GameCanvas canvas) {
@@ -86,7 +90,6 @@ public class LevelSelectController implements Screen, InputProcessor {
     }
 
     public void loadContent() {
-        System.out.println(Assets.LEVEL_SELECT_BACKGROUND);
         background = Assets.LEVEL_SELECT_BACKGROUND;
         tile1Texture = Assets.TILE_1_TEXTURE;
         tile2Texture = Assets.TILE_2_TEXTURE;

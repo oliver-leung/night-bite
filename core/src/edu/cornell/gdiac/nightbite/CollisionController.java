@@ -2,10 +2,11 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
 public class CollisionController implements ContactListener {
@@ -55,13 +56,12 @@ public class CollisionController implements ContactListener {
     public void endContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
-
-        if (a instanceof PlayerModel && b instanceof BoxObstacle && ((BoxObstacle) b).getName().equals("item")) {
+        if (a instanceof PlayerModel && b instanceof ItemModel) {
             int itemId = ((ItemModel) b).getId();
-            ((PlayerModel) a).setOverlapItem(itemId, false);
-        } else if (b instanceof PlayerModel && a instanceof BoxObstacle && ((BoxObstacle) a).getName().equals("item")) {
+            worldModel.setOverlapItem(itemId, false);
+        } else if (b instanceof PlayerModel && a instanceof ItemModel) {
             int itemId = ((ItemModel) a).getId();
-            ((PlayerModel) b).setOverlapItem(itemId, false);
+            worldModel.setOverlapItem(itemId, false);
         }
     }
 
@@ -113,7 +113,6 @@ public class CollisionController implements ContactListener {
                 playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
             }
         }
-
     }
 
     public void handlePlayerToObjectContact(PlayerModel player, Object object) {
@@ -133,7 +132,7 @@ public class CollisionController implements ContactListener {
 
             // Player-Item
             int id = ((ItemModel) object).getId();
-            player.setOverlapItem(id, true);
+            worldModel.setOverlapItem(id, true);
 
         } else if (object instanceof HomeModel) {
 

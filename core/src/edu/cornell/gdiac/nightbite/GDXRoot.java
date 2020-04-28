@@ -91,9 +91,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
 
-		assets = new Assets(manager);
-		assets.preLoadContent(manager);
-		controller = new WorldController();
+        assets = new Assets(manager);
+        assets.preLoadContent();
+        controller = new WorldController();
 
 		loading.setScreenListener(this);
 		setScreen(loading);

@@ -23,14 +23,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-
-import java.util.Vector;
 
 /**
  * Base class for a world-specific controller.
@@ -140,7 +137,7 @@ public class WorldController implements Screen, InputProcessor {
 
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
-        displayFont = Assets.RETRO_FONT;
+        displayFont = Assets.FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
         enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
         enemy.setDrawScale(worldModel.scale);
@@ -165,7 +162,9 @@ public class WorldController implements Screen, InputProcessor {
         canvas.clear();
         canvas.begin();
 
-        LevelController.getInstance().drawBackground(worldModel);
+        worldModel.drawBackground();
+
+        worldModel.drawDecorations();
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
         StringBuilder message2 = new StringBuilder("Player 2 score: ");
@@ -183,8 +182,6 @@ public class WorldController implements Screen, InputProcessor {
                 }
             }
         }
-
-        LevelController.getInstance().drawDecorations(worldModel);
 
         // Draw player scores
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
@@ -246,20 +243,9 @@ public class WorldController implements Screen, InputProcessor {
         CollisionController c = new CollisionController(worldModel);
         worldModel.setContactListener(c);
         worldModel.initLighting(canvas);
-        worldModel.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f); // for player 1
-        worldModel.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f); // for player 2
         populateLevel();
 
-        // Attaching lights to players is janky and serves mostly as demo code
-        // TODO make data-driven
-        Array<LightSource> lights = worldModel.getLights();
-        PlayerModel p1 = worldModel.getPlayers().get(0);
-
-        LightSource l1 = lights.get(0);
-
-        l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
-
-        for (LightSource l : lights) {
+        for (LightSource l : worldModel.getLights()) {
             l.setActive(true);
         }
     }
@@ -364,7 +350,7 @@ public class WorldController implements Screen, InputProcessor {
             /* IF PLAYER GRABS ITEM */
             for (int j = 0; j < worldModel.getNumItems(); j++) {
                 ItemModel item = worldModel.getItem(j);
-                if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+                if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
                 }
@@ -458,9 +444,6 @@ public class WorldController implements Screen, InputProcessor {
         // IGNORE FOR NOW
         screenWidth = width;
         screenHeight = height;
-        System.out.println(width);
-        System.out.println(height);
-        System.out.println("-----");
     }
 
     /**
