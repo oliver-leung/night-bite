@@ -356,17 +356,6 @@ public class WorldModel {
         staticObjects.add(obj);
     }
 
-    public void removeStaticObject(ImmovableModel removeObj) {
-        Iterator itr = staticObjects.iterator();
-        while (itr.hasNext()) {
-            Obstacle obj = (Obstacle) itr.next();
-            if (obj.equals(removeObj)) {
-                itr.remove();
-            }
-        }
-    }
-
-
     public void addItem(ItemModel item) {
         initializeObject(item);
         items.add(item);
@@ -425,6 +414,16 @@ public class WorldModel {
 
     public PooledList<OilModel> getOils() {
         return oils;
+    }
+
+    public void removeOil(Object removeObj) {
+        Iterator itr = oils.iterator();
+        while (itr.hasNext()) {
+            Obstacle obj = (Obstacle) itr.next();
+            if (obj.equals(removeObj)) {
+                itr.remove();
+            }
+        }
     }
 
     /**
