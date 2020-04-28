@@ -92,8 +92,8 @@ public class PlayerModel extends HumanoidModel {
     /** wok hitbox */
     private PolygonObstacle wokHitbox;
     private World world;
-    private int REFLECT_DIST = 8;
-    private float REFLECT_RANGE = 1.5f;
+    private int REFLECT_DIST = 20;
+    private float REFLECT_RANGE = 2f;
 
     private HomeModel home;
 

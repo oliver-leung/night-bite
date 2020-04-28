@@ -14,14 +14,14 @@ import java.util.ArrayList;
 public class FirecrackerModel extends BoxObstacle {
 
     /* Expected timestep age of firecracker before becoming lit */
-    private static final int AGE = 128;
+    private static final int AGE = 80;
     /* Expected timestep age of firecracker before detonating */
     private static final int LIT_AGE = 50;
     /* Expected timestep age of firecracker before becoming destroyed */
     private static final int DETONATING_AGE = 80;
 
     /* How far out will humanoid bodies be affected by the detonation */
-    private static final float BLAST_RADIUS = 1.0f;
+    private static final float BLAST_RADIUS = 1.5f;
 
     /* Physics constants */
     private static final float MOVABLE_OBJECT_DENSITY = 1.0f;
@@ -29,7 +29,7 @@ public class FirecrackerModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
     private static final float THROW_FORCE = 6f;
     private static final float MOTION_DAMPING = 30f;
-    protected static final float KNOCKBACK_IMPULSE = 100f;
+    protected static final float KNOCKBACK_IMPULSE = 30f;
 
     /* How fast we change frames (one frame per 16 calls to update */
     private static final float ANIMATION_SPEED = 0.0625f;
