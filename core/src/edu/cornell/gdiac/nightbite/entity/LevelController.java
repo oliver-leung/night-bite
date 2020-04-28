@@ -10,7 +10,9 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
+import javafx.scene.effect.Light;
 
 public class LevelController {
     private static LevelController instance;
@@ -211,11 +213,11 @@ public class LevelController {
         player.setActualScale(world.getActualScale());
         player.setName("player " + teamName);
 
-        PointSource light = world.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f);
-        light.attachToBody(player.getBody(), light.getX(), light.getY(), light.getDirection());
-
         world.addStaticObject(home);
         world.addPlayer(player);
+
+        LightSource light = world.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f);
+        light.attachToBody(player.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 
     private void createHole(JsonValue holeJson, int x, int y) {

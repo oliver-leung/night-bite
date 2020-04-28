@@ -444,7 +444,7 @@ public class WorldModel {
         rayhandler.diffuseBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 
         // All hard coded for now, to be changed with data-driven levels
-        float[] color = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
+        float[] color = new float[]{0.01f, 0.005f, 0.0f, 1.0f};
         rayhandler.setAmbientLight(color[0], color[1], color[2], color[3]);
         int blur = 2;
         rayhandler.setBlur(blur > 0);
