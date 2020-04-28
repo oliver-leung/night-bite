@@ -124,8 +124,8 @@ public class PlayerModel extends HumanoidModel {
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
 
-        defaultHandheld = Assets.WOK;
-        handheld = Assets.WOK;
+        defaultHandheld = new TextureRegion(Assets.WOK);
+        handheld = new TextureRegion(Assets.WOK);
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
@@ -309,13 +309,14 @@ public class PlayerModel extends HumanoidModel {
 
         // hit things // TODO
 //        clickVector.nor();
-        for (FirecrackerModel firecracker: firecrackers) {
-            Vector2 firecrackerVector = firecracker.getPosition();
-            firecrackerVector.sub(getPosition());
-            if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
-//                System.out.println("called");
-                Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(REFLECT_DIST));
-                firecracker.throwItem(reflectDirection);
+        if (!hasItem()) {
+            for (FirecrackerModel firecracker: firecrackers) {
+                Vector2 firecrackerVector = firecracker.getPosition();
+                firecrackerVector.sub(getPosition());
+                if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
+                    Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(REFLECT_DIST));
+                    firecracker.throwItem(reflectDirection);
+                }
             }
         }
 
