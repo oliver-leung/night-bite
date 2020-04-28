@@ -43,7 +43,7 @@ public class LevelController {
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
         JsonValue cellArray = levelFormat.get("assets");
-        int x = 0, y = 0;
+        int x = 0, y = 11;
         // Yeah, I know this is ugly
         for (JsonValue cellRow : cellArray) {
             for (JsonValue cell : cellRow) {
@@ -83,19 +83,51 @@ public class LevelController {
                 }
                 x++;
             }
-            y++;
+            y--;
             x = 0;
         }
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
+        TextureRegion texture = new TextureRegion(Assets.TEXTURES.get(asset.getString("texture")));
+        texture = rotate(texture, asset.getInt("rotate"));
+
         world.setDecorations(
-                Assets.TEXTURES.get(asset.getString("texture")),
+                texture,
                 x, y
         );
         if (asset.getBoolean("light")) {
             world.addLightBody(x, y);
         }
+    }
+
+    /**
+     * @param textureRegion Texture to be rotated
+     * @param rotate        Number of 90 degree clockwise rotations
+     * @return Rotated copy of the texture
+     */
+    private TextureRegion rotate(TextureRegion textureRegion, int rotate) {
+        TextureRegion rotatedTexture = new TextureRegion(textureRegion);
+        rotate = rotate % 4;
+        switch (rotate) {
+            case 0:
+                break;
+            case 1:
+                rotatedTexture.setV(textureRegion.getV2());
+                rotatedTexture.setV2(textureRegion.getV());
+                break;
+            case 2:
+                rotatedTexture.setU(textureRegion.getU2());
+                rotatedTexture.setU2(textureRegion.getU());
+                rotatedTexture.setV(textureRegion.getV2());
+                rotatedTexture.setV2(textureRegion.getV());
+                break;
+            case 3:
+                rotatedTexture.setU(textureRegion.getU2());
+                rotatedTexture.setU2(textureRegion.getU());
+                break;
+        }
+        return rotatedTexture;
     }
 
     private void createBounds() {

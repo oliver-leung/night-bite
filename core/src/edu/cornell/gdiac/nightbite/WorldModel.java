@@ -310,7 +310,7 @@ public class WorldModel {
      */
     public Vector2 transformTileToWorld(Vector2 pos) {
         Affine2 transformation = new Affine2();
-        transformation.setToTranslation(-0.5f, -0.5f);
+        transformation.setToTranslation(0.5f, 0.5f);
         transformation.applyTo(pos);
         return pos;
     }

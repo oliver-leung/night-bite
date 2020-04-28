@@ -52,8 +52,8 @@ public class Assets {
 
     /** RESOURCES */
     // Character
-    static String PLAYER_FILMSTRIP_FILE = "character/lin_dash_64_fs.png";
-    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/P1_Holding_8.png";
+    static String PLAYER_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Dash_5.png";
+    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Holding_8.png";
     static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
     static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
     static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
@@ -67,9 +67,6 @@ public class Assets {
     // Obstacle
     static String WALL_PA1_FILE = "environment/Box_64.png";
     static String WALL_PA2_FILE = "environment/box_palette2_64.png";
-
-    // Hole
-    static String HOLE_FILE = "environment/hole4_64.png";
 
     // Home stall
     static String HOME_STALL_FILE = "environment/StallHome1_64.png";
@@ -167,7 +164,6 @@ public class Assets {
         loadTexture(PLAYER_SHADOW_FILE);
         loadTexture(PLAYER_ARROW_FILE);
         loadTexture(WALL_PA1_FILE);
-        loadTexture(HOLE_FILE);
         loadTexture(PLAYER_FILMSTRIP_FILE);
         loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
         loadTexture(HOME_STALL_FILE);
@@ -222,30 +218,30 @@ public class Assets {
             TEXTURES.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
         // Home stall textures
-        HOME_STALL = createTexture(manager, HOME_STALL_FILE, true);
+        HOME_STALL = createTexture(manager, HOME_STALL_FILE);
 
         // Player & Items
 //        int num_players = PLAYER_FILMSTRIP_FILES.length;
         PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
-                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);;
+                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
         PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
-                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);;
-        WOK = createTexture(manager, WOK_FILE, true);
-        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
-        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
+                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);
+        WOK = createTexture(manager, WOK_FILE);
+        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
+        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);
 
         // Level select screen
-        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);
-        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE, true);
-        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE, true);
-        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE, true);
-        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE, true);
-        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE, true);
-        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE, true);
-        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE, true);
-        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE, true);
-        HEADER_TEXTURE = createTexture(manager, HEADER_FILE, true);
-        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE, true);
+        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE);
+        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE);
+        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE);
+        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE);
+        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE);
+        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE);
+        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE);
+        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE);
+        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE);
+        HEADER_TEXTURE = createTexture(manager, HEADER_FILE);
+        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE);
 
         FONT = manager.get(FILE_NAMES_JSON.getString("font"));
         MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
@@ -270,8 +266,8 @@ public class Assets {
      * @return [rows, cols, size]
      */
     private int[] getFilmStripDimensions(TextureRegion textureRegion, int pixels) {
-        int rows = textureRegion.getRegionWidth() / pixels;
-        int cols = textureRegion.getRegionHeight() / pixels;
+        int rows = textureRegion.getRegionHeight() / pixels;
+        int cols = textureRegion.getRegionWidth() / pixels;
         int size = rows * cols;
 
         return new int[]{rows, cols, size};

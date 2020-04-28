@@ -23,7 +23,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
@@ -32,8 +31,6 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-
-import java.util.Vector;
 
 /**
  * Base class for a world-specific controller.
@@ -160,6 +157,8 @@ public class WorldController implements Screen, InputProcessor {
 
         worldModel.drawBackground();
 
+        worldModel.drawDecorations();
+
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
         StringBuilder message2 = new StringBuilder("Player 2 score: ");
 
@@ -176,8 +175,6 @@ public class WorldController implements Screen, InputProcessor {
                 }
             }
         }
-
-        worldModel.drawDecorations();
 
         // Draw player scores
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);

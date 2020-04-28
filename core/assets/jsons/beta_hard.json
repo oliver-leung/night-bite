@@ -10,169 +10,129 @@
             [
                 {
                     "name": "ground_0_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_0_0",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_1_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_1_0",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 6,
-                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_2_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_2_0",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_2_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_3_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_3_0",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_3_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_4_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_4_0",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_4_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_5_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_5_0",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_5_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_6_0",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_6_0",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 7,
-                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_7_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_7_0",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_8_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_8_0",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_9_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -180,7 +140,7 @@
                 },
                 {
                     "name": "hole_9_0",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "hole",
@@ -190,37 +150,61 @@
             [
                 {
                     "name": "ground_10_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_10_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_11_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_11_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_12_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_12_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_13_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -230,57 +214,97 @@
             [
                 {
                     "name": "ground_14_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_14_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_15_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_16_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_16_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_17_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_17_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_18_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_18_0",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_19_0",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -292,15 +316,151 @@
             [
                 {
                     "name": "ground_0_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_1_1",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_0_1",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "hole_1_1",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_2_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_2_1",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_3_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_3_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_4_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_4_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_5_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_5_1",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_1",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_6_1",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_1",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_7_1",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_8_1",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_8_1",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -309,136 +469,8 @@
             ],
             [
                 {
-                    "name": "ground_1_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_1_1",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_2_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "wall_2_1",
-                    "texture": "environment/Shrub_64.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "wall",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_3_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "wall_3_1",
-                    "texture": "environment/Shrub_64.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "wall",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_4_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_6_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_6_1",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_7_1",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_1",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_8_1",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
                     "name": "ground_9_1",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -446,9 +478,9 @@
                 },
                 {
                     "name": "decoration_9_1",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
-                    "rotate": 7,
+                    "rotate": 2,
                     "type": "decoration",
                     "light": false
                 }
@@ -456,15 +488,69 @@
             [
                 {
                     "name": "ground_10_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_10_1",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "name": "decoration_10_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_11_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_1",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_1",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_1",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_13_1",
+                    "texture": "background/blue/Blue_HoleEdge_3.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "hole",
@@ -473,107 +559,109 @@
             ],
             [
                 {
-                    "name": "ground_11_1",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_11_1",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_1",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_12_1",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_13_1",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
                     "name": "ground_14_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_1",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_15_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_16_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_16_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_17_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_17_1",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_18_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_18_1",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_19_1",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_1",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ]
@@ -582,7 +670,7 @@
             [
                 {
                     "name": "ground_0_2",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -590,7 +678,7 @@
                 },
                 {
                     "name": "hole_0_2",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -600,7 +688,7 @@
             [
                 {
                     "name": "ground_1_2",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -608,9 +696,9 @@
                 },
                 {
                     "name": "decoration_1_2",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
-                    "rotate": 1,
+                    "rotate": 2,
                     "type": "decoration",
                     "light": false
                 }
@@ -618,861 +706,25 @@
             [
                 {
                     "name": "ground_2_2",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_2_2",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_3_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_4_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_6_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_9_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_9_2",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_10_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_10_2",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_11_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_11_2",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_2",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_12_2",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 7,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_13_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_13_2",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_14_2",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_15_2",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_17_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_18_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_19_2",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ]
-        ],
-        [
-            [
-                {
-                    "name": "ground_0_3",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_0_3",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_1_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_1_3",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_2_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_3_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_4_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_6_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "teamC",
-                    "texture": "character/P3_64_v2.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "character",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_9_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_10_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_11_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_12_3",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_13_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_13_3",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_14_3",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_3",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_15_3",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 7,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_3",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_16_3",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_17_3",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_17_3",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_18_3",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_18_3",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_19_3",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_19_3",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ]
-        ],
-        [
-            [
-                {
-                    "name": "ground_0_4",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_0_4",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_1_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_1_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_2_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_3_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_4_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_5_4",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_6_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_6_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 4,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_7_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 4,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_8_4",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_9_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_10_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_11_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_13_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_15_4",
-                    "texture": "background/red/Red_Brick_Corner.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_16_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_17_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_17_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_18_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_18_4",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_19_4",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_19_4",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 7,
-                    "type": "decoration",
-                    "light": false
-                }
-            ]
-        ],
-        [
-            [
-                {
-                    "name": "ground_0_5",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_0_5",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_1_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "wall_1_5",
-                    "texture": "environment/box_palette2_64.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "wall",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_2_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1484,13 +736,13 @@
                     "flip": false,
                     "rotate": 0,
                     "type": "team",
-                    "light": false
+                    "light": true
                 }
             ],
             [
                 {
-                    "name": "ground_3_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_4_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1499,26 +751,16 @@
             ],
             [
                 {
-                    "name": "ground_4_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_5_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_5_5",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "decoration_5_2",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "decoration",
@@ -1527,52 +769,70 @@
             ],
             [
                 {
-                    "name": "ground_6_5",
-                    "texture": "background/red/Red_Gradient.png",
+                    "name": "ground_6_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_6_5",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "name": "decoration_6_2",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 2,
-                    "type": "hole",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
-                    "name": "ground_7_5",
-                    "texture": "background/red/Red_Gradient.png",
+                    "name": "ground_7_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_7_5",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "name": "decoration_7_2",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
                     "rotate": 3,
-                    "type": "hole",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
-                    "name": "ground_8_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_8_2",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_8_5",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_8_2",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_2",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_9_2",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -1581,46 +841,26 @@
             ],
             [
                 {
-                    "name": "ground_9_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_10_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_10_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_10_5",
-                    "texture": "environment/StallOther4_64.png",
+                    "name": "teamD",
+                    "texture": "character/P4_64.png",
                     "flip": false,
                     "rotate": 0,
-                    "type": "wall",
+                    "type": "character",
                     "light": false
                 }
             ],
             [
                 {
-                    "name": "ground_11_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_11_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1629,56 +869,90 @@
             ],
             [
                 {
-                    "name": "ground_13_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_12_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_16_5",
+                    "name": "decoration_12_2",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_2",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_13_2",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_2",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_2",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_2",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_16_2",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "wall_16_2",
                     "texture": "environment/StallItem1_64.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "wall",
-                    "light": false
+                    "light": true
                 }
             ],
             [
                 {
-                    "name": "ground_17_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_17_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1687,29 +961,37 @@
             ],
             [
                 {
-                    "name": "ground_18_5",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_19_5",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_18_2",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_19_5",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "decoration_18_2",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_2",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_2",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ]
@@ -1717,16 +999,16 @@
         [
             [
                 {
-                    "name": "ground_0_6",
-                    "texture": "background/red/Red_Hole.png",
+                    "name": "ground_0_3",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_0_6",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "hole_0_3",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -1735,118 +1017,16 @@
             ],
             [
                 {
-                    "name": "ground_1_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_1_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_1_6",
-                    "texture": "environment/box_palette2_64.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "wall",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_2_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_3_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_4_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_5_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_5_6",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 3,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_6_6",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_6_6",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 1,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_6",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_7_6",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_8_6",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "decoration_1_3",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -1855,8 +1035,8 @@
             ],
             [
                 {
-                    "name": "ground_9_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_2_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1865,8 +1045,8 @@
             ],
             [
                 {
-                    "name": "ground_10_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_3_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1875,8 +1055,8 @@
             ],
             [
                 {
-                    "name": "ground_11_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_4_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -1885,83 +1065,163 @@
             ],
             [
                 {
-                    "name": "ground_12_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_5_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_12_6",
-                    "texture": "environment/Seat1_64.png",
+                    "name": "wall_7_3",
+                    "texture": "environment/Box_64.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "wall",
-                    "light": false
+                    "light": true
                 }
             ],
             [
                 {
-                    "name": "ground_13_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_17_6",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_18_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_8_3",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "item_18_6",
+                    "name": "hole_8_3",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_9_3",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_10_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_3",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_13_3",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_3",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "item_15_3",
                     "texture": "item/food1_64.png",
                     "flip": false,
                     "rotate": 0,
@@ -1971,19 +1231,57 @@
             ],
             [
                 {
-                    "name": "ground_19_6",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_16_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_17_3",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_18_3",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_19_6",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "decoration_18_3",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_3",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_3",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ]
@@ -1991,16 +1289,16 @@
         [
             [
                 {
-                    "name": "ground_0_7",
-                    "texture": "background/red/Red_Hole.png",
+                    "name": "ground_0_4",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_0_7",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "hole_0_4",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -2009,16 +1307,16 @@
             ],
             [
                 {
-                    "name": "ground_1_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_1_4",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_1_7",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "decoration_1_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -2027,8 +1325,28 @@
             ],
             [
                 {
-                    "name": "ground_2_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_2_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_3_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_4_4",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2045,8 +1363,946 @@
             ],
             [
                 {
+                    "name": "ground_5_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "wall_7_4",
+                    "texture": "environment/Box_64.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "wall",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_8_4",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_8_4",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_9_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_10_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_4",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_13_4",
+                    "texture": "background/blue/Blue_HoleEdge_3.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_4",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_15_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_16_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_16_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_17_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_17_4",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_18_4",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_18_4",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_4",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_4",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "name": "ground_0_5",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_0_5",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_1_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_1_5",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_2_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_3_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_4_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_5_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_7_5",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_8_5",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_8_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_9_5",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_10_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_10_5",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_11_5",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 5,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_5",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_5",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_5",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_13_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_5",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_14_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_5",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_15_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_16_5",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_16_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_17_5",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_17_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_18_5",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_18_5",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_5",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "name": "ground_0_6",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_0_6",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_1_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_1_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_2_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_3_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_4_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_5_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "wall_6_6",
+                    "texture": "environment/Shrub_64.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "wall",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_7_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_8_6",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_8_6",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_6",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_9_6",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_10_6",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_10_6",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 7,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_11_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_6",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 7,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_13_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_15_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_16_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_16_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_17_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_17_6",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_18_6",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_18_6",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_6",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_6",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "name": "ground_0_7",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_0_7",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_1_7",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_1_7",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_2_7",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "wall_2_7",
+                    "texture": "environment/StallOther5-1_64.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "wall",
+                    "light": true
+                }
+            ],
+            [
+                {
                     "name": "ground_3_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2056,7 +2312,7 @@
             [
                 {
                     "name": "ground_4_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2066,15 +2322,35 @@
             [
                 {
                     "name": "ground_5_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_6_7",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_7_7",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_5_7",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "name": "decoration_7_7",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "decoration",
@@ -2083,92 +2359,80 @@
             ],
             [
                 {
-                    "name": "ground_6_7",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_6_7",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 6,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_7_7",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_7_7",
-                    "texture": "background/red/Red_Brick_1.png",
-                    "flip": false,
-                    "rotate": 6,
-                    "type": "decoration",
-                    "light": false
-                }
-            ],
-            [
-                {
                     "name": "ground_8_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_8_7",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "name": "hole_8_7",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
                     "flip": false,
-                    "rotate": 6,
-                    "type": "decoration",
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_9_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "teamC",
+                    "texture": "character/P3_64_v2.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "character",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_10_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_10_7",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_11_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_11_7",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_12_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2178,27 +2442,43 @@
             [
                 {
                     "name": "ground_13_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_13_7",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_14_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_7",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2206,7 +2486,7 @@
                 },
                 {
                     "name": "decoration_15_7",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "decoration",
@@ -2216,7 +2496,7 @@
             [
                 {
                     "name": "ground_16_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2224,9 +2504,9 @@
                 },
                 {
                     "name": "decoration_16_7",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
                     "flip": false,
-                    "rotate": 0,
+                    "rotate": 1,
                     "type": "decoration",
                     "light": false
                 }
@@ -2234,25 +2514,25 @@
             [
                 {
                     "name": "ground_17_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_17_7",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "wall_17_7",
+                    "texture": "environment/Shrub_64.png",
                     "flip": false,
                     "rotate": 0,
-                    "type": "decoration",
+                    "type": "wall",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_18_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2260,9 +2540,9 @@
                 },
                 {
                     "name": "decoration_18_7",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
-                    "rotate": 0,
+                    "rotate": 3,
                     "type": "decoration",
                     "light": false
                 }
@@ -2270,18 +2550,18 @@
             [
                 {
                     "name": "ground_19_7",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_19_7",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "name": "hole_19_7",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 8,
-                    "type": "decoration",
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ]
@@ -2290,7 +2570,7 @@
             [
                 {
                     "name": "ground_0_8",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2298,7 +2578,7 @@
                 },
                 {
                     "name": "hole_0_8",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -2308,7 +2588,7 @@
             [
                 {
                     "name": "ground_1_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2316,7 +2596,7 @@
                 },
                 {
                     "name": "decoration_1_8",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -2326,7 +2606,7 @@
             [
                 {
                     "name": "ground_2_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2336,7 +2616,7 @@
             [
                 {
                     "name": "ground_3_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2346,17 +2626,25 @@
             [
                 {
                     "name": "ground_4_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "teamB",
+                    "texture": "character/P2_64_v2.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "character",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_5_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2366,7 +2654,7 @@
             [
                 {
                     "name": "ground_6_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2376,75 +2664,107 @@
             [
                 {
                     "name": "ground_7_8",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_8_8",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_9_8",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_10_8",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_11_8",
-                    "texture": "background/red/Red_Texture.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_12_8",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "name": "decoration_7_8",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
-                    "rotate": 0,
+                    "rotate": 3,
                     "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
+                    "name": "ground_8_8",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_8_8",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 5,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_9_8",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_9_8",
+                    "texture": "background/blue/Blue_HoleEdge_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_10_8",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_10_8",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
+                    "flip": false,
+                    "rotate": 4,
+                    "type": "hole",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_11_8",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_11_8",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_8",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
                     "name": "ground_13_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2452,9 +2772,9 @@
                 },
                 {
                     "name": "decoration_13_8",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
-                    "rotate": 4,
+                    "rotate": 3,
                     "type": "decoration",
                     "light": false
                 }
@@ -2462,97 +2782,97 @@
             [
                 {
                     "name": "ground_14_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_14_8",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_14_8",
+                    "texture": "background/blue/Blue_HoleEdge_3.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_8",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_15_8",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "name": "hole_15_8",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
                     "flip": false,
-                    "rotate": 8,
-                    "type": "decoration",
+                    "rotate": 3,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_16_8",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_16_8",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "name": "decoration_16_8",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
+                    "rotate": 1,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_17_8",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_17_8",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "teamC",
+                    "texture": "character/P3_64_v2.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
+                    "rotate": 0,
+                    "type": "character",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_18_8",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_18_8",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "decoration_18_8",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
+                    "rotate": 3,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_19_8",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2560,9 +2880,9 @@
                 },
                 {
                     "name": "hole_19_8",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 2,
+                    "rotate": 1,
                     "type": "hole",
                     "light": false
                 }
@@ -2572,7 +2892,7 @@
             [
                 {
                     "name": "ground_0_9",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2580,7 +2900,7 @@
                 },
                 {
                     "name": "hole_0_9",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -2590,7 +2910,7 @@
             [
                 {
                     "name": "ground_1_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2598,7 +2918,7 @@
                 },
                 {
                     "name": "decoration_1_9",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -2608,7 +2928,7 @@
             [
                 {
                     "name": "ground_2_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2618,7 +2938,7 @@
             [
                 {
                     "name": "ground_3_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2628,7 +2948,7 @@
             [
                 {
                     "name": "ground_4_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2638,7 +2958,7 @@
             [
                 {
                     "name": "ground_5_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2648,7 +2968,7 @@
             [
                 {
                     "name": "ground_6_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2658,27 +2978,43 @@
             [
                 {
                     "name": "ground_7_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_7_9",
+                    "texture": "background/blue/Blue_Brick_Corner_2.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_8_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_8_9",
+                    "texture": "background/blue/Blue_Brick_2Opp.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_9_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2686,7 +3022,7 @@
                 },
                 {
                     "name": "decoration_9_9",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "texture": "background/blue/Blue_Brick_2Opp.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "decoration",
@@ -2696,7 +3032,7 @@
             [
                 {
                     "name": "ground_10_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2704,9 +3040,9 @@
                 },
                 {
                     "name": "decoration_10_9",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_2Opp.png",
                     "flip": false,
-                    "rotate": 4,
+                    "rotate": 0,
                     "type": "decoration",
                     "light": false
                 }
@@ -2714,7 +3050,7 @@
             [
                 {
                     "name": "ground_11_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2722,9 +3058,9 @@
                 },
                 {
                     "name": "decoration_11_9",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_Corner_2.png",
                     "flip": false,
-                    "rotate": 0,
+                    "rotate": 1,
                     "type": "decoration",
                     "light": false
                 }
@@ -2732,89 +3068,89 @@
             [
                 {
                     "name": "ground_12_9",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "decoration_12_9",
-                    "texture": "background/red/Red_Brick_2Adj.png",
-                    "flip": false,
-                    "rotate": 8,
-                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_13_9",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_13_9",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "name": "decoration_13_9",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
                     "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
+                    "rotate": 3,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_14_9",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_14_9",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "decoration_14_9",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 2,
-                    "type": "hole",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_9",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "hole_15_9",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "name": "decoration_15_9",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 2,
-                    "type": "hole",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_16_9",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_16_9",
+                    "texture": "background/blue/Blue_Brick_Corner.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_17_9",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2824,20 +3160,36 @@
             [
                 {
                     "name": "ground_18_9",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_18_9",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 3,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_19_9",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_9",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
                     "light": false
                 }
             ]
@@ -2846,7 +3198,7 @@
             [
                 {
                     "name": "ground_0_10",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2854,7 +3206,7 @@
                 },
                 {
                     "name": "hole_0_10",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -2864,7 +3216,7 @@
             [
                 {
                     "name": "ground_1_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2872,7 +3224,7 @@
                 },
                 {
                     "name": "decoration_1_10",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
                     "rotate": 1,
                     "type": "decoration",
@@ -2882,63 +3234,79 @@
             [
                 {
                     "name": "ground_2_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_2_10",
-                    "texture": "environment/Shrub_64.png",
+                    "name": "decoration_2_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 0,
-                    "type": "wall",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_3_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "wall_3_10",
-                    "texture": "environment/Shrub_64.png",
+                    "name": "decoration_3_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 0,
-                    "type": "wall",
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_4_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_4_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_5_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_5_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_6_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2946,7 +3314,7 @@
                 },
                 {
                     "name": "decoration_6_10",
-                    "texture": "background/red/Red_Brick_Corner.png",
+                    "texture": "background/blue/Blue_Brick_1.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "decoration",
@@ -2956,7 +3324,7 @@
             [
                 {
                     "name": "ground_7_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -2964,9 +3332,9 @@
                 },
                 {
                     "name": "decoration_7_10",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
-                    "rotate": 4,
+                    "rotate": 0,
                     "type": "decoration",
                     "light": false
                 }
@@ -2974,43 +3342,43 @@
             [
                 {
                     "name": "ground_8_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_8_10",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_8_10",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_9_10",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_9_10",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "name": "hole_9_10",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 8,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_10_10",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -3018,133 +3386,7 @@
                 },
                 {
                     "name": "hole_10_10",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_11_10",
-                    "texture": "background/red/Red_Gradient.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_11_10",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_12_10",
-                    "texture": "background/red/Red_Gradient.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_12_10",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_13_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_14_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_15_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_16_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_17_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_18_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ],
-            [
-                {
-                    "name": "ground_19_10",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                }
-            ]
-        ],
-        [
-            [
-                {
-                    "name": "ground_0_11",
-                    "texture": "background/red/Red_Hole.png",
-                    "flip": false,
-                    "rotate": 0,
-                    "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_0_11",
-                    "texture": "background/red/Red_HoleEdge_1.png",
+                    "texture": "background/blue/Blue_HoleEdge_2Adj.png",
                     "flip": false,
                     "rotate": 3,
                     "type": "hole",
@@ -3153,116 +3395,290 @@
             ],
             [
                 {
-                    "name": "ground_1_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "name": "ground_11_10",
+                    "texture": "background/blue/Blue_Texture.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_1_11",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "name": "decoration_11_10",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
                     "flip": false,
-                    "rotate": 5,
+                    "rotate": 1,
                     "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_12_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_12_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_13_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_13_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_14_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_14_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_15_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_15_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_16_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_16_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_17_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_17_10",
+                    "texture": "background/blue/Blue_Brick_1.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_18_10",
+                    "texture": "background/blue/Blue_Texture.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "decoration_18_10",
+                    "texture": "background/blue/Blue_Brick_2Adj.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "decoration",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_19_10",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_19_10",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 1,
+                    "type": "hole",
+                    "light": false
+                }
+            ]
+        ],
+        [
+            [
+                {
+                    "name": "ground_0_11",
+                    "texture": "background/blue/Blue_Hole.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                }
+            ],
+            [
+                {
+                    "name": "ground_1_11",
+                    "texture": "background/blue/Blue_Gradient.png",
+                    "flip": false,
+                    "rotate": 0,
+                    "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_1_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_2_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_2_11",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_2_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_3_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_3_11",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_3_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_4_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_4_11",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_4_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_5_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_5_11",
-                    "texture": "background/red/Red_Brick_1.png",
+                    "name": "hole_5_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 0,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_6_11",
-                    "texture": "background/red/Red_Texture.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
                     "light": false
                 },
                 {
-                    "name": "decoration_6_11",
-                    "texture": "background/red/Red_Brick_2Adj.png",
+                    "name": "hole_6_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
-                    "rotate": 8,
-                    "type": "decoration",
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_7_11",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -3270,7 +3686,7 @@
                 },
                 {
                     "name": "hole_7_11",
-                    "texture": "background/red/Red_HoleEdge_2Adj.png",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
                     "flip": false,
                     "rotate": 2,
                     "type": "hole",
@@ -3280,43 +3696,27 @@
             [
                 {
                     "name": "ground_8_11",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_8_11",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_9_11",
-                    "texture": "background/red/Red_Gradient.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
-                    "light": false
-                },
-                {
-                    "name": "hole_9_11",
-                    "texture": "background/red/Red_HoleEdge_1.png",
-                    "flip": false,
-                    "rotate": 2,
-                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_10_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
@@ -3326,87 +3726,151 @@
             [
                 {
                     "name": "ground_11_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_11_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_12_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_12_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_13_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_13_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_14_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_14_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_15_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_15_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_16_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_16_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_17_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_17_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_18_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Gradient.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",
+                    "light": false
+                },
+                {
+                    "name": "hole_18_11",
+                    "texture": "background/blue/Blue_HoleEdge_1.png",
+                    "flip": false,
+                    "rotate": 2,
+                    "type": "hole",
                     "light": false
                 }
             ],
             [
                 {
                     "name": "ground_19_11",
-                    "texture": "background/red/Red_Hole.png",
+                    "texture": "background/blue/Blue_Hole.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "ground",

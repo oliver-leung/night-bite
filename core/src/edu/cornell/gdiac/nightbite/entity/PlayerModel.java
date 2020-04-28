@@ -1,13 +1,11 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
@@ -83,13 +81,12 @@ public class PlayerModel extends HumanoidModel {
     private float arrowXOffset;
     private float arrowYOffset;
 
-    private TextureRegion currentTexture;
     private HomeModel home;
 
     public PlayerModel(float x, float y, float width, float height, String playerTeam, HomeModel home) {
         super(x, y, width, height);
         setBullet(true);
-        setTexture(Assets.TEXTURES.get("character/Filmstrip/Player 1/P1_Walk_8.png"));
+        setTexture((FilmStrip) Assets.TEXTURES.get("character/Filmstrip/Player 1/P1_Walk_8.png"));
 
         impulse = new Vector2();
         boost = new Vector2();
@@ -109,15 +106,15 @@ public class PlayerModel extends HumanoidModel {
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
 
-        handheld = wokTexture;
+        handheld = Assets.WOK;
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
-        shadow = shadowTexture;
-        arrow = arrowTexture;
+        shadow = Assets.PLAYER_SHADOW;
+        arrow = Assets.PLAYER_ARROW;
         swingCooldown = 0;
 
-        this.holdTexture = holdTexture;
+        this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
     }
 
     public int getTicks() {
@@ -196,11 +193,11 @@ public class PlayerModel extends HumanoidModel {
         prevHoriDir = dir;
     }
 
-    public void incrPlayerWalkCounter() {
+    public void incrticks() {
         ticks++;
     }
 
-    public void resetPlayerWalkCounter() {
+    public void resetticks() {
         ticks = 0;
     }
 
@@ -217,18 +214,18 @@ public class PlayerModel extends HumanoidModel {
         }
         state = MoveState.WALK;
 
-        if (playerWalkCounter % 20 == 0) {
+        if (ticks % 20 == 0) {
             ((FilmStrip) texture).setFrame(1);
             if (prevHoriDir == 1) {
                 texture.flip(true, false);
             }
-        } else if (playerWalkCounter % 20 == 10) {
+        } else if (ticks % 20 == 10) {
             ((FilmStrip) texture).setFrame(0);
             if (prevHoriDir == 1) {
                 texture.flip(true, false);
             }
         }
-        playerWalkCounter++;
+        ticks++;
     }
 
     public void setStatic() {
@@ -237,7 +234,7 @@ public class PlayerModel extends HumanoidModel {
         }
         state = MoveState.STATIC;
 
-        playerWalkCounter = 0;
+        ticks = 0;
         ((FilmStrip) texture).setFrame(0);
         if (prevHoriDir == 1) {
             texture.flip(true, false);
@@ -357,8 +354,9 @@ public class PlayerModel extends HumanoidModel {
     }
 
     /** player arrow direction */
+    // TODO: Make everything x, y
     public void updateDirectionState(float vert, float hori) {
-        arrowAngle = -1 * ((new Vector2(vert, hori).angleRad()) - (float) Math.PI/2);
+        arrowAngle = new Vector2(hori, vert).angleRad();
         if (hori == -1) {
             arrowXOffset = -1 * texture.getRegionWidth()/2;
         } else if (hori == 1) {
