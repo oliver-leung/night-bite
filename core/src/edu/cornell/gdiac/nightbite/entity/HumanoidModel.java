@@ -194,6 +194,7 @@ public class HumanoidModel extends SimpleObstacle {
      * Respawn this humanoid at the specified position after 60 steps
      */
     public void respawn() {
+        setLinearVelocity(Vector2.Zero);
         if (respawnCooldown == 0) {
             respawnCooldown = 60;
         }
@@ -204,8 +205,6 @@ public class HumanoidModel extends SimpleObstacle {
             resetTexture();
             draw = true;
         }
-
-        setLinearVelocity(Vector2.Zero);
     }
 
     private void resize(float width, float height) {

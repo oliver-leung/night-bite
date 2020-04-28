@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class FirecrackerModel extends BoxObstacle {
 
     /* Expected timestep age of firecracker before becoming lit */
-    private static final int AGE = 80;
+    private static final int AGE = 30;
     /* Expected timestep age of firecracker before detonating */
     private static final int LIT_AGE = 50;
     /* Expected timestep age of firecracker before becoming destroyed */

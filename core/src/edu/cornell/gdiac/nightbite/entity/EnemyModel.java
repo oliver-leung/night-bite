@@ -17,7 +17,7 @@ abstract class EnemyModel extends HumanoidModel {
     public State state = State.IDLE;
 
     private int MAX_ATTACK_FRAME = 200;
-    private int MAX_RETURN_FRAME = 100;
+    private int MAX_RETURN_FRAME = 75;
     private int attacking;
     private int returning;
 
