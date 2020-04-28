@@ -2,6 +2,8 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
+import edu.cornell.gdiac.util.SoundController;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {

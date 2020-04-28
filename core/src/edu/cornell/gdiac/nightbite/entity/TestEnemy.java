@@ -24,8 +24,8 @@ public class TestEnemy extends HumanoidModel {
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
-        setPosition(x, y);
-        setHomePosition(new Vector2(x + 0.5f, y + 0.5f));
+        setPosition(x, y + 0.1f);  // TODO this is moved up so they don't spawn and die
+        setHomePosition(new Vector2(x + 0.5f, y + 0.6f));  // FIX THIS!!!
 
         path = new PooledList<>();
         aiController = new AIController(world, this);
