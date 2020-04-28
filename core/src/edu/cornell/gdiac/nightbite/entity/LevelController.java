@@ -12,7 +12,6 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
-import javafx.scene.effect.Light;
 
 public class LevelController {
     private static LevelController instance;

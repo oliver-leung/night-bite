@@ -425,7 +425,7 @@ public class LoadController implements Screen, InputProcessor, ControllerListene
 		// Compute the drawing scale
 		float sx = ((float)width)/STANDARD_WIDTH;
 		float sy = ((float)height)/STANDARD_HEIGHT;
-		scale = (Math.min(sx, sy));
+		scale = (Math.max(sx, sy));
 
 		this.width = (int)(BAR_WIDTH_RATIO*width);
 		centerY = (int)(BAR_HEIGHT_RATIO*height);

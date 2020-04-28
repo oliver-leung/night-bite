@@ -65,7 +65,7 @@ public class WorldModel {
     /** List of players */
     private ArrayList<PlayerModel> players;
 
-    private PooledList<HumanoidModel> enemies;
+    private PooledList<EnemyModel> enemies;
 
     /** List of items */
     private ArrayList<ItemModel> items;
@@ -282,7 +282,7 @@ public class WorldModel {
         return players;
     }
 
-    public PooledList<HumanoidModel> getEnemies() { return enemies; }
+    public PooledList<EnemyModel> getEnemies() { return enemies; }
 
     public Vector2 getScale() {
         return scale;
@@ -362,7 +362,7 @@ public class WorldModel {
         overlapItem.add(false);
     }
 
-    public void addEnemy(HumanoidModel enemy) {
+    public void addEnemy(EnemyModel enemy) {
         initializeObject(enemy);
         enemies.add(enemy);
     }

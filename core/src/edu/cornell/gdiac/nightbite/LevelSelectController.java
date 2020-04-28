@@ -194,7 +194,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         // TODO
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (Math.min(sx, sy));
+        scale = (Math.max(sx, sy));
         xpos1 = width/4;
         xpos2 = width/2;
         xpos3 = width * 3/4;

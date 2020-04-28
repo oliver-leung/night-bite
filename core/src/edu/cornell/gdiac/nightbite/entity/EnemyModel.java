@@ -8,7 +8,7 @@ import edu.cornell.gdiac.util.PooledList;
 
 import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
-abstract class EnemyModel extends HumanoidModel {
+public abstract class EnemyModel extends HumanoidModel {
     private enum State {
         IDLE,
         ATTACK,
@@ -24,7 +24,7 @@ abstract class EnemyModel extends HumanoidModel {
     private PooledList<GridPoint2> path;
     public AIController aiController;
     public WorldModel worldModel;
-    private static final float WALK_THRUST = 25f;
+    private static final float WALK_THRUST = 10f;
     private int walkCooldown;
 
     public EnemyModel(float x, float y, float width, float height, FilmStrip walk, FilmStrip fall, WorldModel world) {
@@ -51,6 +51,7 @@ abstract class EnemyModel extends HumanoidModel {
                 if (aiController.canSee(enemyPos, targetPos)) {
                     state = state.ATTACK;
                     attacking = MAX_ATTACK_FRAME;
+                    aiController.forceReplan();
                 }
                 break;
             case ATTACK:
@@ -59,6 +60,7 @@ abstract class EnemyModel extends HumanoidModel {
                 attack(p);
                 if (attacking == 0) { // Timeout in chasing
                     setStateToReturn();
+                    aiController.forceReplan();
                 }
                 break;
             case RETURN: // Go to origin
@@ -81,7 +83,7 @@ abstract class EnemyModel extends HumanoidModel {
 
 
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
-        body.setLinearVelocity(Vector2.Zero);
+//        body.setLinearVelocity(Vector2.Zero);
 
         if (walkCooldown > 0) {
             walkCooldown --;
@@ -104,6 +106,15 @@ abstract class EnemyModel extends HumanoidModel {
         Vector2 dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
+    }
+
+    public void forceReplan() {
+        aiController.forceReplan();
+    }
+
+    public void respawn() {
+        super.respawn();
+        aiController.forceReplan();
     }
 
     public void drawDebug(GameCanvas canvas) {

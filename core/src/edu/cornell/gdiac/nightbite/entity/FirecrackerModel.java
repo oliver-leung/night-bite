@@ -61,7 +61,6 @@ public class FirecrackerModel extends BoxObstacle {
     /* Reference to the existing world but also like jesus this is bad practice */
     private World world;
 
-
     /**
      * Get whether this firecracker is lit or not
      */

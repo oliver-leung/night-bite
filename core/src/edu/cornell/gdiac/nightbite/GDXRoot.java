@@ -63,6 +63,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	// TODO jank shit ill fix after i wake up
 	private boolean loaded = false;
+	private String BLACK_BACKGROUND_FILE = "background/black_background.png";
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -101,6 +102,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
+		// TODO temporary change
+
 	}
 
 	/** 

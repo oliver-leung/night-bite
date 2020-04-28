@@ -24,7 +24,6 @@ public class PlayerModel extends HumanoidModel {
     // TODO
     private int NUM_ITEMS = 1;
     private static final float BOOST_IMP = 100.0f;
-    private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
@@ -98,7 +97,8 @@ public class PlayerModel extends HumanoidModel {
     /** wok hitbox */
     private PolygonObstacle wokHitbox;
     private World world;
-    private int REFLECT_DIST = 20;
+    private int PLAYER_REFLECT_DIST = 2;
+    private int FIRECRACKER_REFLECT_DIST = 15;
     private float REFLECT_RANGE = 2f;
 
     private HomeModel home;
@@ -154,17 +154,6 @@ public class PlayerModel extends HumanoidModel {
     /** player identification */
     public String getTeam() {
         return team;
-    }
-
-    /** physics */
-    public boolean activatePhysics(World world) {
-        boolean ret = super.activatePhysics(world);
-        if (!ret) {
-            return false;
-        }
-        body.setLinearDamping(MOTION_DAMPING);
-        body.setFixedRotation(true);
-        return true;
     }
 
     /** player movement */
@@ -298,7 +287,7 @@ public class PlayerModel extends HumanoidModel {
     }
 
     /** swings wok */
-    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<HumanoidModel> enemies) {
+    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<EnemyModel> enemies) {
         Vector2 clickVector = new Vector2(clickPos.x, clickPos.y);
         clickVector.sub(getPosition());
 
@@ -314,18 +303,19 @@ public class PlayerModel extends HumanoidModel {
                 Vector2 firecrackerVector = firecracker.getPosition();
                 firecrackerVector.sub(getPosition());
                 if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
-                    Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(REFLECT_DIST));
+                    Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
                 }
             }
         }
 
-        for (HumanoidModel enemy : enemies) {
+        for (EnemyModel enemy : enemies) {
             Vector2 enemyVector = enemy.getPosition();
             enemyVector.sub(getPosition());
             if (enemyVector.angleRad(clickVector) < SWING_RADIUS && enemyVector.angleRad(clickVector) > -SWING_RADIUS && enemyVector.len() < REFLECT_RANGE) {
-                Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(REFLECT_DIST));
+                Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
                 enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
+                enemy.forceReplan();
             }
         }
 

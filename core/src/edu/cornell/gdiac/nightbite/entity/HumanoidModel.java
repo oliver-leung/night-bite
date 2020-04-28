@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -13,6 +14,8 @@ import edu.cornell.gdiac.util.FilmStrip;
 public class HumanoidModel extends SimpleObstacle {
 
     private static float SEAM_EPSILON = 0.01f;
+    private static final float MOTION_DAMPING = 25f;
+
     protected Vector2 dimension;
     private Vector2 cache;
     private PolygonShape hitBoxCore;
@@ -125,6 +128,17 @@ public class HumanoidModel extends SimpleObstacle {
         if (prevHoriDir == 1) {
             texture.flip(true, false);
         }
+    }
+
+    /** physics */
+    public boolean activatePhysics(World world) {
+        boolean ret = super.activatePhysics(world);
+        if (!ret) {
+            return false;
+        }
+        body.setLinearDamping(MOTION_DAMPING);
+        body.setFixedRotation(true);
+        return true;
     }
 
     public void setHomePosition(Vector2 position) {
