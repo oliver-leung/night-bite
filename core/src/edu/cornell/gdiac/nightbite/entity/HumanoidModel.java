@@ -150,10 +150,7 @@ public class HumanoidModel extends SimpleObstacle {
      * Resets the current texture to the default (walking) texture
      */
     public void resetTexture() {
-        texture = defaultTexture;
-//        if (prevHoriDir == 1) {
-//            texture.flip(true, false);
-//        }
+        setTexture(defaultTexture);
     }
 
     /**
