@@ -228,10 +228,10 @@ public class Assets {
         }
 
         // Start music // TODO fix this when I'm not sleepy
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
-        music.setLooping(true);
-        music.play();
-        music.setVolume(0.1f);
+        MUSIC = Gdx.audio.newMusic(Gdx.files.internal("audio/Night_Bite_(Theme).mp3"));
+        MUSIC.setLooping(true);
+        MUSIC.play();
+        MUSIC.setVolume(0.1f);
 
         for (String fileName : FILE_NAMES_JSON.get("character filmstrip").asStringArray()) {
             TextureRegion rawTexture = new TextureRegion(manager.get(fileName, Texture.class));
@@ -245,10 +245,6 @@ public class Assets {
                 PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
         PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
                 PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);
-        WOK = createTexture(manager, WOK_FILE);
-        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
-        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);
-                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);;
         WOK = createTexture(manager, WOK_FILE);
         PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
         PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);

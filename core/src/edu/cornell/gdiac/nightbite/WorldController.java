@@ -23,7 +23,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.entity.HomeModel;
+import edu.cornell.gdiac.nightbite.entity.ItemModel;
+import edu.cornell.gdiac.nightbite.entity.LevelController;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -237,10 +240,6 @@ public class WorldController implements Screen, InputProcessor {
         for (LightSource l : worldModel.getLights()) {
             l.setActive(true);
         }
-
-        Assets.MUSIC.setLooping(true);
-        Assets.MUSIC.play();
-        Assets.MUSIC.setVolume(0.1f);
     }
 
     /**

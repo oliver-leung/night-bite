@@ -3,15 +3,14 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
-import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.nightbite.FirecrackerModel;
 
 import java.util.ArrayList;
 
@@ -103,11 +102,11 @@ public class PlayerModel extends HumanoidModel {
 
     private HomeModel home;
 
-    public PlayerModel(float x, float y, float width, float height, World world, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
+    public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(x, y, width, height);
         setBullet(true);
 
-        this.texture = texture;
+        texture = Assets.PLAYER_FILMSTRIP;
         setTexture(texture);
 
         impulse = new Vector2();
@@ -128,7 +127,7 @@ public class PlayerModel extends HumanoidModel {
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
 
-        defaultHandheld = wokTexture;
+        defaultHandheld = Assets.WOK;
         handheld = Assets.WOK;
         flipHandheld = false;
         angleOffset = 0;
@@ -138,7 +137,7 @@ public class PlayerModel extends HumanoidModel {
         swingCooldown = 0;
         alternateShadow = false;
 
-        this.holdTexture = holdTexture;
+        this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
         this.world = world;
     }
 
@@ -229,13 +228,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void resetticks() {
         ticks = 0;
-    }
-
-    public enum MoveState {
-        WALK,
-        RUN,
-        STATIC,
-        DYING
     }
 
     public void setWalk() {
