@@ -63,7 +63,7 @@ public class Assets {
     static String HOLE_FILE = "environment/hole4_64.png";
 
     // Home stall
-    static String HOME_STALL_FILE = "environment/StallHome1_64.png";
+    static String HOME_STALL_FILE = "environment/StallHome_64_fs.png";
 
     // Level select screen
     private static final String LEVEL_SELECT_BACKGROUND_FILE = "level_select/Background.png";
@@ -214,7 +214,7 @@ public class Assets {
     public static TextureRegion WOK;
     public static TextureRegion PLAYER_SHADOW;
     public static TextureRegion PLAYER_ARROW;
-    public static TextureRegion HOME_STALL;
+    public static FilmStrip HOME_STALL;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
     public static TextureRegion HOLE;
@@ -339,7 +339,7 @@ public class Assets {
 
 
         // Home stall textures
-        HOME_STALL = createTexture(manager, HOME_STALL_FILE, true);
+        HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);
 
         // Level select screen
         LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);

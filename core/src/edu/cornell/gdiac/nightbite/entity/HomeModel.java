@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.util.FilmStrip;
 
 public class HomeModel extends ImmovableModel {
 
@@ -9,25 +10,31 @@ public class HomeModel extends ImmovableModel {
     private int score;
 
     /**
-     *
-     * @param x
-     * @param y
-     * @param team
+     * Home stall constructor
      * @param player The player number that belongs to this home stall, 1-4 inclusive.
      */
     public HomeModel(float x, float y, String team, int player) {
         super(x, y, 0);
+        this.texture = Assets.HOME_STALL;
+        setTexture(this.texture);
+
         this.team = team;
         score = 0;
-        setTexture(Assets.HOME_STALL);
     }
 
     public int getScore() {
         return score;
     }
 
+    /**
+     * Increments the score and updates the home texture accordingly
+     * @param increase Amount to increase score by
+     */
     public void incrementScore(int increase) {
         score = score + increase;
+        // TODO this is unsafe
+        if (score < 4) ((FilmStrip) texture).setFrame(score);
+
     }
 
     public String getTeam() {
