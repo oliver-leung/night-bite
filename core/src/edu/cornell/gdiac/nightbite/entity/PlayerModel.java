@@ -107,6 +107,7 @@ public class PlayerModel extends HumanoidModel {
         setBullet(true);
 
         texture = Assets.PLAYER_FILMSTRIP;
+        defaultTexture = Assets.PLAYER_FILMSTRIP;
         setTexture(texture);
 
         impulse = new Vector2();
@@ -446,8 +447,6 @@ public class PlayerModel extends HumanoidModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-//        System.out.println(isBoostCooldown());
-//        System.out.println(alternateShadow);
         if (!isBoostCooldown() || alternateShadow) {
             canvas.draw(shadow, Color.WHITE, origin.x - texture.getRegionWidth() / 4, origin.y + texture.getRegionHeight() / 15, getX() * drawScale.x, getY() * drawScale.y,
                     getAngle(), actualScale.x, actualScale.y);
