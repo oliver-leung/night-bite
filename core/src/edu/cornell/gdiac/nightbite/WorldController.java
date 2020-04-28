@@ -29,6 +29,7 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.Vector;
 
@@ -354,11 +355,12 @@ public class WorldController implements Screen, InputProcessor {
                 if (!item.isHeld() && p.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
+                    SoundController.getInstance().play(Assets.FX_PICKUP_FILE, Assets.FX_PICKUP_FILE, false, Assets.EFFECT_VOLUME);
                 }
                 j++;
             }
 
-            /* IF FISH IN PLAYER HANDS */
+            /* IF ITEM IN PLAYER HANDS */
             if (p.hasItem()) {
                 float offset = 1;
                 for (ItemModel heldItem : p.getItems()) {
@@ -374,6 +376,7 @@ public class WorldController implements Screen, InputProcessor {
                 }
                 p.clearInventory();
                 p.startgrabCooldown();
+                p.resetTexture();
             }
 
             // player updates (for respawn and dash cool down)
@@ -383,6 +386,9 @@ public class WorldController implements Screen, InputProcessor {
             if (playerHorizontal != 0) {
                 p.setPrevHoriDir(playerHorizontal);
             }
+
+            // Must always update sound controller!
+            SoundController.getInstance().update();
         }
     }
 

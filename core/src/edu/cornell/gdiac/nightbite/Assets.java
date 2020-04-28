@@ -203,9 +203,9 @@ public class Assets {
     public static float EFFECT_VOLUME = 0.1f;
     static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
     public static String FX_DELIVER_FILE = "music/delivered.wav";
-    static String FX_FALLING_FILE = "music/falling.wav";
-    static String FX_PICKUP_FILE = "music/pickup.wav";
-    static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
+    public static String FX_FALLING_FILE = "music/falling.wav";
+    public static String FX_PICKUP_FILE = "music/pickup.wav";
+    public static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
 
 
     /*
