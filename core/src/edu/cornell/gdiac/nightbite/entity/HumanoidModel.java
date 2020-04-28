@@ -156,9 +156,9 @@ public class HumanoidModel extends SimpleObstacle {
      */
     public void resetTexture() {
         texture = defaultTexture;
-        if (prevHoriDir == 1) {
-            texture.flip(true, false);
-        }
+//        if (prevHoriDir == 1) {
+//            texture.flip(true, false);
+//        }
     }
 
     /**
