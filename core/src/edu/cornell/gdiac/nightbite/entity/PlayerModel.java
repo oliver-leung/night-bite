@@ -258,7 +258,7 @@ public class PlayerModel extends HumanoidModel {
 
     public void clearInventory() {
         item.clear();
-        texture = defaultTexture;
+        setTexture(defaultTexture);
         handheld = defaultHandheld;
     }
 
