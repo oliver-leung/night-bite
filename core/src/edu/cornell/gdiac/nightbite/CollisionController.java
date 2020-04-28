@@ -38,10 +38,10 @@ public class CollisionController implements ContactListener {
             handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
-        if (a instanceof TestEnemy) {
-            handleEnemyToObjectContact((TestEnemy) a, b);
-        } else if (b instanceof TestEnemy) {
-            handleEnemyToObjectContact((TestEnemy) b, a);
+        if (a instanceof FireEnemyModel) {
+            handleEnemyToObjectContact((FireEnemyModel) a, b);
+        } else if (b instanceof FireEnemyModel) {
+            handleEnemyToObjectContact((FireEnemyModel) b, a);
         }
 
         // Item-Object Contact
@@ -169,7 +169,7 @@ public class CollisionController implements ContactListener {
         }
     }
 
-    public void handleEnemyToObjectContact(TestEnemy enemy, Object object) {
+    public void handleEnemyToObjectContact(FireEnemyModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();

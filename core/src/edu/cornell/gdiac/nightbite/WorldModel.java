@@ -652,6 +652,3 @@ public class WorldModel {
         light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }
-
-    public boolean getOverlapItem(int j) {
-    }

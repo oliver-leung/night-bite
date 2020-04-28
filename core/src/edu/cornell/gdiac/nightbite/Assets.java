@@ -69,6 +69,8 @@ public class Assets {
     /* Enemies */
     static String FIRE_ENEMY_WALK_FILE = "character/Enemies/E1_64_Walk_FS_8.png";
     static String FIRE_ENEMY_FALL_FILE = "character/Enemies/E1_64_Falling_FS_5.png";
+    static String OIL_ENEMY_WALK_FILE = "character/Enemies/E2_64_Walk_FS_8.png";
+    static String OIL_ENEMY_FALL_FILE = "character/Enemies/E2_64_Falling_FS_5.png";
 
     /* Firecracker filmstrip files */
     static String FIRECRACKER_FILE = "item/firecracker_64.png";
@@ -78,8 +80,6 @@ public class Assets {
     /* Oil */
     static String OIL_SPILLING_FILE = "item/oil_64_filmstrip.png";
     static String OIL_TILE_FILE = "item/oiltile_64.png";
-    static String OIL_ENEMY_WALK_FILE = "character/Enemies/E2_64_Walk_FS_8.png";
-    static String OIL_ENEMY_FALL_FILE = "character/Enemies/E2_64_Falling_FS_5.png"
 
     // Item
     static String FISH_ITEM_FILE = "item/food1_64.png";
@@ -130,6 +130,8 @@ public class Assets {
 
     public static FilmStrip FIRE_ENEMY_WALK;
     public static FilmStrip FIRE_ENEMY_FALL;
+    public static FilmStrip OIL_ENEMY_WALK;
+    public static FilmStrip OIL_ENEMY_FALL;
 
     public static FilmStrip FIRECRACKER;
     public static FilmStrip FIRECRACKER_LIT;
@@ -137,8 +139,6 @@ public class Assets {
 
     public static FilmStrip OIL_SPILLING;
     public static FilmStrip OIL_TILE;
-    public static FilmStrip OIL_ENEMY_WALK;
-    public static FilmStrip OIL_ENEMY_FALL;
 
     public static BitmapFont RETRO_FONT;
 
@@ -208,10 +208,15 @@ public class Assets {
 
         loadTexture(FIRE_ENEMY_FALL_FILE);
         loadTexture(FIRE_ENEMY_WALK_FILE);
+        loadTexture(OIL_ENEMY_FALL_FILE);
+        loadTexture(OIL_ENEMY_WALK_FILE);
 
         loadTexture(FIRECRACKER_FILE);
         loadTexture(FIRECRACKER_LIT_FILE);
         loadTexture(FIRECRACKER_DET_FILE);
+
+        loadTexture(OIL_SPILLING_FILE);
+        loadTexture(OIL_TILE_FILE);
 
         loadTexture(PLAYER_FILMSTRIP_FILE);
         loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
@@ -302,6 +307,8 @@ public class Assets {
         // Enemies
         FIRE_ENEMY_WALK = createFilmStrip(manager, FIRE_ENEMY_WALK_FILE, 1,8,8);
         FIRE_ENEMY_FALL = createFilmStrip(manager, FIRE_ENEMY_FALL_FILE, 1,6,6);
+        OIL_ENEMY_WALK = createFilmStrip(manager, OIL_ENEMY_WALK_FILE,1,8,8);
+        OIL_ENEMY_FALL = createFilmStrip(manager, OIL_ENEMY_FALL_FILE, 1, 6,6);
 
         // Firecracker filmstrip
         // TODO don't hardcode the rows/cols/size
@@ -309,11 +316,9 @@ public class Assets {
         FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
         FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
 
-        // Oil Item & Enemy
+        // Oil
         OIL_SPILLING = createFilmStrip(manager, OIL_SPILLING_FILE,1,12,12);
         OIL_TILE = createFilmStrip(manager, OIL_TILE_FILE,1,1,1);
-        OIL_ENEMY_WALK = createFilmStrip(manager, OIL_ENEMY_WALK_FILE,1,8,8);
-        OIL_ENEMY_FALL = createFilmStrip(manager, OIL_ENEMY_FALL_FILE, 1, 6,6);
 
         // Home stall textures
         HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);

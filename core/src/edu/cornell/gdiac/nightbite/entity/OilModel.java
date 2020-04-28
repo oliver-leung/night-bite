@@ -1,23 +1,19 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class OilModel extends ImmovableModel {
-    private int id;
     private int spillngFrame = 12;
     private FilmStrip defaultTexture = Assets.OIL_SPILLING;
 
-    public OilModel(float x, float y, int id){
-        super(x, y, 0);
-        this.id = id;
+    public OilModel(Vector2 pos){
+        super(pos.x, pos.y, 0);
     }
 
-    /**
-     * Set the texture of this firecracker
-     */
     public void setTexture(FilmStrip texture) {
         if (defaultTexture == null) { defaultTexture = texture; }
         super.setTexture(texture);
@@ -26,7 +22,7 @@ public class OilModel extends ImmovableModel {
     public void update(float delta) {
         super.update(delta);
 
-        if (spillngFrame == 0) {
+        if (spillngFrame == 0) { // Done with spilling animation
             setTexture(Assets.OIL_TILE);
         } else {
             spillngFrame--;

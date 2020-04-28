@@ -131,6 +131,8 @@ public class HumanoidModel extends SimpleObstacle {
         homePosition = position;
     }
 
+    public Vector2 getHomePosition() {return homePosition;}
+
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
         setBullet(true);

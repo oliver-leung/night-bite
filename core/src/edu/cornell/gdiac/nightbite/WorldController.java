@@ -134,7 +134,7 @@ public class WorldController implements Screen, InputProcessor {
         this.selectedLevelJSON = selectedLevelJSON;
     }
 
-    private TestEnemy enemy;
+    private FireEnemyModel enemy;
 
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
@@ -315,9 +315,8 @@ public class WorldController implements Screen, InputProcessor {
 
             p = worldModel.getPlayers().get(i);
 
-
-            // update player state
-            if (p.isSliding()) { // if player is sliding, disregard user input
+            // if player is sliding, disregard user input
+            if (p.isSliding()) {
                 slideDirection = p.getSlideDirection();
                 p.setIX(slideDirection.x);
                 p.setIY(slideDirection.y);
@@ -400,15 +399,15 @@ public class WorldController implements Screen, InputProcessor {
             SoundController.getInstance().update();
         }
 
+        Vector2 dir = new Vector2(0,0);
+
         for (HumanoidModel e : worldModel.getEnemies()) {
-            // TODO: Real jank
             p = worldModel.getPlayers().get(0);
-            if (e instanceof TestEnemy && p.isAlive()) {
-                Vector2 dir = ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                Vector2 imp = ((TestEnemy) e).attack(p.getPosition());
-                if (imp != null) {
-                    FirecrackerModel f = worldModel.addFirecracker(e.getPosition().x, e.getPosition().y);
-                    f.throwItem(imp);
+            if (p.isAlive()) {
+                if (e instanceof FireEnemyModel) {
+                    dir = ((FireEnemyModel)e).update(p);
+                } else if (e instanceof OilyBoyModel) {
+                    dir = ((OilyBoyModel)e).update(p);
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);
@@ -427,6 +426,7 @@ public class WorldController implements Screen, InputProcessor {
                     e.respawn();
                     e.setFallingTexture();
                 }
+
                 e.setActive(e.isAlive());
             }
         }

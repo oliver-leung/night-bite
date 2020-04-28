@@ -61,10 +61,6 @@ public class PlayerModel extends HumanoidModel {
     private float slideHorizontal;
     private float slideVertical;
 
-    /** player respawn */
-    private boolean isAlive;
-    private int spawnCooldown;
-
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
     private static int GRAB_COOLDOWN_PERIOD = 15;
