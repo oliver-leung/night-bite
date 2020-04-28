@@ -109,6 +109,9 @@ public class FirecrackerModel extends BoxObstacle {
 
         frame = 0f;
 
+        categoryBits = 0x0020;
+        maskBits = 0x0008;
+
         this.world = world;
     }
 

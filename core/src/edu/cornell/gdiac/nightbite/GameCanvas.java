@@ -982,10 +982,15 @@ public class GameCanvas {
     }
 
     public void drawPoint(float x, float y, Color color) {
-
 		debugRender.setColor(color);
-		debugRender.circle(x, y, 1, 12);
+		debugRender.circle(x, y, 1, 3);
 	}
+
+	public void drawLine(float x1, float y1, float x2, float y2, Color color) {
+    	debugRender.setColor(color);
+		debugRender.line(x1, y1, x2, y2, color, color);
+	}
+
     /**
      * Draws the outline of the given shape in the specified color
      *

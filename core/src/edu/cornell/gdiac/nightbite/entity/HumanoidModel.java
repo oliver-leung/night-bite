@@ -24,6 +24,15 @@ public class HumanoidModel extends SimpleObstacle {
     private Rectangle coreBounds;
     private Rectangle feetBounds;
 
+    private Vector2 feetPositionCache;
+    private Rectangle feetRectangleCache;
+    private Vector2 dimensionCache;
+
+    protected short walkCategoryBits;
+    protected short walkMaskBits;
+    protected short hitCategoryBits;
+    protected short hitMaskBits;
+  
     /** Whether this humanoid is alive */
     protected boolean isAlive;
 
@@ -117,6 +126,7 @@ public class HumanoidModel extends SimpleObstacle {
 
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
+        setBullet(true);
 
         this.texture = texture;
         this.fallTexture = fallTexture;
@@ -142,6 +152,17 @@ public class HumanoidModel extends SimpleObstacle {
         capsuleFixtures = new Fixture[3];
         coreBounds = new Rectangle();
         feetBounds = new Rectangle();
+
+        feetPositionCache = new Vector2();
+        feetRectangleCache = new Rectangle();
+        dimensionCache = new Vector2();
+
+        // TODO: Move this out
+        walkCategoryBits = 0x0010;
+        walkMaskBits = 0x0004 | 0x0008;
+
+        hitCategoryBits = 0x002;
+        hitMaskBits = 0x002 | 0x0020 | 0x0001;
 
         resize(width, height);
     }
@@ -212,8 +233,8 @@ public class HumanoidModel extends SimpleObstacle {
         // Feet has half the width of the capsule and is the
         // lowest .2 of the sprite
 
-        float feetWidth = width * 0.5f;
-        float feetHeight = height * 0.2f;
+        float feetWidth = width * 0.2f;
+        float feetHeight = height * 0.1f;
         x = -feetWidth/2;
         y = - height/2;
 
@@ -249,7 +270,8 @@ public class HumanoidModel extends SimpleObstacle {
         fixture.shape = hitBoxEdge[0];
         fixture.density /= 2;
         // GROUP INDEX MEANS CAPSULE WILL NOT COLLIDE WITH IMMOVABLE OBSTACLES
-        fixture.filter.groupIndex = -1;
+        fixture.filter.maskBits = hitMaskBits;
+        fixture.filter.categoryBits= hitCategoryBits;
         capsuleFixtures[0] = body.createFixture(fixture);
 
         fixture.shape = hitBoxCore;
@@ -266,10 +288,12 @@ public class HumanoidModel extends SimpleObstacle {
 
         fixture.shape = feet;
         fixture.density = defaultDensity;
-        fixture.filter.groupIndex = 0;
+        fixture.filter.categoryBits = walkCategoryBits;
+        fixture.filter.maskBits = walkMaskBits;
         feetFixture = body.createFixture(fixture);
         feetFixture.setUserData(HitArea.WALKBOX);
 
+        System.out.println(feetFixture.getFilterData().maskBits);
         markDirty(false);
     }
 
@@ -300,7 +324,33 @@ public class HumanoidModel extends SimpleObstacle {
             canvas.drawPhysics(hitBoxEdge[1], Color.YELLOW, getX(), getY() - coreBounds.height / 2, drawScale.x, drawScale.y);
         }
 
-        canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y / 2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y/2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPoint(getX() * drawScale.x,(getY() - dimension.y - feetBounds.y + feetBounds.width/2) * drawScale.y, Color.PINK);
+    }
+
+    public float getWidth() {
+        return dimension.x;
+    }
+
+    public float getHeight() {
+        return dimension.y;
+    }
+
+    public Vector2 getDimension() {
+        dimensionCache.set(dimension);
+        return dimensionCache;
+    }
+
+    public Vector2 getFeetPosition() {
+        feetPositionCache.set(getX(), getY() - dimension.y - feetBounds.y + feetBounds.width/2);
+        return feetPositionCache;
+    }
+
+    // TODO
+    public Rectangle getFeetRectangle() {
+        feetRectangleCache.set(getX() - feetBounds.width/2, getY() - dimension.y/2 - feetBounds.y - 0.5f,
+                feetBounds.width, feetBounds.height);
+        return feetRectangleCache;
     }
 
     public enum HitArea {

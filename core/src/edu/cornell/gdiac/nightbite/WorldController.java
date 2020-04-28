@@ -23,10 +23,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.LevelController;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -137,11 +134,20 @@ public class WorldController implements Screen, InputProcessor {
         this.selectedLevelJSON = selectedLevelJSON;
     }
 
+    private TestEnemy enemy;
+
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-        worldModel.addFirecracker(3, 5); // TODO
+        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
+        enemy.setDrawScale(worldModel.scale);
+        enemy.setName("wtf");
+        enemy.setActualScale(worldModel.getActualScale());
+        enemy.setFixedRotation(true);
+        worldModel.addEnemy(enemy);
+        worldModel.initializeAI();
+        // worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -200,7 +206,9 @@ public class WorldController implements Screen, InputProcessor {
             for (Obstacle obj : worldModel.getObjects()) {
                 obj.drawDebug(canvas);
             }
-            debugGrid();
+            // debugGrid();
+            worldModel.debugAI(canvas);
+            worldModel.debug.drawPathfinding(canvas, worldModel.scale);
             canvas.endDebug();
         }
     }
@@ -381,6 +389,19 @@ public class WorldController implements Screen, InputProcessor {
 
             // Must always update sound controller!
             SoundController.getInstance().update();
+        }
+
+        for (HumanoidModel e : worldModel.getEnemies()) {
+            // TODO: Real jank
+            p = worldModel.getPlayers().get(0);
+            if (e instanceof TestEnemy && p.isAlive()) {
+                ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
+                Vector2 imp = ((TestEnemy) e).attack(p.getPosition());
+                if (imp != null) {
+                    FirecrackerModel f = worldModel.addFirecracker(e.getPosition().x, e.getPosition().y);
+                    f.throwItem(imp);
+                }
+            }
         }
     }
 
