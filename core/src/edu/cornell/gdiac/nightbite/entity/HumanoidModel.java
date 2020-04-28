@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 
 public class HumanoidModel extends SimpleObstacle {
 
@@ -31,10 +32,112 @@ public class HumanoidModel extends SimpleObstacle {
     protected short walkMaskBits;
     protected short hitCategoryBits;
     protected short hitMaskBits;
+  
+    /** Whether this humanoid is alive */
+    protected boolean isAlive;
 
-    public HumanoidModel(float x, float y, float width, float height) {
+    /** Time until humanoid respawn */
+    private int respawnCooldown;
+
+    /* How fast we change frames (one frame per 8 calls to update */
+    private static final float ANIMATION_SPEED = 0.125f;
+    /* The number of animation frames in our falling filmstrip */
+    private static final float NUM_FRAMES_FALL = 6;
+    /* Keeps track of the falling animation frame */
+    private float fallFrame;
+
+    /** Steps between switching walk animation frames */
+    public int walkCounter;
+    /** Steps between switching falling animation frames */
+    public int fallCounter;
+
+    /** The previous horizontal direction of the humanoid */
+    private float prevHoriDir;
+
+    /** Textures */
+    public FilmStrip defaultTexture;
+    public FilmStrip fallTexture;
+
+    /** Gets whether this humanoid is alive */
+    public boolean isAlive() { return isAlive; }
+    /** Set the liveness state of this humanoid */
+    public void setAlive(boolean alive) { isAlive = alive; }
+
+    /** Kill this humanoid and set its texture to falling */
+    public void setDead() {
+        setCurrentTexture(fallTexture);
+        setAlive(false);
+    }
+
+    /** Gets previous horizontal direction */
+    public float getPrevHoriDir() { return prevHoriDir; }
+    /** Sets previous horizontal direction */
+    public void setPrevHoriDir(float dir) { prevHoriDir = dir; }
+
+    /**
+     * Sets the current texture of this humanoid
+     */
+    public void setCurrentTexture(FilmStrip texture) {
+        if (defaultTexture == null) { defaultTexture = texture; }
+        setTexture(texture);
+    }
+
+    /**
+     * Sets the current texture to walking. Changes frames every 10 steps.
+     */
+    public void setWalkTexture() {
+        if (walkCounter % 20 == 0) {
+            ((FilmStrip) texture).setFrame(1);
+            if (prevHoriDir == 1) {
+                texture.flip(true, false);
+            }
+        } else if (walkCounter % 20 == 10) {
+            ((FilmStrip) texture).setFrame(0);
+            if (prevHoriDir == 1) {
+                texture.flip(true, false);
+            }
+        }
+        walkCounter++;
+    }
+
+    /**
+     * If the humanoid is not moving, set the texture to one frame of the walk texture.
+     */
+    public void setStaticTexture() {
+        walkCounter = 0;
+        ((FilmStrip) texture).setFrame(0);
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+    }
+
+    /**
+     * If the humanoid is dead, set the texture to falling
+     */
+    public void setFallingTexture() {
+        fallCounter++;
+        fallFrame += ANIMATION_SPEED;
+        if (fallFrame >= NUM_FRAMES_FALL) { fallFrame -= NUM_FRAMES_FALL; }
+        ((FilmStrip) texture).setFrame((int) fallFrame);
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+    }
+
+    public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
         setBullet(true);
+
+        this.texture = texture;
+        this.fallTexture = fallTexture;
+        setCurrentTexture(texture);
+
+        isAlive = true;
+
+        walkCounter = 0;
+        fallCounter = 0;
+        fallFrame = 0f;
+        prevHoriDir = -1f;
 
         // TODO: FIX DIMENSION
         dimension = new Vector2(width, height);
@@ -62,6 +165,41 @@ public class HumanoidModel extends SimpleObstacle {
         hitMaskBits = 0x002 | 0x0020 | 0x0001;
 
         resize(width, height);
+    }
+
+    /**
+     * Resets the current texture to the default (walking) texture
+     */
+    public void resetTexture() {
+        texture = defaultTexture;
+//        if (prevHoriDir == 1) {
+//            texture.flip(true, false);
+//        }
+    }
+
+    /**
+     * Flips the current texture horizontally
+     */
+    public void flipTexture() {
+        texture.flip(true, false);
+    }
+
+    /**
+     * Respawn this humanoid at the specified position after 60 steps
+     */
+    public void respawn(Vector2 pos) {
+        if (respawnCooldown == 0) {
+            respawnCooldown = 60;
+        }
+        respawnCooldown--;
+        if (respawnCooldown == 0) {
+            setPosition(pos);
+            setAlive(true);
+            resetTexture();
+            draw = true;
+        }
+
+        setLinearVelocity(Vector2.Zero);
     }
 
     private void resize(float width, float height) {

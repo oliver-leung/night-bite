@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.HashMap;
 
@@ -57,6 +58,10 @@ public class Assets {
     static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
     static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
     static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
+    static String PLAYER_FALLING_FILMSTRIP_FILE = "character/P1_Falling_5.png";
+    static int PLAYER_FALLING_FILMSTRIP_ROW = 1;
+    static int PLAYER_FALLING_FILMSTRIP_COL = 6;
+    static int PLAYER_FALLING_FILMSTRIP_SIZE = 6;
     static String WOK_FILE = "character/wok_64_nohand.png";
     static String PLAYER_SHADOW_FILE = "character/shadow.png";
     static String PLAYER_ARROW_FILE = "character/arrow.png";
@@ -74,7 +79,7 @@ public class Assets {
     static String WALL_PA2_FILE = "environment/box_palette2_64.png";
 
     // Home stall
-    static String HOME_STALL_FILE = "environment/StallHome1_64.png";
+    static String HOME_STALL_FILE = "environment/StallHome_64_fs.png";
 
     // Level select screen
     private static final String LEVEL_SELECT_BACKGROUND_FILE = "level_select/Background.png";
@@ -89,15 +94,24 @@ public class Assets {
     private static final String HEADER_FILE = "level_select/Header.png";
     private static final String PLAYER_FILE = "level_select/Lin_128px.png";
 
+    // Sound
+    public static float EFFECT_VOLUME = 0.1f;
+    static String MUSIC_FILE = "music/Night_Bite_(Theme)_v2.wav";
+    public static String FX_DELIVER_FILE = "music/delivered.wav";
+    public static String FX_PICKUP_FILE = "music/pickup.wav";
+    public static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
+    public static String FX_FALL_FILE = "music/whistle.wav";
+
     /**
      * LOADED ASSETS
      */
     public static FilmStrip PLAYER_FILMSTRIP;
     public static FilmStrip PLAYER_HOLD_FILMSTRIP;
+    public static FilmStrip PLAYER_FALL_FILMSTRIP;
     public static TextureRegion WOK;
     public static TextureRegion PLAYER_SHADOW;
     public static TextureRegion PLAYER_ARROW;
-    public static TextureRegion HOME_STALL;
+    public static FilmStrip HOME_STALL;
     public static TextureRegion FISH_ITEM;
     public static TextureRegion WALL;
     public static TextureRegion HOLE;
@@ -180,6 +194,7 @@ public class Assets {
 
         loadTexture(PLAYER_FILMSTRIP_FILE);
         loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
+        loadTexture(PLAYER_FALLING_FILMSTRIP_FILE);
         loadTexture(HOME_STALL_FILE);
 
         loadTexture(LEVEL_SELECT_BACKGROUND_FILE);
@@ -214,6 +229,12 @@ public class Assets {
         }
 
         loadFont(FILE_NAMES_JSON.getString("font"), 12);
+
+        // Load sounds
+        loadSound(FX_DELIVER_FILE);
+        loadSound(FX_FALL_FILE);
+        loadSound(FX_FIRECRACKER_FILE);
+        loadSound(FX_PICKUP_FILE);
     }
 
     /** Preloads the texture and sound information for the game :
@@ -238,15 +259,22 @@ public class Assets {
             TEXTURES.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
 
+        SoundController sounds = SoundController.getInstance();
+        sounds.allocate(manager, FX_DELIVER_FILE);
+        sounds.allocate(manager, FX_FALL_FILE);
+        sounds.allocate(manager, FX_FIRECRACKER_FILE);
+        sounds.allocate(manager, FX_PICKUP_FILE);
+
         // Player & Items
-//        int num_players = PLAYER_FILMSTRIP_FILES.length;
         PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
                 PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
         PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
                 PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);
-        WOK = createTexture(manager, WOK_FILE);
-        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
-        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);
+        PLAYER_FALL_FILMSTRIP = createFilmStrip(manager, PLAYER_FALLING_FILMSTRIP_FILE, PLAYER_FALLING_FILMSTRIP_ROW,
+            PLAYER_FALLING_FILMSTRIP_COL, PLAYER_FALLING_FILMSTRIP_SIZE);
+        WOK = createTexture(manager, WOK_FILE, true);
+        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
+        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
 
         // Firecracker filmstrip
         // TODO don't hardcode the rows/cols/size
@@ -256,20 +284,20 @@ public class Assets {
 
 
         // Home stall textures
-        HOME_STALL = createTexture(manager, HOME_STALL_FILE);
+        HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);
 
         // Level select screen
-        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE);
-        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE);
-        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE);
-        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE);
-        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE);
-        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE);
-        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE);
-        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE);
-        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE);
-        HEADER_TEXTURE = createTexture(manager, HEADER_FILE);
-        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE);
+        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);
+        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE, true);
+        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE, true);
+        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE, true);
+        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE, true);
+        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE, true);
+        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE, true);
+        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE, true);
+        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE, true);
+        HEADER_TEXTURE = createTexture(manager, HEADER_FILE, true);
+        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE, true);
 
         FONT = manager.get(FILE_NAMES_JSON.getString("font"));
 
@@ -321,5 +349,23 @@ public class Assets {
         size2Params.fontParameters.size = fontSize;
         manager.load(fontPath, BitmapFont.class, size2Params);
         assets.add(fontPath);
+    }
+
+    /**
+     * Returns a newly loaded texture region for the given file.
+     * <p>
+     * This helper methods is used to set texture settings (such as scaling, and
+     * whether or not the texture should repeat) after loading.
+     */
+    protected static TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
+        if (manager.isLoaded(file)) {
+            TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
+            region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            if (repeat) {
+                region.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+            }
+            return region;
+        }
+        return null;
     }
 }
