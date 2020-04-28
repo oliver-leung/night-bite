@@ -18,6 +18,7 @@ public class ItemModel extends BoxObstacle {
      * item parameters
      */
     private Vector2 item_init_position;
+
     /**
      * item respawn
      */

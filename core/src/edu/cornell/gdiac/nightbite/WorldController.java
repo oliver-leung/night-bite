@@ -23,10 +23,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.LevelController;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -140,6 +137,7 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+        worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -271,7 +269,9 @@ public class WorldController implements Screen, InputProcessor {
 
         // Handle resets
         if (input.didReset()) {
-            reset();
+//            reset();
+            listener.exitScreen(this, EXIT_NEXT);
+            return false;
         }
 
         if (input.didExit()) {
@@ -292,11 +292,6 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: IMPORTANT: All UPDATE METHODS FOR OBJECTS SHOULD NOT BE CALLED HERE
         // TODO: BUT IN POST UPDATE
         // I love abusing todos so stuff i write is highlighted
-
-        RayHandler rayhandler = worldModel.getRayhandler();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
 
         PlayerModel p;
         float playerHorizontal;
@@ -399,6 +394,11 @@ public class WorldController implements Screen, InputProcessor {
         // while (!addQueue.isEmpty()) {
         // 	addObject(addQueue.poll());
         // }
+
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
@@ -504,7 +504,7 @@ public class WorldController implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         float clickX = screenX * worldModel.getWidth() / screenWidth;
         float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
-        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY));
+        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers());
         return true;
     }
 

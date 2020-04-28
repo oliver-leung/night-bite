@@ -1,18 +1,16 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import edu.cornell.gdiac.nightbite.entity.HoleModel;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 
 
-// TODO: Refactor into Collision Filters probably
 public class CollisionController implements ContactListener {
+    /** Impulse for players pushing */
     protected static final float PUSH_IMPULSE = 200f;
 
     public static final int ITEMS_TO_WIN = 3;
@@ -23,6 +21,9 @@ public class CollisionController implements ContactListener {
         this.worldModel = worldModel;
     }
 
+    /**
+     * Called when two fixtures begin to touch
+     */
     public void beginContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
@@ -34,14 +35,24 @@ public class CollisionController implements ContactListener {
             handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
+        // Item-Object Contact
         if (a instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) a, b);
         } else if (b instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) b, a);
         }
 
+        // Firecracker-Object Contact
+        if (a instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) a, b);
+        } else if (b instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) b, a);
+        }
     }
 
+    /**
+     * Called when two fixtures cease to touch
+     */
     public void endContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
@@ -54,6 +65,27 @@ public class CollisionController implements ContactListener {
         }
     }
 
+    /**
+     * Called after a contact is updated
+     */
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        Object a = contact.getFixtureA().getBody().getUserData();
+        Object b = contact.getFixtureB().getBody().getUserData();
+
+        // Players walk through items and firecrackers
+        if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
+            contact.setEnabled(false);
+        } else if ((a instanceof ItemModel && ((ItemModel) a).holdingPlayer != null) || (b instanceof ItemModel && ((ItemModel) b).holdingPlayer != null)) {
+            contact.setEnabled(false);
+        } else if ((a instanceof PlayerModel && b instanceof FirecrackerModel) || (b instanceof PlayerModel && a instanceof FirecrackerModel)) {
+            contact.setEnabled(false);
+        }
+
+    }
+
+    /**
+     * Inspect a contact after solver is finished
+     */
     public void postSolve(Contact contact, ContactImpulse impulse) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
@@ -82,18 +114,6 @@ public class CollisionController implements ContactListener {
             }
         }
     }
-
-    public void preSolve(Contact contact, Manifold oldManifold) {
-        Object a = contact.getFixtureA().getBody().getUserData();
-        Object b = contact.getFixtureB().getBody().getUserData();
-
-        if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
-            contact.setEnabled(false);
-        } else if ((a instanceof ItemModel && ((ItemModel) a).holdingPlayer != null) || (b instanceof ItemModel && ((ItemModel) b).holdingPlayer != null)) {
-            contact.setEnabled(false);
-        }
-    }
-
 
     public void handlePlayerToObjectContact(PlayerModel player, Object object) {
         if (object instanceof HoleModel) {
@@ -151,6 +171,15 @@ public class CollisionController implements ContactListener {
                 // check win condition
                 checkWinCondition(homeObject);
             }
+        }
+    }
+
+    /**
+     * Collision handler for firecrackers to objects
+     */
+    public void handleFirecrackerToObjectContact(FirecrackerModel firecracker, Object object) {
+        if (object instanceof HoleModel) {
+            firecracker.markRemoved(true);
         }
     }
 

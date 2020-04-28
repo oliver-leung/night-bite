@@ -224,6 +224,7 @@ public class LevelSelectController implements Screen, InputProcessor {
 
 //        Gdx.input.setInputProcessor(null);
         pressState = 0;
+        startGame = false;
 
 //        background = null;
 //        tile1Texture= null;

@@ -61,6 +61,11 @@ public class Assets {
     static String PLAYER_SHADOW_FILE = "character/shadow.png";
     static String PLAYER_ARROW_FILE = "character/arrow.png";
 
+    /* Firecracker filmstrip files */
+    static String FIRECRACKER_FILE = "item/firecracker_64.png";
+    static String FIRECRACKER_LIT_FILE = "item/firecracker_fuse_64_fs.png";
+    static String FIRECRACKER_DET_FILE = "item/firecracker_detonating_64_fs.png";
+
     // Item
     static String FISH_ITEM_FILE = "item/food1_64.png";
 
@@ -98,6 +103,11 @@ public class Assets {
     public static TextureRegion HOLE;
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
+
+    public static FilmStrip FIRECRACKER;
+    public static FilmStrip FIRECRACKER_LIT;
+    public static FilmStrip FIRECRACKER_DET;
+
     public static BitmapFont RETRO_FONT;
     public static Music music;
 
@@ -164,6 +174,11 @@ public class Assets {
         loadTexture(PLAYER_SHADOW_FILE);
         loadTexture(PLAYER_ARROW_FILE);
         loadTexture(WALL_PA1_FILE);
+
+        loadTexture(FIRECRACKER_FILE);
+        loadTexture(FIRECRACKER_LIT_FILE);
+        loadTexture(FIRECRACKER_DET_FILE);
+
         loadTexture(PLAYER_FILMSTRIP_FILE);
         loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
         loadTexture(HOME_STALL_FILE);
@@ -212,13 +227,17 @@ public class Assets {
             }
         }
 
+        // Start music // TODO fix this when I'm not sleepy
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
+        music.setLooping(true);
+        music.play();
+        music.setVolume(0.1f);
+
         for (String fileName : FILE_NAMES_JSON.get("character filmstrip").asStringArray()) {
             TextureRegion rawTexture = new TextureRegion(manager.get(fileName, Texture.class));
             int[] dims = getFilmStripDimensions(rawTexture, 64);
             TEXTURES.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
-        // Home stall textures
-        HOME_STALL = createTexture(manager, HOME_STALL_FILE);
 
         // Player & Items
 //        int num_players = PLAYER_FILMSTRIP_FILES.length;
@@ -229,6 +248,20 @@ public class Assets {
         WOK = createTexture(manager, WOK_FILE);
         PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
         PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);
+                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);;
+        WOK = createTexture(manager, WOK_FILE);
+        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE);
+        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE);
+
+        // Firecracker filmstrip
+        // TODO don't hardcode the rows/cols/size
+        FIRECRACKER = createFilmStrip(manager, FIRECRACKER_FILE, 1, 1, 1);
+        FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
+        FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
+
+
+        // Home stall textures
+        HOME_STALL = createTexture(manager, HOME_STALL_FILE);
 
         // Level select screen
         LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE);
