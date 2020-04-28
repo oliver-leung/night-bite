@@ -375,13 +375,15 @@ public class WorldController implements Screen, InputProcessor {
                 p.resetTexture();
             }
 
-            // player updates (for respawn and dash cool down)
-            p.update();
-
             // update horizontal direction
             if (playerHorizontal != 0) {
                 p.setPrevHoriDir(playerHorizontal);
             }
+
+            System.out.println(p.getPrevHoriDir());
+
+            // player updates (for respawn and dash cool down)
+            p.update();
 
             // Must always update sound controller!
             SoundController.getInstance().update();

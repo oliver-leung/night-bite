@@ -49,7 +49,6 @@ public class PlayerModel extends HumanoidModel {
     private int boosting;
     private int cooldown;
 
-    private float prevHoriDir;
     private int ticks;
 
     private Vector2 impulse;
@@ -104,7 +103,6 @@ public class PlayerModel extends HumanoidModel {
         impulse = new Vector2();
         boost = new Vector2();
 
-        prevHoriDir = -1;
         ticks = 0;
 
         cooldown = 0;
@@ -147,6 +145,7 @@ public class PlayerModel extends HumanoidModel {
         super.flipTexture();
         handheld.flip(true, false);
         flipHandheld = !flipHandheld;
+        System.out.println("flip2");
     }
 
     /** player identification */
@@ -192,16 +191,6 @@ public class PlayerModel extends HumanoidModel {
 
     public boolean isBoostCooldown() {
         return cooldown > 0;
-    }
-
-    /** movement state */
-
-    public float getPrevHoriDir() {
-        return prevHoriDir;
-    }
-
-    public void setPrevHoriDir(float dir) {
-        prevHoriDir = dir;
     }
 
     public void incrTicks() {

@@ -173,12 +173,9 @@ public class AIController implements RayCastCallback {
         if (bounded(feet.x, targetPath.getHead().x + 0.5f - 0.2f, targetPath.getHead().x + 0.5f + 0.2f)
                 && bounded(feet.y, targetPath.getHead().y + 0.5f - 0.1f, targetPath.getHead().y + 0.5f + 0.1f))
         {
-            System.out.println("yeet");
             targetPath.poll();
             return Vector2.Zero;
         }
-        System.out.println(targetPath.getHead());
-        System.out.println(feet);
         walkDirectionCache.set(targetPath.getHead().x + 0.5f, targetPath.getHead().y + 0.5f).sub(feet);
         return walkDirectionCache;
     }
