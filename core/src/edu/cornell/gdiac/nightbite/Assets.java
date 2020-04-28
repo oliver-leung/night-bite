@@ -109,7 +109,6 @@ public class Assets {
     public static FilmStrip FIRECRACKER_DET;
 
     public static BitmapFont RETRO_FONT;
-    public static Music music;
 
     // Level select
     public static TextureRegion LEVEL_SELECT_BACKGROUND;
@@ -228,7 +227,7 @@ public class Assets {
         }
 
         // Start music // TODO fix this when I'm not sleepy
-        MUSIC = Gdx.audio.newMusic(Gdx.files.internal("audio/Night_Bite_(Theme).mp3"));
+        MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
         MUSIC.setLooping(true);
         MUSIC.play();
         MUSIC.setVolume(0.1f);
@@ -273,7 +272,6 @@ public class Assets {
         PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE);
 
         FONT = manager.get(FILE_NAMES_JSON.getString("font"));
-        MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
 
         isLoaded = true;
     }
