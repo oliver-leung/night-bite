@@ -12,9 +12,6 @@ public class CollisionController implements ContactListener {
     /** Impulse for players pushing */
     protected static final float PUSH_IMPULSE = 200f;
 
-    /** Impulse for player knockback from detonating firecracker*/
-    protected static final float KNOCKBACK_IMPULSE = 150f;
-
     public static final int ITEMS_TO_WIN = 3;
 
     private WorldModel worldModel;
@@ -43,6 +40,13 @@ public class CollisionController implements ContactListener {
         } else if (b instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) b, a);
         }
+
+        // Firecracker-Object Contact
+        if (a instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) a, b);
+        } else if (b instanceof FirecrackerModel) {
+            handleFirecrackerToObjectContact((FirecrackerModel) b, a);
+        }
     }
 
     /**
@@ -67,13 +71,6 @@ public class CollisionController implements ContactListener {
     public void preSolve(Contact contact, Manifold oldManifold) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
-
-        // Firecracker-Object Contact
-        if (a instanceof FirecrackerModel) {
-            handleFirecrackerToObjectContact((FirecrackerModel) a, b);
-        } else if (b instanceof FirecrackerModel) {
-            handleFirecrackerToObjectContact((FirecrackerModel) b, a);
-        }
 
         // Players walk through items and firecrackers
         if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
@@ -154,21 +151,6 @@ public class CollisionController implements ContactListener {
 
                 // win condition
                 checkWinCondition(homeObject);
-            }
-
-        } else if (object instanceof FirecrackerModel) {
-
-            // Player-Firecracker
-            FirecrackerModel firecracker = (FirecrackerModel) object;
-
-            // If the firecracker is detonating, player should be knocked back
-            // TODO and stunned temporarily
-            if (firecracker.isDetonating()) {
-                Vector2 blastDirection = player.getPosition().sub(firecracker.getPosition()).nor();
-                blastDirection = new Vector2(blastDirection.x, blastDirection.y);  // jank but will break without
-                blastDirection.scl(KNOCKBACK_IMPULSE);
-                player.getBody().applyLinearImpulse(blastDirection, player.getPosition(), true);
-                // Gdx.app.log("Firecracker Collision after applying impulse", blastDirection.toString());
             }
         }
     }

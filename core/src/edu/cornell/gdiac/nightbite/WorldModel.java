@@ -346,7 +346,7 @@ public class WorldModel {
      * @param y The y position of the firecracker enemy
      */
     public void addFirecracker(float x, float y) {
-        FirecrackerModel firecracker = new FirecrackerModel(x, y, 1, 1);
+        FirecrackerModel firecracker = new FirecrackerModel(world, x, y, 1, 1);
         firecracker.setDrawScale(getScale());
         firecracker.setActualScale(getActualScale());
         initializeObject(firecracker);
