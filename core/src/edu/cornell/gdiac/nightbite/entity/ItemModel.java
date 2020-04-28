@@ -99,7 +99,8 @@ public class ItemModel extends BoxObstacle {
     }
 
     /** throw item */
-    public void throwItem(Vector2 impulse) {
+    public void throwItem(Vector2 playerPosition, Vector2 impulse) {
+        setPosition(playerPosition);
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
         holdingPlayer = null;
     }

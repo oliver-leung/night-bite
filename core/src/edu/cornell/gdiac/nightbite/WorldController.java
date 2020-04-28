@@ -17,9 +17,13 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HomeModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.LevelController;
@@ -28,6 +32,8 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.Vector;
 
 /**
  * Base class for a world-specific controller.
@@ -43,7 +49,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  * This is the purpose of our AssetState variable; it censures that multiple instances
  * place nicely with the static assets.
  */
-public class WorldController implements Screen {
+public class WorldController implements Screen, InputProcessor {
     /** Exit code for quitting the game */
     public static final int EXIT_QUIT = 0;
     /** Exit code for advancing to next level */
@@ -72,6 +78,9 @@ public class WorldController implements Screen {
     private boolean debug;
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
+
+    private float screenWidth;
+    private float screenHeight;
 
     /** Create a new game world */
     protected WorldController() {
@@ -312,36 +321,14 @@ public class WorldController implements Screen {
             // update player state
             if (playerVertical != 0 || playerHorizontal != 0) {
                 p.setWalk();
-
-                if (p.getTicks() % 20 == 0) {
-                    p.getTexture().setFrame(1);
-                    if (p.getPrevHoriDir() == 1) {
-                        p.getTexture().flip(true, false);
-                    }
-                } else if (p.getTicks() % 20 == 10) {
-                    p.getTexture().setFrame(0);
-                    if (p.getPrevHoriDir() == 1) {
-                        p.getTexture().flip(true, false);
-                    }
-                }
-                p.incrPlayerWalkCounter();
+                p.updateDirectionState(playerVertical, playerHorizontal);
             } else {
                 p.setStatic();
-                p.resetPlayerWalkCounter();
-                p.getTexture().setFrame(0);
-                if (p.getPrevHoriDir() == 1) {
-                    p.getTexture().flip(true, false);
-                }
             }
-            if (playerHorizontal != 0 || playerVertical != 0) {
-                p.setWalk();
-            } else {
-				p.setStatic();
-			}
 
 			// handle player facing left-right
             if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                p.getTexture().flip(true, false);
+                p.flipTexture();
             }
 
             // Set player movement impulse
@@ -383,7 +370,7 @@ public class WorldController implements Screen {
             /* IF PLAYER THROWS ITEM */
             if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
                 for (ItemModel heldItem : p.getItems()) {
-                    heldItem.throwItem(p.getImpulse());
+                    heldItem.throwItem(p.getPosition(), p.getImpulse());
                 }
                 p.clearInventory();
                 p.startgrabCooldown();
@@ -438,6 +425,8 @@ public class WorldController implements Screen {
      */
     public void resize(int width, int height) {
         // IGNORE FOR NOW
+        screenWidth = width;
+        screenHeight = height;
     }
 
     /**
@@ -500,5 +489,37 @@ public class WorldController implements Screen {
 	 */
 	public void setScreenListener(ScreenListener listener) {
 		this.listener = listener;
+        Gdx.input.setInputProcessor(this);
 	}
+
+	/** Input processor methods (for handling mouse click) */
+
+    @Override
+    public boolean keyDown(int keycode) { return true; }
+
+    @Override
+    public boolean keyUp(int keycode) { return true; }
+
+    @Override
+    public boolean keyTyped(char character) { return true; }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        float clickX = screenX * worldModel.getWidth() / screenWidth;
+        float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
+        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY));
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) { return true; }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) { return true; }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) { return true; }
+
+    @Override
+    public boolean scrolled(int amount) { return false; }
 }
