@@ -564,7 +564,7 @@ public class WorldModel {
         transformTileToWorld(body);
         body.activatePhysics(world);
 
-        PointSource light = createPointLight(new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 4.0f);
+        PointSource light = createPointLight(new float[]{0.2f, 0.1f, 0.05f, 1.0f}, 4.0f);
         light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }
