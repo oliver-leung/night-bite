@@ -194,8 +194,6 @@ public class LevelController {
         item.setDrawScale(world.getScale());
         item.setActualScale(world.getActualScale());
         world.addItem(item);
-
-        itemNum++;
     }
 
     private void createTeam(JsonValue teamJson, int x, int y) {
