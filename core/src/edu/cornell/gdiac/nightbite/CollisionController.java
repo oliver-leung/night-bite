@@ -179,7 +179,10 @@ public class CollisionController implements ContactListener {
      */
     public void handleFirecrackerToObjectContact(FirecrackerModel firecracker, Object object) {
         if (object instanceof HoleModel) {
-            firecracker.markRemoved(true);
+            // Only remove firecracker if it is still
+            if (firecracker.getVX() == 0 && firecracker.getVY() == 0) {
+                firecracker.markRemoved(true);
+            }
         }
     }
 
