@@ -9,7 +9,7 @@ import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 public class TestEnemy extends HumanoidModel {
     private static final int THROW_COOLDOWN = 80;
-    private static final int WALK_COOLDONW = 20;
+    private static final int WALK_COOLDOWN = 10;
     private static final float THROW_DIST = 3;
     private static final float THROW_FORCE = 5f;
     private static final float WALK_THRUST = 25f;
@@ -68,7 +68,7 @@ public class TestEnemy extends HumanoidModel {
         if (aiController.canSee(getPosition(), targetPos)
                 && getPosition().sub(targetPos).len() < THROW_DIST) {
             throwCooldown = THROW_COOLDOWN;
-            walkCooldown = WALK_COOLDONW;
+            walkCooldown = WALK_COOLDOWN;
             return targetPos.cpy().sub(getPosition()).scl(THROW_FORCE);
         }
 
