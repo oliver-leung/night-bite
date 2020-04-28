@@ -14,11 +14,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
-import edu.cornell.gdiac.nightbite.entity.FirecrackerModel;
-import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.LightSource;
@@ -368,7 +364,7 @@ public class WorldModel {
     }
 
     public void initializeAI() {
-        System.out.println(bounds);
+//        System.out.println(bounds);
         aiLattice = new AILattice((int) bounds.width, (int) bounds.height);
         aiLattice.populateStatic(staticObjects);
     }

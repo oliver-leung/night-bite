@@ -292,7 +292,7 @@ public class HumanoidModel extends SimpleObstacle {
         feetFixture = body.createFixture(fixture);
         feetFixture.setUserData(HitArea.WALKBOX);
 
-        System.out.println(feetFixture.getFilterData().maskBits);
+//        System.out.println(feetFixture.getFilterData().maskBits);
         markDirty(false);
     }
 

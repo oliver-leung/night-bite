@@ -4,14 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
-import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
-import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.PooledList;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
+import edu.cornell.gdiac.util.PooledList;
 
 public class AIController implements RayCastCallback {
     private static final int REPLAN_TIME = 60;
@@ -101,7 +97,7 @@ public class AIController implements RayCastCallback {
 
     public void setTarget(GridPoint2 t) {
         this.target.clear();
-        target.add(new GridPoint2((int) t.x, (int) t.y));
+        target.add(new GridPoint2(t.x, t.y));
     }
 
     public void setTarget(Vector2 t) {

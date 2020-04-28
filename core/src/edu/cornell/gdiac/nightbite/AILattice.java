@@ -8,8 +8,6 @@ import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
 
-import java.util.HashSet;
-
 public class AILattice {
     private boolean[][] staticMap;
     private boolean[][] dynamicMap;
@@ -55,7 +53,7 @@ public class AILattice {
         }
         for (int x = 0; x < numW; x ++) {
             for (int y = 0; y < numH; y ++) {
-                System.out.print(staticMap[x][y]);
+//                System.out.print(staticMap[x][y]);
             }
         }
     }
