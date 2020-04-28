@@ -11,7 +11,6 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
 
@@ -99,7 +98,7 @@ public class PlayerModel extends HumanoidModel {
     private HomeModel home;
 
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
-        super(x, y, width, height);
+        super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
         setBullet(true);
 
         texture = Assets.PLAYER_FILMSTRIP;
@@ -135,6 +134,10 @@ public class PlayerModel extends HumanoidModel {
 
         this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
         this.world = world;
+    }
+
+    public Vector2 getHomePos() {
+        return home.getPosition();
     }
 
     public int getTicks() {
@@ -275,21 +278,6 @@ public class PlayerModel extends HumanoidModel {
     public void setDead() {
         isAlive = false;
         draw = false;
-    }
-
-    public void respawn() {
-        if (spawnCooldown == 0) {
-            spawnCooldown = 60;
-        }
-        spawnCooldown--;
-        if (spawnCooldown == 0) {
-            setPosition(home.getPosition());
-            isAlive = true;
-            draw = true;
-        }
-        resetTexture();
-
-        setLinearVelocity(Vector2.Zero);
     }
 
     public boolean hasItem() {

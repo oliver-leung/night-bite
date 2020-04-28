@@ -351,22 +351,6 @@ public class Assets {
         assets.add(fontPath);
     }
 
-
-    /**
-     * Returns a newly loaded filmstrip for the given file.
-     * <p>
-     * This helper methods is used to set texture settings (such as scaling, and
-     * the number of animation frames) after loading.
-     */
-    protected static FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
-        if (manager.isLoaded(file)) {
-            FilmStrip strip = new FilmStrip(manager.get(file, Texture.class), rows, cols, size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        }
-        return null;
-    }
-
     /**
      * Returns a newly loaded texture region for the given file.
      * <p>
@@ -383,13 +367,5 @@ public class Assets {
             return region;
         }
         return null;
-    }
-
-    /**
-     * @param filename Name of the file
-     * @return The TextureRegion from the given filename
-     */
-    public static TextureRegion get(String filename) {
-        return FILES.get(filename);
     }
 }

@@ -25,7 +25,7 @@ public class HumanoidModel extends SimpleObstacle {
     private Rectangle feetBounds;
 
     /** Whether this humanoid is alive */
-    private boolean isAlive;
+    protected boolean isAlive;
 
     /** Time until humanoid respawn */
     private int respawnCooldown;
