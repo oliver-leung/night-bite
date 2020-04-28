@@ -248,7 +248,7 @@
                     "flip": false,
                     "rotate": 0,
                     "type": "decoration",
-                    "light": false
+                    "light": true
                 }
             ],
             [
@@ -3352,7 +3352,7 @@
                 },
                 {
                     "name": "wall_8_11",
-                    "texture": "environment/Seat1_64.png",
+                    "texture": "environment/Seat1-1_64.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "wall",
@@ -3496,7 +3496,7 @@
                 },
                 {
                     "name": "wall_16_11",
-                    "texture": "environment/Seat1_64.png",
+                    "texture": "environment/Seat1-1_64.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "wall",
@@ -3532,7 +3532,7 @@
                 },
                 {
                     "name": "wall_18_11",
-                    "texture": "environment/Seat1_64.png",
+                    "texture": "environment/Seat1-1_64.png",
                     "flip": false,
                     "rotate": 0,
                     "type": "wall",
