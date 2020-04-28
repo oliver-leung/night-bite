@@ -168,7 +168,6 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.drawDecorations();
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
-        StringBuilder message2 = new StringBuilder("Player 2 score: ");
 
         // Draw objects
         for (Obstacle obj : worldModel.getObjects()) {
@@ -178,15 +177,12 @@ public class WorldController implements Screen, InputProcessor {
                 // Add player scores
                 if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
                     message1.append(((HomeModel) obj).getScore());
-                } else if (obj instanceof HomeModel && obj.getName().equals("teamB")) {
-                    message2.append(((HomeModel) obj).getScore());
                 }
             }
         }
 
         // Draw player scores
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
-        canvas.drawText(message2.toString(), displayFont, canvas.getWidth() - 200f, canvas.getHeight() - 6 * 5.0f);
 
         if (worldModel.isComplete()) {
             displayFont.setColor(Color.YELLOW);
