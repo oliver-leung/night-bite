@@ -163,6 +163,9 @@ public class CollisionController implements ContactListener {
                 // win condition
                 checkWinCondition(homeObject);
             }
+        } else if (object instanceof OilModel) {
+            player.setSlide();
+            worldModel.removeStaticObject((ImmovableModel) object);
         }
     }
 

@@ -225,14 +225,21 @@ public class PlayerModel extends HumanoidModel {
         return sliding > 0;
     }
 
-    public Vector2 setSlide(float horizontal, float vertical) {
-        if (state != MoveState.SLIDE) { // player wasn't sliding before
-            state = MoveState.SLIDE;
+    public void setSlide() {
+        state = MoveState.SLIDE;
+        sliding = SLIDE_FRAMES;
+    }
+
+    public void setSlideDirection(float horizontal, float vertical) {
+        if (state != MoveState.SLIDE) { // set direction if player wasn't sliding before
             slideHorizontal = horizontal;
             slideVertical = vertical;
-            sliding = SLIDE_FRAMES;
         }
+    }
+
+    public Vector2 getSlideDirection() {
         return new Vector2(slideHorizontal, slideVertical);
+
     }
 
     public void update() {

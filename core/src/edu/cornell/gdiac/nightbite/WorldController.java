@@ -316,37 +316,14 @@ public class WorldController implements Screen, InputProcessor {
             p = worldModel.getPlayers().get(i);
 
 
-            if (onOilTile || p.isSliding()) { // if player reaches oil or has been sliding, disregard user input
-                slideDirection = p.setSlide(playerHorizontal, playerVertical);
+            // update player state
+            if (p.isSliding()) { // if player is sliding, disregard user input
+                slideDirection = p.getSlideDirection();
                 p.setIX(slideDirection.x);
                 p.setIY(slideDirection.y);
                 playerDidBoost = false;
                 playerDidThrow = false;
             } else {
-                if (playerVertical != 0 || playerHorizontal != 0) {
-                    p.setWalk();
-
-                    if (p.getPlayerWalkCounter() % 20 == 0) {
-                        p.getTexture().setFrame(1);
-                        if (p.getPrevHoriDir() == 1) {
-                            p.getTexture().flip(true, false);
-                        }
-                    } else if (p.getPlayerWalkCounter() % 20 == 10) {
-                        p.getTexture().setFrame(0);
-                        if (p.getPrevHoriDir() == 1) {
-                            p.getTexture().flip(true, false);
-                        }
-                    }
-                    p.incrPlayerWalkCounter();
-                } else {
-                    p.setStatic();
-                    p.resetPlayerWalkCounter();
-                    p.getTexture().setFrame(0);
-                    if (p.getPrevHoriDir() == 1) {
-                        p.getTexture().flip(true, false);
-                    }
-                }
-
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
                     p.setWalk();
@@ -414,6 +391,7 @@ public class WorldController implements Screen, InputProcessor {
             if (playerHorizontal != 0) {
                 p.setPrevHoriDir(playerHorizontal);
             }
+            p.setSlideDirection(playerHorizontal, playerVertical);
 
             // player updates (for respawn and dash cool down)
             p.update();

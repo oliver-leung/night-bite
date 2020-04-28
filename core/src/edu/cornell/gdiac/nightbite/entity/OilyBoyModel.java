@@ -26,7 +26,7 @@ public class OilyBoyModel extends AIController {
         enemy = getEnemy();
     }
 
-    public updateState (HumanoidModel target, WorldModel world) {
+    public updateState (HumanoidModel target, WorldModel world, int numOils) {
         switch (state) {
             case IDLE: // If idle and spots target, chase
                 if (canSee(target)) {
@@ -48,9 +48,9 @@ public class OilyBoyModel extends AIController {
                 break;
             case DROP:
                 // TODO: Create oil object
-//                OilModel oil;
-//                oil = new OilModel(enemy.getX(),enemy.getY(),1,1)
-//                world.addStaticObject(oil);
+                OilModel oil;
+                oil = new OilModel(enemy.getX(),enemy.getY(), numOils);
+                world.addStaticObject(oil);
                 state= State.RETURN;
                 break;
             case RETURN:
