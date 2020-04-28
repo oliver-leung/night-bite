@@ -367,10 +367,6 @@ public class WorldModel {
         aiLattice.drawDebug(canvas, scale);
     }
 
-    public void updateAI() {
-        
-    }
-
     /**
      * TODO allow passing in of different lighting parameters
      */
@@ -446,6 +442,7 @@ public class WorldModel {
         }
 
         aiLattice.populateDynamic(downcastIterable(players));
+        aiLattice.populateDynamic(downcastIterable(enemies));
 
         // TODO: REMOVE
         debug.updatePathfinding(aiLattice);
