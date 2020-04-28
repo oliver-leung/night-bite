@@ -140,12 +140,12 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
-        enemy.setDrawScale(worldModel.scale);
-        enemy.setName("wtf");
-        enemy.setActualScale(worldModel.getActualScale());
-        enemy.setFixedRotation(true);
-        worldModel.addEnemy(enemy);
+//        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
+//        enemy.setDrawScale(worldModel.scale);
+//        enemy.setName("wtf");
+//        enemy.setActualScale(worldModel.getActualScale());
+//        enemy.setFixedRotation(true);
+//        worldModel.addEnemy(enemy);
         worldModel.initializeAI();
         // worldModel.addFirecracker(3, 5); // TODO
     }

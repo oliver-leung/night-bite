@@ -2,7 +2,6 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.*;
 import edu.cornell.gdiac.util.PooledList;
 
@@ -21,12 +20,13 @@ public class TestEnemy extends HumanoidModel {
     private int walkCooldown;
 
     public TestEnemy(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height);
+        super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
         this.texture = Assets.TEXTURES.get("character/P3_64_v2.png");
         setTexture(texture);
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
+        setPosition(x, y);
 
         path = new PooledList<>();
         aiController = new AIController(world, this);

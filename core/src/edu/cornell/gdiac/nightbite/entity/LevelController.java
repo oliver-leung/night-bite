@@ -81,6 +81,29 @@ public class LevelController {
             y--;
             x = 0;
         }
+
+        if (level_file.equals("jsons/beta_easy_funnel.json")) {
+            TestEnemy enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+        } else if (level_file.equals("jsons/beta_medium.json")) {
+            TestEnemy enemy = new TestEnemy(2.5f, 9f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+        } else if (level_file.equals("jsons/beta_hard.json")) {
+            TestEnemy enemy = new TestEnemy(15f, 9f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+        }
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
