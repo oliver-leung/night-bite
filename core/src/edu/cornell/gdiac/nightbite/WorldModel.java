@@ -73,6 +73,8 @@ public class WorldModel {
     private ArrayList<Boolean> overlapItem = new ArrayList<>();
     /** List of firecrackers */
     private PooledList<FirecrackerModel> firecrackers;
+    /** List of oils */
+    private PooledList<OilModel> oils;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -100,6 +102,7 @@ public class WorldModel {
         firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
+        oils = new PooledList<>();
 
         // TODO: REMOVE
         debug = new Debug();
@@ -198,6 +201,7 @@ public class WorldModel {
                     players.iterator(),
                     enemies.iterator(),
                     firecrackers.iterator(),
+                    oils.iterator()
             };
 
             // TODO: Do i want to make this more efficient?
@@ -406,8 +410,21 @@ public class WorldModel {
         return firecracker;
     }
 
-    public PooledList<FirecrackerModel> getFirecrackers () {
+    public OilModel addOil(float x, float y) {
+        OilModel firecracker = new OilModel(new Vector2(x, y));
+        firecracker.setDrawScale(getScale());
+        firecracker.setActualScale(getActualScale());
+        initializeObject(firecracker);
+        oils.add(firecracker);
+        return firecracker;
+    }
+
+    public PooledList<FirecrackerModel> getFirecrackers() {
         return firecrackers;
+    }
+
+    public PooledList<OilModel> getOils() {
+        return oils;
     }
 
     /**
@@ -462,8 +479,8 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = { staticObjects.entryIterator(), firecrackers.entryIterator() };
-        Iterator<?>[] updateOnly = { players.iterator(), items.iterator() };
+        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator(), firecrackers.entryIterator(), oils.entryIterator()};
+        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
 
         for (Iterator<?> iterator : cullAndUpdate) {
             while (iterator.hasNext()) {
