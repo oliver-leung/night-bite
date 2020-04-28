@@ -358,6 +358,7 @@ public class WorldModel {
             Obstacle obj = (Obstacle) itr.next();
             if (obj.equals(removeObj)) {
                 itr.remove();
+            }
         }
     }
 
