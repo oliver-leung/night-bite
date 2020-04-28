@@ -29,7 +29,7 @@ public class FirecrackerModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
     private static final float THROW_FORCE = 6f;
     private static final float MOTION_DAMPING = 30f;
-    protected static final float KNOCKBACK_IMPULSE = 30f;
+    protected static final float KNOCKBACK_IMPULSE = 50f;
 
     /* How fast we change frames (one frame per 16 calls to update */
     private static final float ANIMATION_SPEED = 0.0625f;
