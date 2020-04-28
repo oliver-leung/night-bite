@@ -117,8 +117,8 @@ public class PlayerModel extends HumanoidModel {
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
 
-        defaultHandheld = Assets.WOK;
-        handheld = Assets.WOK;
+        defaultHandheld = new TextureRegion(Assets.WOK);
+        handheld = new TextureRegion(Assets.WOK);
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
