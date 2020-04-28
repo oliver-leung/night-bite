@@ -140,7 +140,7 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.RETRO_FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-//        worldModel.addFirecracker(3, 5);
+        worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -279,7 +279,9 @@ public class WorldController implements Screen, InputProcessor {
 
         // Handle resets
         if (input.didReset()) {
-            reset();
+//            reset();
+            listener.exitScreen(this, EXIT_NEXT);
+            return false;
         }
 
         if (input.didExit()) {

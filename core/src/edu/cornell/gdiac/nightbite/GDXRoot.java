@@ -61,6 +61,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private WorldController controller;
 
+	// TODO jank shit ill fix after i wake up
+	private boolean loaded = false;
+
 	/**
 	 * Creates a new game from the configuration settings.
 	 * <p>
@@ -148,7 +151,10 @@ public class GDXRoot extends Game implements ScreenListener {
 //			if (levelSelect == null) {
 //				levelSelect = new LevelSelectMode(canvas);
 //			}
-			assets.loadContent(manager);
+			if (!loaded) {
+				assets.loadContent(manager);
+				loaded = true;
+			}
 			levelSelect.loadContent();
 
 			levelSelect.setScreenListener(this);
@@ -181,7 +187,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			// We quit the main application
 			Gdx.app.exit();
 		} else if (exitCode == WorldController.EXIT_NEXT) {
-			controller.reset();
+//			controller.reset();
+			Gdx.input.setInputProcessor(null);
+			levelSelect.setScreenListener(this);
+			setScreen(levelSelect);
 		}
 	}
 

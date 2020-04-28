@@ -301,7 +301,7 @@ public class Assets {
         GAME_BACKGROUND = createTexture(manager, GAME_BACKGROUND_FILE, true);
         GOAL = createTexture(manager, GOAL_FILE, true);
 
-        // Start music
+        // Start music // TODO fix this when I'm not sleepy
         music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
         music.setLooping(true);
         music.play();

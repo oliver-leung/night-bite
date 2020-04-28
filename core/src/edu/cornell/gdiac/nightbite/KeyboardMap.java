@@ -28,22 +28,22 @@ public class KeyboardMap {
     }
 
     private static Player PLAYER0 = new Player(
+            Keys.W,
+            Keys.S,
+            Keys.A,
+            Keys.D,
+            Keys.SHIFT_LEFT,
+            Keys.SPACE,
+            Keys.Y,
+            Keys.R);
+
+    private static Player PLAYER1 = new Player(
             Keys.valueOf("Up"),
             Keys.DOWN,
             Keys.LEFT,
             Keys.RIGHT,
             Keys.SLASH,
             Keys.PERIOD,
-            Keys.Y,
-            Keys.R);
-
-    private static Player PLAYER1 = new Player(
-            Keys.W,
-            Keys.S,
-            Keys.A,
-            Keys.D,
-            Keys.V,
-            Keys.C,
             Keys.UNKNOWN,
             Keys.UNKNOWN);
 
