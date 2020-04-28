@@ -270,16 +270,6 @@ public class PlayerModel extends HumanoidModel {
         boosting = 0;
     }
 
-    /** player respawn */
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setDead() {
-        isAlive = false;
-        draw = false;
-    }
-
     public boolean hasItem() {
         return item.size() > 0;
     }
