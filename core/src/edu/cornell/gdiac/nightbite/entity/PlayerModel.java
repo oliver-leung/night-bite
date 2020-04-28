@@ -101,10 +101,6 @@ public class PlayerModel extends HumanoidModel {
         super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
         setBullet(true);
 
-        texture = Assets.PLAYER_FILMSTRIP;
-        defaultTexture = Assets.PLAYER_FILMSTRIP;
-        setTexture(texture);
-
         impulse = new Vector2();
         boost = new Vector2();
 
@@ -142,11 +138,6 @@ public class PlayerModel extends HumanoidModel {
 
     public int getTicks() {
         return ticks;
-    }
-
-    public void resetTexture() {
-        texture = defaultTexture;
-        handheld = defaultHandheld;
     }
 
     /**
@@ -217,33 +208,24 @@ public class PlayerModel extends HumanoidModel {
         prevHoriDir = dir;
     }
 
-    public void incrticks() {
+    public void incrTicks() {
         ticks++;
     }
 
-    public void resetticks() {
+    public void resetTicks() {
         ticks = 0;
     }
 
     public void setWalk() {
-        if (boosting > 0) {
-            return;
-        }
+        if (boosting > 0) return;
         state = MoveState.WALK;
         setWalkTexture();
     }
 
     public void setStatic() {
-        if (boosting > 0) {
-            return;
-        }
+        if (boosting > 0) return;
         state = MoveState.STATIC;
-
-        ticks = 0;
-        ((FilmStrip) texture).setFrame(0);
-        if (prevHoriDir == 1) {
-            texture.flip(true, false);
-        }
+        resetTicks();
         setStaticTexture();
     }
 
