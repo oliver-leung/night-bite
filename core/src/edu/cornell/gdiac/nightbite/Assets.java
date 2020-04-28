@@ -39,6 +39,10 @@ public class Assets {
     static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
     static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
     static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
+    static String PLAYER_FALLING_FILMSTRIP_FILE = "character/P1_Falling_5.png";
+    static int PLAYER_FALLING_FILMSTRIP_ROW = 1;
+    static int PLAYER_FALLING_FILMSTRIP_COL = 6;
+    static int PLAYER_FALLING_FILMSTRIP_SIZE = 6;
     static String WOK_FILE = "character/wok_64_nohand.png";
     static String PLAYER_SHADOW_FILE = "character/shadow.png";
     static String PLAYER_ARROW_FILE = "character/arrow.png";
@@ -206,6 +210,7 @@ public class Assets {
      */
     public static FilmStrip PLAYER_FILMSTRIP;
     public static FilmStrip PLAYER_HOLD_FILMSTRIP;
+    public static FilmStrip PLAYER_FALL_FILMSTRIP;
     public static TextureRegion WOK;
     public static TextureRegion PLAYER_SHADOW;
     public static TextureRegion PLAYER_ARROW;
@@ -267,6 +272,7 @@ public class Assets {
 
         loadTexture(PLAYER_FILMSTRIP_FILE);
         loadTexture(PLAYER_HOLDING_FILMSTRIP_FILE);
+        loadTexture(PLAYER_FALLING_FILMSTRIP_FILE);
         loadTexture(HOME_STALL_FILE);
 
         loadTexture(LEVEL_SELECT_BACKGROUND_FILE);
@@ -316,9 +322,11 @@ public class Assets {
         // Player & Items
 //        int num_players = PLAYER_FILMSTRIP_FILES.length;
         PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
-                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);;
+                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
         PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
-                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);;
+                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);
+        PLAYER_FALL_FILMSTRIP = createFilmStrip(manager, PLAYER_FALLING_FILMSTRIP_FILE, PLAYER_FALLING_FILMSTRIP_ROW,
+            PLAYER_FALLING_FILMSTRIP_COL, PLAYER_FALLING_FILMSTRIP_SIZE);
         WOK = createTexture(manager, WOK_FILE, true);
         PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
         PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);

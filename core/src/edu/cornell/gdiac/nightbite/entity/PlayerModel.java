@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -49,15 +50,8 @@ public class PlayerModel extends HumanoidModel {
     private int boosting;
     private int cooldown;
 
-    private float prevHoriDir;
-    private int playerWalkCounter;
-
     private Vector2 impulse;
     private Vector2 boost;
-
-    /** player respawn */
-    private boolean isAlive;
-    private int spawnCooldown;
 
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
@@ -73,7 +67,6 @@ public class PlayerModel extends HumanoidModel {
     private ArrayList<Boolean> overlapItem;
 
     /** player texture */
-    private FilmStrip defaultTexture;
     private FilmStrip holdTexture;
 
     /** player extra textures */
@@ -92,24 +85,21 @@ public class PlayerModel extends HumanoidModel {
     private float arrowXOffset;
     private float arrowYOffset;
 
-    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
-        super(x, y, width, height);
+    public PlayerModel(float x, float y, float width, float height,
+                       FilmStrip texture, FilmStrip holdTexture, FilmStrip fallTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
+
+        super(x, y, width, height, texture, fallTexture);
+        this.holdTexture = holdTexture;
+
         setBullet(true);
         setName("ball");
-
-        this.texture = texture;
-        setTexture(texture);
 
         impulse = new Vector2();
         boost = new Vector2();
 
-        prevHoriDir = -1;
-        playerWalkCounter = 0;
-
         cooldown = 0;
         boosting = 0;
 
-        isAlive = true;
         item = new ArrayList<>();
         overlapItem = new ArrayList<>();
         for (int i = 0; i < NUM_ITEMS; i++) {
@@ -129,25 +119,15 @@ public class PlayerModel extends HumanoidModel {
         shadow = shadowTexture;
         arrow = arrowTexture;
         swingCooldown = 0;
-
-        this.holdTexture = holdTexture;
     }
 
-    public void resetTexture() {
-        texture = defaultTexture;
-    }
-
+    /**
+     * Flips the current texture and the weapon horizontally
+     */
     public void flipTexture() {
-        texture.flip(true, false);
+        super.flipTexture();
         handheld.flip(true, false);
         flipHandheld = !flipHandheld;
-    }
-
-    public void setTexture(FilmStrip value) {
-        if (defaultTexture == null) {
-            defaultTexture = value;
-        }
-        super.setTexture(value);
     }
 
     /** player identification */
@@ -201,41 +181,20 @@ public class PlayerModel extends HumanoidModel {
 
     /** movement state */
 
-    public float getPrevHoriDir() {
-        return prevHoriDir;
-    }
-
-    public void setPrevHoriDir(float dir) {
-        prevHoriDir = dir;
-    }
-
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
-
-        if (playerWalkCounter % 20 == 0) {
-            ((FilmStrip) texture).setFrame(1);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        } else if (playerWalkCounter % 20 == 10) {
-            ((FilmStrip) texture).setFrame(0);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        }
-        playerWalkCounter++;
+        setWalkTexture();
     }
 
     public void setStatic() {
         if (boosting > 0) { return; }
         state = MoveState.STATIC;
+        setStaticTexture();
+    }
 
-        playerWalkCounter = 0;
-        ((FilmStrip) texture).setFrame(0);
-        if (prevHoriDir == 1) {
-            texture.flip(true, false);
-        }
+    public void setFall() {
+        setFallingTexture();
     }
 
     public void update() {
@@ -250,31 +209,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void resetBoosting() {
         boosting = 0;
-    }
-
-    /** player respawn */
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setDead() {
-        isAlive = false;
-        draw = false;
-    }
-
-    public void respawn() {
-        if (spawnCooldown == 0) {
-            spawnCooldown = 60;
-        }
-        spawnCooldown--;
-        if (spawnCooldown == 0) {
-            setPosition(homeLoc);
-            isAlive = true;
-            draw = true;
-        }
-        resetTexture();
-
-        setLinearVelocity(Vector2.Zero);
     }
 
     /** player-item */
@@ -296,12 +230,11 @@ public class PlayerModel extends HumanoidModel {
 
     public void clearInventory() {
         item.clear();
-        texture = defaultTexture;
     }
 
     public void holdItem(ItemModel i) {
         item.add(i);
-        texture = holdTexture;
+        setCurrentTexture(holdTexture);
     }
 
     /** cooldown between grabbing/throwing */
@@ -405,7 +338,8 @@ public class PlayerModel extends HumanoidModel {
             originY = -texture.getRegionHeight()/5;
         }
 
-        if (!hasItem()) {
+        // Don't draw weapon when holding item or dead
+        if (!hasItem() && isAlive()) {
             canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
                     getAngle() + angleOffset,actualScale.x,actualScale.y);
         }

@@ -341,7 +341,8 @@ public class WorldController implements Screen, InputProcessor {
 
             /* Play state */
             if (!p.isAlive()) {
-                p.respawn();
+                p.respawn(p.getHomeLoc());
+                p.setFall();
             }
             p.setActive(p.isAlive());
 
