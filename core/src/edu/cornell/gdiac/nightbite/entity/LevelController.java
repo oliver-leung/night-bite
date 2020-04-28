@@ -83,21 +83,42 @@ public class LevelController {
         }
 
         if (level_file.equals("jsons/beta_easy_funnel.json")) {
-            TestEnemy enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, world);
+            TestEnemy enemy = new TestEnemy(8f, 8f, 0.6f, 1f, world);
             enemy.setDrawScale(world.getScale());
             enemy.setName("wtf");
             enemy.setActualScale(world.getActualScale());
             enemy.setFixedRotation(true);
             world.addEnemy(enemy);
         } else if (level_file.equals("jsons/beta_medium.json")) {
-            TestEnemy enemy = new TestEnemy(2.5f, 9f, 0.6f, 1f, world);
+            TestEnemy enemy = new TestEnemy(6f, 7f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+
+            enemy = new TestEnemy(18f, 2f, 0.6f, 1f, world);
             enemy.setDrawScale(world.getScale());
             enemy.setName("wtf");
             enemy.setActualScale(world.getActualScale());
             enemy.setFixedRotation(true);
             world.addEnemy(enemy);
         } else if (level_file.equals("jsons/beta_hard.json")) {
-            TestEnemy enemy = new TestEnemy(15f, 9f, 0.6f, 1f, world);
+            TestEnemy enemy = new TestEnemy(4f, 3f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+
+            enemy = new TestEnemy(9f, 4f, 0.6f, 1f, world);
+            enemy.setDrawScale(world.getScale());
+            enemy.setName("wtf");
+            enemy.setActualScale(world.getActualScale());
+            enemy.setFixedRotation(true);
+            world.addEnemy(enemy);
+
+            enemy = new TestEnemy(10f, 9f, 0.6f, 1f, world);
             enemy.setDrawScale(world.getScale());
             enemy.setName("wtf");
             enemy.setActualScale(world.getActualScale());
