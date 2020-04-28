@@ -24,10 +24,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.LevelController;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -303,11 +300,6 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: BUT IN POST UPDATE
         // I love abusing todos so stuff i write is highlighted
 
-        RayHandler rayhandler = worldModel.getRayhandler();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
-
         PlayerModel p;
         float playerHorizontal;
         float playerVertical;
@@ -409,6 +401,11 @@ public class WorldController implements Screen, InputProcessor {
         // while (!addQueue.isEmpty()) {
         // 	addObject(addQueue.poll());
         // }
+
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);

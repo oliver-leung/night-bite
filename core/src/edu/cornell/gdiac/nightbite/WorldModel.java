@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.entity.FirecrackerModel;
 import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
@@ -80,6 +81,8 @@ public class WorldModel {
 
     /** List of items */
     private ArrayList<ItemModel> items;
+    /** List of firecrackers */
+    private PooledList<FirecrackerModel> firecrackers;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -94,6 +97,7 @@ public class WorldModel {
         countdown = -1;
         players = new ArrayList<>();
         items = new ArrayList<>();
+        firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
     }
 
@@ -176,6 +180,7 @@ public class WorldModel {
                     staticObjects.iterator(),
                     items.iterator(),
                     players.iterator(),
+                    firecrackers.iterator(),
             };
 
             // TODO: Do i want to make this more efficient?
@@ -334,6 +339,21 @@ public class WorldModel {
     }
 
     /**
+     * Creates a firecracker at the specified position, usually the position of the enemy (in tiles)
+     * TODO currently called in levelcontroller... may want to change
+     *
+     * @param x The x position of the firecracker enemy
+     * @param y The y position of the firecracker enemy
+     */
+    public void addFirecracker(float x, float y) {
+        FirecrackerModel firecracker = new FirecrackerModel(world, x, y, 1, 1);
+        firecracker.setDrawScale(getScale());
+        firecracker.setActualScale(getActualScale());
+        initializeObject(firecracker);
+        firecrackers.add(firecracker);
+    }
+
+    /**
      * TODO allow passing in of different lighting parameters
      */
     public void initLighting(GameCanvas canvas) {
@@ -384,8 +404,8 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator()};
-        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
+        Iterator<?>[] cullAndUpdate = { staticObjects.entryIterator(), firecrackers.entryIterator() };
+        Iterator<?>[] updateOnly = { players.iterator(), items.iterator() };
 
         for (Iterator<?> iterator : cullAndUpdate) {
             while (iterator.hasNext()) {
