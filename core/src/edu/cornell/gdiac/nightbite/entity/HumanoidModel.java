@@ -86,8 +86,8 @@ public class HumanoidModel extends SimpleObstacle {
         // Feet has half the width of the capsule and is the
         // lowest .2 of the sprite
 
-        float feetWidth = width * 0.5f;
-        float feetHeight = height * 0.2f;
+        float feetWidth = width * 0.2f;
+        float feetHeight = height * 0.1f;
         x = -feetWidth/2;
         y = - height/2;
 
@@ -175,8 +175,7 @@ public class HumanoidModel extends SimpleObstacle {
         }
 
         canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y/2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
-        // System.out.println(dimension);
-        // System.out.println(feetBounds);
+        canvas.drawPoint(getX() * drawScale.x,(getY() - dimension.y - feetBounds.y + feetBounds.width/2) * drawScale.y, Color.PINK);
     }
 
     public float getWidth() {
@@ -193,14 +192,15 @@ public class HumanoidModel extends SimpleObstacle {
     }
 
     public Vector2 getFeetPosition() {
-        feetPositionCache.set(getX(), getY() - dimension.y/2 - feetBounds.y + feetBounds.width/2 - 1);
+        feetPositionCache.set(getX(), getY() - dimension.y - feetBounds.y + feetBounds.width/2);
         return feetPositionCache;
     }
 
     // TODO
-    public Rectangle getFeetRectqangle() {
-        // feetRectangleCache.set(getX() - feetBounds.width/2, getY() - dimension.y/2 - feetBounds.y)
-        return null;
+    public Rectangle getFeetRectangle() {
+        feetRectangleCache.set(getX() - feetBounds.width/2, getY() - dimension.y/2 - feetBounds.y - 0.5f,
+                feetBounds.width, feetBounds.height);
+        return feetRectangleCache;
     }
 
 }

@@ -60,8 +60,11 @@ public class AILattice {
         }
     }
 
-    public void populateDynamic(Iterable<Obstacle> objects) {
+    public void clearDynamic() {
         dynamicMap = new boolean [numW][numH];
+    }
+
+    public void populateDynamic(Iterable<Obstacle> objects) {
         for (Obstacle o : objects) {
             // TODO: this assumes all dynamic things have height and width of 1
             // (Which probably isn't true for projectiles, if it matters)

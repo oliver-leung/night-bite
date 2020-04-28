@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
 
 public class AIController implements RayCastCallback {
-    private static final int REPLAN_TIME = 10;
+    private static final int REPLAN_TIME = 60;
 
     /** Reference to the WorldModel that the AI is in. Needed to determine line of sight. */
     private WorldModel worldModel;
@@ -27,6 +27,7 @@ public class AIController implements RayCastCallback {
     private GridPoint2 positionCache;
 
     private PooledList<GridPoint2> targetPath;
+    private Vector2 walkDirectionCache;
 
     private int replanCountdown;
 
@@ -37,6 +38,7 @@ public class AIController implements RayCastCallback {
         target = new PooledList<>();
         positionCache = new GridPoint2();
         targetPath = new PooledList<>();
+        walkDirectionCache = new Vector2();
     }
 
     public void updateAI(AILattice lattice, Vector2 position) {
@@ -129,6 +131,42 @@ public class AIController implements RayCastCallback {
 
     public void forceReplan() {
         replanCountdown = 0;
+    }
+
+    private boolean bounded(float val, float min, float max) {
+        return val >= min && val < max;
+    }
+
+
+    public Vector2 vectorToNode(Vector2 feet) {
+        if (targetPath.isEmpty()) {
+            return Vector2.Zero;
+        }
+
+        // for (int i = 0; i < targetPath.size(); i ++) {
+        //     if (bounded(feet.x, targetPath.get(i).x + 0.5f - 0.2f, targetPath.get(i).x + 0.5f + 0.2f)
+        //             && bounded(feet.y, targetPath.get(i).y + 0.5f - 0.1f, targetPath.get(i).y + 0.5f + 0.1f))
+        //     {
+        //         System.out.println("yeet");
+        //         while (i >= 0) {
+        //             targetPath.poll();
+        //             i --;
+        //         }
+        //         return Vector2.Zero;
+        //     }
+        // }
+
+        if (bounded(feet.x, targetPath.getHead().x + 0.5f - 0.2f, targetPath.getHead().x + 0.5f + 0.2f)
+                && bounded(feet.y, targetPath.getHead().y + 0.5f - 0.1f, targetPath.getHead().y + 0.5f + 0.1f))
+        {
+            System.out.println("yeet");
+            targetPath.poll();
+            return Vector2.Zero;
+        }
+        System.out.println(targetPath.getHead());
+        System.out.println(feet);
+        walkDirectionCache.set(targetPath.getHead().x + 0.5f, targetPath.getHead().y + 0.5f).sub(feet);
+        return walkDirectionCache;
     }
 
     public void drawDebug(GameCanvas canvas, Vector2 drawScale) {
