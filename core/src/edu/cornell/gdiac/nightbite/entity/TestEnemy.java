@@ -56,7 +56,7 @@ public class TestEnemy extends HumanoidModel {
 
         aiController.updateAI(aiLattice, getFeetPosition());
         Vector2 dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
-        System.out.println(dir);
+//        System.out.println(dir);
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
     }
 
