@@ -1,9 +1,6 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.Assets;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
-import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class OilModel extends ImmovableModel {
@@ -12,6 +9,7 @@ public class OilModel extends ImmovableModel {
 
     public OilModel(float x, float y){
         super(x, y, 0);
+        setSensor(true);
     }
 
     public void setTexture(FilmStrip texture) {
