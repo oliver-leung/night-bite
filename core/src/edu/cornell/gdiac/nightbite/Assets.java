@@ -100,11 +100,11 @@ public class Assets {
 
     // Sound
     public static float EFFECT_VOLUME = 0.1f;
-    static String MUSIC_FILE = "music/Night_Bite_(Theme)_v2.wav";
-    public static String FX_DELIVER_FILE = "music/delivered.wav";
-    public static String FX_PICKUP_FILE = "music/pickup.wav";
-    public static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
-    public static String FX_FALL_FILE = "music/whistle.wav";
+    static String MUSIC_FILE = "audio/Night_Bite_(Theme)_v2.wav";
+    public static String FX_DELIVER_FILE = "audio/delivered.wav";
+    public static String FX_PICKUP_FILE = "audio/pickup.wav";
+    public static String FX_FIRECRACKER_FILE = "audio/firecracker.wav";
+    public static String FX_FALL_FILE = "audio/falling.wav";
 
     /**
      * LOADED ASSETS
@@ -258,7 +258,9 @@ public class Assets {
         }
 
         // Start music // TODO fix this when I'm not sleepy
-        MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
+        // MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
+
+        MUSIC = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
         MUSIC.setLooping(true);
         MUSIC.play();
         MUSIC.setVolume(0.1f);
