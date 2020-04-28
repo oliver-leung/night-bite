@@ -1,27 +1,24 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
-import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
-import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
+import edu.cornell.gdiac.util.PointSource;
 
 public class LevelController {
     private static LevelController instance;
-    private static JsonReader jsonReader;
-
-    // TODO: Refactor these to be stored in arrays
-    public JsonValue background;
-    public JsonValue decorations;
-
-    private LevelController() {
-        jsonReader = new JsonReader();
-    }
+    private static JsonReader jsonReader = new JsonReader();
+    /** Iterated over to maintain unique item numbers */
+    private int itemNum = 0;
+    /** Reference to the world that is being populated */
+    private WorldModel world;
 
     public static LevelController getInstance() {
         if (instance == null) {
@@ -30,42 +27,75 @@ public class LevelController {
         return instance;
     }
 
+    /**
+     * Populate this world as specified in the level file
+     *
+     * @param world      WorldModel to be populated
+     * @param level_file Level specification
+     */
     public void populate(WorldModel world, String level_file) {
+        this.world = world;
+        createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
-        background = levelFormat.get("grounds");
+        JsonValue cellArray = levelFormat.get("assets");
+        int x = 0, y = 11;
+        // Yeah, I know this is ugly
+        for (JsonValue cellRow : cellArray) {
+            for (JsonValue cell : cellRow) {
+                for (JsonValue asset : cell) {
 
-        createWalls(world, levelFormat.get("walls"));
-        createHoles(world, levelFormat.get("holes"));
-        createTeams(world, levelFormat.get("teams"));
-        createItems(world, levelFormat.get("items"));
+                    String type = asset.getString("type");
+                    switch (type) {
+                        case "ground":
+                            this.world.setBackground(
+                                    Assets.TEXTURES.get(asset.getString("texture")),
+                                    x, y
+                            );
+                            break;
 
-        decorations = levelFormat.get("decorations");
+                        case "decoration":
+                            createDecoration(asset, x, y);
+                            break;
 
-        createBounds(world);
-    }
+                        case "item":
+                            createItem(x, y);
+                            break;
 
-    public void drawBackground(WorldModel world) {
-        drawNonObject(world, background);
-    }
+                        case "team":
+                            createTeam(asset, x, y);
+                            break;
 
-    public void drawDecorations(WorldModel world) {
-        drawNonObject(world, decorations);
-    }
+                        case "hole":
+                            createHole(asset, x, y);
+                            break;
 
-    //TODO: switch x/y back once it's fixed in the level builder
-    private void drawNonObject(WorldModel world, JsonValue jsonValue) {
-        for (JsonValue groundJson : jsonValue.iterator()) {
-            Vector2 pos = new Vector2(
-                    groundJson.getFloat("y"),
-                    9 - groundJson.getFloat("x")
-            );
-            TextureRegion texture = Assets.get(groundJson.getString("texture"));
-            GameCanvas.getInstance().draw(texture, Color.WHITE, 0, 0, pos.x * world.getScale().x,
-                    pos.y * world.getScale().y, 0, world.getActualScale().x, world.getActualScale().y);
+                        case "wall":
+                            createWall(asset, x, y);
+                            break;
+
+                    }
+
+                }
+                x++;
+            }
+            y--;
+            x = 0;
         }
     }
 
-    private void createBounds(WorldModel world) {
+    private void createDecoration(JsonValue asset, int x, int y) {
+        Sprite sprite = new Sprite(Assets.TEXTURES.get(asset.getString("texture")));
+        int rotate = asset.getInt("rotate") % 4;
+        sprite.rotate((float) rotate * -90f);
+        sprite.setPosition(x * world.getScale().x, y * world.getScale().y);
+
+        world.setDecorations(sprite, x, y);
+        if (asset.getBoolean("light")) {
+            world.addLightBody(x, y);
+        }
+    }
+
+    private void createBounds() {
         float width = world.getBounds().width;
         float height = world.getBounds().height;
         WallModel wall;
@@ -75,12 +105,14 @@ public class LevelController {
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
+            wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
             wall = new WallModel(i, height + 1f, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
+            wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
         }
         for (int i = 0; i < height; i++) {
@@ -88,105 +120,93 @@ public class LevelController {
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
+            wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
             wall = new WallModel(width + 1f, i, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
+            wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
         }
     }
 
-    private void createItems(WorldModel world, JsonValue items) {
-        ItemModel item;
-        int itemNum = 0;
-        for (JsonValue itemJson : items.iterator()) {
-            item = new ItemModel(
-                    itemJson.getFloat("y") + 1,
-                    10 - itemJson.getFloat("x"),
-                    1, 1, itemNum, Assets.FISH_ITEM
-            );
-            item.setName("item");
-            item.setDrawScale(world.getScale());
-            item.setActualScale(world.getActualScale());
-            world.addItem(item);
-            itemNum++;
-        }
+    private Filter makeBoundsFilter() {
+        Filter filter;
+        filter = new Filter();
+        filter.categoryBits = Obstacle.STATIC_OBSTACLE;
+        filter.maskBits = Obstacle.WALKBOX;
+        return filter;
     }
 
-    private void createTeams(WorldModel world, JsonValue teams) {
-        PlayerModel player;
-        HomeModel home;
-        int playerNum = 0;
-        for (JsonValue teamJson : teams.iterator()) {
-            float x = 1.5f + teamJson.getFloat("y");
-            float y = 9.5f - teamJson.getFloat("x");
-            FilmStrip filmStrip = Assets.PLAYER_FILMSTRIP;
-            FilmStrip holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
-            FilmStrip fallTexture = Assets.PLAYER_FALL_FILMSTRIP;
-            TextureRegion wokTexture = Assets.WOK;
-            TextureRegion shadowTexture = Assets.PLAYER_SHADOW;
-            TextureRegion arrowTexture = Assets.PLAYER_ARROW;
-            float pWidth = (filmStrip.getRegionWidth() - 30f) / world.getScale().x;
-            float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
-            String teamName = teamJson.name;
+    private void createItem(int x, int y) {
+        ItemModel item = new ItemModel(
+                x, y, itemNum,
+                Assets.TEXTURES.get("item/food1_64.png")
+        );
 
-            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, holdTexture, fallTexture, wokTexture, shadowTexture, arrowTexture, teamName);
-            player.setDrawScale(world.getScale());
-            player.setActualScale(world.getActualScale());
-            player.setName("player " + teamName);
-            world.addPlayer(player);
+        item.setName("item" + itemNum);
+        item.setDrawScale(world.getScale());
+        item.setActualScale(world.getActualScale());
+        world.addItem(item);
 
-            home = new HomeModel(x, y, teamName, playerNum);
-            home.setName(teamName);
-            home.setDrawScale(world.getScale());
-            home.setActualScale(world.getActualScale());
-            home.setWidth(2);
-            home.setHeight(2);
-            world.addStaticObject(home);
-            playerNum++;
-        }
+        itemNum++;
     }
 
-    private void createHoles(WorldModel world, JsonValue holes) {
-        HoleModel hole;
-        for (JsonValue holeJson : holes.iterator()) {
-            hole = new HoleModel(
-                    1 + holeJson.getFloat("y"),
-                    10 - holeJson.getFloat("x"),
-                    holeJson.getInt("rotate"));
-            hole.setDrawScale(world.getScale());
-            hole.setActualScale(world.getActualScale());
-            hole.setName(holeJson.name());
-            String texture = holeJson.getString("texture");
-            hole.setTexture(Assets.FILES.get(texture));
-            world.addStaticObject(hole);
-        }
+    private void createTeam(JsonValue teamJson, int x, int y) {
+        String teamName = teamJson.getString("name");
+
+        HomeModel home = new HomeModel(x, y, teamName);
+        home.setDrawScale(world.getScale());
+        home.setActualScale(world.getActualScale());
+
+        TextureRegion texture = Assets.TEXTURES.get("character/Filmstrip/Player 1/P1_Walk_8.png");
+        float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
+        float pHeight = texture.getRegionHeight() / world.getScale().y;
+        PlayerModel player = new PlayerModel(x, y, pWidth, pHeight, world.getWorld(), teamName, home);
+        player.setDrawScale(world.getScale());
+        player.setActualScale(world.getActualScale());
+        player.setName("player " + teamName);
+
+        PointSource light = world.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f);
+        light.attachToBody(player.getBody(), light.getX(), light.getY(), light.getDirection());
+
+        world.addStaticObject(home);
+        world.addPlayer(player);
     }
 
-    void createWalls(WorldModel world, JsonValue walls) {
-        WallModel wall;
-        for (JsonValue wallJson : walls.iterator()) {
-            wall = new WallModel(
-                    1 + wallJson.getFloat("y"),
-                    10 - wallJson.getFloat("x"),
-                    wallJson.getInt("rotate"));
-            wall.setDrawScale(world.getScale());
-            wall.setActualScale(world.getActualScale());
-            wall.setName(wallJson.name());
-            String texture = wallJson.getString("texture");
-            Gdx.app.log("Texture", "Setting texture: " + texture);
-            wall.setTexture(Assets.FILES.get(texture));
-            if (wall.getTexture().getRegionWidth() > 65) {
-                Vector2 pos = wall.getPosition();
-                pos.x += 0.5f;
-                pos.y -= 0.5f;
-                wall.setPosition(pos);
-                wall.setWidth(2);
-                wall.setHeight(2);
-            }
-            world.addStaticObject(wall);
+    private void createHole(JsonValue holeJson, int x, int y) {
+        HoleModel hole = new HoleModel(x, y, holeJson.getInt("rotate"));
+        hole.setDrawScale(world.getScale());
+        hole.setActualScale(world.getActualScale());
+        hole.setName(holeJson.name());
+        String texture = holeJson.getString("texture");
+        hole.setTexture(Assets.TEXTURES.get(texture));
+        world.addStaticObject(hole);
+    }
+
+    private void createWall(JsonValue wallJson, int x, int y) {
+        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"));
+        wall.setDrawScale(world.getScale());
+        wall.setActualScale(world.getActualScale());
+        wall.setName(wallJson.getString("name"));
+        String texture = wallJson.getString("texture");
+        wall.setTexture(Assets.TEXTURES.get(texture));
+
+        if (wall.getTexture().getRegionWidth() > 65) {
+            Vector2 pos = wall.getPosition();
+            pos.x += 0.5f;
+            pos.y -= 0.5f;
+            wall.setPosition(pos);
+            wall.setWidth(2);
+            wall.setHeight(2);
         }
+
+        if (wallJson.getBoolean("light")) {
+            world.addLightBody(x, y);
+        }
+
+        world.addStaticObject(wall);
     }
 }

@@ -46,6 +46,11 @@ public class GameCanvas {
 	 * Value to cache window height (if we are currently full screen)
 	 */
 	int height;
+
+	public PolygonSpriteBatch getSpriteBatch() {
+		return spriteBatch;
+	}
+
 	/**
 	 * Drawing context to handle textures AND POLYGONS as sprites
 	 */

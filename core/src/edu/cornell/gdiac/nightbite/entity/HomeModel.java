@@ -11,16 +11,23 @@ public class HomeModel extends ImmovableModel {
     private int score;
 
     /**
-     * Home stall constructor
-     * @param player The player number that belongs to this home stall, 1-4 inclusive.
+     * @param x    X position of the home
+     * @param y    Y position of the home
+     * @param team Team that the home belongs to
      */
-    public HomeModel(float x, float y, String team, int player) {
+    public HomeModel(float x, float y, String team) {
         super(x, y, 0);
         this.texture = Assets.HOME_STALL;
         setTexture(this.texture);
 
         this.team = team;
         score = 0;
+        setWidth(2);
+        setHeight(2);
+        // TODO: Fix once the JSON's are fixed
+        setX(getX() + 0.5f);
+        setY(getY() - 0.5f);
+        setName(team);
     }
 
     public int getScore() {

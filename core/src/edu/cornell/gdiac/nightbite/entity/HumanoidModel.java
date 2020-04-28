@@ -3,20 +3,16 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class HumanoidModel extends SimpleObstacle {
 
-    public static enum HitArea {
-        HITBOX,
-        WALKBOX
-    }
-
     private static float SEAM_EPSILON = 0.01f;
-
     protected Vector2 dimension;
     private Vector2 cache;
     private PolygonShape hitBoxCore;
@@ -25,7 +21,6 @@ public class HumanoidModel extends SimpleObstacle {
     private float[] vertices;
     private Fixture[] capsuleFixtures;
     private Fixture feetFixture;
-
     private Rectangle coreBounds;
     private Rectangle feetBounds;
 
@@ -187,9 +182,9 @@ public class HumanoidModel extends SimpleObstacle {
     }
 
     private void resize(float width, float height) {
-        float radius = width/2;
-        float x = -width/2 + SEAM_EPSILON;
-        float y = -height/2 + radius;
+        float radius = width / 2;
+        float x = -width / 2 + SEAM_EPSILON;
+        float y = -height / 2 + radius;
         float capHeight = height - width;
         float capWidth = width - 2 * SEAM_EPSILON;
 
@@ -299,13 +294,18 @@ public class HumanoidModel extends SimpleObstacle {
 
         canvas.drawPhysics(hitBoxCore, Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
         if (hitBoxEdge[0] != null) {
-            canvas.drawPhysics(hitBoxEdge[0],Color.YELLOW,getX(),getY() + coreBounds.height / 2,drawScale.x,drawScale.y);
+            canvas.drawPhysics(hitBoxEdge[0], Color.YELLOW, getX(), getY() + coreBounds.height / 2, drawScale.x, drawScale.y);
         }
         if (hitBoxEdge[1] != null) {
-            canvas.drawPhysics(hitBoxEdge[1],Color.YELLOW,getX(),getY() - coreBounds.height / 2,drawScale.x,drawScale.y);
+            canvas.drawPhysics(hitBoxEdge[1], Color.YELLOW, getX(), getY() - coreBounds.height / 2, drawScale.x, drawScale.y);
         }
 
-        canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y/2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y / 2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+    }
+
+    public enum HitArea {
+        HITBOX,
+        WALKBOX
     }
 
 }
