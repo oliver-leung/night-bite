@@ -3,6 +3,7 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.SoundController;
 
 public class HomeModel extends ImmovableModel {
 
@@ -32,9 +33,10 @@ public class HomeModel extends ImmovableModel {
      */
     public void incrementScore(int increase) {
         score = score + increase;
-        // TODO this is unsafe
-        if (score < 4) ((FilmStrip) texture).setFrame(score);
+        SoundController.getInstance().play(Assets.FX_DELIVER_FILE, Assets.FX_DELIVER_FILE, false, Assets.EFFECT_VOLUME);
 
+        // TODO need to safely set the texture
+        if (score < 4) ((FilmStrip) texture).setFrame(score);
     }
 
     public String getTeam() {

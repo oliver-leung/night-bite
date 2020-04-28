@@ -3,12 +3,14 @@ package edu.cornell.gdiac.nightbite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.HashMap;
 
@@ -198,7 +200,13 @@ public class Assets {
     static int RETRO_FONT_SIZE = 12;
 
     // Sound
+    public static float EFFECT_VOLUME = 0.1f;
     static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
+    public static String FX_DELIVER_FILE = "music/delivered.wav";
+    static String FX_FALLING_FILE = "music/falling.wav";
+    static String FX_PICKUP_FILE = "music/pickup.wav";
+    static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
+
 
     /*
      * TODO: A future goal for this class would be to also make the file paths above and the loaded assets below
@@ -296,6 +304,12 @@ public class Assets {
 
         // Load Font
         loadFont(RETRO_FONT_FILE, RETRO_FONT_SIZE);
+
+        // Load sounds
+        loadSound(FX_DELIVER_FILE);
+        // loadSound(FX_FALLING_FILE);  for some reason breaking things
+        loadSound(FX_FIRECRACKER_FILE);
+        loadSound(FX_PICKUP_FILE);
     }
 
     /** Preloads the texture and sound information for the game :
@@ -308,10 +322,16 @@ public class Assets {
         GOAL = createTexture(manager, GOAL_FILE, true);
 
         // Start music
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/Night_Bite_(Theme).mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
         music.setLooping(true);
         music.play();
-        music.setVolume(0.1f);
+        music.setVolume(0.05f);
+
+        SoundController sounds = SoundController.getInstance();
+        sounds.allocate(manager, FX_DELIVER_FILE);
+        // sounds.allocate(manager, FX_FALLING_FILE);
+        sounds.allocate(manager, FX_FIRECRACKER_FILE);
+        sounds.allocate(manager, FX_PICKUP_FILE);
 
         FILES = new HashMap<>();
         // Make background textures
@@ -376,6 +396,11 @@ public class Assets {
 
     public void loadTexture(String filePath) {
         manager.load(filePath, Texture.class);
+        assets.add(filePath);
+    }
+
+    public void loadSound(String filePath) {
+        manager.load(filePath, Sound.class);
         assets.add(filePath);
     }
 
