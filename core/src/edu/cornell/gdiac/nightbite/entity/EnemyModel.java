@@ -58,8 +58,7 @@ abstract class EnemyModel extends HumanoidModel {
                 dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
                 attack(p);
                 if (attacking == 0) { // Timeout in chasing
-                    state = State.RETURN;
-                    returning = MAX_RETURN_FRAME;
+                    setStateToReturn();
                 }
                 break;
             case RETURN: // Go to origin
@@ -74,6 +73,12 @@ abstract class EnemyModel extends HumanoidModel {
         }
         return dir;
     };
+
+    public void setStateToReturn () {
+        state = State.RETURN;
+        returning = MAX_RETURN_FRAME;
+    }
+
 
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
         body.setLinearVelocity(Vector2.Zero);

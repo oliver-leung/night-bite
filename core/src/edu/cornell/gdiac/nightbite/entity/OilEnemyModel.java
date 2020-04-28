@@ -17,6 +17,7 @@ public class OilEnemyModel extends EnemyModel {
         if (distance <= 1) { // If close to target, drop oil
             OilModel oil = new OilModel(enemyPosition.x * worldModel.getScale().x, enemyPosition.y * worldModel.getScale().y);
             worldModel.addOil(enemyPosition.x, enemyPosition.y);
+            setStateToReturn();
         }
     }
 }

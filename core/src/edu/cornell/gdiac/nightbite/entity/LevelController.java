@@ -83,7 +83,7 @@ public class LevelController {
         }
 
         if (level_file.equals("jsons/level_test.json")) {
-            OilEnemyModel enemy = new OilEnemyModel(8f, 8f, 0.6f, 1f, world);
+            FireEnemyModel enemy = new FireEnemyModel(8f, 8f, 0.6f, 1f, world);
             enemy.setDrawScale(world.getScale());
             enemy.setName("wtf");
             enemy.setActualScale(world.getActualScale());
