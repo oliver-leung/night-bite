@@ -20,6 +20,9 @@ public class HomeModel extends ImmovableModel {
         setTexture(Assets.TEXTURES.get("environment/StallHome1_64.png"));
         setWidth(2);
         setHeight(2);
+        // TODO: Fix once the JSON's are fixed
+        setX(getX() + 0.5f);
+        setY(getY() - 0.5f);
         setName(team);
     }
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
@@ -74,7 +75,7 @@ public class WorldModel {
     /** Bottom layer background textures */
     private TextureRegion[][] background = new TextureRegion[20][12];
     /** Top layer foreground textures */
-    private TextureRegion[][] decorations = new TextureRegion[20][12];
+    private Sprite[][] decorations = new Sprite[20][12];
 
     public WorldModel() {
         world = new World(Vector2.Zero, false);
@@ -441,8 +442,8 @@ public class WorldModel {
         background[x][y] = textureRegion;
     }
 
-    public void setDecorations(TextureRegion textureRegion, int x, int y) {
-        decorations[x][y] = textureRegion;
+    public void setDecorations(Sprite sprite, int x, int y) {
+        decorations[x][y] = sprite;
     }
 
     public void setPixelBounds() {
@@ -489,11 +490,21 @@ public class WorldModel {
 //        canonicalToActual.applyTo(actualScale);
     }
 
-    //TODO: switch x/y back once it's fixed in the level builder
-    public void drawNonObjects(TextureRegion[][] textureArray) {
+    public void drawDecorations() {
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
-                TextureRegion texture = textureArray[i][j];
+                Sprite sprite = decorations[i][j];
+                if (sprite != null) {
+                    sprite.draw(GameCanvas.getInstance().getSpriteBatch());
+                }
+            }
+        }
+    }
+
+    public void drawBackground() {
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                TextureRegion texture = background[i][j];
                 if (texture != null) {
                     GameCanvas.getInstance().draw(
                             texture, Color.WHITE,
@@ -503,14 +514,6 @@ public class WorldModel {
                 }
             }
         }
-    }
-
-    public void drawDecorations() {
-        drawNonObjects(decorations);
-    }
-
-    public void drawBackground() {
-        drawNonObjects(background);
     }
 
     public boolean getOverlapItem(int j) {
@@ -532,6 +535,7 @@ public class WorldModel {
                 x, y);
         body.setSensor(true);
         body.setActive(true);
+        transformTileToWorld(body);
         body.activatePhysics(world);
 
         PointSource light = createPointLight(new float[]{0.1f, 0.1f, 0.1f, 1.0f}, 4.0f);

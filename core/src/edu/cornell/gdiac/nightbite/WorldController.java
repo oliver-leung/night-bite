@@ -139,7 +139,7 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.FONT;
-        LevelController.getInstance().populate(worldModel, selectedLevelJSON, 0);
+        LevelController.getInstance().populate(worldModel, selectedLevelJSON);
     }
 
     /**

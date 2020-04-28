@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
@@ -14,15 +15,10 @@ import edu.cornell.gdiac.util.PointSource;
 public class LevelController {
     private static LevelController instance;
     private static JsonReader jsonReader = new JsonReader();
-
-    // TODO: Refactor these to be stored in arrays
-    public JsonValue background;
-    public JsonValue decorations;
     /** Iterated over to maintain unique item numbers */
     private int itemNum = 0;
     /** Reference to the world that is being populated */
     private WorldModel world;
-    private int playerNum = 0;
 
     public static LevelController getInstance() {
         if (instance == null) {
@@ -36,9 +32,8 @@ public class LevelController {
      *
      * @param world      WorldModel to be populated
      * @param level_file Level specification
-     * @param schema     JSON schema to use
      */
-    public void populate(WorldModel world, String level_file, int schema) {
+    public void populate(WorldModel world, String level_file) {
         this.world = world;
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
@@ -89,45 +84,15 @@ public class LevelController {
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
-        TextureRegion texture = new TextureRegion(Assets.TEXTURES.get(asset.getString("texture")));
-        texture = rotate(texture, asset.getInt("rotate"));
+        Sprite sprite = new Sprite(Assets.TEXTURES.get(asset.getString("texture")));
+        int rotate = asset.getInt("rotate") % 4;
+        sprite.rotate((float) rotate * -90f);
+        sprite.setPosition(x * world.getScale().x, y * world.getScale().y);
 
-        world.setDecorations(
-                texture,
-                x, y
-        );
+        world.setDecorations(sprite, x, y);
         if (asset.getBoolean("light")) {
             world.addLightBody(x, y);
         }
-    }
-
-    /**
-     * @param textureRegion Texture to be rotated
-     * @param rotate        Number of 90 degree clockwise rotations
-     * @return Rotated copy of the texture
-     */
-    private TextureRegion rotate(TextureRegion textureRegion, int rotate) {
-        TextureRegion rotatedTexture = new TextureRegion(textureRegion);
-        rotate = rotate % 4;
-        switch (rotate) {
-            case 0:
-                break;
-            case 1:
-                rotatedTexture.setV(textureRegion.getV2());
-                rotatedTexture.setV2(textureRegion.getV());
-                break;
-            case 2:
-                rotatedTexture.setU(textureRegion.getU2());
-                rotatedTexture.setU2(textureRegion.getU());
-                rotatedTexture.setV(textureRegion.getV2());
-                rotatedTexture.setV2(textureRegion.getV());
-                break;
-            case 3:
-                rotatedTexture.setU(textureRegion.getU2());
-                rotatedTexture.setU2(textureRegion.getU());
-                break;
-        }
-        return rotatedTexture;
     }
 
     private void createBounds() {
@@ -209,8 +174,6 @@ public class LevelController {
 
         world.addStaticObject(home);
         world.addPlayer(player);
-
-        playerNum++;
     }
 
     private void createHole(JsonValue holeJson, int x, int y) {
