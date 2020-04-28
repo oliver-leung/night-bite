@@ -7,6 +7,7 @@ import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class FirecrackerModel extends BoxObstacle {
     /* Expected timestep age of firecracker before becoming lit */
     private static final int AGE = 128;
     /* Expected timestep age of firecracker before detonating */
-    private static final int LIT_AGE = 112;
+    private static final int LIT_AGE = 50;
     /* Expected timestep age of firecracker before becoming destroyed */
     private static final int DETONATING_AGE = 80;
 
@@ -189,6 +190,7 @@ public class FirecrackerModel extends BoxObstacle {
                 detonating = false;
                 frame = 0f;
                 setTexture(litTexture);
+                SoundController.getInstance().play(Assets.FX_FIRECRACKER_FILE, Assets.FX_FIRECRACKER_FILE, false, Assets.EFFECT_VOLUME);
             }
         }
 
@@ -198,6 +200,7 @@ public class FirecrackerModel extends BoxObstacle {
             if (lit_age == 0) {
                 lit = false;
                 detonating = true;
+                frame = 0f;
                 setTexture(detTexture);
             } else {
                 frame += ANIMATION_SPEED;
