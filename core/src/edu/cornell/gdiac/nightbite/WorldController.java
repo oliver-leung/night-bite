@@ -140,6 +140,7 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.RETRO_FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+//        worldModel.addFirecracker(3, 5);
     }
 
     /**
@@ -514,7 +515,7 @@ public class WorldController implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         float clickX = screenX * worldModel.getWidth() / screenWidth;
         float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
-        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY));
+        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers());
         return true;
     }
 

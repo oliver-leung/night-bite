@@ -131,7 +131,7 @@ public class LevelController {
             float pHeight = filmStrip.getRegionHeight() / world.getScale().y;
             String teamName = teamJson.name;
 
-            player = new PlayerModel(x, y, pWidth, pHeight, filmStrip, holdTexture, wokTexture, shadowTexture, arrowTexture, teamName);
+            player = new PlayerModel(x, y, pWidth, pHeight, world.getWorld(), filmStrip, holdTexture, wokTexture, shadowTexture, arrowTexture, teamName);
             player.setDrawScale(world.getScale());
             player.setActualScale(world.getActualScale());
             player.setName("player " + teamName);

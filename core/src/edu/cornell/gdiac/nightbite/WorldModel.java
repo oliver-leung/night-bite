@@ -353,6 +353,10 @@ public class WorldModel {
         firecrackers.add(firecracker);
     }
 
+    public PooledList<FirecrackerModel> getFirecrackers () {
+        return firecrackers;
+    }
+
     /**
      * TODO allow passing in of different lighting parameters
      */

@@ -3,11 +3,12 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
 
@@ -78,6 +79,7 @@ public class PlayerModel extends HumanoidModel {
 
     /** player extra textures */
     private TextureRegion handheld;
+    private TextureRegion defaultHandheld;
     private boolean flipHandheld;
     private float angleOffset;
     private float clickAngle;
@@ -96,7 +98,13 @@ public class PlayerModel extends HumanoidModel {
     private boolean alternateShadow;
     private static int SHADOW_BLINK_FREQUENCY = 15;
 
-    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
+    /** wok hitbox */
+    private PolygonObstacle wokHitbox;
+    private World world;
+    private int REFLECT_DIST = 8;
+    private float REFLECT_RANGE = 1.5f;
+
+    public PlayerModel(float x, float y, float width, float height, World world, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
         super(x, y, width, height);
         setBullet(true);
         setName("ball");
@@ -127,6 +135,7 @@ public class PlayerModel extends HumanoidModel {
         setRestitution(MOVABLE_OBJ_RESTITUTION);
 
         handheld = wokTexture;
+        defaultHandheld = wokTexture;
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
@@ -136,10 +145,12 @@ public class PlayerModel extends HumanoidModel {
         alternateShadow = false;
 
         this.holdTexture = holdTexture;
+        this.world = world;
     }
 
     public void resetTexture() {
         texture = defaultTexture;
+        handheld = defaultHandheld;
     }
 
     public void flipTexture() {
@@ -311,6 +322,7 @@ public class PlayerModel extends HumanoidModel {
     public void clearInventory() {
         item.clear();
         texture = defaultTexture;
+        handheld = defaultHandheld;
     }
 
     public void holdItem(ItemModel i) {
@@ -335,10 +347,53 @@ public class PlayerModel extends HumanoidModel {
     }
 
     /** swings wok */
-    public void swingWok(Vector2 clickPos) {
-        clickPos.sub(getPosition());
+    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers) {
+        Vector2 clickVector = new Vector2(clickPos.x, clickPos.y);
+        clickVector.sub(getPosition());
+
+        // animation
         if (swingCooldown == 0) {
-            startSwing(clickPos.angleRad());
+            startSwing(clickVector.angleRad());
+        }
+
+        // hit things // TODO
+//        clickVector.nor();
+        for (FirecrackerModel firecracker: firecrackers) {
+            Vector2 firecrackerVector = firecracker.getPosition();
+            firecrackerVector.sub(getPosition());
+            if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
+                System.out.println("called");
+                Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(REFLECT_DIST));
+                firecracker.throwItem(reflectDirection);
+            }
+        }
+
+//        DetectionCallback callback = new DetectionCallback();
+//        float lowerX = Math.min(getX(), getX()+clickVector.x);
+//        float lowerY = Math.min(getY(), getY()+clickVector.y);
+//        float upperX = Math.max(getX(), getX()+clickVector.x);
+//        float upperY = Math.max(getY(), getY()+clickVector.y);
+//        world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
+//        for (Fixture f : callback.foundFixtures) {
+//            // TODO check item
+//            if (f.getUserData() != HitArea.HITBOX) {
+//                Vector2 hitDirection = clickPos;
+//                Body b = f.getBody();
+//                hitDirection.sub(b.getPosition());
+//                b.applyLinearImpulse(hitDirection.nor().scl(100), b.getPosition(), true);
+//            }
+//        }
+    }
+
+    static class DetectionCallback implements QueryCallback {
+        ArrayList<Fixture> foundFixtures = new ArrayList<>();
+
+        @Override
+        public boolean reportFixture(Fixture fixture) {
+            if (fixture.getUserData() == HumanoidModel.HitArea.HITBOX) {
+                foundFixtures.add(fixture);
+            }
+            return true;
         }
     }
 
