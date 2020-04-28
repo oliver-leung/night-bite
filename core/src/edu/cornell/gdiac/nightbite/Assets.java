@@ -163,7 +163,9 @@ public class Assets {
             "background/StallOther1_64.png",
             "background/StallOther2_64.png",
             "background/StallOther_palette2_64.png",
-            "background/stand-border.png"
+            "background/stand-border.png",
+
+            "character/P3_64_v2.png"
     };
 
     // Background

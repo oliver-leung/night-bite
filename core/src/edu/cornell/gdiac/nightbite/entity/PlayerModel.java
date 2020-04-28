@@ -63,7 +63,6 @@ public class PlayerModel extends HumanoidModel {
 
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
         super(x, y, width, height);
-        setBullet(true);
         setName("ball");
 
         this.texture = texture;

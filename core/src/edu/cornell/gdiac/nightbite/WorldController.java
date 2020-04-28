@@ -20,11 +20,9 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import edu.cornell.gdiac.nightbite.entity.HomeModel;
-import edu.cornell.gdiac.nightbite.entity.ItemModel;
-import edu.cornell.gdiac.nightbite.entity.LevelController;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -131,10 +129,18 @@ public class WorldController implements Screen {
         this.selectedLevelJSON = selectedLevelJSON;
     }
 
+    private TestEnemy enemy;
+
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.RETRO_FONT;
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
+        enemy.setDrawScale(worldModel.scale);
+        enemy.setName("wtf");
+        enemy.setActualScale(worldModel.getActualScale());
+        enemy.setFixedRotation(true);
+        worldModel.addEnemy(enemy);
         worldModel.initializeAI();
     }
 
@@ -409,6 +415,14 @@ public class WorldController implements Screen {
             // update horizontal direction
             if (playerHorizontal != 0) {
                 p.setPrevHoriDir(playerHorizontal);
+            }
+        }
+
+        for (HumanoidModel e : worldModel.getEnemies()) {
+            // TODO: Real jank
+            p = worldModel.getPlayers().get(0);
+            if (e instanceof TestEnemy) {
+                ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
             }
         }
     }

@@ -28,6 +28,10 @@ public class HumanoidModel extends SimpleObstacle {
     private Rectangle coreBounds;
     private Rectangle feetBounds;
 
+    private Vector2 feetPositionCache;
+    private Rectangle feetRectangleCache;
+    private Vector2 dimensionCache;
+
     public HumanoidModel(float x, float y, float width, float height) {
         super(x, y);
         // TODO: FIX DIMENSION
@@ -43,6 +47,10 @@ public class HumanoidModel extends SimpleObstacle {
         capsuleFixtures = new Fixture[3];
         coreBounds = new Rectangle();
         feetBounds = new Rectangle();
+
+        feetPositionCache = new Vector2();
+        feetRectangleCache = new Rectangle();
+        dimensionCache = new Vector2();
 
         resize(width, height);
     }
@@ -167,6 +175,8 @@ public class HumanoidModel extends SimpleObstacle {
         }
 
         canvas.drawPhysics(feet, Color.WHITE, getX(), getY() - dimension.y/2 - feetBounds.y, getAngle(), drawScale.x, drawScale.y);
+        // System.out.println(dimension);
+        // System.out.println(feetBounds);
     }
 
     public float getWidth() {
@@ -175,6 +185,22 @@ public class HumanoidModel extends SimpleObstacle {
 
     public float getHeight() {
         return dimension.y;
+    }
+
+    public Vector2 getDimension() {
+        dimensionCache.set(dimension);
+        return dimensionCache;
+    }
+
+    public Vector2 getFeetPosition() {
+        feetPositionCache.set(getX(), getY() - dimension.y/2 - feetBounds.y + feetBounds.width/2 - 1);
+        return feetPositionCache;
+    }
+
+    // TODO
+    public Rectangle getFeetRectqangle() {
+        // feetRectangleCache.set(getX() - feetBounds.width/2, getY() - dimension.y/2 - feetBounds.y)
+        return null;
     }
 
 }

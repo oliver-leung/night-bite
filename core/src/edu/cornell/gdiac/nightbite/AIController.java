@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
@@ -22,7 +23,7 @@ public class AIController implements RayCastCallback {
     /** During ray cast, the position of the first body that the ray collided with */
     private Vector2 contactPoint;
 
-    private GridPoint2 target;
+    private PooledList<GridPoint2> target;
     private GridPoint2 positionCache;
 
     private PooledList<GridPoint2> targetPath;
@@ -30,9 +31,11 @@ public class AIController implements RayCastCallback {
     private int replanCountdown;
 
 
-    public AIController(int w, int h, WorldModel worldModel, HumanoidModel enemy) {
+    public AIController(WorldModel worldModel, HumanoidModel enemy) {
         this.worldModel = worldModel;
         this.enemy = enemy;
+        target = new PooledList<>();
+        positionCache = new GridPoint2();
         targetPath = new PooledList<>();
     }
 
@@ -76,17 +79,59 @@ public class AIController implements RayCastCallback {
         return true;
     }
 
-    public void setTarget(GridPoint2 target) {
-        this.target.set(target);
-        forceReplan();
+    public void clearTarget() {
+        target.clear();
     }
 
-    public void setTarget(Vector2 target) {
-        this.target.set((int) target.x, (int) target.y);
-        forceReplan();
+    public void setTarget(GridPoint2 t) {
+        this.target.clear();
+        target.add(new GridPoint2((int) t.x, (int) t.y));
+    }
+
+    public void setTarget(Vector2 t) {
+        this.target.clear();
+        target.add(new GridPoint2((int) t.x, (int) t.y));
+    }
+
+    public void setTarget(Iterable<GridPoint2> targets) {
+        target.clear();
+        for (GridPoint2 t : targets) {
+            target.add(new GridPoint2(t));
+        }
+    }
+
+    public void setTargetVectors(Iterable<Vector2> targets) {
+        target.clear();
+        for (Vector2 t : targets) {
+            target.add(new GridPoint2((int)t.x, (int)t.y));
+        }
+    }
+
+    public void addTarget(GridPoint2 target) {
+        target.add(new GridPoint2(target));
+    }
+
+    public void addTarget(Vector2 target) {
+        this.target.add(new GridPoint2((int) target.x, (int) target.y));
+    }
+
+    public void addTarget(int x, int y) {
+        target.add(new GridPoint2(x, y));
+    }
+
+    public void addTarget(float x, float y) {
+        target.add(new GridPoint2((int) x, (int) y));
+    }
+
+    public Vector2 getMove(Rectangle feet) {
+        return null;
     }
 
     public void forceReplan() {
         replanCountdown = 0;
+    }
+
+    public void drawDebug(GameCanvas canvas, Vector2 drawScale) {
+        AILattice.drawPath(canvas, targetPath, drawScale, Color.BLUE);
     }
 }

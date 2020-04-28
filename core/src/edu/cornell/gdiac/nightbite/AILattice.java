@@ -8,6 +8,8 @@ import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
 
+import java.util.HashSet;
+
 public class AILattice {
     private boolean[][] staticMap;
     private boolean[][] dynamicMap;
@@ -31,7 +33,8 @@ public class AILattice {
         numW = w;
         numH = h;
         staticMap = new boolean [w][h];
-
+        dynamicMap = new boolean[w][h];
+        tempQueue = new PooledList<>();
     }
 
     public void populateStatic(Iterable<Obstacle> objects) {
@@ -102,10 +105,19 @@ public class AILattice {
         return val >= min && val < max;
     }
 
-    private Node bfs(GridPoint2 target, GridPoint2 position) {
+    private Node bfs(Iterable<GridPoint2> target, GridPoint2 position) {
         boolean[][] visited = new boolean[numW][numH];
         tempQueue.clear();
         tempQueue.add(new Node(position.x, position.y, null));
+
+        boolean[][] goal = new boolean[numW][numH];
+
+        for (GridPoint2 t : target) {
+            if (t.x >= goal.length || t.y >= goal[0].length) {
+                continue;
+            }
+            goal[t.x][t.y] = true;
+        }
 
         while (!tempQueue.isEmpty()) {
             Node n = tempQueue.poll();
@@ -114,11 +126,16 @@ public class AILattice {
                 continue;
             }
 
-            if (target.x == n.x && target.y == n.y) {
+            if ((staticMap[n.x][n.y]) &&
+                    (position.x != n.x || position.y != n.y)) {
+                continue;
+            }
+
+            if (goal[n.x][n.y]) {
                 return n;
             }
 
-            if ((staticMap[n.x][n.y] || dynamicMap[n.x][n.y]) &&
+            if ((dynamicMap[n.x][n.y]) &&
                     (position.x != n.x || position.y != n.y)) {
                 continue;
             }
@@ -139,7 +156,7 @@ public class AILattice {
         return null;
     }
 
-    public void findPath(PooledList<GridPoint2> prev, GridPoint2 target, GridPoint2 position) {
+    public void findPath(PooledList<GridPoint2> prev, Iterable<GridPoint2> target, GridPoint2 position) {
         prev.clear();
 
         Node n = bfs(target, position);

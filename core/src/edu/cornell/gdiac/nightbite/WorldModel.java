@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
 import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
@@ -65,6 +66,8 @@ public class WorldModel {
     /** List of players */
     private ArrayList<PlayerModel> players;
 
+    private PooledList<HumanoidModel> enemies;
+
     public World getWorld() {
         return world;
     }
@@ -100,6 +103,7 @@ public class WorldModel {
         players = new ArrayList<>();
         items = new ArrayList<>();
         staticObjects = new PooledList<>();
+        enemies = new PooledList<>();
 
         // TODO: REMOVE
         debug = new Debug();
@@ -184,6 +188,7 @@ public class WorldModel {
                     items.iterator(),
                     staticObjects.iterator(),
                     players.iterator(),
+                    enemies.iterator()
             };
 
             // TODO: Do i want to make this more efficient?
@@ -264,6 +269,8 @@ public class WorldModel {
         return players;
     }
 
+    public PooledList<HumanoidModel> getEnemies() { return enemies; }
+
     public Vector2 getScale() {
         return scale;
     }
@@ -341,10 +348,19 @@ public class WorldModel {
         items.add(item);
     }
 
+    public void addEnemy(HumanoidModel enemy) {
+        initializeObject(enemy);
+        enemies.add(enemy);
+    }
+
     public void initializeAI() {
         System.out.println(bounds);
         aiLattice = new AILattice((int) bounds.width, (int) bounds.height);
         aiLattice.populateStatic(staticObjects);
+    }
+
+    public AILattice getAILattice() {
+        return aiLattice;
     }
 
     public void debugAI(GameCanvas canvas) {
