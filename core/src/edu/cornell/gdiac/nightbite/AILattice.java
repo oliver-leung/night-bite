@@ -168,10 +168,11 @@ public class AILattice {
             return;
         }
 
-        while (n != null) {
+        while (n.back != null) {
             prev.add(0, new GridPoint2(n.x, n.y));
             n = n.back;
         }
+
     }
 
     public void drawDebug(GameCanvas canvas, Vector2 drawScale) {

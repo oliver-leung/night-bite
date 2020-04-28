@@ -18,6 +18,7 @@ public class ItemModel extends BoxObstacle {
      * item parameters
      */
     private Vector2 item_init_position;
+
     /**
      * item respawn
      */
@@ -54,6 +55,9 @@ public class ItemModel extends BoxObstacle {
 
         item_init_position = new Vector2(x - 0.5f, y - 0.5f);
         id = itemId;
+
+        maskBits = 0x0002 | 0x0008;
+        categoryBits = 0x0001;
     }
 
     public void update() {
@@ -99,7 +103,8 @@ public class ItemModel extends BoxObstacle {
     }
 
     /** throw item */
-    public void throwItem(Vector2 impulse) {
+    public void throwItem(Vector2 playerPosition, Vector2 impulse) {
+        setPosition(playerPosition);
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
         holdingPlayer = null;
     }

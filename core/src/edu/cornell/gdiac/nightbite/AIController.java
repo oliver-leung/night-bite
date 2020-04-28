@@ -62,6 +62,20 @@ public class AIController implements RayCastCallback {
         return contactPoint.equals(myPosition);
     }
 
+    /**
+     * @param target Target to look at
+     * @return True if the enemy can see the target
+     */
+    public boolean canSee(Vector2 source, Vector2 target) {
+        contactPoint = null;
+
+        worldModel.getWorld().rayCast(this, source, target);
+        if (contactPoint == null) {
+            return false;
+        }
+        return contactPoint.equals(target);
+    }
+
     @Override
     public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
         // Continue the ray through sensors (which act as "transparent" bodies)

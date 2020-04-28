@@ -19,6 +19,9 @@ public abstract class ImmovableModel extends BoxObstacle {
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setAngle((float) (rotate * Math.PI / -2.0f));
+
+        maskBits = 0x0020 | 0x0001 | 0x0010;
+        categoryBits = 0x0008;
     }
 
     public boolean activatePhysics(World world) {
@@ -27,9 +30,6 @@ public abstract class ImmovableModel extends BoxObstacle {
             return false;
         }
         body.setFixedRotation(true);
-        Filter f = geometry.getFilterData();
-        f.groupIndex = -1;
-        geometry.setFilterData(f);
         return true;
     }
 }

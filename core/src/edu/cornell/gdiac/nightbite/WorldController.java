@@ -17,6 +17,8 @@
 package edu.cornell.gdiac.nightbite;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -27,6 +29,8 @@ import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
+
+import java.util.Vector;
 
 /**
  * Base class for a world-specific controller.
@@ -42,7 +46,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  * This is the purpose of our AssetState variable; it censures that multiple instances
  * place nicely with the static assets.
  */
-public class WorldController implements Screen {
+public class WorldController implements Screen, InputProcessor {
     /** Exit code for quitting the game */
     public static final int EXIT_QUIT = 0;
     /** Exit code for advancing to next level */
@@ -71,6 +75,9 @@ public class WorldController implements Screen {
     private boolean debug;
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
+
+    private float screenWidth;
+    private float screenHeight;
 
     /** Create a new game world */
     protected WorldController() {
@@ -142,6 +149,7 @@ public class WorldController implements Screen {
         enemy.setFixedRotation(true);
         worldModel.addEnemy(enemy);
         worldModel.initializeAI();
+        // worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -246,13 +254,10 @@ public class WorldController implements Screen {
         // TODO make data-driven
         Array<LightSource> lights = worldModel.getLights();
         PlayerModel p1 = worldModel.getPlayers().get(0);
-        PlayerModel p2 = worldModel.getPlayers().get(1);
 
         LightSource l1 = lights.get(0);
-        LightSource l2 = lights.get(1);
 
         l1.attachToBody(p1.getBody(), l1.getX(), l1.getY(), l1.getDirection());
-        l2.attachToBody(p2.getBody(), l2.getX(), l2.getY(), l2.getDirection());
 
         for (LightSource l : lights) {
             l.setActive(true);
@@ -285,7 +290,9 @@ public class WorldController implements Screen {
 
         // Handle resets
         if (input.didReset()) {
-            reset();
+//            reset();
+            listener.exitScreen(this, EXIT_NEXT);
+            return false;
         }
 
         if (input.didExit()) {
@@ -307,11 +314,6 @@ public class WorldController implements Screen {
         // TODO: BUT IN POST UPDATE
         // I love abusing todos so stuff i write is highlighted
 
-        RayHandler rayhandler = worldModel.getRayhandler();
-        if (rayhandler != null) {
-            rayhandler.update();
-        }
-
         PlayerModel p;
         float playerHorizontal;
         float playerVertical;
@@ -319,7 +321,7 @@ public class WorldController implements Screen {
         boolean playerDidThrow;
 
         // TODO for refactoring update
-        int NUM_PLAYERS = 2;
+        int NUM_PLAYERS = 1;
         for (int i = 0; i < NUM_PLAYERS; i++) {
 
             playerHorizontal = manager.getVelX(i);
@@ -332,36 +334,14 @@ public class WorldController implements Screen {
             // update player state
             if (playerVertical != 0 || playerHorizontal != 0) {
                 p.setWalk();
-
-                if (p.getPlayerWalkCounter() % 20 == 0) {
-                    p.getTexture().setFrame(1);
-                    if (p.getPrevHoriDir() == 1) {
-                        p.getTexture().flip(true, false);
-                    }
-                } else if (p.getPlayerWalkCounter() % 20 == 10) {
-                    p.getTexture().setFrame(0);
-                    if (p.getPrevHoriDir() == 1) {
-                        p.getTexture().flip(true, false);
-                    }
-                }
-                p.incrPlayerWalkCounter();
+                p.updateDirectionState(playerVertical, playerHorizontal);
             } else {
                 p.setStatic();
-                p.resetPlayerWalkCounter();
-                p.getTexture().setFrame(0);
-                if (p.getPrevHoriDir() == 1) {
-                    p.getTexture().flip(true, false);
-                }
             }
-            if (playerHorizontal != 0 || playerVertical != 0) {
-                p.setWalk();
-            } else {
-				p.setStatic();
-			}
 
 			// handle player facing left-right
             if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                p.getTexture().flip(true, false);
+                p.flipTexture();
             }
 
             // Set player movement impulse
@@ -403,7 +383,7 @@ public class WorldController implements Screen {
             /* IF PLAYER THROWS ITEM */
             if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
                 for (ItemModel heldItem : p.getItems()) {
-                    heldItem.throwItem(p.getImpulse());
+                    heldItem.throwItem(p.getPosition(), p.getImpulse());
                 }
                 p.clearInventory();
                 p.startgrabCooldown();
@@ -421,8 +401,13 @@ public class WorldController implements Screen {
         for (HumanoidModel e : worldModel.getEnemies()) {
             // TODO: Real jank
             p = worldModel.getPlayers().get(0);
-            if (e instanceof TestEnemy) {
+            if (e instanceof TestEnemy && p.isAlive()) {
                 ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
+                Vector2 imp = ((TestEnemy) e).attack(p.getPosition());
+                if (imp != null) {
+                    FirecrackerModel f = worldModel.addFirecracker(e.getPosition().x, e.getPosition().y);
+                    f.throwItem(imp);
+                }
             }
         }
     }
@@ -443,6 +428,11 @@ public class WorldController implements Screen {
         // while (!addQueue.isEmpty()) {
         // 	addObject(addQueue.poll());
         // }
+
+        RayHandler rayhandler = worldModel.getRayhandler();
+        if (rayhandler != null) {
+            rayhandler.update();
+        }
 
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
@@ -466,6 +456,11 @@ public class WorldController implements Screen {
      */
     public void resize(int width, int height) {
         // IGNORE FOR NOW
+        screenWidth = width;
+        screenHeight = height;
+        System.out.println(width);
+        System.out.println(height);
+        System.out.println("-----");
     }
 
     /**
@@ -528,5 +523,37 @@ public class WorldController implements Screen {
 	 */
 	public void setScreenListener(ScreenListener listener) {
 		this.listener = listener;
+        Gdx.input.setInputProcessor(this);
 	}
+
+	/** Input processor methods (for handling mouse click) */
+
+    @Override
+    public boolean keyDown(int keycode) { return true; }
+
+    @Override
+    public boolean keyUp(int keycode) { return true; }
+
+    @Override
+    public boolean keyTyped(char character) { return true; }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        float clickX = screenX * worldModel.getWidth() / screenWidth;
+        float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
+        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers());
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) { return true; }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) { return true; }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) { return true; }
+
+    @Override
+    public boolean scrolled(int amount) { return false; }
 }

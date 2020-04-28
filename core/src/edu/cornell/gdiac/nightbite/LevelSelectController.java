@@ -12,30 +12,17 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class LevelSelectController implements Screen, InputProcessor {
 
-    /** Resources */
-    private static final String BACKGROUND_FILE = "level_select/Background.png";
-    private static final String LEVEL1_TILE_FILE = "level_select/#1.png";
-    private static final String LEVEL2_TILE_FILE = "level_select/#2.png";
-    private static final String LEVEL3_TILE_FILE = "level_select/#3.png";
-    private static final String LEVEL1_STALL_FILE = "level_select/LVL1_Stall.png";
-    private static final String LEVEL2_STALL_FILE = "level_select/LVL2_Stall.png";
-    private static final String LEVEL3_STALL_FILE = "level_select/LVL3_Stall.png";
-    private static final String ARROW_BUTTON_FILE = "level_select/Arrow.png";
-    private static final String BACK_BUTTON_FILE = "level_select/Back.png";
-    private static final String HEADER_FILE = "level_select/Header.png";
-    private static final String PLAYER_FILE = "level_select/Lin_128px.png";
-
     /** Textures */ // TODO refactor asset manager
-    private Texture background;
-    private Texture tile1Texture;
-    private Texture tile2Texture;
-    private Texture tile3Texture;
-    private Texture store1Texture;
-    private Texture store2Texture;
-    private Texture store3Texture;
-    private Texture arrowTexture;
-    private Texture backTexture;
-    private Texture headerTexture;
+    private TextureRegion background;
+    private TextureRegion tile1Texture;
+    private TextureRegion tile2Texture;
+    private TextureRegion tile3Texture;
+    private TextureRegion store1Texture;
+    private TextureRegion store2Texture;
+    private TextureRegion store3Texture;
+    private TextureRegion arrowTexture;
+    private TextureRegion backTexture;
+    private TextureRegion headerTexture;
     private TextureRegion playerTexture;
 
     /** Scaling factor for when player changes the resolution. */
@@ -91,23 +78,26 @@ public class LevelSelectController implements Screen, InputProcessor {
     public LevelSelectController(GameCanvas canvas) {
         this.canvas = canvas;
 
-        background = new Texture(BACKGROUND_FILE);
-        tile1Texture = new Texture(LEVEL1_TILE_FILE);
-        tile2Texture = new Texture(LEVEL2_TILE_FILE);
-        tile3Texture = new Texture(LEVEL3_TILE_FILE);
-        store1Texture = new Texture(LEVEL1_STALL_FILE);
-        store2Texture = new Texture(LEVEL2_STALL_FILE);
-        store3Texture = new Texture(LEVEL3_STALL_FILE);
-        arrowTexture = new Texture(ARROW_BUTTON_FILE);
-        backTexture = new Texture(BACK_BUTTON_FILE);
-        headerTexture = new Texture(HEADER_FILE);
-        playerTexture = new TextureRegion(new Texture(PLAYER_FILE));
-
         active = true;
         startGame = false;
         levelChoiceindex = 1;
         moveCooldown = 0;
         prevDir = 1;
+    }
+
+    public void loadContent() {
+        System.out.println(Assets.LEVEL_SELECT_BACKGROUND);
+        background = Assets.LEVEL_SELECT_BACKGROUND;
+        tile1Texture = Assets.TILE_1_TEXTURE;
+        tile2Texture = Assets.TILE_2_TEXTURE;
+        tile3Texture = Assets.TILE_3_TEXTURE;
+        store1Texture = Assets.STORE_1_TEXTURE;
+        store2Texture = Assets.STORE_2_TEXTURE;
+        store3Texture = Assets.STORE_3_TEXTURE;
+        arrowTexture = Assets.ARROW_TEXTURE;
+        backTexture = Assets.BACK_TEXTURE;
+        headerTexture = Assets.HEADER_TEXTURE;
+        playerTexture = Assets.PLAYER_TEXTURE;
     }
 
     public String getSelectedLevelJSON () {
@@ -165,7 +155,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         canvas.begin();
 
         canvas.draw(background, Color.WHITE, 0, 30, 0, 0, 0, scale, scale);
-        canvas.draw(headerTexture, Color.WHITE, headerTexture.getWidth()/2.0f, headerTexture.getHeight()/2.0f, xpos2, yposHeader, 0, scale, scale);
+        canvas.draw(headerTexture, Color.WHITE, headerTexture.getRegionWidth()/2.0f, headerTexture.getRegionHeight()/2.0f, xpos2, yposHeader, 0, scale, scale);
         canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile+5, 0, scale, scale);
         canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
 
@@ -173,11 +163,11 @@ public class LevelSelectController implements Screen, InputProcessor {
         canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
         canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
 
-        canvas.draw(store1Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos1, yposStall, 0, scale, scale);
-        canvas.draw(store2Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos2, yposStall, 0, scale, scale);
-        canvas.draw(store3Texture, Color.WHITE, store1Texture.getWidth()/2.0f - tile1Texture.getWidth()/2.0f, store1Texture.getHeight()/2.0f - 10, xpos3, yposStall, 0, scale, scale);
+        canvas.draw(store1Texture, Color.WHITE, store1Texture.getRegionWidth()/2.0f - tile1Texture.getRegionWidth()/2.0f, store1Texture.getRegionHeight()/2.0f - 10, xpos1, yposStall, 0, scale, scale);
+        canvas.draw(store2Texture, Color.WHITE, store1Texture.getRegionWidth()/2.0f - tile1Texture.getRegionWidth()/2.0f, store1Texture.getRegionHeight()/2.0f - 10, xpos2, yposStall, 0, scale, scale);
+        canvas.draw(store3Texture, Color.WHITE, store1Texture.getRegionWidth()/2.0f - tile1Texture.getRegionWidth()/2.0f, store1Texture.getRegionHeight()/2.0f - 10, xpos3, yposStall, 0, scale, scale);
 
-        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth()/2.0f - tile1Texture.getWidth()/2.0f, -playerTexture.getRegionHeight()/4.0f, xposList[levelChoiceindex], yposTile, 0, scale, scale);
+        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth()/2.0f - tile1Texture.getRegionHeight()/2.0f, -playerTexture.getRegionHeight()/4.0f, xposList[levelChoiceindex], yposTile, 0, scale, scale);
 
         canvas.end();
     }
@@ -231,6 +221,7 @@ public class LevelSelectController implements Screen, InputProcessor {
 
 //        Gdx.input.setInputProcessor(null);
         pressState = 0;
+        startGame = false;
 
 //        background = null;
 //        tile1Texture= null;
@@ -281,7 +272,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
 
-        float radius = backTexture.getWidth()/2.0f;
+        float radius = backTexture.getRegionWidth()/2.0f;
         float dist = (screenX-xLeftEnd)*(screenX-xLeftEnd)+(screenY-yposTop)*(screenY-yposTop);
         if (dist < radius*radius) {
             pressState = 1;

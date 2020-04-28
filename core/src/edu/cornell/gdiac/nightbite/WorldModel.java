@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
+import edu.cornell.gdiac.nightbite.entity.FirecrackerModel;
 import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
 import edu.cornell.gdiac.nightbite.entity.PlayerModel;
@@ -82,6 +84,8 @@ public class WorldModel {
 
     /** List of items */
     private ArrayList<ItemModel> items;
+    /** List of firecrackers */
+    private PooledList<FirecrackerModel> firecrackers;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -102,6 +106,7 @@ public class WorldModel {
         countdown = -1;
         players = new ArrayList<>();
         items = new ArrayList<>();
+        firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
 
@@ -185,10 +190,11 @@ public class WorldModel {
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
             Iterator<?>[] iters = {
-                    items.iterator(),
                     staticObjects.iterator(),
+                    items.iterator(),
                     players.iterator(),
-                    enemies.iterator()
+                    enemies.iterator(),
+                    firecrackers.iterator(),
             };
 
             // TODO: Do i want to make this more efficient?
@@ -367,6 +373,28 @@ public class WorldModel {
         aiLattice.drawDebug(canvas, scale);
     }
 
+
+    // I made this return FirecrackerModel so you can get the thing you just thrown
+    /**
+     * Creates a firecracker at the specified position, usually the position of the enemy (in tiles)
+     * TODO currently called in levelcontroller... may want to change
+     *
+     * @param x The x position of the firecracker enemy
+     * @param y The y position of the firecracker enemy
+     */
+    public FirecrackerModel addFirecracker(float x, float y) {
+        FirecrackerModel firecracker = new FirecrackerModel(world, x, y, 1, 1);
+        firecracker.setDrawScale(getScale());
+        firecracker.setActualScale(getActualScale());
+        initializeObject(firecracker);
+        firecrackers.add(firecracker);
+        return firecracker;
+    }
+
+    public PooledList<FirecrackerModel> getFirecrackers () {
+        return firecrackers;
+    }
+
     /**
      * TODO allow passing in of different lighting parameters
      */
@@ -418,8 +446,8 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator()};
-        Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
+        Iterator<?>[] cullAndUpdate = { staticObjects.entryIterator(), firecrackers.entryIterator() };
+        Iterator<?>[] updateOnly = { players.iterator(), items.iterator() };
 
         for (Iterator<?> iterator : cullAndUpdate) {
             while (iterator.hasNext()) {

@@ -32,8 +32,15 @@ public class HumanoidModel extends SimpleObstacle {
     private Rectangle feetRectangleCache;
     private Vector2 dimensionCache;
 
+    protected short walkCategoryBits;
+    protected short walkMaskBits;
+    protected short hitCategoryBits;
+    protected short hitMaskBits;
+
     public HumanoidModel(float x, float y, float width, float height) {
         super(x, y);
+        setBullet(true);
+
         // TODO: FIX DIMENSION
         dimension = new Vector2(width, height);
         cache = new Vector2();
@@ -51,6 +58,13 @@ public class HumanoidModel extends SimpleObstacle {
         feetPositionCache = new Vector2();
         feetRectangleCache = new Rectangle();
         dimensionCache = new Vector2();
+
+        // TODO: Move this out
+        walkCategoryBits = 0x0010;
+        walkMaskBits = 0x0004 | 0x0008;
+
+        hitCategoryBits = 0x002;
+        hitMaskBits = 0x002 | 0x0020 | 0x0001;
 
         resize(width, height);
     }
@@ -123,7 +137,8 @@ public class HumanoidModel extends SimpleObstacle {
         fixture.shape = hitBoxEdge[0];
         fixture.density /= 2;
         // GROUP INDEX MEANS CAPSULE WILL NOT COLLIDE WITH IMMOVABLE OBSTACLES
-        fixture.filter.groupIndex = -1;
+        fixture.filter.maskBits = hitMaskBits;
+        fixture.filter.categoryBits= hitCategoryBits;
         capsuleFixtures[0] = body.createFixture(fixture);
 
         fixture.shape = hitBoxCore;
@@ -140,10 +155,12 @@ public class HumanoidModel extends SimpleObstacle {
 
         fixture.shape = feet;
         fixture.density = defaultDensity;
-        fixture.filter.groupIndex = 0;
+        fixture.filter.categoryBits = walkCategoryBits;
+        fixture.filter.maskBits = walkMaskBits;
         feetFixture = body.createFixture(fixture);
         feetFixture.setUserData(HitArea.WALKBOX);
 
+        System.out.println(feetFixture.getFilterData().maskBits);
         markDirty(false);
     }
 

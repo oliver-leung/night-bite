@@ -1,10 +1,14 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
 
@@ -23,12 +27,23 @@ public class PlayerModel extends HumanoidModel {
     private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
-    private static final int COOLDOWN_FRAMES = 35;
+    private static final int COOLDOWN_FRAMES = 70;
 
     public enum MoveState {
         WALK,
         RUN,
         STATIC
+    }
+
+    public enum DirectionState {
+        NORTH,
+        NORTHEAST,
+        EAST,
+        SOUTHEAST,
+        SOUTH,
+        SOUTHWEST,
+        WEST,
+        NORTHWEST,
     }
 
     public MoveState state;
@@ -60,8 +75,36 @@ public class PlayerModel extends HumanoidModel {
 
     /** player texture */
     private FilmStrip defaultTexture;
+    private FilmStrip holdTexture;
 
-    public PlayerModel(float x, float y, float width, float height, FilmStrip texture, String playerTeam) {
+    /** player extra textures */
+    private TextureRegion handheld;
+    private TextureRegion defaultHandheld;
+    private boolean flipHandheld;
+    private float angleOffset;
+    private float clickAngle;
+    private float SWING_RADIUS = 0.7f;
+    private boolean swinging;
+    private int swingCooldown;
+    private int SWING_COOLDOWN_PERIOD = 30;
+
+    private TextureRegion shadow;
+    private TextureRegion arrow;
+    private float arrowAngle;
+    private float arrowXOffset;
+    private float arrowYOffset;
+
+    /** blinking shadow while dashing */
+    private boolean alternateShadow;
+    private static int SHADOW_BLINK_FREQUENCY = 15;
+
+    /** wok hitbox */
+    private PolygonObstacle wokHitbox;
+    private World world;
+    private int REFLECT_DIST = 8;
+    private float REFLECT_RANGE = 1.5f;
+
+    public PlayerModel(float x, float y, float width, float height, World world, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
         super(x, y, width, height);
         setName("ball");
 
@@ -89,14 +132,30 @@ public class PlayerModel extends HumanoidModel {
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
+
+        handheld = wokTexture;
+        defaultHandheld = wokTexture;
+        flipHandheld = false;
+        angleOffset = 0;
+        swinging = false;
+        shadow = shadowTexture;
+        arrow = arrowTexture;
+        swingCooldown = 0;
+        alternateShadow = false;
+
+        this.holdTexture = holdTexture;
+        this.world = world;
     }
 
     public void resetTexture() {
         texture = defaultTexture;
+        handheld = defaultHandheld;
     }
 
-    public FilmStrip getTexture() {
-        return (FilmStrip) texture;
+    public void flipTexture() {
+        texture.flip(true, false);
+        handheld.flip(true, false);
+        flipHandheld = !flipHandheld;
     }
 
     public void setTexture(FilmStrip value) {
@@ -123,10 +182,6 @@ public class PlayerModel extends HumanoidModel {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
-        // Filter f = cap1.getFilterData();
-        // f.groupIndex = -1;
-        // cap1.setFilterData(f);
-        // core.setFilterData(f);
         return true;
     }
 
@@ -155,6 +210,10 @@ public class PlayerModel extends HumanoidModel {
         boost.setZero();
     }
 
+    public boolean isBoostCooldown() {
+        return cooldown > 0;
+    }
+
     /** movement state */
 
     public float getPrevHoriDir() {
@@ -165,32 +224,48 @@ public class PlayerModel extends HumanoidModel {
         prevHoriDir = dir;
     }
 
-    public int getPlayerWalkCounter() {
-        return playerWalkCounter;
-    }
-
-    public void incrPlayerWalkCounter() {
-        playerWalkCounter++;
-    }
-
-    public void resetPlayerWalkCounter() {
-        playerWalkCounter = 0;
-    }
-
     public void setWalk() {
         if (boosting > 0) { return; }
         state = MoveState.WALK;
+
+        if (playerWalkCounter % 20 == 0) {
+            ((FilmStrip) texture).setFrame(1);
+            if (prevHoriDir == 1) {
+                texture.flip(true, false);
+            }
+        } else if (playerWalkCounter % 20 == 10) {
+            ((FilmStrip) texture).setFrame(0);
+            if (prevHoriDir == 1) {
+                texture.flip(true, false);
+            }
+        }
+        playerWalkCounter++;
     }
 
     public void setStatic() {
         if (boosting > 0) { return; }
         state = MoveState.STATIC;
+
+        playerWalkCounter = 0;
+        ((FilmStrip) texture).setFrame(0);
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
     }
 
     public void update() {
         updateGrabCooldown();
-        cooldown = Math.max(0, cooldown - 1);
+        updateSwingCooldown();
+        if (cooldown > 0) {
+            if (cooldown % SHADOW_BLINK_FREQUENCY == 0) {
+                alternateShadow = !alternateShadow;
+            }
+            cooldown--;
+        }
         boosting = Math.max(0, boosting - 1);
+        if (swinging) {
+            updateSwing();
+        }
     }
 
     public void resetBoosting() {
@@ -235,24 +310,19 @@ public class PlayerModel extends HumanoidModel {
         return item.size() > 0;
     }
 
-    public int numCarriedItems() {
-        return item.size();
-    }
-
     public ArrayList<ItemModel> getItems() {
         return item;
     }
 
     public void clearInventory() {
         item.clear();
-    }
-
-    public void unholdItem(ItemModel i) {
-        item.remove(i);
+        texture = defaultTexture;
+        handheld = defaultHandheld;
     }
 
     public void holdItem(ItemModel i) {
         item.add(i);
+        texture = holdTexture;
     }
 
     /** cooldown between grabbing/throwing */
@@ -270,5 +340,140 @@ public class PlayerModel extends HumanoidModel {
     public boolean grabCooldownOver() {
         return grabCooldown == 0;
     }
-}
 
+    /** swings wok */
+    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers) {
+        Vector2 clickVector = new Vector2(clickPos.x, clickPos.y);
+        clickVector.sub(getPosition());
+
+        // animation
+        if (swingCooldown == 0) {
+            startSwing(clickVector.angleRad());
+        }
+
+        // hit things // TODO
+//        clickVector.nor();
+        for (FirecrackerModel firecracker: firecrackers) {
+            Vector2 firecrackerVector = firecracker.getPosition();
+            firecrackerVector.sub(getPosition());
+            if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
+                System.out.println("called");
+                Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(REFLECT_DIST));
+                firecracker.throwItem(reflectDirection);
+            }
+        }
+
+//        DetectionCallback callback = new DetectionCallback();
+//        float lowerX = Math.min(getX(), getX()+clickVector.x);
+//        float lowerY = Math.min(getY(), getY()+clickVector.y);
+//        float upperX = Math.max(getX(), getX()+clickVector.x);
+//        float upperY = Math.max(getY(), getY()+clickVector.y);
+//        world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
+//        for (Fixture f : callback.foundFixtures) {
+//            // TODO check item
+//            if (f.getUserData() != HitArea.HITBOX) {
+//                Vector2 hitDirection = clickPos;
+//                Body b = f.getBody();
+//                hitDirection.sub(b.getPosition());
+//                b.applyLinearImpulse(hitDirection.nor().scl(100), b.getPosition(), true);
+//            }
+//        }
+    }
+
+    static class DetectionCallback implements QueryCallback {
+        ArrayList<Fixture> foundFixtures = new ArrayList<>();
+
+        @Override
+        public boolean reportFixture(Fixture fixture) {
+            if (fixture.getUserData() == HumanoidModel.HitArea.HITBOX) {
+                foundFixtures.add(fixture);
+            }
+            return true;
+        }
+    }
+
+    public void startSwing(float swingAngle) {
+        startSwingCooldown();
+//        angleOffset = clickAngle - (float)Math.PI/4;
+        if (!flipHandheld) {
+            clickAngle = swingAngle - (float)Math.PI/4;
+        } else {
+            clickAngle = swingAngle - (float)Math.PI * 3/4;
+        }
+        angleOffset = clickAngle - SWING_RADIUS;
+        swinging = true;
+    }
+
+    public void updateSwing() {
+        if (angleOffset < clickAngle + SWING_RADIUS) {
+            angleOffset += 0.1;
+        } else {
+            angleOffset = 0;
+            swinging = false;
+        }
+    }
+
+    private void startSwingCooldown() {
+        swingCooldown = SWING_COOLDOWN_PERIOD;
+    }
+
+    private void updateSwingCooldown() {
+        if (swingCooldown > 0) {
+            swingCooldown--;
+        }
+    }
+
+    /** player arrow direction */
+    public void updateDirectionState(float vert, float hori) {
+        arrowAngle = -1 * ((new Vector2(vert, hori).angleRad()) - (float) Math.PI/2);
+        if (hori == -1) {
+            arrowXOffset = -1 * texture.getRegionWidth()/2;
+        } else if (hori == 1) {
+            arrowXOffset = texture.getRegionWidth()/2;
+        } else {
+            arrowXOffset = 0;
+        }
+        if (vert == -1) {
+            arrowYOffset = -1 * texture.getRegionHeight() * 3/4;
+        } else if (vert == 1){
+            arrowYOffset = -1 * texture.getRegionHeight()/5;
+        } else {
+            arrowYOffset = -1 * texture.getRegionHeight()/2;
+        }
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (!isBoostCooldown() || alternateShadow) {
+            canvas.draw(shadow, Color.WHITE,origin.x-texture.getRegionWidth()/4,origin.y+texture.getRegionHeight()/15,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
+
+        canvas.draw(arrow, Color.WHITE,arrow.getRegionWidth()/2,arrow.getRegionHeight()/2,getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
+                arrowAngle,actualScale.x,actualScale.y);
+
+        super.draw(canvas);
+
+        float originX;
+        float originY;
+        float ox;
+        if (flipHandheld) {
+            originX = -texture.getRegionWidth()/5;
+            ox = handheld.getRegionWidth();
+        } else {
+            originX = texture.getRegionWidth()/5;
+            ox = 0;
+        }
+
+        if (((FilmStrip) texture).getFrame() == 1) {
+            originY = -texture.getRegionHeight()/3;
+        } else {
+            originY = -texture.getRegionHeight()/5;
+        }
+
+        if (!hasItem()) {
+            canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
+                    getAngle() + angleOffset,actualScale.x,actualScale.y);
+        }
+    }
+}
