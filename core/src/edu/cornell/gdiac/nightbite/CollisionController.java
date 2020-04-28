@@ -148,6 +148,7 @@ public class CollisionController implements ContactListener {
                     item_obj.startRespawn();
                 }
                 player.clearInventory();
+                player.resetTexture();
 
                 // win condition
                 checkWinCondition(homeObject);
