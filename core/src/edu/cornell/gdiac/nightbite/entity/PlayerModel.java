@@ -55,10 +55,6 @@ public class PlayerModel extends HumanoidModel {
     private Vector2 impulse;
     private Vector2 boost;
 
-    /** player respawn */
-    private boolean isAlive;
-    private int spawnCooldown;
-
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
     private static int GRAB_COOLDOWN_PERIOD = 15;
@@ -70,7 +66,6 @@ public class PlayerModel extends HumanoidModel {
     private ArrayList<ItemModel> item;
 
     /** player texture */
-    private FilmStrip defaultTexture;
     private FilmStrip holdTexture;
 
     /** player extra textures */
@@ -103,12 +98,8 @@ public class PlayerModel extends HumanoidModel {
     private HomeModel home;
 
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
-        super(x, y, width, height);
+        super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
         setBullet(true);
-
-        texture = Assets.PLAYER_FILMSTRIP;
-        defaultTexture = Assets.PLAYER_FILMSTRIP;
-        setTexture(texture);
 
         impulse = new Vector2();
         boost = new Vector2();
@@ -119,7 +110,6 @@ public class PlayerModel extends HumanoidModel {
         cooldown = 0;
         boosting = 0;
 
-        isAlive = true;
         item = new ArrayList<>();
 
         this.home = home;
@@ -142,26 +132,21 @@ public class PlayerModel extends HumanoidModel {
         this.world = world;
     }
 
+    public Vector2 getHomePos() {
+        return home.getPosition();
+    }
+
     public int getTicks() {
         return ticks;
     }
 
-    public void resetTexture() {
-        texture = defaultTexture;
-        handheld = defaultHandheld;
-    }
-
+    /**
+     * Flips the current texture and the weapon horizontally
+     */
     public void flipTexture() {
-        texture.flip(true, false);
+        super.flipTexture();
         handheld.flip(true, false);
         flipHandheld = !flipHandheld;
-    }
-
-    public void setTexture(FilmStrip value) {
-        if (defaultTexture == null) {
-            defaultTexture = value;
-        }
-        super.setTexture(value);
     }
 
     /** player identification */
@@ -223,45 +208,29 @@ public class PlayerModel extends HumanoidModel {
         prevHoriDir = dir;
     }
 
-    public void incrticks() {
+    public void incrTicks() {
         ticks++;
     }
 
-    public void resetticks() {
+    public void resetTicks() {
         ticks = 0;
     }
 
     public void setWalk() {
-        if (boosting > 0) {
-            return;
-        }
+        if (boosting > 0) return;
         state = MoveState.WALK;
-
-        if (ticks % 20 == 0) {
-            ((FilmStrip) texture).setFrame(1);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        } else if (ticks % 20 == 10) {
-            ((FilmStrip) texture).setFrame(0);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        }
-        ticks++;
+        setWalkTexture();
     }
 
     public void setStatic() {
-        if (boosting > 0) {
-            return;
-        }
+        if (boosting > 0) return;
         state = MoveState.STATIC;
+        resetTicks();
+        setStaticTexture();
+    }
 
-        ticks = 0;
-        ((FilmStrip) texture).setFrame(0);
-        if (prevHoriDir == 1) {
-            texture.flip(true, false);
-        }
+    public void setFall() {
+        setFallingTexture();
     }
 
     public void update() {
@@ -283,31 +252,6 @@ public class PlayerModel extends HumanoidModel {
         boosting = 0;
     }
 
-    /** player respawn */
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setDead() {
-        isAlive = false;
-        draw = false;
-    }
-
-    public void respawn() {
-        if (spawnCooldown == 0) {
-            spawnCooldown = 60;
-        }
-        spawnCooldown--;
-        if (spawnCooldown == 0) {
-            setPosition(home.getPosition());
-            isAlive = true;
-            draw = true;
-        }
-        resetTexture();
-
-        setLinearVelocity(Vector2.Zero);
-    }
-
     public boolean hasItem() {
         return item.size() > 0;
     }
@@ -324,7 +268,7 @@ public class PlayerModel extends HumanoidModel {
 
     public void holdItem(ItemModel i) {
         item.add(i);
-        texture = holdTexture;
+        setCurrentTexture(holdTexture);
     }
 
     /** cooldown between grabbing/throwing */
@@ -474,7 +418,8 @@ public class PlayerModel extends HumanoidModel {
             originY = -texture.getRegionHeight()/5;
         }
 
-        if (!hasItem()) {
+        // Don't draw weapon when holding item or dead
+        if (!hasItem() && isAlive()) {
             canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
                     getAngle() + angleOffset,actualScale.x,actualScale.y);
         }

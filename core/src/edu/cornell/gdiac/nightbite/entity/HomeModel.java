@@ -2,6 +2,8 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.SoundController;
 
 public class HomeModel extends ImmovableModel {
 
@@ -15,9 +17,11 @@ public class HomeModel extends ImmovableModel {
      */
     public HomeModel(float x, float y, String team) {
         super(x, y, 0);
+        this.texture = Assets.HOME_STALL;
+        setTexture(this.texture);
+
         this.team = team;
         score = 0;
-        setTexture(Assets.TEXTURES.get("environment/StallHome1_64.png"));
         setWidth(2);
         setHeight(2);
         // TODO: Fix once the JSON's are fixed
@@ -30,9 +34,16 @@ public class HomeModel extends ImmovableModel {
         return score;
     }
 
+    /**
+     * Increments the score and updates the home texture accordingly
+     * @param increase Amount to increase score by
+     */
     public void incrementScore(int increase) {
         score = score + increase;
-        //TODO: add animation
+        SoundController.getInstance().play(Assets.FX_DELIVER_FILE, Assets.FX_DELIVER_FILE, false, Assets.EFFECT_VOLUME);
+
+        // TODO need to safely set the texture
+        if (score < 4) ((FilmStrip) texture).setFrame(score);
     }
 
     public String getTeam() {
