@@ -203,9 +203,9 @@ public class Assets {
     public static float EFFECT_VOLUME = 0.1f;
     static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
     public static String FX_DELIVER_FILE = "music/delivered.wav";
-    public static String FX_FALLING_FILE = "music/falling.wav";
     public static String FX_PICKUP_FILE = "music/pickup.wav";
     public static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
+    // public static String FX_FALL_FILE = "music/wahh.wav";
 
 
     /*
@@ -307,7 +307,7 @@ public class Assets {
 
         // Load sounds
         loadSound(FX_DELIVER_FILE);
-        // loadSound(FX_FALLING_FILE);  for some reason breaking things
+        // loadSound(FX_FALL_FILE);
         loadSound(FX_FIRECRACKER_FILE);
         loadSound(FX_PICKUP_FILE);
     }
@@ -329,7 +329,7 @@ public class Assets {
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, FX_DELIVER_FILE);
-        // sounds.allocate(manager, FX_FALLING_FILE);
+        // sounds.allocate(manager, FX_FALL_FILE);
         sounds.allocate(manager, FX_FIRECRACKER_FILE);
         sounds.allocate(manager, FX_PICKUP_FILE);
 
@@ -340,7 +340,6 @@ public class Assets {
         }
 
         // Player & Items
-//        int num_players = PLAYER_FILMSTRIP_FILES.length;
         PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
                 PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
         PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,

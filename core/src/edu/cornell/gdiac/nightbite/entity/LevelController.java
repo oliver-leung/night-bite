@@ -40,7 +40,7 @@ public class LevelController {
         createItems(world, levelFormat.get("items"));
 
         decorations = levelFormat.get("decorations");
-        
+
         createBounds(world);
     }
 
