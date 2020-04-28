@@ -201,11 +201,11 @@ public class Assets {
 
     // Sound
     public static float EFFECT_VOLUME = 0.1f;
-    static String MUSIC_FILE = "music/Night_Bite_(Theme).mp3";
+    static String MUSIC_FILE = "music/Night_Bite_(Theme)_v2.wav";
     public static String FX_DELIVER_FILE = "music/delivered.wav";
     public static String FX_PICKUP_FILE = "music/pickup.wav";
     public static String FX_FIRECRACKER_FILE = "music/firecracker.wav";
-    // public static String FX_FALL_FILE = "music/wahh.wav";
+    public static String FX_FALL_FILE = "music/whistle.wav";
 
 
     /*
@@ -307,7 +307,7 @@ public class Assets {
 
         // Load sounds
         loadSound(FX_DELIVER_FILE);
-        // loadSound(FX_FALL_FILE);
+        loadSound(FX_FALL_FILE);
         loadSound(FX_FIRECRACKER_FILE);
         loadSound(FX_PICKUP_FILE);
     }
@@ -325,11 +325,11 @@ public class Assets {
         music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
         music.setLooping(true);
         music.play();
-        music.setVolume(0.05f);
+        music.setVolume(0.1f);
 
         SoundController sounds = SoundController.getInstance();
         sounds.allocate(manager, FX_DELIVER_FILE);
-        // sounds.allocate(manager, FX_FALL_FILE);
+        sounds.allocate(manager, FX_FALL_FILE);
         sounds.allocate(manager, FX_FIRECRACKER_FILE);
         sounds.allocate(manager, FX_PICKUP_FILE);
 

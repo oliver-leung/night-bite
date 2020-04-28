@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
+import edu.cornell.gdiac.util.SoundController;
 
 
 public class CollisionController implements ContactListener {
@@ -129,6 +130,8 @@ public class CollisionController implements ContactListener {
                 player.clearInventory();
             }
 
+            SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+
         } else if (object instanceof ItemModel) {
 
             // Player-Item
@@ -161,7 +164,9 @@ public class CollisionController implements ContactListener {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
+                SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
             }
+
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
