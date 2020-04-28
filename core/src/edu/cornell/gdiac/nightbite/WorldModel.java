@@ -173,8 +173,8 @@ public class WorldModel {
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
             Iterator<?>[] iters = {
-                    items.iterator(),
                     staticObjects.iterator(),
+                    items.iterator(),
                     players.iterator(),
             };
 

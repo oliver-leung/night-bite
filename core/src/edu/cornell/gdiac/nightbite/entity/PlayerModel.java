@@ -26,7 +26,7 @@ public class PlayerModel extends HumanoidModel {
     private static final float MOTION_DAMPING = 25f;
 
     private static final int BOOST_FRAMES = 20;
-    private static final int COOLDOWN_FRAMES = 35;
+    private static final int COOLDOWN_FRAMES = 70;
 
     public enum MoveState {
         WALK,
@@ -92,6 +92,10 @@ public class PlayerModel extends HumanoidModel {
     private float arrowXOffset;
     private float arrowYOffset;
 
+    /** blinking shadow while dashing */
+    private boolean alternateShadow;
+    private static int SHADOW_BLINK_FREQUENCY = 15;
+
     public PlayerModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip holdTexture, TextureRegion wokTexture, TextureRegion shadowTexture, TextureRegion arrowTexture, String playerTeam) {
         super(x, y, width, height);
         setBullet(true);
@@ -129,6 +133,7 @@ public class PlayerModel extends HumanoidModel {
         shadow = shadowTexture;
         arrow = arrowTexture;
         swingCooldown = 0;
+        alternateShadow = false;
 
         this.holdTexture = holdTexture;
     }
@@ -199,6 +204,10 @@ public class PlayerModel extends HumanoidModel {
         boost.setZero();
     }
 
+    public boolean isBoostCooldown() {
+        return cooldown > 0;
+    }
+
     /** movement state */
 
     public float getPrevHoriDir() {
@@ -241,7 +250,12 @@ public class PlayerModel extends HumanoidModel {
     public void update() {
         updateGrabCooldown();
         updateSwingCooldown();
-        cooldown = Math.max(0, cooldown - 1);
+        if (cooldown > 0) {
+            if (cooldown % SHADOW_BLINK_FREQUENCY == 0) {
+                alternateShadow = !alternateShadow;
+            }
+            cooldown--;
+        }
         boosting = Math.max(0, boosting - 1);
         if (swinging) {
             updateSwing();
@@ -380,8 +394,10 @@ public class PlayerModel extends HumanoidModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-        canvas.draw(shadow, Color.WHITE,origin.x-texture.getRegionWidth()/4,origin.y+texture.getRegionHeight()/15,getX() * drawScale.x, getY() * drawScale.y,
-                getAngle(),actualScale.x,actualScale.y);
+        if (!isBoostCooldown() || alternateShadow) {
+            canvas.draw(shadow, Color.WHITE,origin.x-texture.getRegionWidth()/4,origin.y+texture.getRegionHeight()/15,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
 
         canvas.draw(arrow, Color.WHITE,arrow.getRegionWidth()/2,arrow.getRegionHeight()/2,getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
                 arrowAngle,actualScale.x,actualScale.y);
