@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.nightbite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.entity.*;
@@ -8,7 +9,11 @@ import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 
 
 public class CollisionController implements ContactListener {
+    /** Impulse for players pushing */
     protected static final float PUSH_IMPULSE = 200f;
+
+    /** Impulse for player knockback from detonating firecracker*/
+    protected static final float KNOCKBACK_IMPULSE = 150f;
 
     public static final int ITEMS_TO_WIN = 3;
 
@@ -64,7 +69,6 @@ public class CollisionController implements ContactListener {
         Object b = contact.getFixtureB().getBody().getUserData();
 
         // Firecracker-Object Contact
-        // TODO Will only kill the player if player was not already colliding with firecracker beforehand
         if (a instanceof FirecrackerModel) {
             handleFirecrackerToObjectContact((FirecrackerModel) a, b);
         } else if (b instanceof FirecrackerModel) {
@@ -157,16 +161,14 @@ public class CollisionController implements ContactListener {
             // Player-Firecracker
             FirecrackerModel firecracker = (FirecrackerModel) object;
 
-            // If the firecracker is detonating, player dies
+            // If the firecracker is detonating, player should be knocked back
+            // TODO and stunned temporarily
             if (firecracker.isDetonating()) {
-                player.setDead();
-
-                if (player.hasItem()) {  // see above about jankness
-                    for (ItemModel item_obj : player.getItems()) {
-                        item_obj.startRespawn();
-                    }
-                    player.clearInventory();
-                }
+                Vector2 blastDirection = player.getPosition().sub(firecracker.getPosition()).nor();
+                blastDirection = new Vector2(blastDirection.x, blastDirection.y);  // jank but will break without
+                blastDirection.scl(KNOCKBACK_IMPULSE);
+                player.getBody().applyLinearImpulse(blastDirection, player.getPosition(), true);
+                // Gdx.app.log("Firecracker Collision after applying impulse", blastDirection.toString());
             }
         }
     }
