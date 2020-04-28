@@ -20,13 +20,12 @@ public class TestEnemy extends HumanoidModel {
     private int walkCooldown;
 
     public TestEnemy(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
-        this.texture = Assets.TEXTURES.get("character/P3_64_v2.png");
-        setTexture(texture);
+        super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL);
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
         setPosition(x, y);
+        setHomePosition(new Vector2(x, y));
 
         path = new PooledList<>();
         aiController = new AIController(world, this);
@@ -34,12 +33,12 @@ public class TestEnemy extends HumanoidModel {
     }
 
 
-    public void move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
+    public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
         body.setLinearVelocity(Vector2.Zero);
 
         if (walkCooldown > 0) {
             walkCooldown --;
-            return;
+            return new Vector2(0,0);
         }
 
         aiController.clearTarget();
@@ -57,6 +56,7 @@ public class TestEnemy extends HumanoidModel {
         aiController.updateAI(aiLattice, getFeetPosition());
         Vector2 dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
+        return dir;
     }
 
     public Vector2 attack(Vector2 targetPos) {

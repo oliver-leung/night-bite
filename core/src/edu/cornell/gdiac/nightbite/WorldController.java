@@ -338,8 +338,8 @@ public class WorldController implements Screen, InputProcessor {
 
             /* Play state */
             if (!p.isAlive()) {
-                p.respawn(p.getHomePos());
-                p.setFall();
+                p.respawn();
+                p.setFallingTexture();
             }
             p.setActive(p.isAlive());
 
@@ -391,12 +391,30 @@ public class WorldController implements Screen, InputProcessor {
             // TODO: Real jank
             p = worldModel.getPlayers().get(0);
             if (e instanceof TestEnemy && p.isAlive()) {
-                ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
+                Vector2 dir = ((TestEnemy) e).move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
                 Vector2 imp = ((TestEnemy) e).attack(p.getPosition());
                 if (imp != null) {
                     FirecrackerModel f = worldModel.addFirecracker(e.getPosition().x, e.getPosition().y);
                     f.throwItem(imp);
                 }
+
+                int enemyHorizontal = Integer.signum((int)dir.x);
+                // handle enemy facing left-right
+                if (enemyHorizontal != 0 && enemyHorizontal != e.getPrevHoriDir()) {
+                    e.flipTexture();
+                }
+
+                // update horizontal direction
+                if (enemyHorizontal != 0) {
+                    e.setPrevHoriDir(enemyHorizontal);
+                }
+
+                /* Play state */
+                if (!e.isAlive()) {
+                    e.respawn();
+                    e.setFallingTexture();
+                }
+                e.setActive(e.isAlive());
             }
         }
     }

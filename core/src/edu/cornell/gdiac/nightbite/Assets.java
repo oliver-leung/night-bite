@@ -66,6 +66,10 @@ public class Assets {
     static String PLAYER_SHADOW_FILE = "character/shadow.png";
     static String PLAYER_ARROW_FILE = "character/arrow.png";
 
+    /* Enemies */
+    static String FIRE_ENEMY_WALK_FILE = "character/Enemies/E1_64_Walk_FS_8.png";
+    static String FIRE_ENEMY_FALL_FILE = "character/Enemies/E1_64_Falling_FS_5.png";
+
     /* Firecracker filmstrip files */
     static String FIRECRACKER_FILE = "item/firecracker_64.png";
     static String FIRECRACKER_LIT_FILE = "item/firecracker_fuse_64_fs.png";
@@ -117,6 +121,9 @@ public class Assets {
     public static TextureRegion HOLE;
     public static TextureRegion GAME_BACKGROUND;
     public static TextureRegion GOAL;
+
+    public static FilmStrip FIRE_ENEMY_WALK;
+    public static FilmStrip FIRE_ENEMY_FALL;
 
     public static FilmStrip FIRECRACKER;
     public static FilmStrip FIRECRACKER_LIT;
@@ -187,6 +194,9 @@ public class Assets {
         loadTexture(PLAYER_SHADOW_FILE);
         loadTexture(PLAYER_ARROW_FILE);
         loadTexture(WALL_PA1_FILE);
+
+        loadTexture(FIRE_ENEMY_FALL_FILE);
+        loadTexture(FIRE_ENEMY_WALK_FILE);
 
         loadTexture(FIRECRACKER_FILE);
         loadTexture(FIRECRACKER_LIT_FILE);
@@ -275,6 +285,10 @@ public class Assets {
         WOK = createTexture(manager, WOK_FILE, true);
         PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
         PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
+
+        // Enemies
+        FIRE_ENEMY_WALK = createFilmStrip(manager, FIRE_ENEMY_WALK_FILE, 1,8,8);
+        FIRE_ENEMY_FALL = createFilmStrip(manager, FIRE_ENEMY_FALL_FILE, 1,6,6);
 
         // Firecracker filmstrip
         // TODO don't hardcode the rows/cols/size

@@ -112,6 +112,7 @@ public class PlayerModel extends HumanoidModel {
 
         this.home = home;
         team = playerTeam;
+        setHomePosition(home.getPosition());
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
@@ -128,10 +129,6 @@ public class PlayerModel extends HumanoidModel {
 
         this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
         this.world = world;
-    }
-
-    public Vector2 getHomePos() {
-        return home.getPosition();
     }
 
     public int getTicks() {
@@ -211,10 +208,6 @@ public class PlayerModel extends HumanoidModel {
         state = MoveState.STATIC;
         resetTicks();
         setStaticTexture();
-    }
-
-    public void setFall() {
-        setFallingTexture();
     }
 
     public void update() {

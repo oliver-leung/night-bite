@@ -38,6 +38,12 @@ public class CollisionController implements ContactListener {
             handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
+        if (a instanceof TestEnemy) {
+            handleEnemyToObjectContact((TestEnemy) a, b);
+        } else if (b instanceof TestEnemy) {
+            handleEnemyToObjectContact((TestEnemy) b, a);
+        }
+
         // Item-Object Contact
         if (a instanceof ItemModel) {
             handleItemToObjectContact((ItemModel) a, b);
@@ -157,6 +163,14 @@ public class CollisionController implements ContactListener {
                 // win condition
                 checkWinCondition(homeObject);
             }
+        }
+    }
+
+    public void handleEnemyToObjectContact(TestEnemy enemy, Object object) {
+        if (object instanceof HoleModel) {
+            // Enemy-Hole collision
+            enemy.setDead();
+            SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
         }
     }
 

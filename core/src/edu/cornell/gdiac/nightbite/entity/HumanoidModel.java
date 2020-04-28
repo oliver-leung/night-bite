@@ -32,6 +32,9 @@ public class HumanoidModel extends SimpleObstacle {
     protected short walkMaskBits;
     protected short hitCategoryBits;
     protected short hitMaskBits;
+
+    /** Respawn position */
+    private Vector2 homePosition;
   
     /** Whether this humanoid is alive */
     protected boolean isAlive;
@@ -124,6 +127,10 @@ public class HumanoidModel extends SimpleObstacle {
         }
     }
 
+    public void setHomePosition(Vector2 position) {
+        homePosition = position;
+    }
+
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
         setBullet(true);
@@ -184,13 +191,13 @@ public class HumanoidModel extends SimpleObstacle {
     /**
      * Respawn this humanoid at the specified position after 60 steps
      */
-    public void respawn(Vector2 pos) {
+    public void respawn() {
         if (respawnCooldown == 0) {
             respawnCooldown = 60;
         }
         respawnCooldown--;
         if (respawnCooldown == 0) {
-            setPosition(pos);
+            setPosition(homePosition);
             setAlive(true);
             resetTexture();
             draw = true;
