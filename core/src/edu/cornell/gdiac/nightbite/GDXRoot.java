@@ -148,6 +148,9 @@ public class GDXRoot extends Game implements ScreenListener {
 //			if (levelSelect == null) {
 //				levelSelect = new LevelSelectMode(canvas);
 //			}
+			assets.loadContent(manager);
+			levelSelect.loadContent();
+
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
 
@@ -156,8 +159,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == levelSelect) {
 			if (exitCode == LevelSelectController.EXIT_START) {
 				Gdx.input.setInputProcessor(null);
-
-				assets.loadContent(manager);
 
 				controller.setScreenListener(this);
 				controller.setCanvas(canvas);
