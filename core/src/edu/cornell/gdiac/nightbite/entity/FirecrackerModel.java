@@ -21,7 +21,7 @@ public class FirecrackerModel extends BoxObstacle {
     private static final int DETONATING_AGE = 80;
 
     /* How far out will humanoid bodies be affected by the detonation */
-    private static final float BLAST_RADIUS = 1.5f;
+    private static final float BLAST_RADIUS = 0.7f;
 
     /* Physics constants */
     private static final float MOVABLE_OBJECT_DENSITY = 1.0f;
@@ -95,7 +95,7 @@ public class FirecrackerModel extends BoxObstacle {
         setFriction(MOVABLE_OBJECT_FRICTION);
         setRestitution(MOVABLE_OBJECT_RESTITUTION);
 
-        setSensor(false);
+        setSensor(true);
         // TODO shouldn't need - firecracker should move relatively slowly
         setBullet(true);
         setName("firecracker");

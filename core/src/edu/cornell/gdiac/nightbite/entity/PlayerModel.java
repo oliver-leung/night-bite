@@ -145,7 +145,6 @@ public class PlayerModel extends HumanoidModel {
         super.flipTexture();
         handheld.flip(true, false);
         flipHandheld = !flipHandheld;
-        System.out.println("flip2");
     }
 
     /** player identification */

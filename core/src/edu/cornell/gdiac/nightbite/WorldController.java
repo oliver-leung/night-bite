@@ -380,8 +380,6 @@ public class WorldController implements Screen, InputProcessor {
                 p.setPrevHoriDir(playerHorizontal);
             }
 
-            System.out.println(p.getPrevHoriDir());
-
             // player updates (for respawn and dash cool down)
             p.update();
 

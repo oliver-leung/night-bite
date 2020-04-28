@@ -86,7 +86,6 @@ public class HumanoidModel extends SimpleObstacle {
      * Sets the current texture to walking. Changes frames every 10 steps.
      */
     public void setWalkTexture() {
-        System.out.println(prevHoriDir);
         if (walkCounter % 20 == 0) {
             ((FilmStrip) texture).setFrame(1);
             if (prevHoriDir == 1) {
@@ -179,7 +178,6 @@ public class HumanoidModel extends SimpleObstacle {
      * Flips the current texture horizontally
      */
     public void flipTexture() {
-        System.out.println("flip1");
         texture.flip(true, false);
     }
 
