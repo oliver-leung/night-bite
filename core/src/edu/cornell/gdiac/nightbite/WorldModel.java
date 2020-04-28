@@ -197,11 +197,11 @@ public class WorldModel {
             // Please.
             Iterator<?>[] iters = {
                     staticObjects.iterator(),
+                    oils.iterator(),
                     items.iterator(),
                     players.iterator(),
                     enemies.iterator(),
                     firecrackers.iterator(),
-                    oils.iterator()
             };
 
             // TODO: Do i want to make this more efficient?
@@ -411,12 +411,12 @@ public class WorldModel {
     }
 
     public OilModel addOil(float x, float y) {
-        OilModel firecracker = new OilModel(new Vector2(x, y));
-        firecracker.setDrawScale(getScale());
-        firecracker.setActualScale(getActualScale());
-        initializeObject(firecracker);
-        oils.add(firecracker);
-        return firecracker;
+        OilModel oil = new OilModel(x, y);
+        oil.setDrawScale(getScale());
+        oil.setActualScale(getActualScale());
+        oil.activatePhysics(world);
+        oils.add(oil);
+        return oil;
     }
 
     public PooledList<FirecrackerModel> getFirecrackers() {
