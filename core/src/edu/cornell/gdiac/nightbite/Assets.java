@@ -104,7 +104,7 @@ public class Assets {
     public static String FX_DELIVER_FILE = "audio/delivered.wav";
     public static String FX_PICKUP_FILE = "audio/pickup.wav";
     public static String FX_FIRECRACKER_FILE = "audio/firecracker.wav";
-    public static String FX_FALL_FILE = "audio/falling.wav";
+    public static String FX_FALL_FILE = "audio/whistle.wav";
 
     /**
      * LOADED ASSETS
