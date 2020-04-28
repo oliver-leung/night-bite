@@ -53,15 +53,20 @@ public class ItemModel extends BoxObstacle {
         setBullet(true);
         setName("item");
 
-        item_init_position = new Vector2(x - 0.5f, y - 0.5f);
+        item_init_position = new Vector2(x + 0.5f, y + 0.5f);  // this is mad sus
         id = itemId;
 
         maskBits = 0x0002 | 0x0008;
         categoryBits = 0x0001;
     }
 
-    public void update() {
-        updateRespawn();
+    public void update(float dt) {
+        super.update(dt);
+
+        respawn -= 1;
+        if (respawn == 0) {
+            addItem(item_init_position);
+        }
     }
 
     /** item identification */
@@ -72,16 +77,9 @@ public class ItemModel extends BoxObstacle {
     /** respawn */
 
     public void startRespawn() {
+        draw = false;
         holdingPlayer = null;
         respawn = RESPAWN_TIME;
-        draw = false;
-    }
-
-    public void updateRespawn() {
-        respawn -= 1;
-        if (respawn == 0) {
-            addItem(item_init_position);
-        }
     }
 
     private void addItem(Vector2 position) {
