@@ -162,10 +162,6 @@ public class PlayerModel extends HumanoidModel {
         }
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
-        // Filter f = cap1.getFilterData();
-        // f.groupIndex = -1;
-        // cap1.setFilterData(f);
-        // core.setFilterData(f);
         return true;
     }
 

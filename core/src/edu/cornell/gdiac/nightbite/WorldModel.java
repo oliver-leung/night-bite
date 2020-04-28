@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
 import edu.cornell.gdiac.nightbite.entity.FirecrackerModel;
 import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.entity.ItemModel;
@@ -67,6 +68,9 @@ public class WorldModel {
 
     /** List of players */
     private ArrayList<PlayerModel> players;
+
+    private PooledList<HumanoidModel> enemies;
+
     /** List of items */
     private ArrayList<ItemModel> items;
     /** Whether the player is overlapping the items */
@@ -82,6 +86,12 @@ public class WorldModel {
     /** Top layer foreground textures */
     private Sprite[][] decorations = new Sprite[20][12];
 
+    private AILattice aiLattice;
+
+
+    // TODO: REMOVE
+    public Debug debug;
+
     public WorldModel() {
         world = new World(Vector2.Zero, false);
         bounds = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -93,6 +103,10 @@ public class WorldModel {
         items = new ArrayList<>();
         firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
+        enemies = new PooledList<>();
+
+        // TODO: REMOVE
+        debug = new Debug();
     }
 
     /**
@@ -186,6 +200,7 @@ public class WorldModel {
                     staticObjects.iterator(),
                     items.iterator(),
                     players.iterator(),
+                    enemies.iterator(),
                     firecrackers.iterator(),
             };
 
@@ -267,6 +282,8 @@ public class WorldModel {
         return players;
     }
 
+    public PooledList<HumanoidModel> getEnemies() { return enemies; }
+
     public Vector2 getScale() {
         return scale;
     }
@@ -345,6 +362,27 @@ public class WorldModel {
         overlapItem.add(false);
     }
 
+    public void addEnemy(HumanoidModel enemy) {
+        initializeObject(enemy);
+        enemies.add(enemy);
+    }
+
+    public void initializeAI() {
+        System.out.println(bounds);
+        aiLattice = new AILattice((int) bounds.width, (int) bounds.height);
+        aiLattice.populateStatic(staticObjects);
+    }
+
+    public AILattice getAILattice() {
+        return aiLattice;
+    }
+
+    public void debugAI(GameCanvas canvas) {
+        aiLattice.drawDebug(canvas, scale);
+    }
+
+
+    // I made this return FirecrackerModel so you can get the thing you just thrown
     /**
      * Creates a firecracker at the specified position, usually the position of the enemy (in tiles)
      * TODO currently called in levelcontroller... may want to change
@@ -352,12 +390,13 @@ public class WorldModel {
      * @param x The x position of the firecracker enemy
      * @param y The y position of the firecracker enemy
      */
-    public void addFirecracker(float x, float y) {
+    public FirecrackerModel addFirecracker(float x, float y) {
         FirecrackerModel firecracker = new FirecrackerModel(world, x, y, 1, 1);
         firecracker.setDrawScale(getScale());
         firecracker.setActualScale(getActualScale());
         initializeObject(firecracker);
         firecrackers.add(firecracker);
+        return firecracker;
     }
 
     public PooledList<FirecrackerModel> getFirecrackers () {
@@ -438,6 +477,44 @@ public class WorldModel {
                 ((Obstacle) iterator.next()).update(dt);
             }
         }
+
+        aiLattice.clearDynamic();
+        aiLattice.populateDynamic(downcastIterable(players));
+        // aiLattice.populateDynamic(downcastIterable(enemies));
+
+        // TODO: REMOVE
+        debug.updatePathfinding(aiLattice);
+
+    }
+
+    private Iterable<Obstacle> downcastIterable(Iterable iter) {
+        // AGAIN, unsafe
+        class ObsIterator implements Iterator<Obstacle> {
+            Iterator iterator;
+
+            public ObsIterator(Iterator iter) {
+                iterator = iter;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Obstacle next() {
+                return (Obstacle) iterator.next();
+            }
+        }
+
+        class ObsIterable implements Iterable<Obstacle> {
+            @Override
+            public Iterator<Obstacle> iterator() {
+                return new ObsIterator(iter.iterator());
+            }
+        }
+
+        return new ObsIterable();
     }
 
     public void dispose() {

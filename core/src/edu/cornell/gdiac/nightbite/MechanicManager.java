@@ -39,9 +39,9 @@ public class MechanicManager {
 
     public void update() {
         for (MechanicController controller : controllers) {
-            if (controller instanceof AIController) {
-                ((AIController) controller).updateAI();
-            }
+            // if (controller instanceof AIController) {
+            //     ((AIController) controller).updateAI();
+            // }
             controller.poll();
         }
     }

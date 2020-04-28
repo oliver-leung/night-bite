@@ -55,6 +55,9 @@ public class ItemModel extends BoxObstacle {
 
         item_init_position = new Vector2(x + 0.5f, y + 0.5f);  // this is mad sus
         id = itemId;
+
+        maskBits = 0x0002 | 0x0008;
+        categoryBits = 0x0001;
     }
 
     public void update(float dt) {
