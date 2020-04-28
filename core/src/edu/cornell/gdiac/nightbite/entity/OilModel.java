@@ -10,8 +10,8 @@ public class OilModel extends ImmovableModel {
     private int spillngFrame = 12;
     private FilmStrip defaultTexture = Assets.OIL_SPILLING;
 
-    public OilModel(Vector2 pos){
-        super(pos.x, pos.y, 0);
+    public OilModel(float x, float y){
+        super(x, y, 0);
     }
 
     public void setTexture(FilmStrip texture) {

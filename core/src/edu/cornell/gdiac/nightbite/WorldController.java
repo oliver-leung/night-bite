@@ -406,8 +406,8 @@ public class WorldController implements Screen, InputProcessor {
             if (p.isAlive()) {
                 if (e instanceof FireEnemyModel) {
                     dir = ((FireEnemyModel)e).update(p);
-                } else if (e instanceof OilyBoyModel) {
-                    dir = ((OilyBoyModel)e).update(p);
+                } else if (e instanceof OilEnemyModel) {
+                    dir = ((OilEnemyModel)e).update(p);
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);
