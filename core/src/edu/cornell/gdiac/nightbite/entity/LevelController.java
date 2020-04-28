@@ -82,7 +82,7 @@ public class LevelController {
             x = 0;
         }
 
-        if (level_file.equals("jsons/beta_easy_funnel.json")) {
+        if (level_file.equals("jsons/level_test.json")) {
             TestEnemy enemy = new TestEnemy(8f, 8f, 0.6f, 1f, world);
             enemy.setDrawScale(world.getScale());
             enemy.setName("wtf");

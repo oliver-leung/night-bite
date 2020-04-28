@@ -74,7 +74,7 @@ public class LevelSelectController implements Screen, InputProcessor {
 
     // TODO: switch to levels made with new JSON schema
     private String[] levelJSONList = new String[]{
-            "jsons/beta_easy_funnel.json",
+            "jsons/level_test.json",
             "jsons/beta_medium.json",
             "jsons/beta_hard.json"};
     private int[] xposList;

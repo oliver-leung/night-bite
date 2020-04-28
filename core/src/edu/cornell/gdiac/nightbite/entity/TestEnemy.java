@@ -25,7 +25,7 @@ public class TestEnemy extends HumanoidModel {
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
         setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
+        setHomePosition(new Vector2(x + 0.5f, y + 0.5f));
 
         path = new PooledList<>();
         aiController = new AIController(world, this);
