@@ -416,16 +416,6 @@ public class WorldModel {
         return oils;
     }
 
-    public void removeOil(Object removeObj) {
-        Iterator itr = oils.iterator();
-        while (itr.hasNext()) {
-            Obstacle obj = (Obstacle) itr.next();
-            if (obj.equals(removeObj)) {
-                itr.remove();
-            }
-        }
-    }
-
     /**
      * TODO allow passing in of different lighting parameters
      */

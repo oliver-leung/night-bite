@@ -27,7 +27,7 @@ public class PlayerModel extends HumanoidModel {
 
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
-    private static final int SLIDE_FRAMES=80;
+    private static final int SLIDE_FRAMES=50; // Slide through about 3-4 tiles
 
     public enum MoveState {
         WALK,

@@ -166,7 +166,7 @@ public class CollisionController implements ContactListener {
             }
         } else if (object instanceof OilModel) {
             player.setSlide();
-            worldModel.removeOil(object);
+            ((OilModel) object).markRemoved(true);
         }
     }
 

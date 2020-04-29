@@ -16,8 +16,8 @@ public abstract class EnemyModel extends HumanoidModel {
     }
     public State state = State.IDLE;
 
-    private int MAX_ATTACK_FRAME = 200;
-    private int MAX_RETURN_FRAME = 75;
+    private int MAX_ATTACK_FRAME;
+    private int MAX_RETURN_FRAME;
     private int attacking;
     private int returning;
 
@@ -125,4 +125,6 @@ public abstract class EnemyModel extends HumanoidModel {
     public void setWalkCooldown(int cooldown) {
         walkCooldown = cooldown;
     }
+    public void setMaxAttackFrame(int frames) { MAX_ATTACK_FRAME = frames; }
+    public void setMaxReturnFrame(int frames) { MAX_RETURN_FRAME = frames; }
 }

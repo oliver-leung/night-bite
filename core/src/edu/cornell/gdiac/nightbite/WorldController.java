@@ -343,8 +343,10 @@ public class WorldController implements Screen, InputProcessor {
                 if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
                     p.setBoostImpulse(playerHorizontal, playerVertical);
                 }
-                p.applyImpulse();
             }
+
+            // Move player
+            p.applyImpulse();
 
             /* Play state */
             if (!p.isAlive()) {

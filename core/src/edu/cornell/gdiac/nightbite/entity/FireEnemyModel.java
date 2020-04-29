@@ -16,6 +16,8 @@ public class FireEnemyModel extends EnemyModel {
 
     public FireEnemyModel(float x, float y, float width, float height, WorldModel world) {
         super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
+        setMaxAttackFrame(200);
+        setMaxReturnFrame(100);
 
         //TODO: FIX BELOW
         setPosition(x,y+0.1f); // this is mmoved up so they dont spawn and die
