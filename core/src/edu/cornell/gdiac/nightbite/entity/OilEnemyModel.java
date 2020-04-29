@@ -9,8 +9,8 @@ public class OilEnemyModel extends EnemyModel {
     private static final int DROP_COOLDOWN = 150;
     private int dropCooldown = 0;
 
-    public OilEnemyModel(float x, float y, float width, float height,  WorldModel world) {
-        super(x, y, width, height, Assets.OIL_ENEMY_WALK, Assets.OIL_ENEMY_FALL, world);
+    public OilEnemyModel(float x, float y,  WorldModel world) {
+        super(x, y, Assets.OIL_ENEMY_WALK, Assets.OIL_ENEMY_FALL, world);
     }
 
     public void attack(PlayerModel p) {

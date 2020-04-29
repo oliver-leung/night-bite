@@ -13,8 +13,8 @@ public class FireEnemyModel extends EnemyModel {
     private static final float THROW_FORCE = 5f;
     private int throwCooldown;
 
-    public FireEnemyModel(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
+    public FireEnemyModel(float x, float y, WorldModel world) {
+        super(x, y, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
 
         //TODO: FIX BELOW
         setPosition(x,y+0.1f); // this is mmoved up so they dont spawn and die

@@ -39,7 +39,7 @@ public class LevelController {
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
         JsonValue cellArray = levelFormat.get("assets");
-        int x = 0, y = 11;
+        int x = 0, y = 0;
         // Yeah, I know this is ugly
         for (JsonValue cellRow : cellArray) {
             for (JsonValue cell : cellRow) {
@@ -66,6 +66,10 @@ public class LevelController {
                             createTeam(asset, x, y);
                             break;
 
+                        case "enemy":
+                            createEnemy(asset, x, y);
+                            break;
+
                         case "hole":
                             createHole(asset, x, y);
                             break;
@@ -79,52 +83,8 @@ public class LevelController {
                 }
                 x++;
             }
-            y--;
+            y++;
             x = 0;
-        }
-
-        if (level_file.equals("jsons/level_test.json")) {
-            OilEnemyModel enemy = new OilEnemyModel(8f, 8f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-        } else if (level_file.equals("jsons/beta_medium.json")) {
-            FireEnemyModel enemy = new FireEnemyModel(6f, 7f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(18f, 2f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-        } else if (level_file.equals("jsons/beta_hard.json")) {
-            FireEnemyModel enemy = new FireEnemyModel(4f, 3f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(9f, 4f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(10f, 9f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
         }
     }
 
@@ -217,6 +177,25 @@ public class LevelController {
 
         LightSource light = world.createPointLight(new float[]{0.03f, 0.0f, 0.17f, 1.0f}, 4.0f);
         light.attachToBody(player.getBody(), light.getX(), light.getY(), light.getDirection());
+    }
+
+    private void createEnemy(JsonValue enemyJson, int x, int y) {
+        EnemyModel enemy = null;
+        switch (enemyJson.getString("enemyType")) {
+            case "OilEnemy":
+                enemy = new OilEnemyModel(x, y, world);
+                break;
+            case "FireEnemy":
+                enemy = new FireEnemyModel(x, y, world);
+                break;
+//            case "ThiefEnemy":
+//                break;
+        }
+        enemy.setDrawScale(world.getScale());
+        enemy.setActualScale(world.getActualScale());
+        enemy.setName(enemyJson.name());
+        enemy.setFixedRotation(true);
+        world.addEnemy(enemy);
     }
 
     private void createHole(JsonValue holeJson, int x, int y) {

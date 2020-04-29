@@ -32,8 +32,8 @@ public abstract class EnemyModel extends HumanoidModel {
     private static final float WALK_THRUST = 10f;
     private int walkCooldown;
 
-    public EnemyModel(float x, float y, float width, float height, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
-        super(x, y, width, height, walk, fall);
+    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
+        super(x, y,0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);
