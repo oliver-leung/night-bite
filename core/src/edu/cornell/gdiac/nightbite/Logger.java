@@ -13,7 +13,7 @@ public class Logger implements ApplicationLogger {
 
     public Logger() {
         try {
-            writer = new BufferedWriter(new FileWriter("log.txt", true));
+            writer = new BufferedWriter(new FileWriter("log.txt", false));
         } catch (IOException e) {
             e.printStackTrace();
         }
