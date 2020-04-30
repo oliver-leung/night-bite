@@ -259,7 +259,7 @@ public class Assets {
 
     // TODO: Potentially refactor this out to another class, and change to v2
     private void playMusic() {
-        Music music = musics.get("audio/Night_Bite_(Theme).mp3");
+        Music music = musics.get("audio/Night_Bite_(Theme)_v2.mp3");
         music.setLooping(true);
         music.play();
         music.setVolume(0.1f);
