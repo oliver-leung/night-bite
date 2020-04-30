@@ -41,13 +41,6 @@ public class Assets {
     private static final String BACK_BUTTON_FILE = "level_select/Back.png";
     private static final String HEADER_FILE = "level_select/Header.png";
     private static final String PLAYER_FILE = "level_select/Lin_128px.png";
-    /** RESOURCES */
-    // Character
-    static String PLAYER_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Dash_5.png";
-    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Holding_8.png";
-    static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
-    static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
-    static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
     // Sound
     public static float EFFECT_VOLUME = 0.1f;
     public static String FX_DELIVER_FILE = "audio/delivered.wav";
@@ -64,11 +57,6 @@ public class Assets {
     public static TextureRegion PLAYER_SHADOW;
     public static TextureRegion PLAYER_ARROW;
     public static FilmStrip HOME_STALL;
-    public static TextureRegion FISH_ITEM;
-    public static TextureRegion WALL;
-    public static TextureRegion HOLE;
-    public static TextureRegion GAME_BACKGROUND;
-    public static TextureRegion GOAL;
     public static FilmStrip FIRE_ENEMY_WALK;
     public static FilmStrip FIRE_ENEMY_FALL;
     public static FilmStrip OIL_ENEMY_WALK;
@@ -78,7 +66,6 @@ public class Assets {
     public static FilmStrip FIRECRACKER_DET;
     public static FilmStrip OIL_SPILLING;
     public static FilmStrip OIL_TILE;
-    public static BitmapFont RETRO_FONT;
     // Level select
     public static TextureRegion LEVEL_SELECT_BACKGROUND;
     public static TextureRegion TILE_1_TEXTURE;
@@ -91,6 +78,10 @@ public class Assets {
     public static TextureRegion BACK_TEXTURE;
     public static TextureRegion HEADER_TEXTURE;
     public static TextureRegion PLAYER_TEXTURE;
+    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Holding_8.png";
+    static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
+    static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
+    static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
     static String PLAYER_FALLING_FILMSTRIP_FILE = "character/P1_Falling_5.png";
     static int PLAYER_FALLING_FILMSTRIP_ROW = 1;
     static int PLAYER_FALLING_FILMSTRIP_COL = 6;
@@ -122,7 +113,7 @@ public class Assets {
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
     private static Map<String, FilmStrip> filmStrips = new HashMap<>();
     /** In-game music asset */
-    private static Music music;
+    private static Map<String, Music> musics = new HashMap<>();
     /** Mapping from file names to in-game sound effects */
     private static Map<String, Sound> sounds = new HashMap<>();
     /** In-game font asset */
@@ -136,7 +127,7 @@ public class Assets {
     int PLAYER_FILMSTRIP_SIZE = 8;
     private URI uri;
     /** Asset Manager */
-    private AssetManager manager;
+    private static AssetManager manager;
     /** Track load status */
     private boolean isLoaded = false;
     /** Track all loaded assets (for unloading purposes) */
@@ -148,7 +139,7 @@ public class Assets {
     private List<String> fileNames = new ArrayList<>();
 
     public Assets(AssetManager manager) {
-        setManager(manager);
+        Assets.manager = manager;
         FILE_NAMES_JSON = jsonReader.parse(Gdx.files.internal("assets.json"));
 
         File assets = new File(Gdx.files.getLocalStoragePath());
@@ -156,6 +147,55 @@ public class Assets {
 
         listAssets(assets);
         preLoadContent();
+    }
+
+    public static BitmapFont getFont() {
+        return font;
+    }
+
+    public static TextureRegion getTextureRegion(String fileName) {
+        return new TextureRegion(textureRegions.get(fileName));
+    }
+
+    /**
+     * Get the FilmStrip dimensions of a TextureRegion (if it were a FilmStrip)
+     *
+     * @param textureRegion Raw texture region
+     * @return [rows, cols, size]
+     */
+    private static int[] getFilmStripDimensions(TextureRegion textureRegion) {
+        int rows = textureRegion.getRegionHeight() / 64;
+        int cols = textureRegion.getRegionWidth() / 64;
+        int size = rows * cols;
+
+        return new int[]{rows, cols, size};
+    }
+
+    public static FilmStrip getFilmStrip(String fileName) {
+        if (filmStrips.get(fileName) == null) {
+            TextureRegion rawTexture = textureRegions.get(fileName);
+            int[] dims = getFilmStripDimensions(rawTexture);
+            filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
+        }
+        return new FilmStrip(filmStrips.get(fileName));
+    }
+
+    public static Music getMusic(String filename) {
+        return musics.get(filename);
+    }
+
+    /**
+     * Returns the file extension in a file name. If it doesn't have one, return an empty string.
+     *
+     * @param fileName File name
+     * @return File extension of fileName in lower case
+     */
+    private String getExtension(String fileName) {
+        String extension = "";
+        int idx = fileName.lastIndexOf(".");
+        if (idx > 0) extension = fileName.substring(idx + 1).toLowerCase();
+
+        return extension;
     }
 
     /**
@@ -206,26 +246,8 @@ public class Assets {
         return null;
     }
 
-    public void setManager(AssetManager manager) {
-        this.manager = manager;
-    }
-
     /**
-     * Returns the file extension in a file name. If it doesn't have one, return an empty string.
-     *
-     * @param fileName File name
-     * @return File extension of fileName in lower case
-     */
-    private String getExtension(String fileName) {
-        String extension = "";
-        int idx = fileName.lastIndexOf(".");
-        if (idx > 0) extension = fileName.substring(idx + 1).toLowerCase();
-
-        return extension;
-    }
-
-    /**
-     * Recursively add all files contained by a file/directory to the set of all file names
+     * Recursively add all files contained by a file/directory to the list of all file names
      *
      * @param asset File/directory to be searched
      */
@@ -240,145 +262,6 @@ public class Assets {
                 listAssets(subAsset);
             }
         }
-    }
-
-    /** Preload the texture and sound information for the game */
-    private void preLoadContent() {
-        for (String fileName : fileNames) {
-            switch (getExtension(fileName)) {
-                case "png":
-                    loadTexture(fileName);
-                    break;
-                case "mp3":
-                    loadMusic(fileName);
-                    break;
-                case "wav":
-                    loadSound(fileName);
-                    break;
-                case "ttf":
-                    loadFont(fileName, 12);
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Preloads the texture and sound information for the game :
-     * extracting assets from the manager after it has finished loading them
-     */
-    public void loadContent(AssetManager manager) {
-        for (String fileName : fileNames) {
-            switch (getExtension(fileName)) {
-                case "png":
-                    textureRegions.put(fileName, createTexture(manager, fileName));
-                    break;
-                case "mp3":
-                    loadMusic(fileName);
-                    break;
-                case "wav":
-                    loadSound(fileName);
-                    break;
-                case "ttf":
-                    loadFont(fileName, 12);
-                    break;
-            }
-        }
-        // Static textures
-        for (String key : textureKeys) {
-            for (String fileName : FILE_NAMES_JSON.get(key).asStringArray()) {
-                textureRegions.put(fileName, createTexture(manager, fileName));
-            }
-        }
-
-        // Start music // TODO fix this when I'm not sleepy
-        // MUSIC = manager.get("audio/Night_Bite_(Theme).mp3");
-
-        music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
-        music.setLooping(true);
-        music.play();
-        music.setVolume(0.1f);
-
-        for (String fileName : FILE_NAMES_JSON.get("character filmstrip").asStringArray()) {
-            TextureRegion rawTexture = new TextureRegion(manager.get(fileName, Texture.class));
-            int[] dims = getFilmStripDimensions(rawTexture);
-            textureRegions.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
-        }
-
-        soundController.allocate(manager, FX_DELIVER_FILE);
-        soundController.allocate(manager, FX_FALL_FILE);
-        soundController.allocate(manager, FX_FIRECRACKER_FILE);
-        soundController.allocate(manager, FX_PICKUP_FILE);
-
-        // Player & Items
-        PLAYER_FILMSTRIP = createFilmStrip(manager, PLAYER_FILMSTRIP_FILE, PLAYER_FILMSTRIP_ROW,
-                PLAYER_FILMSTRIP_COL, PLAYER_FILMSTRIP_SIZE);
-        PLAYER_HOLD_FILMSTRIP = createFilmStrip(manager, PLAYER_HOLDING_FILMSTRIP_FILE, PLAYER_HOLDING_FILMSTRIP_ROW,
-                PLAYER_HOLDING_FILMSTRIP_COL, PLAYER_HOLDING_FILMSTRIP_SIZE);
-        PLAYER_FALL_FILMSTRIP = createFilmStrip(manager, PLAYER_FALLING_FILMSTRIP_FILE, PLAYER_FALLING_FILMSTRIP_ROW,
-                PLAYER_FALLING_FILMSTRIP_COL, PLAYER_FALLING_FILMSTRIP_SIZE);
-        WOK = createTexture(manager, WOK_FILE, true);
-        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
-        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
-
-        // Enemies
-        FIRE_ENEMY_WALK = createFilmStrip(manager, FIRE_ENEMY_WALK_FILE, 1,8,8);
-        FIRE_ENEMY_FALL = createFilmStrip(manager, FIRE_ENEMY_FALL_FILE, 1,6,6);
-        OIL_ENEMY_WALK = createFilmStrip(manager, OIL_ENEMY_WALK_FILE,1,8,8);
-        OIL_ENEMY_FALL = createFilmStrip(manager, OIL_ENEMY_FALL_FILE, 1, 6,6);
-
-        // Firecracker filmstrip
-        // TODO don't hardcode the rows/cols/size
-        FIRECRACKER = createFilmStrip(manager, FIRECRACKER_FILE, 1, 1, 1);
-        FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
-        FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
-
-        // Oil
-        OIL_SPILLING = createFilmStrip(manager, OIL_SPILLING_FILE,1,12,12);
-        OIL_TILE = createFilmStrip(manager, OIL_TILE_FILE,1,1,1);
-
-        // Home stall textures
-        HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);
-
-        // Level select screen
-        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);
-        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE, true);
-        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE, true);
-        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE, true);
-        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE, true);
-        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE, true);
-        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE, true);
-        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE, true);
-        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE, true);
-        HEADER_TEXTURE = createTexture(manager, HEADER_FILE, true);
-        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE, true);
-
-        font = manager.get(FILE_NAMES_JSON.getString("font"));
-
-        isLoaded = true;
-    }
-
-    /** Unloads the assets for this game. */
-    public void unloadContent(AssetManager manager) {
-        for (String s : assets) {
-            if (manager.isLoaded(s)) {
-                manager.unload(s);
-            }
-        }
-        this.isLoaded = false;
-    }
-
-    /**
-     * Get the FilmStrip dimensions of a TextureRegion (if it were a FilmStrip)
-     *
-     * @param textureRegion Raw texture region
-     * @return [rows, cols, size]
-     */
-    private int[] getFilmStripDimensions(TextureRegion textureRegion) {
-        int rows = textureRegion.getRegionHeight() / 64;
-        int cols = textureRegion.getRegionWidth() / 64;
-        int size = rows * cols;
-
-        return new int[]{rows, cols, size};
     }
 
     public void loadSound(String filePath) {
@@ -404,13 +287,116 @@ public class Assets {
         assets.add(fontPath);
     }
 
-    public TextureRegion getTextureRegion(String fileName) {
-        return new TextureRegion(textureRegions.get(fileName));
+    /** Preload the texture and sound information for the game */
+    private void preLoadContent() {
+        for (String fileName : fileNames) {
+            switch (getExtension(fileName)) {
+                case "png":
+                    loadTexture(fileName);
+                    break;
+                case "mp3":
+                    loadMusic(fileName);
+                    break;
+                case "wav":
+                    loadSound(fileName);
+                    break;
+                case "ttf":
+                    loadFont(fileName, 12); // TODO: Let's make this a more reasonable size
+                    break;
+            }
+        }
     }
 
-    public FilmStrip getFilmStrip(String fileName) {
-        TextureRegion rawTexture = textureRegions.get(fileName);
-        int[] dims = getFilmStripDimensions(rawTexture);
-        return new FilmStrip(rawTexture, dims[0], dims[1], dims[2]);
+    private Music createMusic(AssetManager manager, String file) {
+        if (manager.isLoaded(file)) {
+            return manager.get(file, Music.class);
+        }
+        return null;
+    }
+
+    /**
+     * Loads the texture and sound information for the game :
+     * extracting assets from the manager after it has finished loading them
+     */
+    public void loadContent(AssetManager manager) {
+        for (String fileName : fileNames) {
+            switch (getExtension(fileName)) {
+                case "png":
+                    textureRegions.put(fileName, createTexture(manager, fileName));
+                    break;
+                case "mp3":
+                    musics.put(fileName, createMusic(manager, fileName));
+                    break;
+                case "wav":
+                    soundController.allocate(manager, fileName);
+                    break;
+                case "ttf":
+                    font = manager.get(fileName);
+                    break;
+            }
+        }
+
+        playMusic();
+
+        // Player & Items
+        PLAYER_FILMSTRIP = getFilmStrip("character/Filmstrip/Player 1/P1_Dash_5.png");
+        PLAYER_HOLD_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
+        PLAYER_FALL_FILMSTRIP = createFilmStrip(manager, PLAYER_FALLING_FILMSTRIP_FILE, PLAYER_FALLING_FILMSTRIP_ROW,
+                PLAYER_FALLING_FILMSTRIP_COL, PLAYER_FALLING_FILMSTRIP_SIZE);
+        WOK = createTexture(manager, WOK_FILE, true);
+        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
+        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
+
+        // Enemies
+        FIRE_ENEMY_WALK = createFilmStrip(manager, FIRE_ENEMY_WALK_FILE, 1, 8, 8);
+        FIRE_ENEMY_FALL = createFilmStrip(manager, FIRE_ENEMY_FALL_FILE, 1, 6, 6);
+        OIL_ENEMY_WALK = createFilmStrip(manager, OIL_ENEMY_WALK_FILE, 1, 8, 8);
+        OIL_ENEMY_FALL = createFilmStrip(manager, OIL_ENEMY_FALL_FILE, 1, 6, 6);
+
+        // Firecracker filmstrip
+        // TODO don't hardcode the rows/cols/size
+        FIRECRACKER = createFilmStrip(manager, FIRECRACKER_FILE, 1, 1, 1);
+        FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
+        FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
+
+        // Oil
+        OIL_SPILLING = createFilmStrip(manager, OIL_SPILLING_FILE, 1, 12, 12);
+        OIL_TILE = createFilmStrip(manager, OIL_TILE_FILE, 1, 1, 1);
+
+        // Home stall textures
+        HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);
+
+        // Level select screen
+        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);
+        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE, true);
+        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE, true);
+        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE, true);
+        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE, true);
+        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE, true);
+        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE, true);
+        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE, true);
+        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE, true);
+        HEADER_TEXTURE = createTexture(manager, HEADER_FILE, true);
+        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE, true);
+
+        isLoaded = true;
+    }
+
+    // TODO: Potentially refactor this out to another class, and change to v2
+    private void playMusic() {
+        Music music = musics.get("audio/Night_Bite_(Theme).mp3");
+        music.setLooping(true);
+        music.play();
+        music.setVolume(0.1f);
+    }
+
+    /** Unloads the assets for this game. */
+    public void unloadContent(AssetManager manager) {
+        for (String s : assets) {
+            if (manager.isLoaded(s)) {
+                manager.unload(s);
+            }
+        }
+        this.isLoaded = false;
     }
 }

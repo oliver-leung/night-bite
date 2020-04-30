@@ -138,7 +138,7 @@ public class WorldController implements Screen, InputProcessor {
 
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
-        displayFont = Assets.font;
+        displayFont = Assets.getFont();
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
 //        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
 //        enemy.setDrawScale(worldModel.scale);

@@ -11,7 +11,6 @@ import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
-import edu.cornell.gdiac.util.PointSource;
 
 public class LevelController {
     private static LevelController instance;
@@ -49,7 +48,7 @@ public class LevelController {
                     switch (type) {
                         case "ground":
                             this.world.setBackground(
-                                    Assets.TEXTURES.get(asset.getString("texture")),
+                                    Assets.getTextureRegion(asset.getString("texture")),
                                     x, y
                             );
                             break;
@@ -129,7 +128,7 @@ public class LevelController {
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
-        Sprite sprite = new Sprite(Assets.TEXTURES.get(asset.getString("texture")));
+        Sprite sprite = new Sprite(Assets.getTextureRegion(asset.getString("texture")));
         int rotate = asset.getInt("rotate") % 4;
         sprite.rotate((float) rotate * -90f);
         sprite.setPosition(x * world.getScale().x, y * world.getScale().y);
@@ -188,7 +187,7 @@ public class LevelController {
     private void createItem(int x, int y) {
         ItemModel item = new ItemModel(
                 x, y, itemNum,
-                Assets.TEXTURES.get("item/food1_64.png")
+                Assets.getTextureRegion("item/food1_64.png")
         );
 
         item.setName("item" + itemNum);
@@ -204,7 +203,7 @@ public class LevelController {
         home.setDrawScale(world.getScale());
         home.setActualScale(world.getActualScale());
 
-        TextureRegion texture = Assets.TEXTURES.get("character/Filmstrip/Player 1/P1_Walk_8.png");
+        TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/Player 1/P1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
         float pHeight = texture.getRegionHeight() / world.getScale().y;
         PlayerModel player = new PlayerModel(x, y, pWidth, pHeight, world.getWorld(), teamName, home);
@@ -225,7 +224,7 @@ public class LevelController {
         hole.setActualScale(world.getActualScale());
         hole.setName(holeJson.name());
         String texture = holeJson.getString("texture");
-        hole.setTexture(Assets.TEXTURES.get(texture));
+        hole.setTexture(Assets.getTextureRegion(texture));
         world.addStaticObject(hole);
     }
 
@@ -235,7 +234,7 @@ public class LevelController {
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
         String texture = wallJson.getString("texture");
-        wall.setTexture(Assets.TEXTURES.get(texture));
+        wall.setTexture(Assets.getTextureRegion(texture));
 
         if (wall.getTexture().getRegionWidth() > 65) {
             Vector2 pos = wall.getPosition();

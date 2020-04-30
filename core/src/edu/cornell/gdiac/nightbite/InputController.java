@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
@@ -102,12 +103,13 @@ public class InputController extends MechanicController {
         isReset = isReset || (!prevReset && temp1);
 
         // Music
-        // TODO: Remove reference to Assets class
+        // TODO: Remove reference to Assets class, and change to v2
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            if (Assets.music.getVolume() > 0) {
-                Assets.music.setVolume(0);
+            Music music = Assets.getMusic("audio/Night_Bite_(Theme).mp3");
+            if (music.getVolume() > 0) {
+                music.setVolume(0);
             } else {
-                Assets.music.setVolume(0.1f);
+                music.setVolume(0.1f);
             }
         }
     }
