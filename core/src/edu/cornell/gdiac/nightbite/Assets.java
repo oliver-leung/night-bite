@@ -93,6 +93,13 @@ public class Assets {
         return getFilmStrip(fileName, 64);
     }
 
+    /**
+     * Get the FilmStrip associated with this filename
+     *
+     * @param fileName File name of FilmStrip
+     * @param pixels   Width/height of each frame in pixels
+     * @return Associated FilmStrip
+     */
     public static FilmStrip getFilmStrip(String fileName, int pixels) {
         if (filmStrips.get(fileName) == null) {
             TextureRegion rawTexture = textureRegions.get(fileName);
@@ -116,7 +123,7 @@ public class Assets {
      * This helper methods is used to set texture settings (such as scaling, and
      * the number of animation frames) after loading.
      */
-    protected static FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
+    private static FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
         if (manager.isLoaded(file)) {
             FilmStrip strip = new FilmStrip(manager.get(file, Texture.class), rows, cols, size);
             strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -131,7 +138,7 @@ public class Assets {
      * This helper methods is used to set texture settings (such as scaling, and
      * whether or not the texture should repeat) after loading.
      */
-    protected static TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
+    private static TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
         if (manager.isLoaded(file)) {
             TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
             region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -175,22 +182,22 @@ public class Assets {
         }
     }
 
-    public void loadSound(String filePath) {
+    private void loadSound(String filePath) {
         manager.load(filePath, Sound.class);
         assets.add(filePath);
     }
 
-    public void loadMusic(String filePath) {
+    private void loadMusic(String filePath) {
         manager.load(filePath, Music.class);
         assets.add(filePath);
     }
 
-    public void loadTexture(String filePath) {
+    private void loadTexture(String filePath) {
         manager.load(filePath, Texture.class);
         assets.add(filePath);
     }
 
-    public void loadFont(String fontPath, int fontSize) {
+    private void loadFont(String fontPath, int fontSize) {
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = fontPath;
         size2Params.fontParameters.size = fontSize;
