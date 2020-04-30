@@ -12,28 +12,30 @@ import edu.cornell.gdiac.util.PooledList;
 import java.util.ArrayList;
 
 public class AIController implements RayCastCallback {
+    /** Number of frames between each path replan */
     private static final int REPLAN_TIME = 60;
+    /** AI will detect whether the player is within this radius */
     private float DETECTION_RADIUS = 5f; // About 5 tiles
 
+    /** Reference to the World that the AI is in. Needed to determine line of sight and AABB boxes. */
     private World world;
-    /** Reference to the WorldModel that the AI is in. Needed to determine line of sight. */
-    private WorldModel worldModel;
     /** Reference to the enemy that is being controlled */
     private HumanoidModel enemy;
     /** During ray cast, the position of the first body that the ray collided with */
     private Vector2 contactPoint;
 
     private PooledList<GridPoint2> target;
+    /** Where the AI was during path planning */
     private GridPoint2 positionCache;
 
     private PooledList<GridPoint2> targetPath;
     private Vector2 walkDirectionCache;
 
+    /** Number of frames until the next path replan */
     private int replanCountdown;
 
 
     public AIController(WorldModel worldModel, HumanoidModel enemy) {
-        this.worldModel = worldModel;
         this.world = worldModel.getWorld();
         this.enemy = enemy;
         target = new PooledList<>();
@@ -58,7 +60,7 @@ public class AIController implements RayCastCallback {
     public boolean canSee(Vector2 source, Vector2 target) {
         contactPoint = null;
 
-        worldModel.getWorld().rayCast(this, source, target);
+        world.rayCast(this, source, target);
         if (contactPoint == null) {
             return false;
         }
