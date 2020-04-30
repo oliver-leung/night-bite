@@ -5,11 +5,12 @@ import edu.cornell.gdiac.util.FilmStrip;
 
 public class OilModel extends ImmovableModel {
     private int spillngFrame = 12;
-    private FilmStrip defaultTexture = Assets.OIL_SPILLING;
+    private FilmStrip defaultTexture;
 
     public OilModel(float x, float y){
         super(x, y, 0);
         setSensor(true);
+        setTexture(Assets.getFilmStrip("item/oil_64_filmstrip.png"));
     }
 
     public void setTexture(FilmStrip texture) {
@@ -21,8 +22,9 @@ public class OilModel extends ImmovableModel {
         super.update(delta);
 
         if (spillngFrame == 0) { // Done with spilling animation
-            setTexture(Assets.OIL_TILE);
+            setTexture(Assets.getFilmStrip("item/oiltile_64.png"));
         } else {
+            defaultTexture.setFrame(12 - spillngFrame);
             spillngFrame--;
         }
     }

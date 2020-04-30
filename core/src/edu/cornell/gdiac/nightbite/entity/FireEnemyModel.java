@@ -1,11 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.*;
-import edu.cornell.gdiac.util.PooledList;
-
-import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
+import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int THROW_COOLDOWN = 80;
@@ -15,11 +12,16 @@ public class FireEnemyModel extends EnemyModel {
     private int throwCooldown;
 
     public FireEnemyModel(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
+        super(
+                x, y, width, height,
+                Assets.getFilmStrip("character/Enemies/E1_64_Walk_FS_8.png"),
+                Assets.getFilmStrip("character/Enemies/E1_64_Falling_FS_5.png"),
+                world
+        );
 
         //TODO: FIX BELOW
-        setPosition(x,y+0.1f); // this is mmoved up so they dont spawn and die
-        setHomePosition(new Vector2(x+0.5f, y+0.6f));
+        setPosition(x, y + 0.1f); // this is mmoved up so they dont spawn and die
+        setHomePosition(new Vector2(x + 0.5f, y + 0.6f));
     }
 
     public void attack(PlayerModel p) {

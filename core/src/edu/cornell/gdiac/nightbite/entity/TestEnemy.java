@@ -20,7 +20,10 @@ public class TestEnemy extends HumanoidModel {
     private int walkCooldown;
 
     public TestEnemy(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL);
+        super(
+                x, y, width, height,
+                Assets.getFilmStrip("character/Enemies/E1_64_Walk_FS_8.png"),
+                Assets.getFilmStrip("character/Enemies/E1_64_Falling_FS_5.png"));
         setDensity(MOVABLE_OBJ_DENSITY);
         setFriction(MOVABLE_OBJ_FRICTION);
         setRestitution(MOVABLE_OBJ_RESTITUTION);

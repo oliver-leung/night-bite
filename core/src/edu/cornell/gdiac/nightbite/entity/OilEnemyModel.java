@@ -7,7 +7,12 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class OilEnemyModel extends EnemyModel {
     public OilEnemyModel(float x, float y, float width, float height,  WorldModel world) {
-        super(x, y, width, height, Assets.OIL_ENEMY_WALK, Assets.OIL_ENEMY_FALL, world);
+        super(
+                x, y, width, height,
+                Assets.getFilmStrip("character/Enemies/E2_64_Walk_FS_8.png"),
+                Assets.getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png"),
+                world
+        );
     }
 
     public void attack(PlayerModel p) {

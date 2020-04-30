@@ -27,47 +27,35 @@ import java.util.Map;
 // drawing/other functions
 
 public class Assets {
-    // Sound
+    /** Sound effect volume */
     public static float EFFECT_VOLUME = 0.1f;
-    /**
-     * LOADED ASSETS
-     */
-    public static FilmStrip PLAYER_FILMSTRIP;
-    public static FilmStrip PLAYER_HOLD_FILMSTRIP;
-    public static FilmStrip PLAYER_FALL_FILMSTRIP;
-    public static TextureRegion WOK;
-    public static TextureRegion PLAYER_SHADOW;
-    public static TextureRegion PLAYER_ARROW;
-    public static FilmStrip HOME_STALL;
-    public static FilmStrip FIRE_ENEMY_WALK;
-    public static FilmStrip FIRE_ENEMY_FALL;
-    public static FilmStrip OIL_ENEMY_WALK;
-    public static FilmStrip OIL_ENEMY_FALL;
-    public static FilmStrip OIL_SPILLING;
-    public static FilmStrip OIL_TILE;
+    /** Asset Manager */
+    private static AssetManager manager;
+    /** Mapping from file names to in-game film strip assets */
+    private static Map<String, FilmStrip> filmStrips = new HashMap<>();
+    /** Reference to the sound effect controller */
+    private final SoundController soundController = SoundController.getInstance();
+    /** File path to assets */
+    private URI assetsUri;
+    /** Track all loaded assets (for unloading purposes) */
+    private Array<String> assets = new Array<>();
+
     /** Mapping from file names to in-game texture assets */
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
-    private static Map<String, FilmStrip> filmStrips = new HashMap<>();
+    /** Names of all files to be loaded */
+    private List<String> fileNames = new ArrayList<>();
     /** In-game music asset */
     private static Map<String, Music> musics = new HashMap<>();
     /** In-game font asset */
     private static BitmapFont font;
-    private final SoundController soundController = SoundController.getInstance();
-    // TODO: Delete these filmstrip constants
-    private URI uri;
-    /** Asset Manager */
-    private static AssetManager manager;
     /** Track load status */
     private boolean isLoaded = false;
-    /** Track all loaded assets (for unloading purposes) */
-    private Array<String> assets = new Array<>();
-    private List<String> fileNames = new ArrayList<>();
 
     public Assets(AssetManager manager) {
         Assets.manager = manager;
 
         File assets = new File(Gdx.files.getLocalStoragePath());
-        uri = assets.toURI();
+        assetsUri = assets.toURI();
 
         listAssets(assets);
         preLoadContent();
@@ -85,20 +73,31 @@ public class Assets {
      * Get the FilmStrip dimensions of a TextureRegion (if it were a FilmStrip)
      *
      * @param textureRegion Raw texture region
+     * @param pixels        height/width of one frame in pixels
      * @return [rows, cols, size]
      */
-    private static int[] getFilmStripDimensions(TextureRegion textureRegion) {
-        int rows = textureRegion.getRegionHeight() / 64;
-        int cols = textureRegion.getRegionWidth() / 64;
+    private static int[] getFilmStripDimensions(TextureRegion textureRegion, int pixels) {
+        int rows = textureRegion.getRegionHeight() / pixels;
+        int cols = textureRegion.getRegionWidth() / pixels;
         int size = rows * cols;
 
         return new int[]{rows, cols, size};
     }
 
+    /**
+     * Get the FilmStrip associated with this filename, assuming that each frame is 64 x 64 pixels
+     *
+     * @param fileName File name of FilmStrip
+     * @return Associated FilmStrip
+     */
     public static FilmStrip getFilmStrip(String fileName) {
+        return getFilmStrip(fileName, 64);
+    }
+
+    public static FilmStrip getFilmStrip(String fileName, int pixels) {
         if (filmStrips.get(fileName) == null) {
             TextureRegion rawTexture = textureRegions.get(fileName);
-            int[] dims = getFilmStripDimensions(rawTexture);
+            int[] dims = getFilmStripDimensions(rawTexture, pixels);
             filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
         return new FilmStrip(filmStrips.get(fileName));
@@ -166,7 +165,7 @@ public class Assets {
      */
     private void listAssets(File asset) {
         if (asset.isFile()) {
-            fileNames.add(uri.relativize(asset.toURI()).toString());
+            fileNames.add(assetsUri.relativize(asset.toURI()).toString());
         } else if (asset.isDirectory()) {
             File[] subAssets = asset.listFiles();
             assert subAssets != null;
@@ -248,30 +247,7 @@ public class Assets {
                     break;
             }
         }
-
         playMusic();
-
-        // Player & Items
-        PLAYER_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Dash_5.png");
-        PLAYER_HOLD_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
-        PLAYER_FALL_FILMSTRIP = getFilmStrip("character/P1_Falling_5.png");
-        WOK = getTextureRegion("character/wok_64_nohand.png");
-        PLAYER_SHADOW = getTextureRegion("character/shadow.png");
-        PLAYER_ARROW = getTextureRegion("character/arrow.png");
-
-        // Enemies
-        FIRE_ENEMY_WALK = getFilmStrip("character/Enemies/E1_64_Walk_FS_8.png");
-        FIRE_ENEMY_FALL = getFilmStrip("character/Enemies/E1_64_Falling_FS_5.png");
-        OIL_ENEMY_WALK = getFilmStrip("character/Enemies/E2_64_Walk_FS_8.png");
-        OIL_ENEMY_FALL = getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png");
-
-        // Oil
-        OIL_SPILLING = getFilmStrip("item/oil_64_filmstrip.png");
-        OIL_TILE = getFilmStrip("item/oiltile_64.png");
-
-        // Home stall textures
-        HOME_STALL = getFilmStrip("environment/StallHome_64_fs.png");
-
         isLoaded = true;
     }
 
