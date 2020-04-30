@@ -1,14 +1,11 @@
 package edu.cornell.gdiac.nightbite;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import edu.cornell.gdiac.nightbite.entity.*;
-import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
-import edu.cornell.gdiac.nightbite.obstacle.CapsuleObstacle;
 import edu.cornell.gdiac.util.SoundController;
 
 
@@ -17,6 +14,7 @@ public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
     public static final int ITEMS_TO_WIN = 3;
+    private final String FX_FALL_FILE = "audio/whistle.wav";
 
     private WorldModel worldModel;
 
@@ -137,7 +135,7 @@ public class CollisionController implements ContactListener {
                 player.clearInventory();
             }
 
-            SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
 
         } else if (object instanceof ItemModel) {
 
@@ -173,7 +171,7 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
-            SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
         }
     }
 
@@ -182,7 +180,7 @@ public class CollisionController implements ContactListener {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
-                SoundController.getInstance().play(Assets.FX_FALL_FILE, Assets.FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
             }
 
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {

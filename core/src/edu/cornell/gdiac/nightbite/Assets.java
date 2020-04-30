@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
 
@@ -29,24 +27,8 @@ import java.util.Map;
 // drawing/other functions
 
 public class Assets {
-    // Level select screen
-    private static final String LEVEL_SELECT_BACKGROUND_FILE = "level_select/Background.png";
-    private static final String LEVEL1_TILE_FILE = "level_select/#1.png";
-    private static final String LEVEL2_TILE_FILE = "level_select/#2.png";
-    private static final String LEVEL3_TILE_FILE = "level_select/#3.png";
-    private static final String LEVEL1_STALL_FILE = "level_select/LVL1_Stall.png";
-    private static final String LEVEL2_STALL_FILE = "level_select/LVL2_Stall.png";
-    private static final String LEVEL3_STALL_FILE = "level_select/LVL3_Stall.png";
-    private static final String ARROW_BUTTON_FILE = "level_select/Arrow.png";
-    private static final String BACK_BUTTON_FILE = "level_select/Back.png";
-    private static final String HEADER_FILE = "level_select/Header.png";
-    private static final String PLAYER_FILE = "level_select/Lin_128px.png";
     // Sound
     public static float EFFECT_VOLUME = 0.1f;
-    public static String FX_DELIVER_FILE = "audio/delivered.wav";
-    public static String FX_PICKUP_FILE = "audio/pickup.wav";
-    public static String FX_FIRECRACKER_FILE = "audio/firecracker.wav";
-    public static String FX_FALL_FILE = "audio/whistle.wav";
     /**
      * LOADED ASSETS
      */
@@ -66,65 +48,15 @@ public class Assets {
     public static FilmStrip FIRECRACKER_DET;
     public static FilmStrip OIL_SPILLING;
     public static FilmStrip OIL_TILE;
-    // Level select
-    public static TextureRegion LEVEL_SELECT_BACKGROUND;
-    public static TextureRegion TILE_1_TEXTURE;
-    public static TextureRegion TILE_2_TEXTURE;
-    public static TextureRegion TILE_3_TEXTURE;
-    public static TextureRegion STORE_1_TEXTURE;
-    public static TextureRegion STORE_2_TEXTURE;
-    public static TextureRegion STORE_3_TEXTURE;
-    public static TextureRegion ARROW_TEXTURE;
-    public static TextureRegion BACK_TEXTURE;
-    public static TextureRegion HEADER_TEXTURE;
-    public static TextureRegion PLAYER_TEXTURE;
-    static String PLAYER_HOLDING_FILMSTRIP_FILE = "character/Filmstrip/Player 1/P1_Holding_8.png";
-    static int PLAYER_HOLDING_FILMSTRIP_ROW = 1;
-    static int PLAYER_HOLDING_FILMSTRIP_COL = 8;
-    static int PLAYER_HOLDING_FILMSTRIP_SIZE = 8;
-    static String PLAYER_FALLING_FILMSTRIP_FILE = "character/P1_Falling_5.png";
-    static int PLAYER_FALLING_FILMSTRIP_ROW = 1;
-    static int PLAYER_FALLING_FILMSTRIP_COL = 6;
-    static int PLAYER_FALLING_FILMSTRIP_SIZE = 6;
-    static String WOK_FILE = "character/wok_64_nohand.png";
-    static String PLAYER_SHADOW_FILE = "character/shadow.png";
-    static String PLAYER_ARROW_FILE = "character/arrow.png";
-    /* Enemies */
-    static String FIRE_ENEMY_WALK_FILE = "character/Enemies/E1_64_Walk_FS_8.png";
-    static String FIRE_ENEMY_FALL_FILE = "character/Enemies/E1_64_Falling_FS_5.png";
-    static String OIL_ENEMY_WALK_FILE = "character/Enemies/E2_64_Walk_FS_8.png";
-    static String OIL_ENEMY_FALL_FILE = "character/Enemies/E2_64_Falling_FS_5.png";
-    /* Firecracker filmstrip files */
-    static String FIRECRACKER_FILE = "item/firecracker_64.png";
-    static String FIRECRACKER_LIT_FILE = "item/firecracker_fuse_64_fs.png";
-    static String FIRECRACKER_DET_FILE = "item/firecracker_detonating_64_fs.png";
-    /* Oil */
-    static String OIL_SPILLING_FILE = "item/oil_64_filmstrip.png";
-    static String OIL_TILE_FILE = "item/oiltile_64.png";
-    // Item
-    static String FISH_ITEM_FILE = "item/food1_64.png";
-    // Obstacle
-    static String WALL_PA1_FILE = "environment/Box_64.png";
-    static String WALL_PA2_FILE = "environment/box_palette2_64.png";
-    // Home stall
-    static String HOME_STALL_FILE = "environment/StallHome_64_fs.png";
-    static String MUSIC_FILE = "audio/Night_Bite_(Theme)_v2.wav";
     /** Mapping from file names to in-game texture assets */
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
     private static Map<String, FilmStrip> filmStrips = new HashMap<>();
     /** In-game music asset */
     private static Map<String, Music> musics = new HashMap<>();
-    /** Mapping from file names to in-game sound effects */
-    private static Map<String, Sound> sounds = new HashMap<>();
     /** In-game font asset */
     private static BitmapFont font;
-    /** Keys that map to static texture file names */
-    private final String[] textureKeys = new String[]{"ground", "decoration", "hole", "character", "team", "wall", "item"};
     private final SoundController soundController = SoundController.getInstance();
     // TODO: Delete these filmstrip constants
-    int PLAYER_FILMSTRIP_ROW = 1;
-    int PLAYER_FILMSTRIP_COL = 8;
-    int PLAYER_FILMSTRIP_SIZE = 8;
     private URI uri;
     /** Asset Manager */
     private static AssetManager manager;
@@ -132,15 +64,10 @@ public class Assets {
     private boolean isLoaded = false;
     /** Track all loaded assets (for unloading purposes) */
     private Array<String> assets = new Array<>();
-    /** JSON Reader */
-    private JsonReader jsonReader = new JsonReader();
-    /** JSON of asset file names */
-    private JsonValue FILE_NAMES_JSON;
     private List<String> fileNames = new ArrayList<>();
 
     public Assets(AssetManager manager) {
         Assets.manager = manager;
-        FILE_NAMES_JSON = jsonReader.parse(Gdx.files.internal("assets.json"));
 
         File assets = new File(Gdx.files.getLocalStoragePath());
         uri = assets.toURI();
@@ -213,19 +140,8 @@ public class Assets {
         return null;
     }
 
-    /**
-     * Returns a newly loaded texture region for the given file.
-     * <p>
-     * This helper methods is used to set texture settings (such as scaling, and
-     * whether or not the texture should repeat) after loading.
-     */
     protected static TextureRegion createTexture(AssetManager manager, String file) {
-        if (manager.isLoaded(file)) {
-            TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
-            region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return region;
-        }
-        return null;
+        return createTexture(manager, file, true);
     }
 
     /**
@@ -341,43 +257,29 @@ public class Assets {
         // Player & Items
         PLAYER_FILMSTRIP = getFilmStrip("character/Filmstrip/Player 1/P1_Dash_5.png");
         PLAYER_HOLD_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
-        PLAYER_FALL_FILMSTRIP = createFilmStrip(manager, PLAYER_FALLING_FILMSTRIP_FILE, PLAYER_FALLING_FILMSTRIP_ROW,
-                PLAYER_FALLING_FILMSTRIP_COL, PLAYER_FALLING_FILMSTRIP_SIZE);
-        WOK = createTexture(manager, WOK_FILE, true);
-        PLAYER_SHADOW = createTexture(manager, PLAYER_SHADOW_FILE, true);
-        PLAYER_ARROW = createTexture(manager, PLAYER_ARROW_FILE, true);
+        PLAYER_FALL_FILMSTRIP = getFilmStrip("character/P1_Falling_5.png");
+        WOK = getTextureRegion("character/wok_64_nohand.png");
+        PLAYER_SHADOW = getTextureRegion("character/shadow.png");
+        PLAYER_ARROW = getTextureRegion("character/arrow.png");
 
         // Enemies
-        FIRE_ENEMY_WALK = createFilmStrip(manager, FIRE_ENEMY_WALK_FILE, 1, 8, 8);
-        FIRE_ENEMY_FALL = createFilmStrip(manager, FIRE_ENEMY_FALL_FILE, 1, 6, 6);
-        OIL_ENEMY_WALK = createFilmStrip(manager, OIL_ENEMY_WALK_FILE, 1, 8, 8);
-        OIL_ENEMY_FALL = createFilmStrip(manager, OIL_ENEMY_FALL_FILE, 1, 6, 6);
+        FIRE_ENEMY_WALK = getFilmStrip("character/Enemies/E1_64_Walk_FS_8.png");
+        FIRE_ENEMY_FALL = getFilmStrip("character/Enemies/E1_64_Falling_FS_5.png");
+        OIL_ENEMY_WALK = getFilmStrip("character/Enemies/E2_64_Walk_FS_8.png");
+        OIL_ENEMY_FALL = getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png");
 
         // Firecracker filmstrip
         // TODO don't hardcode the rows/cols/size
-        FIRECRACKER = createFilmStrip(manager, FIRECRACKER_FILE, 1, 1, 1);
-        FIRECRACKER_LIT = createFilmStrip(manager, FIRECRACKER_LIT_FILE, 1, 5, 5);
-        FIRECRACKER_DET = createFilmStrip(manager, FIRECRACKER_DET_FILE, 1, 7, 7);
+        FIRECRACKER = getFilmStrip("item/firecracker_64.png");
+        FIRECRACKER_LIT = getFilmStrip("item/firecracker_fuse_64_fs.png");
+        FIRECRACKER_DET = getFilmStrip("item/firecracker_detonating_64_fs.png");
 
         // Oil
-        OIL_SPILLING = createFilmStrip(manager, OIL_SPILLING_FILE, 1, 12, 12);
-        OIL_TILE = createFilmStrip(manager, OIL_TILE_FILE, 1, 1, 1);
+        OIL_SPILLING = getFilmStrip("item/oil_64_filmstrip.png");
+        OIL_TILE = getFilmStrip("item/oiltile_64.png");
 
         // Home stall textures
-        HOME_STALL = createFilmStrip(manager, HOME_STALL_FILE, 1, 4, 4);
-
-        // Level select screen
-        LEVEL_SELECT_BACKGROUND = createTexture(manager, LEVEL_SELECT_BACKGROUND_FILE, true);
-        TILE_1_TEXTURE = createTexture(manager, LEVEL1_TILE_FILE, true);
-        TILE_2_TEXTURE = createTexture(manager, LEVEL2_TILE_FILE, true);
-        TILE_3_TEXTURE = createTexture(manager, LEVEL3_TILE_FILE, true);
-        STORE_1_TEXTURE = createTexture(manager, LEVEL1_STALL_FILE, true);
-        STORE_2_TEXTURE = createTexture(manager, LEVEL2_STALL_FILE, true);
-        STORE_3_TEXTURE = createTexture(manager, LEVEL3_STALL_FILE, true);
-        ARROW_TEXTURE = createTexture(manager, ARROW_BUTTON_FILE, true);
-        BACK_TEXTURE = createTexture(manager, BACK_BUTTON_FILE, true);
-        HEADER_TEXTURE = createTexture(manager, HEADER_FILE, true);
-        PLAYER_TEXTURE = createTexture(manager, PLAYER_FILE, true);
+        HOME_STALL = getFilmStrip("environment/StallHome_64_fs.png");
 
         isLoaded = true;
     }

@@ -11,6 +11,18 @@ import edu.cornell.gdiac.util.ScreenListener;
 
 public class LevelSelectController implements Screen, InputProcessor {
 
+    private static TextureRegion PLAYER_TEXTURE;
+    private static TextureRegion HEADER_TEXTURE;
+    private static TextureRegion BACK_TEXTURE;
+    private static TextureRegion ARROW_TEXTURE;
+    private static TextureRegion STORE_3_TEXTURE;
+    private static TextureRegion STORE_2_TEXTURE;
+    private static TextureRegion STORE_1_TEXTURE;
+    private static TextureRegion TILE_3_TEXTURE;
+    private static TextureRegion TILE_2_TEXTURE;
+    private static TextureRegion TILE_1_TEXTURE;
+    // Level select
+    private static TextureRegion LEVEL_SELECT_BACKGROUND;
     /** Textures */ // TODO refactor asset manager
     private TextureRegion background;
     private TextureRegion tile1Texture;
@@ -90,17 +102,30 @@ public class LevelSelectController implements Screen, InputProcessor {
     }
 
     public void loadContent() {
-        background = Assets.LEVEL_SELECT_BACKGROUND;
-        tile1Texture = Assets.TILE_1_TEXTURE;
-        tile2Texture = Assets.TILE_2_TEXTURE;
-        tile3Texture = Assets.TILE_3_TEXTURE;
-        store1Texture = Assets.STORE_1_TEXTURE;
-        store2Texture = Assets.STORE_2_TEXTURE;
-        store3Texture = Assets.STORE_3_TEXTURE;
-        arrowTexture = Assets.ARROW_TEXTURE;
-        backTexture = Assets.BACK_TEXTURE;
-        headerTexture = Assets.HEADER_TEXTURE;
-        playerTexture = Assets.PLAYER_TEXTURE;
+        // TODO: This is what I could quickly do using IntelliJ's refactoring tools lmao
+        LEVEL_SELECT_BACKGROUND = Assets.getTextureRegion("level_select/Background.png");
+        TILE_1_TEXTURE = Assets.getTextureRegion("level_select/#1.png");
+        TILE_2_TEXTURE = Assets.getTextureRegion("level_select/#2.png");
+        TILE_3_TEXTURE = Assets.getTextureRegion("level_select/#3.png");
+        STORE_1_TEXTURE = Assets.getTextureRegion("level_select/LVL1_Stall.png");
+        STORE_2_TEXTURE = Assets.getTextureRegion("level_select/LVL2_Stall.png");
+        STORE_3_TEXTURE = Assets.getTextureRegion("level_select/LVL3_Stall.png");
+        ARROW_TEXTURE = Assets.getTextureRegion("level_select/Arrow.png");
+        BACK_TEXTURE = Assets.getTextureRegion("level_select/Back.png");
+        HEADER_TEXTURE = Assets.getTextureRegion("level_select/Header.png");
+        PLAYER_TEXTURE = Assets.getTextureRegion("level_select/Lin_128px.png");
+
+        background = LEVEL_SELECT_BACKGROUND;
+        tile1Texture = TILE_1_TEXTURE;
+        tile2Texture = TILE_2_TEXTURE;
+        tile3Texture = TILE_3_TEXTURE;
+        store1Texture = STORE_1_TEXTURE;
+        store2Texture = STORE_2_TEXTURE;
+        store3Texture = STORE_3_TEXTURE;
+        arrowTexture = ARROW_TEXTURE;
+        backTexture = BACK_TEXTURE;
+        headerTexture = HEADER_TEXTURE;
+        playerTexture = PLAYER_TEXTURE;
     }
 
     public String getSelectedLevelJSON () {
