@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.nightbite;
+package edu.cornell.gdiac.util;
 
 import com.badlogic.gdx.ApplicationLogger;
 
