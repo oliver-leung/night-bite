@@ -13,19 +13,26 @@ public class OilModel extends ImmovableModel {
     /* Expected timestep age of oil spilling */
     private int spillingAge = 170;
 
-    private FilmStrip defaultTexture = Assets.OIL_SPILLING;
+    private FilmStrip defaultTexture;
 
-    public OilModel(float x, float y){
+    public OilModel(float x, float y) {
         super(x, y, 0);
         setSensor(true);
-        setTexture(defaultTexture);
+        setTexture(Assets.getFilmStrip("item/oil_64_filmstrip.png"));
+    }
+
+    public void setTexture(FilmStrip texture) {
+        if (defaultTexture == null) {
+            defaultTexture = texture;
+        }
+        super.setTexture(texture);
     }
 
     public void update(float delta) {
         super.update(delta);
 
         if (spillingAge == 0) {// Done with spilling animation
-            setTexture(Assets.OIL_TILE);
+            setTexture(Assets.getFilmStrip("item/oiltile_64.png"));
         } else { // Animate spilling
             spillingAge--;
             frame += ANIMATION_SPEED;

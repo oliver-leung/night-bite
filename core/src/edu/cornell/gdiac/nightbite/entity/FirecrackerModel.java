@@ -1,10 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.Assets;
-import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
@@ -37,6 +35,10 @@ public class FirecrackerModel extends BoxObstacle {
     private static final float NUM_FRAMES_LIT = 5;
     /* The number of animation frames in our detonating filmstrip */
     private static final float NUM_FRAMES_DET = 7;
+    public static FilmStrip FIRECRACKER;
+    public static FilmStrip FIRECRACKER_LIT;
+    public static FilmStrip FIRECRACKER_DET;
+    private static String FX_FIRECRACKER_FILE = "audio/firecracker.wav";
 
     /* Age counter of firecracker while cold */
     private int age;
@@ -85,9 +87,14 @@ public class FirecrackerModel extends BoxObstacle {
     public FirecrackerModel(World world, float x, float y, float width, float height) {
         super(x, y, width, height);
 
-        this.texture = Assets.FIRECRACKER;
-        litTexture = Assets.FIRECRACKER_LIT;
-        detTexture = Assets.FIRECRACKER_DET;
+        // TODO: Inline and delete these fields
+        FIRECRACKER = Assets.getFilmStrip("item/firecracker_64.png");
+        FIRECRACKER_LIT = Assets.getFilmStrip("item/firecracker_fuse_64_fs.png");
+        FIRECRACKER_DET = Assets.getFilmStrip("item/firecracker_detonating_64_fs.png");
+
+        this.texture = FIRECRACKER;
+        litTexture = FIRECRACKER_LIT;
+        detTexture = FIRECRACKER_DET;
         setTexture(this.texture);
 
         setDensity(MOVABLE_OBJECT_DENSITY);
@@ -192,7 +199,7 @@ public class FirecrackerModel extends BoxObstacle {
                 detonating = false;
                 frame = 0f;
                 setTexture(litTexture);
-                SoundController.getInstance().play(Assets.FX_FIRECRACKER_FILE, Assets.FX_FIRECRACKER_FILE, false, Assets.EFFECT_VOLUME);
+                SoundController.getInstance().play(FX_FIRECRACKER_FILE, FX_FIRECRACKER_FILE, false, Assets.EFFECT_VOLUME);
             }
         }
 

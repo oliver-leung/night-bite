@@ -24,7 +24,7 @@ public class PlayerModel extends HumanoidModel {
 
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
-    private static final int SLIDE_FRAMES=50; // Slide through about 3-4 tiles
+    private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
 
     public enum MoveState {
         WALK,
@@ -101,7 +101,11 @@ public class PlayerModel extends HumanoidModel {
     private HomeModel home;
 
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
-        super(x, y, width, height, Assets.PLAYER_FILMSTRIP, Assets.PLAYER_FALL_FILMSTRIP);
+        super(
+                x, y, width, height,
+                Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Dash_5.png"),
+                Assets.getFilmStrip("character/P1_Falling_5.png")
+        );
         setBullet(true);
 
         impulse = new Vector2();
@@ -118,17 +122,17 @@ public class PlayerModel extends HumanoidModel {
         team = playerTeam;
         setHomePosition(home.getPosition());
 
-        defaultHandheld = new TextureRegion(Assets.WOK);
-        handheld = new TextureRegion(Assets.WOK);
+        defaultHandheld = Assets.getTextureRegion("character/wok_64_nohand.png");
+        handheld = Assets.getTextureRegion("character/wok_64_nohand.png");
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
-        shadow = Assets.PLAYER_SHADOW;
-        arrow = Assets.PLAYER_ARROW;
+        shadow = Assets.getTextureRegion("character/shadow.png");
+        arrow = Assets.getTextureRegion("character/arrow.png");
         swingCooldown = 0;
         alternateShadow = false;
 
-        this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
+        this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
         this.world = world;
     }
 

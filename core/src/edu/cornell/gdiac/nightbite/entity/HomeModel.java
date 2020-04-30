@@ -7,6 +7,7 @@ import edu.cornell.gdiac.util.SoundController;
 
 public class HomeModel extends ImmovableModel {
 
+    private static String FX_DELIVER_FILE = "audio/delivered.wav";
     private String team;
     private int score;
 
@@ -17,7 +18,7 @@ public class HomeModel extends ImmovableModel {
      */
     public HomeModel(float x, float y, String team) {
         super(x, y, 0);
-        this.texture = Assets.HOME_STALL;
+        this.texture = Assets.getFilmStrip("environment/StallHome_64_fs.png", 128);
         setTexture(this.texture);
 
         this.team = team;
@@ -40,7 +41,7 @@ public class HomeModel extends ImmovableModel {
      */
     public void incrementScore(int increase) {
         score = score + increase;
-        SoundController.getInstance().play(Assets.FX_DELIVER_FILE, Assets.FX_DELIVER_FILE, false, Assets.EFFECT_VOLUME);
+        SoundController.getInstance().play(FX_DELIVER_FILE, FX_DELIVER_FILE, false, Assets.EFFECT_VOLUME);
 
         // TODO need to safely set the texture
         if (score < 4) ((FilmStrip) texture).setFrame(score);

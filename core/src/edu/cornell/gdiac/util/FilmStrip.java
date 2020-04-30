@@ -27,7 +27,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * The class breaks up the image into regions, according the number of
  * rows and columns in the image.  It then indexes each region by frame,
  * starting from the top-left and processing one row at a time.
- * 
+ *
  * This is a subclass of TextureRegion, and so it keeps a rectangle region
  * that tracks the active part of the image to use for drawing.  See the
  * API for that class to understand how a TextureRegion.  The primary 
@@ -36,38 +36,49 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class FilmStrip extends TextureRegion {
 	/** The number of columns in this filmstrip */
+	private int rows;
+	/** The number of columns in this filmstrip */
 	private int cols;
-	
+
 	/** The width of a single frame; computed from column count */
 	private int rwidth;
-	
+
 	/** The height of a single frame; computed from row count */
 	private int rheight;
-	
+
 	/** The number of frames in this filmstrip */
 	private int size;
-	
+
 	/** The active animation frame */
 	private int frame;
-	
+
+	public FilmStrip(FilmStrip filmStrip) {
+		this(filmStrip.getTexture(), filmStrip.rows, filmStrip.cols, filmStrip.size);
+
+		Texture texture = filmStrip.getTexture();
+		rwidth = texture.getWidth() / cols;
+		rheight = texture.getHeight() / rows;
+		setFrame(filmStrip.getFrame());
+	}
+
 	/**
 	 * Creates a new filmstrip from the given texture.
-	 * 
+	 *
 	 * @param texture The texture image to use
-	 * @param rows The number of rows in the filmstrip
-	 * @param cols The number of columns in the filmstrip
+	 * @param rows    The number of rows in the filmstrip
+	 * @param cols    The number of columns in the filmstrip
 	 */
 	public FilmStrip(Texture texture, int rows, int cols) {
-		this(texture,rows,cols,rows*cols);
+		this(texture, rows, cols, rows * cols);
 	}
-	
+
 	/**
 	 * Creates a new filmstrip from the given texture.
-	 * 
+	 *
 	 * The parameter size is to indicate that there are unused frames in
 	 * the filmstrip.  The value size must be less than or equal to
 	 * rows*cols, or this constructor will raise an error.
-	 * 
+	 *
 	 * @param texture The texture image to use
 	 * @param rows The number of rows in the filmstrip
 	 * @param cols The number of columns in the filmstrip
@@ -75,14 +86,15 @@ public class FilmStrip extends TextureRegion {
 	 */
 	public FilmStrip(Texture texture, int rows, int cols, int size) {
 		super(texture);
-		if (size > rows*cols) {
+		if (size > rows * cols) {
 			Gdx.app.error("FilmStrip", "Invalid strip size", new IllegalArgumentException());
 			return;
 		}
+		this.rows = rows;
 		this.cols = cols;
 		this.size = size;
-		rwidth  = texture.getWidth()/cols;
-		rheight = texture.getHeight()/rows;
+		rwidth = texture.getWidth() / cols;
+		rheight = texture.getHeight() / rows;
 		setFrame(0);
 	}
 	

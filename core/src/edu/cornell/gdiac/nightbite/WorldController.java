@@ -56,6 +56,7 @@ public class WorldController implements Screen, InputProcessor {
     public static final int WORLD_VELOC = 6;
     /** Number of position iterations for the constrain solvers. */
     public static final int WORLD_POSIT = 2;
+    private static String FX_PICKUP_FILE = "audio/pickup.wav";
 
     /** Reference to the game canvas */
     protected GameCanvas canvas;
@@ -138,7 +139,7 @@ public class WorldController implements Screen, InputProcessor {
 
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
-        displayFont = Assets.FONT;
+        displayFont = Assets.getFont();
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
 //        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
 //        enemy.setDrawScale(worldModel.scale);
@@ -365,7 +366,7 @@ public class WorldController implements Screen, InputProcessor {
                 if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
-                    SoundController.getInstance().play(Assets.FX_PICKUP_FILE, Assets.FX_PICKUP_FILE, false, Assets.EFFECT_VOLUME);
+                    SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.EFFECT_VOLUME);
                 }
                 j++;
             }
