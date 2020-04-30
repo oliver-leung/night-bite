@@ -103,9 +103,8 @@ public class InputController extends MechanicController {
         isReset = isReset || (!prevReset && temp1);
 
         // Music
-        // TODO: Remove reference to Assets class, and change to v2
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            Music music = Assets.getMusic("audio/Night_Bite_(Theme)_v2.mp3");
+            Music music = Assets.getMusic();
             if (music.getVolume() > 0) {
                 music.setVolume(0);
             } else {

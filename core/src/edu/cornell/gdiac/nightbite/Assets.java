@@ -109,6 +109,10 @@ public class Assets {
         return new FilmStrip(filmStrips.get(fileName));
     }
 
+    public static Music getMusic() {
+        return musics.get("audio/Night_Bite_(Theme)_v2.mp3");
+    }
+
     public static Music getMusic(String filename) {
         return musics.get(filename);
     }
@@ -257,9 +261,9 @@ public class Assets {
         isLoaded = true;
     }
 
-    // TODO: Potentially refactor this out to another class, and change to v2
+    // TODO: Potentially refactor this out to another class
     private void playMusic() {
-        Music music = musics.get("audio/Night_Bite_(Theme)_v2.mp3");
+        Music music = getMusic();
         music.setLooping(true);
         music.play();
         music.setVolume(0.1f);
