@@ -11,6 +11,8 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
+
 public class HumanoidModel extends SimpleObstacle {
 
     private static float SEAM_EPSILON = 0.01f;
@@ -150,6 +152,10 @@ public class HumanoidModel extends SimpleObstacle {
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
         setBullet(true);
+
+        setDensity(MOVABLE_OBJ_DENSITY);
+        setFriction(MOVABLE_OBJ_FRICTION);
+        setRestitution(MOVABLE_OBJ_RESTITUTION);
 
         this.texture = texture;
         this.fallTexture = fallTexture;

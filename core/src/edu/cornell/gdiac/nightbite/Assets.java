@@ -43,9 +43,6 @@ public class Assets {
     public static FilmStrip FIRE_ENEMY_FALL;
     public static FilmStrip OIL_ENEMY_WALK;
     public static FilmStrip OIL_ENEMY_FALL;
-    public static FilmStrip FIRECRACKER;
-    public static FilmStrip FIRECRACKER_LIT;
-    public static FilmStrip FIRECRACKER_DET;
     public static FilmStrip OIL_SPILLING;
     public static FilmStrip OIL_TILE;
     /** Mapping from file names to in-game texture assets */
@@ -255,7 +252,7 @@ public class Assets {
         playMusic();
 
         // Player & Items
-        PLAYER_FILMSTRIP = getFilmStrip("character/Filmstrip/Player 1/P1_Dash_5.png");
+        PLAYER_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Dash_5.png");
         PLAYER_HOLD_FILMSTRIP = getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
         PLAYER_FALL_FILMSTRIP = getFilmStrip("character/P1_Falling_5.png");
         WOK = getTextureRegion("character/wok_64_nohand.png");
@@ -267,12 +264,6 @@ public class Assets {
         FIRE_ENEMY_FALL = getFilmStrip("character/Enemies/E1_64_Falling_FS_5.png");
         OIL_ENEMY_WALK = getFilmStrip("character/Enemies/E2_64_Walk_FS_8.png");
         OIL_ENEMY_FALL = getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png");
-
-        // Firecracker filmstrip
-        // TODO don't hardcode the rows/cols/size
-        FIRECRACKER = getFilmStrip("item/firecracker_64.png");
-        FIRECRACKER_LIT = getFilmStrip("item/firecracker_fuse_64_fs.png");
-        FIRECRACKER_DET = getFilmStrip("item/firecracker_detonating_64_fs.png");
 
         // Oil
         OIL_SPILLING = getFilmStrip("item/oil_64_filmstrip.png");

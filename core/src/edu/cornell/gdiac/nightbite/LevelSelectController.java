@@ -104,9 +104,9 @@ public class LevelSelectController implements Screen, InputProcessor {
     public void loadContent() {
         // TODO: This is what I could quickly do using IntelliJ's refactoring tools lmao
         LEVEL_SELECT_BACKGROUND = Assets.getTextureRegion("level_select/Background.png");
-        TILE_1_TEXTURE = Assets.getTextureRegion("level_select/#1.png");
-        TILE_2_TEXTURE = Assets.getTextureRegion("level_select/#2.png");
-        TILE_3_TEXTURE = Assets.getTextureRegion("level_select/#3.png");
+        TILE_1_TEXTURE = Assets.getTextureRegion("level_select/1.png");
+        TILE_2_TEXTURE = Assets.getTextureRegion("level_select/2.png");
+        TILE_3_TEXTURE = Assets.getTextureRegion("level_select/3.png");
         STORE_1_TEXTURE = Assets.getTextureRegion("level_select/LVL1_Stall.png");
         STORE_2_TEXTURE = Assets.getTextureRegion("level_select/LVL2_Stall.png");
         STORE_3_TEXTURE = Assets.getTextureRegion("level_select/LVL3_Stall.png");
