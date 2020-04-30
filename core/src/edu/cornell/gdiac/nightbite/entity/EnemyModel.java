@@ -2,17 +2,12 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.QueryCallback;
-import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.*;
+import edu.cornell.gdiac.nightbite.AIController;
+import edu.cornell.gdiac.nightbite.AILattice;
+import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
-
-import java.util.ArrayList;
-
-import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 public abstract class EnemyModel extends HumanoidModel {
     private enum State {
@@ -34,9 +29,6 @@ public abstract class EnemyModel extends HumanoidModel {
 
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y,0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
-        setDensity(MOVABLE_OBJ_DENSITY);
-        setFriction(MOVABLE_OBJ_FRICTION);
-        setRestitution(MOVABLE_OBJ_RESTITUTION);
         setPosition(x, y);
         setHomePosition(new Vector2(x, y));
 
@@ -56,7 +48,7 @@ public abstract class EnemyModel extends HumanoidModel {
         switch (state) {
             case IDLE:
                 if (aiController.canDetectPlayer()) { // Player is within detection radius - attack
-                    state = state.ATTACK;
+                    state = State.ATTACK;
                     aiController.forceReplan();
                 }
                 break;
@@ -77,7 +69,7 @@ public abstract class EnemyModel extends HumanoidModel {
                     break;
                 } else if (aiController.canDetectPlayer()) { // Player is within detection radius - attack
                     previousDistanceFromHome = 0f; // Reset
-                    state = state.ATTACK;
+                    state = State.ATTACK;
                     aiController.forceReplan();
                     break;
                 }
@@ -87,7 +79,7 @@ public abstract class EnemyModel extends HumanoidModel {
                 break;
         }
         return dir;
-    };
+    }
 
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
 //        body.setLinearVelocity(Vector2.Zero);
