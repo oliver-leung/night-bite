@@ -13,9 +13,6 @@ import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
-import java.util.Vector;
-
-import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
 
 public class PlayerModel extends HumanoidModel {
 
@@ -27,7 +24,7 @@ public class PlayerModel extends HumanoidModel {
 
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
-    private static final int SLIDE_FRAMES=80;
+    private static final int SLIDE_FRAMES=50; // Slide through about 3-4 tiles
 
     public enum MoveState {
         WALK,
@@ -120,9 +117,6 @@ public class PlayerModel extends HumanoidModel {
         this.home = home;
         team = playerTeam;
         setHomePosition(home.getPosition());
-        setDensity(MOVABLE_OBJ_DENSITY);
-        setFriction(MOVABLE_OBJ_FRICTION);
-        setRestitution(MOVABLE_OBJ_RESTITUTION);
 
         defaultHandheld = new TextureRegion(Assets.WOK);
         handheld = new TextureRegion(Assets.WOK);
@@ -386,29 +380,29 @@ public class PlayerModel extends HumanoidModel {
     public void updateDirectionState(float vert, float hori) {
         arrowAngle = new Vector2(hori, vert).angleRad();
         if (hori == -1) {
-            arrowXOffset = -1 * texture.getRegionWidth()/2;
+            arrowXOffset = -1.0f * texture.getRegionWidth() / 2.0f;
         } else if (hori == 1) {
-            arrowXOffset = texture.getRegionWidth()/2;
+            arrowXOffset = texture.getRegionWidth() / 2.0f;
         } else {
             arrowXOffset = 0;
         }
         if (vert == -1) {
-            arrowYOffset = -1 * texture.getRegionHeight() * 3/4;
+            arrowYOffset = -1.0f * texture.getRegionHeight() * 3.0f / 4.0f;
         } else if (vert == 1){
-            arrowYOffset = -1 * texture.getRegionHeight()/5;
+            arrowYOffset = -1.0f * texture.getRegionHeight() / 5.0f;
         } else {
-            arrowYOffset = -1 * texture.getRegionHeight()/2;
+            arrowYOffset = -1.0f * texture.getRegionHeight() / 2.0f;
         }
     }
 
     @Override
     public void draw(GameCanvas canvas) {
         if (!isBoostCooldown() || alternateShadow) {
-            canvas.draw(shadow, Color.WHITE, origin.x - texture.getRegionWidth() / 4, origin.y + texture.getRegionHeight() / 15, getX() * drawScale.x, getY() * drawScale.y,
+            canvas.draw(shadow, Color.WHITE, origin.x - texture.getRegionWidth() / 4.0f, origin.y + texture.getRegionHeight() / 15.0f, getX() * drawScale.x, getY() * drawScale.y,
                     getAngle(), actualScale.x, actualScale.y);
         }
 
-        canvas.draw(arrow, Color.WHITE, arrow.getRegionWidth() / 2, arrow.getRegionHeight() / 2, getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
+        canvas.draw(arrow, Color.WHITE, arrow.getRegionWidth() / 2.0f, arrow.getRegionHeight() / 2.0f, getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
                 arrowAngle, actualScale.x, actualScale.y);
 
         super.draw(canvas);
@@ -417,17 +411,17 @@ public class PlayerModel extends HumanoidModel {
         float originY;
         float ox;
         if (flipHandheld) {
-            originX = -texture.getRegionWidth()/5;
+            originX = -texture.getRegionWidth() / 5.0f;
             ox = handheld.getRegionWidth();
         } else {
-            originX = texture.getRegionWidth()/5;
+            originX = texture.getRegionWidth() / 5.0f;
             ox = 0;
         }
 
         if (((FilmStrip) texture).getFrame() == 1) {
-            originY = -texture.getRegionHeight()/3;
+            originY = -texture.getRegionHeight() / 3.0f;
         } else {
-            originY = -texture.getRegionHeight()/5;
+            originY = -texture.getRegionHeight() / 5.0f;
         }
 
         // Don't draw weapon when holding item or dead

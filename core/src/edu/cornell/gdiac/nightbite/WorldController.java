@@ -163,9 +163,10 @@ public class WorldController implements Screen, InputProcessor {
         canvas.clear();
         canvas.begin();
 
+        // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-
-        worldModel.drawDecorations();
+        worldModel.drawDecorations(true);
+        worldModel.drawDecorations(false);
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
 
@@ -343,8 +344,10 @@ public class WorldController implements Screen, InputProcessor {
                 if (playerDidBoost && (playerHorizontal != 0 || playerVertical != 0)) {
                     p.setBoostImpulse(playerHorizontal, playerVertical);
                 }
-                p.applyImpulse();
             }
+
+            // Move player
+            p.applyImpulse();
 
             /* Play state */
             if (!p.isAlive()) {

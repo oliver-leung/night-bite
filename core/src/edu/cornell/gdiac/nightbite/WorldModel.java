@@ -81,8 +81,10 @@ public class WorldModel {
     private Array<LightSource> lights = new Array<>();
     /** Bottom layer background textures */
     private TextureRegion[][] background = new TextureRegion[20][12];
-    /** Top layer foreground textures */
-    private Sprite[][] decorations = new Sprite[20][12];
+    /** 1st layer foreground textures */
+    private Sprite[][] brick = new Sprite[20][12];
+    /** 2nd layer foreground textures */
+    private Sprite[][] lantern = new Sprite[20][12];
 
     private AILattice aiLattice;
 
@@ -416,16 +418,6 @@ public class WorldModel {
         return oils;
     }
 
-    public void removeOil(Object removeObj) {
-        Iterator itr = oils.iterator();
-        while (itr.hasNext()) {
-            Obstacle obj = (Obstacle) itr.next();
-            if (obj.equals(removeObj)) {
-                itr.remove();
-            }
-        }
-    }
-
     /**
      * TODO allow passing in of different lighting parameters
      */
@@ -568,8 +560,12 @@ public class WorldModel {
         background[x][y] = textureRegion;
     }
 
-    public void setDecorations(Sprite sprite, int x, int y) {
-        decorations[x][y] = sprite;
+    public void setBrick(Sprite sprite, int x, int y) {
+        brick[x][y] = sprite;
+    }
+
+    public void setLantern(Sprite sprite, int x, int y) {
+        lantern[x][y] = sprite;
     }
 
     public void setPixelBounds() {
@@ -616,10 +612,16 @@ public class WorldModel {
 //        canonicalToActual.applyTo(actualScale);
     }
 
-    public void drawDecorations() {
+    public void drawDecorations(boolean isbrick) {
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
-                Sprite sprite = decorations[i][j];
+                Sprite sprite;
+                if (isbrick) {
+                    sprite = brick[i][j];
+                } else {
+                    sprite = lantern[i][j];
+                }
+
                 if (sprite != null) {
                     sprite.draw(GameCanvas.getInstance().getSpriteBatch());
                 }

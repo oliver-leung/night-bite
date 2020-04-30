@@ -1,21 +1,17 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.*;
-import edu.cornell.gdiac.util.PooledList;
-
-import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
+import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int THROW_COOLDOWN = 80;
-    private static final int WALK_COOLDOWN = 10;
     private static final float THROW_DIST = 3;
     private static final float THROW_FORCE = 5f;
     private int throwCooldown;
 
-    public FireEnemyModel(float x, float y, float width, float height, WorldModel world) {
-        super(x, y, width, height, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
+    public FireEnemyModel(float x, float y, WorldModel world) {
+        super(x, y, Assets.FIRE_ENEMY_WALK, Assets.FIRE_ENEMY_FALL, world);
 
         //TODO: FIX BELOW
         setPosition(x,y+0.1f); // this is mmoved up so they dont spawn and die
@@ -39,7 +35,6 @@ public class FireEnemyModel extends EnemyModel {
         if (aiController.canSee(getPosition(), targetPos)
                 && getPosition().sub(targetPos).len() < THROW_DIST) {
             throwCooldown = THROW_COOLDOWN;
-            setWalkCooldown(WALK_COOLDOWN);
             return targetPos.cpy().sub(getPosition()).scl(THROW_FORCE);
         }
         return null;

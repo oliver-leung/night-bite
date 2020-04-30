@@ -195,5 +195,4 @@ public class AILattice {
                     (p2.x + 0.5f) * drawScale.x, (p2.y + 0.5f) * drawScale.y, color);
         }
     }
-
 }

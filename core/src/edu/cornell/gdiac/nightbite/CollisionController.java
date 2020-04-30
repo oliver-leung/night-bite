@@ -38,10 +38,11 @@ public class CollisionController implements ContactListener {
             handlePlayerToObjectContact((PlayerModel) b, a);
         }
 
-        if (a instanceof FireEnemyModel) {
-            handleEnemyToObjectContact((FireEnemyModel) a, b);
+        // Enemy-Object Contact
+        if (a instanceof EnemyModel) {
+            handleEnemyToObjectContact((EnemyModel) a, b);
         } else if (b instanceof FireEnemyModel) {
-            handleEnemyToObjectContact((FireEnemyModel) b, a);
+            handleEnemyToObjectContact((EnemyModel) b, a);
         }
 
         // Item-Object Contact
@@ -81,12 +82,12 @@ public class CollisionController implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
-        // Players walk through items and firecrackers
-        if ((a instanceof PlayerModel && b instanceof ItemModel) || (b instanceof PlayerModel && a instanceof ItemModel)) {
+        // Humanoids walk through items and firecrackers
+        if ((a instanceof HumanoidModel && b instanceof ItemModel) || (b instanceof HumanoidModel && a instanceof ItemModel)) {
             contact.setEnabled(false);
         } else if ((a instanceof ItemModel && ((ItemModel) a).holdingPlayer != null) || (b instanceof ItemModel && ((ItemModel) b).holdingPlayer != null)) {
             contact.setEnabled(false);
-        } else if ((a instanceof PlayerModel && b instanceof FirecrackerModel) || (b instanceof PlayerModel && a instanceof FirecrackerModel)) {
+        } else if ((a instanceof HumanoidModel && b instanceof FirecrackerModel) || (b instanceof HumanoidModel && a instanceof FirecrackerModel)) {
             contact.setEnabled(false);
         }
 
@@ -165,11 +166,11 @@ public class CollisionController implements ContactListener {
             }
         } else if (object instanceof OilModel) {
             player.setSlide();
-            worldModel.removeOil(object);
+            ((OilModel) object).markRemoved(true);
         }
     }
 
-    public void handleEnemyToObjectContact(FireEnemyModel enemy, Object object) {
+    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();

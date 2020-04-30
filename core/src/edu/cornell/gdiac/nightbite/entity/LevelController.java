@@ -39,7 +39,7 @@ public class LevelController {
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
         JsonValue cellArray = levelFormat.get("assets");
-        int x = 0, y = 11;
+        int x = 0, y = 0;
         // Yeah, I know this is ugly
         for (JsonValue cellRow : cellArray) {
             for (JsonValue cell : cellRow) {
@@ -59,11 +59,15 @@ public class LevelController {
                             break;
 
                         case "item":
-                            createItem(x, y);
+                            createItem(asset, x, y);
                             break;
 
                         case "team":
                             createTeam(asset, x, y);
+                            break;
+
+                        case "enemy":
+                            createEnemy(asset, x, y);
                             break;
 
                         case "hole":
@@ -79,62 +83,24 @@ public class LevelController {
                 }
                 x++;
             }
-            y--;
+            y++;
             x = 0;
-        }
-
-        if (level_file.equals("jsons/level_test.json")) {
-            FireEnemyModel enemy = new FireEnemyModel(8f, 8f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-        } else if (level_file.equals("jsons/beta_medium.json")) {
-            FireEnemyModel enemy = new FireEnemyModel(6f, 7f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(18f, 2f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-        } else if (level_file.equals("jsons/beta_hard.json")) {
-            FireEnemyModel enemy = new FireEnemyModel(4f, 3f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(9f, 4f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
-
-            enemy = new FireEnemyModel(10f, 9f, 0.6f, 1f, world);
-            enemy.setDrawScale(world.getScale());
-            enemy.setName("wtf");
-            enemy.setActualScale(world.getActualScale());
-            enemy.setFixedRotation(true);
-            world.addEnemy(enemy);
         }
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
-        Sprite sprite = new Sprite(Assets.TEXTURES.get(asset.getString("texture")));
+        String texture = asset.getString("texture");
+        Sprite sprite = new Sprite(Assets.TEXTURES.get(texture));
         int rotate = asset.getInt("rotate") % 4;
         sprite.rotate((float) rotate * -90f);
         sprite.setPosition(x * world.getScale().x, y * world.getScale().y);
 
-        world.setDecorations(sprite, x, y);
+        if (texture.contains("Lantern")) { // Lantern
+            world.setLantern(sprite, x, y);
+        } else { // Brick
+            world.setBrick(sprite, x, y);
+        }
+
         if (asset.getBoolean("light")) {
             world.addLightBody(x, y);
         }
@@ -146,14 +112,14 @@ public class LevelController {
         WallModel wall;
         // TODO: Use four walls rather than n X m
         for (int i = 0; i < width; i++) {
-            wall = new WallModel(i, 0, 0);
+            wall = new WallModel(i, -1, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(i, height + 1f, 0);
+            wall = new WallModel(i, height, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -161,14 +127,14 @@ public class LevelController {
             world.addStaticObject(wall);
         }
         for (int i = 0; i < height; i++) {
-            wall = new WallModel(0, i, 0);
+            wall = new WallModel(-1, i, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(width + 1f, i, 0);
+            wall = new WallModel(width , i, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -185,7 +151,7 @@ public class LevelController {
         return filter;
     }
 
-    private void createItem(int x, int y) {
+    private void createItem(JsonValue itemJson, int x, int y) {
         ItemModel item = new ItemModel(
                 x, y, itemNum,
                 Assets.TEXTURES.get("item/food1_64.png")
@@ -195,6 +161,12 @@ public class LevelController {
         item.setDrawScale(world.getScale());
         item.setActualScale(world.getActualScale());
         world.addItem(item);
+
+        // TODO: Adjust light colors if needed
+        if (itemJson.getBoolean("light")) {
+            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
+        }
     }
 
     private void createTeam(JsonValue teamJson, int x, int y) {
@@ -219,6 +191,31 @@ public class LevelController {
         light.attachToBody(player.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 
+    private void createEnemy(JsonValue enemyJson, int x, int y) {
+        EnemyModel enemy = null;
+        switch (enemyJson.getString("enemyType")) {
+            case "OilEnemy":
+                enemy = new OilEnemyModel(x, y, world);
+                break;
+            case "FireEnemy":
+                enemy = new FireEnemyModel(x, y, world);
+                break;
+//            case "ThiefEnemy":
+//                break;
+        }
+        enemy.setDrawScale(world.getScale());
+        enemy.setActualScale(world.getActualScale());
+        enemy.setName(enemyJson.name());
+        enemy.setFixedRotation(true);
+        world.addEnemy(enemy);
+
+        // TODO: Adjust light colors if needed
+        if (enemyJson.getBoolean("light")) {
+            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            light.attachToBody(enemy.getBody(), light.getX(), light.getY(), light.getDirection());
+        }
+    }
+
     private void createHole(JsonValue holeJson, int x, int y) {
         HoleModel hole = new HoleModel(x, y, holeJson.getInt("rotate"));
         hole.setDrawScale(world.getScale());
@@ -237,13 +234,17 @@ public class LevelController {
         String texture = wallJson.getString("texture");
         wall.setTexture(Assets.TEXTURES.get(texture));
 
-        if (wall.getTexture().getRegionWidth() > 65) {
+        int width = wall.getTexture().getRegionWidth();
+        int height = wall.getTexture().getRegionHeight();
+        if (width > 64 || height > 64) {
+            int widthFactor = width / 64;
+            int heightFactor = height / 64;
             Vector2 pos = wall.getPosition();
-            pos.x += 0.5f;
-            pos.y -= 0.5f;
+            pos.x +=  0.5f * (widthFactor-1);
+            pos.y -= 0.5f * (heightFactor-1);
             wall.setPosition(pos);
-            wall.setWidth(2);
-            wall.setHeight(2);
+            wall.setWidth(widthFactor);
+            wall.setHeight(heightFactor);
         }
 
         if (wallJson.getBoolean("light")) {
