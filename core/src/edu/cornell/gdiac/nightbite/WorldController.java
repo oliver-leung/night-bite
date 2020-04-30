@@ -163,9 +163,10 @@ public class WorldController implements Screen, InputProcessor {
         canvas.clear();
         canvas.begin();
 
+        // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-
-        worldModel.drawDecorations();
+        worldModel.drawDecorations(true);
+        worldModel.drawDecorations(false);
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
 
