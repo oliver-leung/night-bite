@@ -13,6 +13,12 @@ import edu.cornell.gdiac.util.FilmStrip;
 
 public class HumanoidModel extends SimpleObstacle {
 
+    /**
+     * Movable object parameters
+     */
+    private final float DENSITY = 10f;
+    private final float FRICTION = 0.1f;
+    private final float RESTITUTION = 0.4f;
     private static float SEAM_EPSILON = 0.01f;
     private static final float MOTION_DAMPING = 25f;
 
@@ -150,6 +156,9 @@ public class HumanoidModel extends SimpleObstacle {
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
         setBullet(true);
+        setDensity(DENSITY);
+        setFriction(FRICTION);
+        setRestitution(RESTITUTION);
 
         this.texture = texture;
         this.fallTexture = fallTexture;

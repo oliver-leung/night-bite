@@ -1,11 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.*;
-import edu.cornell.gdiac.util.PooledList;
-
-import static edu.cornell.gdiac.nightbite.entity.MovableModel.*;
+import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int THROW_COOLDOWN = 80;
