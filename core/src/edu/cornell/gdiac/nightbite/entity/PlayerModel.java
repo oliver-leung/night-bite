@@ -134,7 +134,7 @@ public class PlayerModel extends HumanoidModel {
         swingCooldown = 0;
         alternateShadow = false;
 
-        this.holdTexture = Assets.PLAYER_HOLD_FILMSTRIP;
+        this.holdTexture = new FilmStrip(Assets.PLAYER_HOLD_FILMSTRIP.getTexture(), 1, 8);
         this.world = world;
     }
 

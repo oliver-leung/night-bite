@@ -80,8 +80,8 @@ public class LevelSelectController implements Screen, InputProcessor {
     private String[] levelJSONList = new String[]{
             "jsons/level_tutorial1.json",
             "jsons/level_tutorial2.json",
-            "jsons/level_tutorial3.json",
             "jsons/level_test.json",
+            "jsons/intro_bridge_level.json",
             "jsons/beta_medium.json",
             "jsons/beta_hard.json"
     };

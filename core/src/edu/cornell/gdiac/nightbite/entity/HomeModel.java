@@ -17,7 +17,8 @@ public class HomeModel extends ImmovableModel {
      */
     public HomeModel(float x, float y, String team) {
         super(x, y, 0);
-        this.texture = Assets.HOME_STALL;
+        FilmStrip stallTexture = Assets.HOME_STALL;
+        this.texture = new FilmStrip(stallTexture.getTexture(), 1, 4);
         setTexture(this.texture);
 
         this.team = team;
