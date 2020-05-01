@@ -37,6 +37,9 @@ public class BoxObstacle extends SimpleObstacle {
 	public Fixture geometry;
 	/** Cache of the polygon vertices (for resizing) */
 	private float[] vertices;
+
+	protected short maskBits;
+	protected short categoryBits = 0xfff;
 	
 	/** 
 	 * Returns the dimensions of this box
@@ -175,6 +178,8 @@ public class BoxObstacle extends SimpleObstacle {
 
 	protected void defineFixtures() {
 		fixture.shape = shape;
+		fixture.filter.maskBits = maskBits;
+		fixture.filter.categoryBits = categoryBits;
 	}
 
 	/**

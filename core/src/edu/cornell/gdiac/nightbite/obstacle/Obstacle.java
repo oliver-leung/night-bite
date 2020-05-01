@@ -37,6 +37,15 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
  * and fixture information into a single interface.
  */
 public abstract class Obstacle {
+	/** Category bits for collision filtering */
+	public static final short ITEM = 0x0001;
+	public static final short FIRECRACKER = 0x0012;
+	public static final short OIL = 0x0004;
+	public static final short STATIC_OBSTACLE = 0x0008;
+	public static final short WALKBOX = 0x0010;
+	public static final short HITBOX = 0x0002;
+	public static final short DEFLECT = 0x0011;
+
 	/// Initialization structures to store body information
 	/** Stores the body information for this shape */
 	protected BodyDef bodyinfo;
@@ -992,13 +1001,13 @@ public abstract class Obstacle {
 
 	/**
 	 * Updates the object's physics state (NOT GAME LOGIC).
-	 *
-	 * This method is called AFTER the collision resolution state. Therefore, it 
-	 * should not be used to process actions or any other gameplay information.  Its 
-	 * primary purpose is to adjust changes to the fixture, which have to take place 
+	 * <p>
+	 * This method is called AFTER the collision resolution state. Therefore, it
+	 * should not be used to process actions or any other gameplay information.  Its
+	 * primary purpose is to adjust changes to the fixture, which have to take place
 	 * after collision.
 	 *
-	 * @param dt Timing values from parent loop
+	 * @param delta Timing values from parent loop
 	 */
 	public void update(float delta) { 
 	}
@@ -1018,5 +1027,4 @@ public abstract class Obstacle {
 	 * @param canvas Drawing context
 	 */
 	public abstract void drawDebug(GameCanvas canvas);
-
 }

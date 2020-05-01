@@ -18,6 +18,7 @@ public class ItemModel extends BoxObstacle {
      * item parameters
      */
     private Vector2 item_init_position;
+
     /**
      * item respawn
      */
@@ -39,8 +40,8 @@ public class ItemModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
-    public ItemModel(float x, float y, float width, float height, int itemId, TextureRegion itemTexture) {
-        super(x, y, width, height);
+    public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
+        super(x, y, 1, 1);
         setTexture(itemTexture);
 
         setTexture(itemTexture);
@@ -52,12 +53,20 @@ public class ItemModel extends BoxObstacle {
         setBullet(true);
         setName("item");
 
-        item_init_position = new Vector2(x - 0.5f, y - 0.5f);
+        item_init_position = new Vector2(x + 0.5f, y + 0.5f);  // this is mad sus
         id = itemId;
+
+        maskBits = 0x0002 | 0x0008;
+        categoryBits = 0x0001;
     }
 
-    public void update() {
-        updateRespawn();
+    public void update(float dt) {
+        super.update(dt);
+
+        respawn -= 1;
+        if (respawn == 0) {
+            addItem(item_init_position);
+        }
     }
 
     /** item identification */
@@ -68,16 +77,9 @@ public class ItemModel extends BoxObstacle {
     /** respawn */
 
     public void startRespawn() {
+        draw = false;
         holdingPlayer = null;
         respawn = RESPAWN_TIME;
-        draw = false;
-    }
-
-    public void updateRespawn() {
-        respawn -= 1;
-        if (respawn == 0) {
-            addItem(item_init_position);
-        }
     }
 
     private void addItem(Vector2 position) {
@@ -99,7 +101,8 @@ public class ItemModel extends BoxObstacle {
     }
 
     /** throw item */
-    public void throwItem(Vector2 impulse) {
+    public void throwItem(Vector2 playerPosition, Vector2 impulse) {
+        setPosition(playerPosition);
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
         holdingPlayer = null;
     }

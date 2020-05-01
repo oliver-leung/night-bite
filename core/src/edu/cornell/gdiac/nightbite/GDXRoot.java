@@ -61,6 +61,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private WorldController controller;
 
+	// TODO jank shit ill fix after i wake up
+	private boolean loaded = false;
+	private String BLACK_BACKGROUND_FILE = "background/black_background.png";
+
 	/**
 	 * Creates a new game from the configuration settings.
 	 * <p>
@@ -89,7 +93,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		levelSelect = new LevelSelectController(canvas);
 
 		assets = new Assets(manager);
-		assets.preLoadContent(manager);
+		assets.preLoadContent();
 		controller = new WorldController();
 
 		loading.setScreenListener(this);
@@ -98,6 +102,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
 		Gdx.app.setLogLevel(Application.LOG_NONE);
+
+		// TODO temporary change
+
 	}
 
 	/** 
@@ -148,6 +155,12 @@ public class GDXRoot extends Game implements ScreenListener {
 //			if (levelSelect == null) {
 //				levelSelect = new LevelSelectMode(canvas);
 //			}
+			if (!loaded) {
+				assets.loadContent(manager);
+				loaded = true;
+			}
+			levelSelect.loadContent();
+
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
 
@@ -156,8 +169,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == levelSelect) {
 			if (exitCode == LevelSelectController.EXIT_START) {
 				Gdx.input.setInputProcessor(null);
-
-				assets.loadContent(manager);
 
 				controller.setScreenListener(this);
 				controller.setCanvas(canvas);
@@ -180,7 +191,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			// We quit the main application
 			Gdx.app.exit();
 		} else if (exitCode == WorldController.EXIT_NEXT) {
-			controller.reset();
+//			controller.reset();
+			Gdx.input.setInputProcessor(null);
+			levelSelect.setScreenListener(this);
+			setScreen(levelSelect);
 		}
 	}
 
