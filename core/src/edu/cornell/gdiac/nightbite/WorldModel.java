@@ -35,7 +35,7 @@ public class WorldModel {
     /** Canonical view height in pixels */
     public static final float CANONICAL_HEIGHT = 768f;
     /** How many frames after winning/losing do we continue? */
-    public static final int EXIT_COUNT = 120;
+    public static final int EXIT_COUNT = 150;
     /** Padding for actual view in pixels */
     private static final float PADDING = 0f;
 
@@ -86,6 +86,10 @@ public class WorldModel {
 
     private AILattice aiLattice;
 
+    // Level exit codes
+    private int LEVEL_EXIT_CODE;
+    public int LEVEL_COMPLETED = 0;
+    public int LEVEL_TIME_OUT = 1;
 
     // TODO: REMOVE
     public Debug debug;
@@ -174,9 +178,20 @@ public class WorldModel {
     /**
      * Complete the level
      */
-    public void completeLevel() {
-        countdown = EXIT_COUNT;
+    public void completeLevel(boolean passedLevel) {
+        if (!complete) {
+            countdown = EXIT_COUNT;
+        }
         complete = true;
+        if (passedLevel) {
+            LEVEL_EXIT_CODE = LEVEL_COMPLETED;
+        } else {
+            LEVEL_EXIT_CODE = LEVEL_TIME_OUT;
+        }
+    }
+
+    public int getLevelExitCode() {
+        return LEVEL_EXIT_CODE;
     }
 
     public void setContactListener(ContactListener c) {
