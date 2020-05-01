@@ -92,16 +92,16 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
 
-        assets = new Assets(manager);
-        assets.preLoadContent();
-        controller = new WorldController();
+		assets = new Assets(manager);
+		assets.preLoadContent();
+		controller = new WorldController();
 
 		loading.setScreenListener(this);
 		setScreen(loading);
 
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 
 		// TODO temporary change
 
