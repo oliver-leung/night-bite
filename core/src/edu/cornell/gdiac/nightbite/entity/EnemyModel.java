@@ -36,6 +36,7 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController = new AIController(worldModel, this);
         this.worldModel = worldModel;
         walkCooldown = WALK_COOLDOWN;
+        setRespawnCooldown(120);
     }
 
     public abstract void attack(PlayerModel p);

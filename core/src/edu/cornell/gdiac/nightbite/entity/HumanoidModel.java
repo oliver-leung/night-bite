@@ -50,6 +50,7 @@ public class HumanoidModel extends SimpleObstacle {
 
     /** Time until humanoid respawn */
     private int respawnCooldown;
+    private int DEFAULT_RESPAWN_COOLDOWN = 60;
 
     /* How fast we change frames (one frame per 8 calls to update */
     private static final float ANIMATION_SPEED = 0.125f;
@@ -74,6 +75,10 @@ public class HumanoidModel extends SimpleObstacle {
     public boolean isAlive() { return isAlive; }
     /** Set the liveness state of this humanoid */
     public void setAlive(boolean alive) { isAlive = alive; }
+
+    /** Respawn cooldown interval */
+    public int getRespawnCooldown() { return respawnCooldown; }
+    public void setRespawnCooldown(int cooldown) { DEFAULT_RESPAWN_COOLDOWN = cooldown; };
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
@@ -219,7 +224,7 @@ public class HumanoidModel extends SimpleObstacle {
     public void respawn() {
         setLinearVelocity(Vector2.Zero);
         if (respawnCooldown == 0) {
-            respawnCooldown = 60;
+            respawnCooldown = DEFAULT_RESPAWN_COOLDOWN;
         }
         respawnCooldown--;
         if (respawnCooldown == 0) {

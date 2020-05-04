@@ -108,8 +108,10 @@ public class InputController extends MechanicController {
             Music music = Assets.getMusic("audio/Night_Bite_(Theme)_v2.mp3");
             if (music.getVolume() > 0) {
                 music.setVolume(0);
+                Assets.EFFECT_VOLUME = 0;
             } else {
                 music.setVolume(0.1f);
+                Assets.EFFECT_VOLUME = 0.1f;
             }
         }
     }
