@@ -18,8 +18,6 @@ public class PlayerModel extends HumanoidModel {
 
     /** Regular walking impulse as a scalar */
     private static final float WALK_IMPULSE = 10.0f;
-    // TODO
-    private int NUM_ITEMS = 1;
     private static final float BOOST_IMP = 100.0f;
 
     private static final int BOOST_FRAMES = 20;
@@ -31,17 +29,6 @@ public class PlayerModel extends HumanoidModel {
         RUN,
         STATIC,
         SLIDE
-    }
-
-    public enum DirectionState {
-        NORTH,
-        NORTHEAST,
-        EAST,
-        SOUTHEAST,
-        SOUTH,
-        SOUTHWEST,
-        WEST,
-        NORTHWEST,
     }
 
     public MoveState state;

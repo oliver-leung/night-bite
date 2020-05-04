@@ -8,21 +8,38 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class HumanoidModel extends SimpleObstacle {
 
+    private static final float MOTION_DAMPING = 25f;
+    /* How fast we change frames (one frame per 8 calls to update */
+    private static final float ANIMATION_SPEED = 0.125f;
+    /* The number of animation frames in our falling filmstrip */
+    private static final float NUM_FRAMES_FALL = 6;
+    private static float SEAM_EPSILON = 0.01f;
     /**
      * Movable object parameters
      */
     private final float DENSITY = 10f;
     private final float FRICTION = 0.1f;
     private final float RESTITUTION = 0.4f;
-    private static float SEAM_EPSILON = 0.01f;
-    private static final float MOTION_DAMPING = 25f;
-
+    /** Steps between switching walk animation frames */
+    public int walkCounter;
+    /** Steps between switching falling animation frames */
+    public int fallCounter;
+    /** Textures */
+    public FilmStrip defaultTexture;
+    public FilmStrip fallTexture;
     protected Vector2 dimension;
+    protected short walkCategoryBits;
+    protected short walkMaskBits;
+    protected short hitCategoryBits;
+    protected short hitMaskBits;
+    /** Whether this humanoid is alive */
+    protected boolean isAlive;
     private Vector2 cache;
     private PolygonShape hitBoxCore;
     private CircleShape[] hitBoxEdge;
@@ -32,48 +49,73 @@ public class HumanoidModel extends SimpleObstacle {
     private Fixture feetFixture;
     private Rectangle coreBounds;
     private Rectangle feetBounds;
-
     private Vector2 feetPositionCache;
     private Rectangle feetRectangleCache;
     private Vector2 dimensionCache;
-
-    protected short walkCategoryBits;
-    protected short walkMaskBits;
-    protected short hitCategoryBits;
-    protected short hitMaskBits;
-
     /** Respawn position */
     private Vector2 homePosition;
-  
-    /** Whether this humanoid is alive */
-    protected boolean isAlive;
-
     /** Time until humanoid respawn */
     private int respawnCooldown;
-
-    /* How fast we change frames (one frame per 8 calls to update */
-    private static final float ANIMATION_SPEED = 0.125f;
-    /* The number of animation frames in our falling filmstrip */
-    private static final float NUM_FRAMES_FALL = 6;
     /* Keeps track of the falling animation frame */
     private float fallFrame;
-
-    /** Steps between switching walk animation frames */
-    public int walkCounter;
-    /** Steps between switching falling animation frames */
-    public int fallCounter;
-
     /** The previous horizontal direction of the humanoid */
     private float prevHoriDir;
 
-    /** Textures */
-    public FilmStrip defaultTexture;
-    public FilmStrip fallTexture;
+    public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
+        super(x, y);
+        setBullet(true);
+        setDensity(DENSITY);
+        setFriction(FRICTION);
+        setRestitution(RESTITUTION);
+
+        this.texture = texture;
+        this.fallTexture = fallTexture;
+        setCurrentTexture(texture);
+
+        isAlive = true;
+
+        walkCounter = 0;
+        fallCounter = 0;
+        fallFrame = 0f;
+        prevHoriDir = -1f;
+
+        // TODO: FIX DIMENSION
+        dimension = new Vector2(width, height);
+        cache = new Vector2();
+        hitBoxCore = new PolygonShape();
+        hitBoxEdge = new CircleShape[]{
+                new CircleShape(),
+                new CircleShape()
+        };
+        feet = new PolygonShape();
+        vertices = new float[8];
+        capsuleFixtures = new Fixture[3];
+        coreBounds = new Rectangle();
+        feetBounds = new Rectangle();
+
+        feetPositionCache = new Vector2();
+        feetRectangleCache = new Rectangle();
+        dimensionCache = new Vector2();
+
+        // TODO: Move this out
+        walkCategoryBits = Obstacle.WALKBOX;
+        walkMaskBits = 0x0004 | 0x0008;
+
+        hitCategoryBits = Obstacle.HITBOX;
+        hitMaskBits = 0x002 | 0x0020 | 0x0001;
+
+        resize(width, height);
+    }
 
     /** Gets whether this humanoid is alive */
-    public boolean isAlive() { return isAlive; }
+    public boolean isAlive() {
+        return isAlive;
+    }
+
     /** Set the liveness state of this humanoid */
-    public void setAlive(boolean alive) { isAlive = alive; }
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
@@ -83,6 +125,7 @@ public class HumanoidModel extends SimpleObstacle {
 
     /** Gets previous horizontal direction */
     public float getPrevHoriDir() { return prevHoriDir; }
+
     /** Sets previous horizontal direction */
     public void setPrevHoriDir(float dir) { prevHoriDir = dir; }
 
@@ -98,16 +141,9 @@ public class HumanoidModel extends SimpleObstacle {
      * Sets the current texture to walking. Changes frames every 10 steps.
      */
     public void setWalkTexture() {
-        if (walkCounter % 20 == 0) {
-            ((FilmStrip) texture).setFrame(1);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        } else if (walkCounter % 20 == 10) {
-            ((FilmStrip) texture).setFrame(0);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
+        defaultTexture.setFrame((walkCounter / 8) % defaultTexture.getSize());
+        if (prevHoriDir == 1) {
+            defaultTexture.flip(true, false);
         }
         walkCounter++;
     }
@@ -147,56 +183,12 @@ public class HumanoidModel extends SimpleObstacle {
         return true;
     }
 
-    public void setHomePosition(Vector2 position) {
-        homePosition = position;
+    public Vector2 getHomePosition() {
+        return homePosition;
     }
 
-    public Vector2 getHomePosition() {return homePosition;}
-
-    public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
-        super(x, y);
-        setBullet(true);
-        setDensity(DENSITY);
-        setFriction(FRICTION);
-        setRestitution(RESTITUTION);
-
-        this.texture = texture;
-        this.fallTexture = fallTexture;
-        setCurrentTexture(texture);
-
-        isAlive = true;
-
-        walkCounter = 0;
-        fallCounter = 0;
-        fallFrame = 0f;
-        prevHoriDir = -1f;
-
-        // TODO: FIX DIMENSION
-        dimension = new Vector2(width, height);
-        cache = new Vector2();
-        hitBoxCore = new PolygonShape() ;
-        hitBoxEdge = new CircleShape[] {
-                new CircleShape(),
-                new CircleShape()
-        };
-        feet = new PolygonShape();
-        vertices = new float[8];
-        capsuleFixtures = new Fixture[3];
-        coreBounds = new Rectangle();
-        feetBounds = new Rectangle();
-
-        feetPositionCache = new Vector2();
-        feetRectangleCache = new Rectangle();
-        dimensionCache = new Vector2();
-
-        // TODO: Move this out
-        walkCategoryBits = 0x0010;
-        walkMaskBits = 0x0004 | 0x0008;
-
-        hitCategoryBits = 0x002;
-        hitMaskBits = 0x002 | 0x0020 | 0x0001;
-
-        resize(width, height);
+    public void setHomePosition(Vector2 position) {
+        homePosition = position;
     }
 
     /**
