@@ -10,14 +10,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonReader;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
 
-import java.io.File;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // The whole point of this class is to get all textures in a unified location.
@@ -42,24 +39,20 @@ public class Assets {
     private static BitmapFont font;
     /** Reference to the sound effect controller */
     private final SoundController soundController = SoundController.getInstance();
-    /** File path to assets */
-    private URI assetsUri;
     /** Track all loaded assets (for unloading purposes) */
     private Array<String> assets = new Array<>();
     /** Names of all files to be loaded */
-    private List<String> fileNames = new ArrayList<>();
+    private String[] fileNames;
     /** Track load status */
     private boolean isLoaded = false;
 
     public Assets(AssetManager manager) {
         Assets.manager = manager;
 
-//        File assets = new File(Gdx.files.getLocalStoragePath());
-//        assetsUri = assets.toURI();
+        JsonReader jsonReader = new JsonReader();
+        FileHandle assetsJson = Gdx.files.internal("assets.json");
+        fileNames = jsonReader.parse(assetsJson).get("assets").asStringArray();
 
-        FileHandle assetsRoot = Gdx.files.internal(".");
-
-        listAssets(assetsRoot);
         preLoadContent();
     }
 
@@ -165,35 +158,6 @@ public class Assets {
         if (idx > 0) extension = fileName.substring(idx + 1).toLowerCase();
 
         return extension;
-    }
-
-    /**
-     * Recursively add all files contained by a file/directory to the list of all file names
-     *
-     * @param asset File/directory to be searched
-     */
-    private void listAssets(File asset) {
-        if (asset.isFile()) {
-            fileNames.add(assetsUri.relativize(asset.toURI()).toString());
-        } else if (asset.isDirectory()) {
-            File[] subAssets = asset.listFiles();
-            assert subAssets != null;
-
-            for (File subAsset : subAssets) {
-                listAssets(subAsset);
-            }
-        }
-    }
-
-    private void listAssets(FileHandle asset) {
-        if (asset.isDirectory()) {
-            for (FileHandle subAsset : asset.list()) {
-                listAssets(subAsset);
-            }
-        } else {
-            // Paths normally begin with "./" to signify the assets root
-            fileNames.add(asset.path().substring(2));
-        }
     }
 
     private void loadSound(String filePath) {
