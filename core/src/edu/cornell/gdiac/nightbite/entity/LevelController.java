@@ -90,8 +90,17 @@ public class LevelController {
     private void createDecoration(JsonValue asset, int x, int y) {
         String texture = asset.getString("texture");
         Sprite sprite = new Sprite(Assets.getTextureRegion(asset.getString("texture")));
+
         int rotate = asset.getInt("rotate") % 4;
         sprite.rotate((float) rotate * -90f);
+
+        boolean flip = asset.getBoolean("flip");
+        if (rotate % 2 == 0 ) {
+            sprite.flip(flip, false);
+        } else {
+            sprite.flip(false, flip);
+        }
+
         sprite.setPosition(x * world.getScale().x, y * world.getScale().y);
 
         if (texture.contains("Lantern")) { // Lantern
