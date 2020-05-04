@@ -78,12 +78,26 @@ public class WorldController implements Screen, InputProcessor {
     private float screenWidth;
     private float screenHeight;
 
+    private static int GAME_DURATION = 150;
+    private float gameTimeElapsed;
+
     /** Create a new game world */
     protected WorldController() {
         setDebug(false);
         worldModel = new WorldModel();
         debug = false;
         active = false;
+        resetTimer();
+    }
+
+    public void resetTimer() {
+        gameTimeElapsed = System.nanoTime();
+    }
+
+    public void checkTimeOut() {
+        if ((System.nanoTime() - gameTimeElapsed) / 1000000000 > GAME_DURATION) {
+            worldModel.completeLevel(false);
+        }
     }
 
     /**
@@ -188,9 +202,12 @@ public class WorldController implements Screen, InputProcessor {
 
         if (worldModel.isComplete()) {
             displayFont.setColor(Color.YELLOW);
-            canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+            if (worldModel.getLevelExitCode() == worldModel.LEVEL_COMPLETED) {
+                canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+            } else {
+                canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
+            }
         }
-
         canvas.end();
 
         // Draw with rayhandler
@@ -243,7 +260,7 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.setContactListener(c);
         worldModel.initLighting(canvas);
         populateLevel();
-
+        resetTimer();
         for (LightSource l : worldModel.getLights()) {
             l.setActive(true);
         }
@@ -291,6 +308,7 @@ public class WorldController implements Screen, InputProcessor {
     }
 
     public void update(float dt) {
+        checkTimeOut();
         // TODO: Refactor all player movement
 
         MechanicManager manager = MechanicManager.getInstance();

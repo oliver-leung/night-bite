@@ -101,10 +101,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-
-		// TODO temporary change
-
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 	}
 
 	/** 
