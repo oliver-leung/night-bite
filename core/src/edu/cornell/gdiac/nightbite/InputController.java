@@ -103,15 +103,14 @@ public class InputController extends MechanicController {
         isReset = isReset || (!prevReset && temp1);
 
         // Music
-        // TODO: Remove reference to Assets class
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             Music music = Assets.getMusic("audio/Night_Bite_(Theme)_v2.mp3");
             if (music.getVolume() > 0) {
-                music.setVolume(0);
                 Assets.EFFECT_VOLUME = 0;
+                music.setVolume(Assets.EFFECT_VOLUME);
             } else {
-                music.setVolume(0.1f);
                 Assets.EFFECT_VOLUME = 0.1f;
+                music.setVolume(Assets.EFFECT_VOLUME);
             }
         }
     }
