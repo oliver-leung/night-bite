@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -53,10 +54,12 @@ public class Assets {
     public Assets(AssetManager manager) {
         Assets.manager = manager;
 
-        File assets = new File(Gdx.files.getLocalStoragePath());
-        assetsUri = assets.toURI();
+//        File assets = new File(Gdx.files.getLocalStoragePath());
+//        assetsUri = assets.toURI();
 
-        listAssets(assets);
+        FileHandle assetsRoot = Gdx.files.internal(".");
+
+        listAssets(assetsRoot);
         preLoadContent();
     }
 
@@ -179,6 +182,17 @@ public class Assets {
             for (File subAsset : subAssets) {
                 listAssets(subAsset);
             }
+        }
+    }
+
+    private void listAssets(FileHandle asset) {
+        if (asset.isDirectory()) {
+            for (FileHandle subAsset : asset.list()) {
+                listAssets(subAsset);
+            }
+        } else {
+            // Paths normally begin with "./" to signify the assets root
+            fileNames.add(asset.path().substring(2));
         }
     }
 
