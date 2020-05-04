@@ -10,10 +10,13 @@ import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class AIController implements RayCastCallback {
+public class AIController {
     /** Number of frames between each path replan */
     private static final int REPLAN_TIME = 60;
+    /** Half of the distance (in World units) between two parallel rays during raycasting */
+    public static final float RAYCAST_OFFSET = 0.5f;
     /** AI will detect whether the player is within this radius */
     private float DETECTION_RADIUS = 5f; // About 5 tiles
 
@@ -21,8 +24,6 @@ public class AIController implements RayCastCallback {
     private World world;
     /** Reference to the enemy that is being controlled */
     private HumanoidModel enemy;
-    /** During ray cast, the position of the first body that the ray collided with */
-    private Vector2 contactPoint;
 
     private PooledList<GridPoint2> target;
     /** Where the AI was during path planning */
@@ -54,17 +55,41 @@ public class AIController implements RayCastCallback {
     }
 
     /**
-     * @param target Target to look at
-     * @return True if the enemy can see the target
+     * @param source Position of source of vision
+     * @param target Position of target to look at
+     * @return True if the source can see the target
      */
     public boolean canSee(Vector2 source, Vector2 target) {
-        contactPoint = null;
+        VisionCallback callback = new VisionCallback();
+        Vector2 normal = new Vector2(target).sub(source);
+        normal = new Vector2(-normal.y, normal.x).nor().scl(RAYCAST_OFFSET);
 
-        world.rayCast(this, source, target);
-        if (contactPoint == null) {
-            return false;
+        // Cast two parallel, offset rays
+        world.rayCast(callback, new Vector2(source).add(normal), new Vector2(target).add(normal));
+        world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
+
+        for (Body body : callback.seenBodies) {
+            if (!body.getPosition().equals(target)) {
+                return false;
+            }
         }
-        return contactPoint.equals(target);
+        return true;
+    }
+
+    static class VisionCallback implements RayCastCallback {
+        List<Body> seenBodies = new ArrayList<>();
+
+        // TODO: The current method of ray casting doesn't account for thrown firecrackers, and they momentarily block
+        // line of sight between the enemy and the player.
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            // Continue the ray through sensors (which act as "transparent" bodies)
+            if (fixture.isSensor()) return 1;
+
+            // Stop the ray and record the position of the body with which it impacted
+            seenBodies.add(fixture.getBody());
+            return 0;
+        }
     }
 
     /**
@@ -90,16 +115,6 @@ public class AIController implements RayCastCallback {
         DetectionCallback callback = new DetectionCallback();
         world.QueryAABB(callback, pos.x-DETECTION_RADIUS, pos.y-DETECTION_RADIUS, pos.x+DETECTION_RADIUS, pos.y+DETECTION_RADIUS);
         return callback.foundBodies.size() > 0;
-    }
-
-    @Override
-    public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-        // Continue the ray through sensors (which act as "transparent" bodies)
-        if (fixture.isSensor()) return 1;
-
-        // Stop the ray and record the position of the body with which it impacted
-        contactPoint = fixture.getBody().getPosition();
-        return 0;
     }
 
     private boolean replan() {
