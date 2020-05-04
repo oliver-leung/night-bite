@@ -38,10 +38,6 @@ public abstract class EnemyModel extends HumanoidModel {
         walkCooldown = WALK_COOLDOWN;
     }
 
-    public void setWalkCooldown(int walkCooldown) {
-        this.walkCooldown = walkCooldown;
-    }
-
     public abstract void attack(PlayerModel p);
 
 

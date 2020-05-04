@@ -110,7 +110,7 @@ public class LevelController {
         float height = world.getBounds().height;
         WallModel wall;
         // TODO: Use four walls rather than n X m
-        for (int i = 0; i < width; i++) {
+        for (int i = -1; i < width; i++) {
             wall = new WallModel(i, -1, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
@@ -125,7 +125,7 @@ public class LevelController {
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
         }
-        for (int i = 0; i < height; i++) {
+        for (int i = -1; i < height; i++) {
             wall = new WallModel(-1, i, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
@@ -133,7 +133,7 @@ public class LevelController {
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(width , i, 0);
+            wall = new WallModel(width, i, 0);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
