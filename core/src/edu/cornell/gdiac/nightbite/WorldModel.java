@@ -85,6 +85,8 @@ public class WorldModel {
     private Sprite[][] brick = new Sprite[20][12];
     /** 2nd layer foreground textures */
     private Sprite[][] lantern = new Sprite[20][12];
+    /** Hole edge textures to be drawn on top of holes */
+    private Sprite[][] holeEdge = new Sprite[20][12];
 
     private AILattice aiLattice;
     public int LEVEL_COMPLETED = 0;
@@ -582,6 +584,8 @@ public class WorldModel {
         lantern[x][y] = sprite;
     }
 
+    public void setHoleEdge(Sprite sprite, int x, int y) { holeEdge[x][y] = sprite; }
+
     public void setPixelBounds() {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
@@ -626,14 +630,16 @@ public class WorldModel {
 //        canonicalToActual.applyTo(actualScale);
     }
 
-    public void drawDecorations(boolean isbrick) {
+    public void drawDecorations(boolean isbrick, boolean isLantern) {
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
                 Sprite sprite;
                 if (isbrick) {
                     sprite = brick[i][j];
-                } else {
+                } else if (isLantern) {
                     sprite = lantern[i][j];
+                } else {
+                    sprite = holeEdge[i][j];
                 }
 
                 if (sprite != null) {
