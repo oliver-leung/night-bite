@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.MathUtils;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
@@ -10,8 +11,12 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 public class FireEnemyModel extends EnemyModel {
     private static final int THROW_COOLDOWN = 50;
     private static final float THROW_DIST = 5;
-    private static final float THROW_FORCE = 3f;
-    private static final float THROW_TIME = 1f; // fudged in seconds
+    private static final float THROW_FORCE = 2f;
+    private static final float THROW_TIME = 0.9f; // fudged in seconds
+    private static final float MIN_DIST_DEV = 0.4f;
+    private static final float MAX_DIST_DEV = 1.4f;
+    private static final float MAX_DEVIATION = 20f;
+    private static final float MIN_DEVIATION = -20f;
     private int throwCooldown;
 
     private Vector2 source, target, targetPred, cache;
@@ -38,7 +43,7 @@ public class FireEnemyModel extends EnemyModel {
         Vector2 imp = throwFirecracker(p.getPosition(), p.getLinearVelocity(), aiLattice);
         if (imp != null) {
             FirecrackerModel f = worldModel.addFirecracker(getPosition().x, getPosition().y);
-            f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE));
+            f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE).scl(MathUtils.random(MIN_DIST_DEV, MAX_DIST_DEV)));
         }
     }
 
@@ -53,6 +58,7 @@ public class FireEnemyModel extends EnemyModel {
         Vector2 walk = cache.set(targetVelocity).scl(THROW_TIME);
         System.out.println(walk);
         cache.add(targetPos);
+        // cache.rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
         targetPred.set(cache);
         // ;System.out.println(aiLattice.isReachable(cache, targetPos));
 
@@ -63,11 +69,11 @@ public class FireEnemyModel extends EnemyModel {
         }
 
 
-
         if (aiController.canTarget(getPosition(), cache, THROW_DIST)) { // && aiLattice.isReachable(cache, targetPos)) {// && !targetVelocity.epsilonEquals(Vector2.Zero)) {
             throwCooldown = THROW_COOLDOWN;
-            cache.sub(getPosition());
-            if (cache.len() < THROW_DIST) {
+            cache.sub(getPosition()).rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
+            targetPred.set(getPosition()).add(cache);
+            if (cache.len() > THROW_DIST) {
                 cache.nor().scl(THROW_DIST);
             }
             return cache.cpy();
@@ -92,8 +98,6 @@ public class FireEnemyModel extends EnemyModel {
         //
         // }
 
-        // if (aiController.canSee())
-
         if (aiController.canSee(getPosition(), targetPos)
                 && getPosition().sub(targetPos).len() < THROW_DIST) {
             throwCooldown = THROW_COOLDOWN;
@@ -105,6 +109,7 @@ public class FireEnemyModel extends EnemyModel {
     @Override
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
+        // cuz screw this particular point in general
         if (source.epsilonEquals(-3, -3)) {
             return;
         }
