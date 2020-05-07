@@ -18,6 +18,7 @@ public class AIController {
     public static final float RAYCAST_OFFSET = 0.5f;
     /** AI will detect whether the player is within this radius */
     private float DETECTION_RADIUS = 5f; // About 5 tiles
+    private float CHASE_RADIUS = 8f;
 
     /** Reference to the World that the AI is in. Needed to determine line of sight and AABB boxes. */
     private World world;
@@ -168,6 +169,13 @@ public class AIController {
         return callback.foundBodies.size() > 0;
     }
 
+    public boolean canChasePlayer() {
+        Vector2 pos = enemy.getHomePosition();
+        DetectionCallback callback = new DetectionCallback();
+        world.QueryAABB(callback, pos.x-CHASE_RADIUS, pos.y-CHASE_RADIUS, pos.x+CHASE_RADIUS, pos.y+CHASE_RADIUS);
+        return callback.foundBodies.size() > 0;
+    }
+
     private boolean replan() {
         if (replanCountdown > 0) {
             replanCountdown --;
@@ -236,9 +244,13 @@ public class AIController {
     }
 
 
-    public Vector2 vectorToNode(Vector2 feet) {
+    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice) {
         if (targetPath.isEmpty()) {
-            return Vector2.Zero;
+            forceReplan();
+            updateAI(aiLattice, feet);
+            if (targetPath.isEmpty()) {
+                return Vector2.Zero;
+            }
         }
 
         if (bounded(feet.x, targetPath.getHead().x + 0.5f - 0.2f, targetPath.getHead().x + 0.5f + 0.2f)

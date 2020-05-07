@@ -50,7 +50,7 @@ public class HumanoidModel extends SimpleObstacle {
 
     /** Time until humanoid respawn */
     private int respawnCooldown;
-    private int DEFAULT_RESPAWN_COOLDOWN = 60;
+    protected int DEFAULT_RESPAWN_COOLDOWN = 60;
 
     /* How fast we change frames (one frame per 8 calls to update */
     private static final float ANIMATION_SPEED = 0.125f;

@@ -7,9 +7,11 @@ import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import org.graalvm.compiler.lir.alloc.lsra.OptimizingLinearScanWalker_OptionDescriptors;
 
 public class FireEnemyModel extends EnemyModel {
-    private static final int THROW_COOLDOWN = 70;
+    private static final int MAX_THROW_COOLDOWN = 100;
+    private static final int MIN_THROW_COOLDOWN = 60;
     private static final float THROW_DIST = 5;
     private static final float THROW_FORCE = 2f;
     private static final float THROW_TIME = 0.9f; // fudged in seconds
@@ -44,6 +46,7 @@ public class FireEnemyModel extends EnemyModel {
         if (imp != null) {
             FirecrackerModel f = worldModel.addFirecracker(getPosition().x, getPosition().y);
             f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE).scl(MathUtils.random(MIN_DIST_DEV, MAX_DIST_DEV)));
+            walkCooldown = WALK_COOLDOWN;
         }
     }
 
@@ -70,7 +73,7 @@ public class FireEnemyModel extends EnemyModel {
 
 
         if (aiController.canTarget(getPosition(), cache, THROW_DIST)) { // && aiLattice.isReachable(cache, targetPos)) {// && !targetVelocity.epsilonEquals(Vector2.Zero)) {
-            throwCooldown = THROW_COOLDOWN;
+            resetThrowCooldown();
             cache.sub(getPosition()).rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
             targetPred.set(getPosition()).add(cache);
             if (cache.len() > THROW_DIST) {
@@ -100,10 +103,14 @@ public class FireEnemyModel extends EnemyModel {
 
         if (aiController.canSee(getPosition(), targetPos)
                 && getPosition().sub(targetPos).len() < THROW_DIST) {
-            throwCooldown = THROW_COOLDOWN;
+            resetThrowCooldown();
             return targetPos.cpy().sub(getPosition());
         }
         return null;
+    }
+
+    private void resetThrowCooldown() {
+        throwCooldown = MathUtils.random(MIN_THROW_COOLDOWN, MAX_THROW_COOLDOWN);
     }
 
     @Override

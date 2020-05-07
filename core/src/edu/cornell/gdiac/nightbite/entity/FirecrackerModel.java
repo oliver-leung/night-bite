@@ -156,7 +156,8 @@ public class FirecrackerModel extends BoxObstacle {
             }
 
             if (body.getUserData() instanceof EnemyModel) {
-                ((EnemyModel) (body.getUserData())).forceReplan();
+                EnemyModel e = ((EnemyModel) (body.getUserData()));
+                e.forceReplan();
             }
         }
     }
