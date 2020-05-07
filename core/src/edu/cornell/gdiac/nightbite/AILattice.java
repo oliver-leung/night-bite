@@ -157,6 +157,55 @@ public class AILattice {
         return null;
     }
 
+    private boolean dfs(int targetX, int targetY, int sourceX, int sourceY,
+                        boolean[][] visited, int depth, int maxDepth) {
+        // System.out.printf("%d, %d, %d, %d, %d, %d", targetX, targetY, sourceX, sourceY, depth, maxDepth);
+        if (depth >= maxDepth) {
+            // System.out.println("lol");
+            return false;
+        }
+
+        if (sourceX < 0 || sourceX >= numW || sourceY < 0 || sourceY >= numH) {
+            return false;
+        }
+
+        if (visited[sourceX][sourceY]) {
+            return false;
+        }
+
+        if (staticMap[sourceX][sourceY]) {
+            return false;
+        }
+
+        if (targetX == sourceX && targetY == sourceY) {
+            return true;
+        }
+
+        visited[sourceX][sourceY] = true;
+
+        boolean up = dfs(targetX, targetY, sourceX, sourceY+1, visited, depth+1, maxDepth);
+        boolean down = dfs(targetX, targetY, sourceX, sourceY-1, visited, depth+1, maxDepth);;
+        boolean left = dfs(targetX, targetY, sourceX-1, sourceY, visited, depth+1, maxDepth);;
+        boolean right = dfs(targetX, targetY, sourceX+1, sourceY, visited, depth+1, maxDepth);;
+
+        // System.out.println("ha");
+
+        return up || down || left || right;
+    }
+
+    private boolean dfs(Vector2 source, Vector2 target, int dist) {
+        // System.out.println(source);
+        // System.out.println(target);
+        boolean[][] visited = new boolean[numW][numH];
+        return dfs((int) target.x, (int) target.y, (int) source.x, (int) source.y, visited, 0, dist);
+    }
+
+    public boolean isReachable(Vector2 source, Vector2 target) {
+        // Manhattan distance as upper bound
+        int dist = (int) (Math.ceil(target.x - source.x) + Math.ceil(target.y - source.y)) + 30;
+        return dfs(source, target, dist);
+    }
+
     public void findPath(PooledList<GridPoint2> prev, Iterable<GridPoint2> target, GridPoint2 position) {
         prev.clear();
 

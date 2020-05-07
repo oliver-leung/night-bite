@@ -423,13 +423,13 @@ public class WorldController implements Screen, InputProcessor {
 
         Vector2 dir = new Vector2(0,0);
 
-        for (HumanoidModel e : worldModel.getEnemies()) {
+        for (EnemyModel e : worldModel.getEnemies()) {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
                 if (e instanceof FireEnemyModel) {
-                    dir = ((FireEnemyModel)e).update(p);
+                    dir = ((FireEnemyModel)e).update(p, worldModel.getAILattice());
                 } else if (e instanceof OilEnemyModel) {
-                    dir = ((OilEnemyModel)e).update(p);
+                    dir = ((OilEnemyModel)e).update(p, worldModel.getAILattice());
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);

@@ -39,10 +39,10 @@ public abstract class EnemyModel extends HumanoidModel {
         setRespawnCooldown(120);
     }
 
-    public abstract void attack(PlayerModel p);
+    public abstract void attack(PlayerModel p, AILattice aiLattice);
 
 
-    public Vector2 update(PlayerModel p) {
+    public Vector2 update(PlayerModel p, AILattice aiLattice) {
         Vector2 homePos = getHomePosition();
         Vector2 dir = new Vector2(0, 0);
         switch (state) {
@@ -54,7 +54,7 @@ public abstract class EnemyModel extends HumanoidModel {
                 break;
             case ATTACK:
                 dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                attack(p);
+                attack(p, aiLattice);
                 if (!aiController.canDetectPlayer()) { // Player not within detection radius - return to origin
                     state = State.RETURN;
                     aiController.forceReplan();
