@@ -9,7 +9,7 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class FireEnemyModel extends EnemyModel {
-    private static final int THROW_COOLDOWN = 50;
+    private static final int THROW_COOLDOWN = 70;
     private static final float THROW_DIST = 5;
     private static final float THROW_FORCE = 2f;
     private static final float THROW_TIME = 0.9f; // fudged in seconds
