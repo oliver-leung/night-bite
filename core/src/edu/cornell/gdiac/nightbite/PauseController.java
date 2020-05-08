@@ -28,39 +28,36 @@ public class PauseController implements Screen, InputProcessor {
 
     /** Whether this player mode is still active */
     private boolean active;
-    /** Flag to resume the game */
-    private boolean resumeGame;
+    /** The current state of the menu button */
+    private int pressStateMenu;
     /** The current state of the resume button */
-    private int pressState;
+    private int pressStateResume;
 
     /** Coordinate variables */
     private int heightY = 0;
-
-    private int xLeftEnd = 0;
-    private int yposTop = 0;
-
+    private int xposResume = 0;
+    private int yposResume = 0;
     private int xposMenu = 0;
     private int yposMenu = 0;
 
     /** Textures */
     private TextureRegion menuTexture;
     // private TextureRegion pauseTexture;
-    // private TextureRegion resumeTexture;
+    private TextureRegion resumeTexture;
     private TextureRegion background;
 
 
     public PauseController(GameCanvas canvas) {
         this.canvas = canvas;
         active = true;
-        resumeGame = false;
     }
 
     /** Loads UI assets */
     public void loadContent() {
-        background = Assets.getTextureRegion("level_select/Background.png");
+        background = Assets.getTextureRegion("pause/Background.png");
         menuTexture = Assets.getTextureRegion("pause/MainMenuButton.png");
         // pauseTexture = Assets.getTextureRegion("pause/PauseTitle.png");
-        // resumeTexture = Assets.getTextureRegion("pause/ResumeButton.png");
+        resumeTexture = Assets.getTextureRegion("pause/ResumeButton.png");
     }
 
     /** Sets this controller's screen listener */
@@ -77,28 +74,43 @@ public class PauseController implements Screen, InputProcessor {
         canvas.begin();
 
         canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
-        canvas.draw(menuTexture, Color.WHITE, menuTexture.getRegionWidth() / 2f, menuTexture.getRegionHeight() / 2f,
+
+        // Draw buttons
+        Color tintMenu = (pressStateMenu == 1 ? Color.GRAY: Color.WHITE);
+        Color tintResume = (pressStateResume == 1 ? Color.GRAY: Color.WHITE);
+        canvas.draw(menuTexture, tintMenu, 0, 0,
                     xposMenu, yposMenu, 0, scale, scale);
+        canvas.draw(resumeTexture, tintResume, resumeTexture.getRegionWidth() / 2f, resumeTexture.getRegionHeight() / 2f,
+                    xposResume, yposResume, 0, scale, scale);
 
         canvas.end();
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressState == 2) return true;
+        if (pressStateMenu == 2 || pressStateResume == 2) return true;
 
         // flip to match graphics coordinates, origin on bottom left
         screenY = heightY - screenY;
 
-        // change press state
-        float halfWidthMenu = menuTexture.getRegionWidth() / 2f;
-        float halfHeightMenu = menuTexture.getRegionHeight() / 2f;
-
-        boolean inBoundXMenu = screenX >= xposMenu-halfWidthMenu && screenX <= xposMenu+halfWidthMenu;
-        boolean inBoundYMenu = screenY >= yposMenu-halfHeightMenu && screenY <= yposMenu+halfHeightMenu;
+        // change menu press state
+        // jank alert: hard coded because of how the texture is drawn with origin 0,0 instead of a midway coord.
+        boolean inBoundXMenu = screenX >= xposMenu && screenX <= xposMenu+menuTexture.getRegionWidth();
+        boolean inBoundYMenu = screenY >= yposMenu && screenY <= yposMenu+menuTexture.getRegionHeight();
 
         if (inBoundXMenu && inBoundYMenu) {
-            pressState = 1;
+            pressStateMenu = 1;
+        }
+
+        // change resume press state
+        float halfWidthResume = resumeTexture.getRegionWidth() / 2f;
+        float halfHeightResume = resumeTexture.getRegionHeight() / 2f;
+
+        boolean inBoundXResume = screenX >= xposResume-halfWidthResume && screenX <= xposResume+halfWidthResume;
+        boolean inBoundYResume = screenY >= yposResume-halfHeightResume && screenY <= yposResume+halfHeightResume;
+
+        if (inBoundXResume && inBoundYResume) {
+            pressStateResume = 1;
         }
 
         return false;
@@ -106,8 +118,12 @@ public class PauseController implements Screen, InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (pressState == 1) {
-            pressState = 2;
+        if (pressStateMenu == 1) {
+            pressStateMenu = 2;
+            return true;
+        }
+        if (pressStateResume == 1) {
+            pressStateResume = 2;
             return true;
         }
         return false;
@@ -119,9 +135,9 @@ public class PauseController implements Screen, InputProcessor {
             update(delta);
             draw();
 
-            if (resumeGame && listener != null) {
+            if (pressStateResume == 2 && listener != null) {
                 listener.exitScreen(this, ExitCodes.LEVEL);
-            } else if (pressState == 2 && listener != null) {
+            } else if (pressStateMenu == 2 && listener != null) {
                 listener.exitScreen(this, ExitCodes.SELECT);
             }
         }
@@ -137,12 +153,13 @@ public class PauseController implements Screen, InputProcessor {
         scale = Math.max(sx, sy);
         heightY = height;
 
-        xposMenu = width / 2;
-        yposMenu = width / 4;
+        // Top left corner
+        xposMenu = width / 16;
+        yposMenu = height * 14/16;
 
-        // todo
-        xLeftEnd = width / 16;
-        yposTop = height * 7/8;
+        // Bottom middle
+        xposResume = width / 2;
+        yposResume = height / 4;
     }
 
     /** Default stubs */
@@ -185,7 +202,7 @@ public class PauseController implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-        pressState = 0;
-        resumeGame = false;
+        pressStateMenu = 0;
+        pressStateResume = 0;
     }
 }
