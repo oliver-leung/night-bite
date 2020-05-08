@@ -211,7 +211,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (exitCode == ExitCodes.QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
-		} else if (exitCode == WorldController.EXIT_NEXT) {
+		} else if (exitCode == ExitCodes.SELECT) {
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);

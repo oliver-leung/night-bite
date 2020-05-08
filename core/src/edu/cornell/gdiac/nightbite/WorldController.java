@@ -42,9 +42,6 @@ import edu.cornell.gdiac.util.*;
  * place nicely with the static assets.
  */
 public class WorldController implements Screen, InputProcessor {
-    /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
-
     /** The amount of time for a physics engine step. */
     public static final float WORLD_STEP = 1 / 60.0f;
     /** Number of velocity iterations for the constrain solvers. */
@@ -288,7 +285,7 @@ public class WorldController implements Screen, InputProcessor {
         // Handle resets
         if (input.didReset()) {
 //            reset();
-            listener.exitScreen(this, EXIT_NEXT);
+            listener.exitScreen(this, ExitCodes.SELECT);
             return false;
         }
 
@@ -296,7 +293,7 @@ public class WorldController implements Screen, InputProcessor {
             listener.exitScreen(this, ExitCodes.QUIT);
 			return false;
 		} else if (worldModel.isDone()) {
-			listener.exitScreen(this, EXIT_NEXT);
+			listener.exitScreen(this, ExitCodes.SELECT);
 			return false;
 		}
 		return true;
