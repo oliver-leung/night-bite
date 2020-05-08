@@ -168,7 +168,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			loading.dispose();
 		} else if (screen == levelSelect) {
-			if (exitCode == LevelSelectController.EXIT_START) {
+			// start the level
+			if (exitCode == ExitCodes.LEVEL) {
 				Gdx.input.setInputProcessor(null);
 
 				controller.setScreenListener(this);
@@ -179,34 +180,19 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(controller);
 
 				levelSelect.dispose();
-			} else if (exitCode == LevelSelectController.EXIT_MENU) {
+			} else if (exitCode == ExitCodes.TITLE) {
 				loading.setScreenListener(this);
 				setScreen(loading);
 
 				levelSelect.dispose();
 			}
 		} else if (screen == pause) {
-			if (exitCode == PauseController.EXIT_MENU) {
-				// return to level select
+			if (exitCode == ExitCodes.SELECT) {
 				levelSelect.loadContent();
 				levelSelect.setScreenListener(this);
 				setScreen(levelSelect);
 
 				pause.dispose();
-			} else if (exitCode == PauseController.EXIT_RESUME) {
-				// return to game
-//				Gdx.input.setInputProcessor(null);
-//
-//				controller.setScreenListener(this);
-//				controller.setCanvas(canvas);
-//				controller.setLevel(levelSelect.getSelectedLevelJSON());
-//
-//				controller.reset();
-//				setScreen(controller);
-//
-//				levelSelect.dispose();
-				// TODO test with level select
-
 			}
 		} else if (exitCode == ExitCodes.QUIT) {
 			// We quit the main application

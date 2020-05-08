@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -31,11 +32,6 @@ public class PauseController implements Screen, InputProcessor {
     private boolean resumeGame;
     /** The current state of the resume button */
     private int pressState;
-
-    /** Exit code for heading back to game menu */
-    public static final int EXIT_MENU = 1;
-    /** Exit code for returning to the game */
-    public static final int EXIT_RESUME = 2;
 
     /** Coordinate variables */
     private int heightY = 0;
@@ -124,9 +120,9 @@ public class PauseController implements Screen, InputProcessor {
             draw();
 
             if (resumeGame && listener != null) {
-                listener.exitScreen(this, EXIT_RESUME);
+                listener.exitScreen(this, ExitCodes.LEVEL);
             } else if (pressState == 2 && listener != null) {
-                listener.exitScreen(this, EXIT_MENU);
+                listener.exitScreen(this, ExitCodes.SELECT);
             }
         }
     }
