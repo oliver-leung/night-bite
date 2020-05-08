@@ -58,13 +58,16 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private LevelSelectController levelSelect;
 	/**
+	 * Player mode for the pause screen (CONTROLLER CLASS)
+	 */
+	private PauseController pause;
+	/**
 	 * List of all WorldControllers
 	 */
 	private WorldController controller;
 
 	// TODO jank shit ill fix after i wake up
 	private boolean loaded = false;
-	private String BLACK_BACKGROUND_FILE = "background/black_background.png";
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -92,6 +95,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = GameCanvas.getInstance();
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
+		pause = new PauseController(canvas);
 
 		assets = new Assets(manager);
 		controller = new WorldController();
@@ -149,20 +153,19 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
 		if (screen == loading) {
-//			if (levelSelect == null) {
-//				levelSelect = new LevelSelectMode(canvas);
-//			}
 			if (!loaded) {
 				assets.loadContent(manager);
 				loaded = true;
 			}
-			levelSelect.loadContent();
+//			levelSelect.loadContent();
+//
+//			levelSelect.setScreenListener(this);
 
-			levelSelect.setScreenListener(this);
-			setScreen(levelSelect);
+			pause.loadContent();
+			pause.setScreenListener(this);
+			setScreen(pause); // TODO debug
 
 			loading.dispose();
-//			loading = null;
 		} else if (screen == levelSelect) {
 			if (exitCode == LevelSelectController.EXIT_START) {
 				Gdx.input.setInputProcessor(null);
@@ -175,20 +178,39 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(controller);
 
 				levelSelect.dispose();
-//				levelSelect = null;
 			} else if (exitCode == LevelSelectController.EXIT_MENU) {
-//				loading = new LoadingMode(canvas, manager, 1);
 				loading.setScreenListener(this);
 				setScreen(loading);
 
 				levelSelect.dispose();
-//				levelSelect = null;
+			}
+		} else if (screen == pause) {
+			if (exitCode == PauseController.EXIT_MENU) {
+				// return to level select
+				levelSelect.loadContent();
+				levelSelect.setScreenListener(this);
+				setScreen(levelSelect);
+
+				pause.dispose();
+			} else if (exitCode == PauseController.EXIT_RESUME) {
+				// return to game
+//				Gdx.input.setInputProcessor(null);
+//
+//				controller.setScreenListener(this);
+//				controller.setCanvas(canvas);
+//				controller.setLevel(levelSelect.getSelectedLevelJSON());
+//
+//				controller.reset();
+//				setScreen(controller);
+//
+//				levelSelect.dispose();
+				// TODO test with level select
+
 			}
 		} else if (exitCode == WorldController.EXIT_QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
 		} else if (exitCode == WorldController.EXIT_NEXT) {
-//			controller.reset();
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
