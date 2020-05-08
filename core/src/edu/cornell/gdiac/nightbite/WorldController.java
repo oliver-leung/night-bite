@@ -25,10 +25,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.LightSource;
-import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.SoundController;
+import edu.cornell.gdiac.util.*;
 
 /**
  * Base class for a world-specific controller.
@@ -45,8 +42,6 @@ import edu.cornell.gdiac.util.SoundController;
  * place nicely with the static assets.
  */
 public class WorldController implements Screen, InputProcessor {
-    /** Exit code for quitting the game */
-    public static final int EXIT_QUIT = 0;
     /** Exit code for advancing to next level */
     public static final int EXIT_NEXT = 1;
 
@@ -298,7 +293,7 @@ public class WorldController implements Screen, InputProcessor {
         }
 
         if (input.didExit()) {
-            listener.exitScreen(this, EXIT_QUIT);
+            listener.exitScreen(this, ExitCodes.QUIT);
 			return false;
 		} else if (worldModel.isDone()) {
 			listener.exitScreen(this, EXIT_NEXT);

@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.Logger;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -207,7 +208,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				// TODO test with level select
 
 			}
-		} else if (exitCode == WorldController.EXIT_QUIT) {
+		} else if (exitCode == ExitCodes.QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
 		} else if (exitCode == WorldController.EXIT_NEXT) {
