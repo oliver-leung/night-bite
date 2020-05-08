@@ -284,8 +284,12 @@ public class WorldController implements Screen, InputProcessor {
 
         // Handle resets
         if (input.didReset()) {
-//            reset();
             listener.exitScreen(this, ExitCodes.SELECT);
+            return false;
+        }
+
+        if (input.didPause()) {
+            listener.exitScreen(this, ExitCodes.PAUSE);
             return false;
         }
 

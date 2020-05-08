@@ -55,7 +55,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private LoadController loading;
 	/**
-	 * Player mode for the asset loading screen (CONTROLLER CLASS)
+	 * Player mode for the level select screen (CONTROLLER CLASS)
 	 */
 	private LevelSelectController levelSelect;
 	/**
@@ -63,9 +63,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private PauseController pause;
 	/**
-	 * List of all WorldControllers
+	 * Player mode for the in-game level controller
 	 */
-	private WorldController controller;
+	private WorldController game;
 
 	// TODO jank shit ill fix after i wake up
 	private boolean loaded = false;
@@ -99,7 +99,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		pause = new PauseController(canvas);
 
 		assets = new Assets(manager);
-		controller = new WorldController();
+		game = new WorldController();
 
 		loading.setScreenListener(this);
 		setScreen(loading);
@@ -118,7 +118,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Call dispose on our children
 		setScreen(null);
 		assets.unloadContent(manager);
-		controller.dispose();
+		game.dispose();
 
 		canvas.dispose();
 		canvas = null;
@@ -156,15 +156,13 @@ public class GDXRoot extends Game implements ScreenListener {
 		if (screen == loading) {
 			if (!loaded) {
 				assets.loadContent(manager);
+				pause.loadContent();
+				levelSelect.loadContent();
 				loaded = true;
 			}
-//			levelSelect.loadContent();
-//
-//			levelSelect.setScreenListener(this);
+			levelSelect.setScreenListener(this);
 
-			pause.loadContent();
-			pause.setScreenListener(this);
-			setScreen(pause); // TODO debug
+			setScreen(levelSelect);
 
 			loading.dispose();
 		} else if (screen == levelSelect) {
@@ -172,12 +170,13 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (exitCode == ExitCodes.LEVEL) {
 				Gdx.input.setInputProcessor(null);
 
-				controller.setScreenListener(this);
-				controller.setCanvas(canvas);
-				controller.setLevel(levelSelect.getSelectedLevelJSON());
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				game.setLevel(levelSelect.getSelectedLevelJSON());
 
-				controller.reset();
-				setScreen(controller);
+				game.reset();
+				setScreen(game);
+				System.out.println("level screen set");
 
 				levelSelect.dispose();
 			} else if (exitCode == ExitCodes.TITLE) {
@@ -186,21 +185,26 @@ public class GDXRoot extends Game implements ScreenListener {
 
 				levelSelect.dispose();
 			}
-		} else if (screen == pause) {
-			if (exitCode == ExitCodes.SELECT) {
-				levelSelect.loadContent();
-				levelSelect.setScreenListener(this);
-				setScreen(levelSelect);
+		}
 
-				pause.dispose();
-			}
-		} else if (exitCode == ExitCodes.QUIT) {
+		/* IN-GAME LEVEL EXIT CODES */
+		else if (exitCode == ExitCodes.QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
+
 		} else if (exitCode == ExitCodes.SELECT) {
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
+
+			if (screen == pause) pause.dispose();
+
+		} else if (exitCode == ExitCodes.PAUSE) {
+			Gdx.input.setInputProcessor(null);
+
+			pause.setScreenListener(this);
+			setScreen(pause);
+			System.out.println("pause screen set");
 		}
 	}
 
