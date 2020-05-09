@@ -21,7 +21,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.entity.*;
@@ -342,6 +341,7 @@ public class WorldController implements Screen, InputProcessor {
                 p.setIY(slideDirection.y);
                 playerDidBoost = false;
                 playerDidThrow = false;
+                SoundController.getInstance().play("audio/sliding.wav", "audio/sliding.wav", false, Assets.EFFECT_VOLUME);
             } else {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
@@ -417,6 +417,8 @@ public class WorldController implements Screen, InputProcessor {
             // player updates (for respawn and dash cool down)
             p.update();
 
+            p.playWalkSound();
+
             // Must always update sound controller!
             SoundController.getInstance().update();
         }
@@ -427,9 +429,9 @@ public class WorldController implements Screen, InputProcessor {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
                 if (e instanceof FireEnemyModel) {
-                    dir = ((FireEnemyModel)e).update(p, worldModel.getAILattice());
+                    dir = e.update(p, worldModel.getAILattice());
                 } else if (e instanceof OilEnemyModel) {
-                    dir = ((OilEnemyModel)e).update(p, worldModel.getAILattice());
+                    dir = e.update(p, worldModel.getAILattice());
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);

@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -11,6 +10,7 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
 
@@ -25,6 +25,15 @@ public class PlayerModel extends HumanoidModel {
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
     private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
+
+    public void playWalkSound() {
+        SoundController soundController = SoundController.getInstance();
+        if (state == MoveState.WALK && !soundController.isActive("audio/walking.wav")) {
+            soundController.play("audio/walking.wav", "audio/walking.wav", true, Assets.EFFECT_VOLUME + 0.6f);
+        } else if (state != MoveState.WALK && soundController.isActive("audio/walking.wav")) {
+            soundController.stop("audio/walking.wav");
+        }
+    }
 
     public enum MoveState {
         WALK,
@@ -195,6 +204,7 @@ public class PlayerModel extends HumanoidModel {
         if (boosting > 0 || sliding > 0) { return; }
         state = MoveState.WALK;
         setWalkTexture();
+
     }
 
     public void setStatic() {
@@ -294,8 +304,6 @@ public class PlayerModel extends HumanoidModel {
             startSwing(clickVector.angleRad());
         }
 
-        // hit things // TODO
-//        clickVector.nor();
         if (!hasItem()) {
             for (FirecrackerModel firecracker: firecrackers) {
                 Vector2 firecrackerVector = firecracker.getPosition();
@@ -303,6 +311,7 @@ public class PlayerModel extends HumanoidModel {
                 if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
                     Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
+                    SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.EFFECT_VOLUME);
                 }
             }
         }
@@ -314,6 +323,7 @@ public class PlayerModel extends HumanoidModel {
                 Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
                 enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
                 enemy.forceReplan();
+                SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.EFFECT_VOLUME);
             }
         }
 

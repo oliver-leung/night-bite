@@ -1,8 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
@@ -58,7 +58,7 @@ public class FireEnemyModel extends EnemyModel {
         // TODO: average walk velocity? or is that overkill
         // Estimated walk vector
         Vector2 walk = cache.set(targetVelocity).scl(THROW_TIME);
-        System.out.println(walk);
+//        System.out.println(walk);
         cache.add(targetPos);
         // cache.rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
         targetPred.set(cache);
