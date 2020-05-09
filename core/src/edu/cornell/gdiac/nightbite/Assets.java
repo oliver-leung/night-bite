@@ -106,7 +106,7 @@ public class Assets {
     }
 
     public static Music getMusic() {
-        return musics.get("audio/Night_Bite_(Theme)_v2.mp3");
+        return musics.get("audio/Night_Bite_(Theme)_v6.mp3");
     }
 
     public static Music getMusic(String filename) {
