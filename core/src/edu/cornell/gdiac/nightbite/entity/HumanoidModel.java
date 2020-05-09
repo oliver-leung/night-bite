@@ -13,50 +13,53 @@ import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class HumanoidModel extends SimpleObstacle {
-
+    /** Prevents humanoids from flying around */
     private static final float MOTION_DAMPING = 25f;
-    /* How fast we change frames (one frame per 8 calls to update */
+    /** How fast we change frames (one frame per 8 calls to update */
     private static final float ANIMATION_SPEED = 0.125f;
-    /* The number of animation frames in our falling filmstrip */
+    /** The number of animation frames in our falling filmstrip */
     private static final float NUM_FRAMES_FALL = 6;
+    /** Small distance between fixtures to avoid overlapping */
     private static float SEAM_EPSILON = 0.01f;
-    /**
-     * Movable object parameters
-     */
     private final float DENSITY = 10f;
     private final float FRICTION = 0.1f;
     private final float RESTITUTION = 0.4f;
     /** Steps between switching walk animation frames */
-    public int walkCounter;
+    public int walkCounter = 0;
     /** Steps between switching falling animation frames */
-    public int fallCounter;
+    public int fallCounter = 0;
     /** Textures */
     public FilmStrip defaultTexture;
     public FilmStrip fallTexture;
+    /** Texture tint */
+    public Color tint = new Color(Color.WHITE);
     protected Vector2 dimension;
     /** Whether this humanoid is alive */
-    protected boolean isAlive;
-    private Vector2 cache;
-    private PolygonShape hitBoxCore;
-    private CircleShape[] hitBoxEdge;
-    private PolygonShape feet;
-    private float[] vertices;
-    private Fixture[] capsuleFixtures;
+    protected boolean isAlive = true;
+    private Vector2 cache = new Vector2();
+    private PolygonShape hitBoxCore = new PolygonShape();
+    private CircleShape[] hitBoxEdge = new CircleShape[]{
+            new CircleShape(),
+            new CircleShape()
+    };
+    private PolygonShape feet = new PolygonShape();
+    private float[] vertices = new float[8];
+    private Fixture[] capsuleFixtures = new Fixture[3];
     private Fixture feetFixture;
-    private Rectangle coreBounds;
-    private Rectangle feetBounds;
-    private Vector2 feetPositionCache;
-    private Rectangle feetRectangleCache;
-    private Vector2 dimensionCache;
+    private Rectangle coreBounds = new Rectangle();
+    private Rectangle feetBounds = new Rectangle();
+    private Vector2 feetPositionCache = new Vector2();
+    private Rectangle feetRectangleCache = new Rectangle();
+    private Vector2 dimensionCache = new Vector2();
     /** Respawn position */
     private Vector2 homePosition;
     /** Time until humanoid respawn */
     private int respawnCooldown;
     private int DEFAULT_RESPAWN_COOLDOWN = 60;
     /* Keeps track of the falling animation frame */
-    private float fallFrame;
+    private float fallFrame = 0f;
     /** The previous horizontal direction of the humanoid */
-    private float prevHoriDir;
+    private float prevHoriDir = -1f;
 
     public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
         super(x, y);
@@ -68,38 +71,11 @@ public class HumanoidModel extends SimpleObstacle {
         this.texture = texture;
         this.fallTexture = fallTexture;
         setCurrentTexture(texture);
-        tint = new Color(Color.WHITE);
-
-        isAlive = true;
-
-        walkCounter = 0;
-        fallCounter = 0;
-        fallFrame = 0f;
-        prevHoriDir = -1f;
 
         // TODO: FIX DIMENSION
         dimension = new Vector2(width, height);
-        cache = new Vector2();
-        hitBoxCore = new PolygonShape();
-        hitBoxEdge = new CircleShape[]{
-                new CircleShape(),
-                new CircleShape()
-        };
-        feet = new PolygonShape();
-        vertices = new float[8];
-        capsuleFixtures = new Fixture[3];
-        coreBounds = new Rectangle();
-        feetBounds = new Rectangle();
-
-        feetPositionCache = new Vector2();
-        feetRectangleCache = new Rectangle();
-        dimensionCache = new Vector2();
-
         resize(width, height);
     }
-
-    /** Texture tint */
-    public Color tint;
 
     /** Gets whether this humanoid is alive */
     public boolean isAlive() {
@@ -109,12 +85,9 @@ public class HumanoidModel extends SimpleObstacle {
     /** Set the liveness state of this humanoid */
     public void setAlive(boolean alive) {
         isAlive = alive;
-        tint.a = 1.0f;
-    }
-
-    /** Respawn cooldown interval */
-    public int getRespawnCooldown() {
-        return respawnCooldown;
+        if (isAlive) {
+            tint.a = 1.0f;
+        }
     }
 
     public void setRespawnCooldown(int cooldown) {
@@ -145,7 +118,7 @@ public class HumanoidModel extends SimpleObstacle {
      * Sets the current texture to walking. Changes frames every 10 steps.
      */
     public void setWalkTexture() {
-        defaultTexture.setFrame((walkCounter / 8) % defaultTexture.getSize());
+        defaultTexture.setFrame((walkCounter / 5) % defaultTexture.getSize());
         if (prevHoriDir == 1) {
             defaultTexture.flip(true, false);
         }
@@ -380,16 +353,16 @@ public class HumanoidModel extends SimpleObstacle {
         return feetRectangleCache;
     }
 
-    public enum HitArea {
-        HITBOX,
-        WALKBOX
-    }
-
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
-                    getAngle(),actualScale.x,actualScale.y);
+            canvas.draw(texture, tint, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(), actualScale.x, actualScale.y);
         }
+    }
+
+    public enum HitArea {
+        HITBOX,
+        WALKBOX
     }
 }
