@@ -294,8 +294,6 @@ public class PlayerModel extends HumanoidModel {
             startSwing(clickVector.angleRad());
         }
 
-        // hit things // TODO
-//        clickVector.nor();
         if (!hasItem()) {
             for (FirecrackerModel firecracker: firecrackers) {
                 Vector2 firecrackerVector = firecracker.getPosition();
@@ -318,24 +316,6 @@ public class PlayerModel extends HumanoidModel {
                 }
             }
         }
-
-
-
-//        DetectionCallback callback = new DetectionCallback();
-//        float lowerX = Math.min(getX(), getX()+clickVector.x);
-//        float lowerY = Math.min(getY(), getY()+clickVector.y);
-//        float upperX = Math.max(getX(), getX()+clickVector.x);
-//        float upperY = Math.max(getY(), getY()+clickVector.y);
-//        world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
-//        for (Fixture f : callback.foundFixtures) {
-//            // TODO check item
-//            if (f.getUserData() != HitArea.HITBOX) {
-//                Vector2 hitDirection = clickPos;
-//                Body b = f.getBody();
-//                hitDirection.sub(b.getPosition());
-//                b.applyLinearImpulse(hitDirection.nor().scl(100), b.getPosition(), true);
-//            }
-//        }
     }
 
     static class DetectionCallback implements QueryCallback {
@@ -352,7 +332,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void startSwing(float swingAngle) {
         startSwingCooldown();
-//        angleOffset = clickAngle - (float)Math.PI/4;
         if (!flipHandheld) {
             clickAngle = swingAngle - (float)Math.PI/4;
         } else {

@@ -61,16 +61,39 @@ public class CrowdModel {
                 }
                 break;
             case ROAM:
-                for (CrowdUnitModel crowdUnit: getCrowdUnitList()) {
-                    crowdUnit.move(targetPos, crowdUnit.getDimension(), worldModel.getAILattice());
+//                for (CrowdUnitModel crowdUnit: getCrowdUnitList()) {
+//                    crowdUnit.move(targetPos, crowdUnit.getDimension(), worldModel.getAILattice());
+//                }
+//                float distanceFromTarget = getCrowdUnitList().get(0).getPosition().dst(targetPos); // TODO does this actualy work
+//                if (distanceFromTarget == previousDistanceFromTarget) {
+//                    previousDistanceFromTarget = 0f;
+//                    state = State.IDLE;
+//                    return;
+//                }
+//                previousDistanceFromTarget = distanceFromTarget;
+//                break;
+
+                // leader ai
+                float distanceFromTarget;
+                for (int i = 0; i < getCrowdUnitList().size(); i++) {
+                    if (i == 0) { // leader
+                        getCrowdUnitList().get(i).move(targetPos, getCrowdUnitList().get(i).getDimension(), worldModel.getAILattice());
+                        distanceFromTarget = getCrowdUnitList().get(i).getPosition().dst(targetPos);
+                        if (distanceFromTarget == previousDistanceFromTarget) {
+                            previousDistanceFromTarget = 0f;
+                            state = State.IDLE;
+                            return;
+                        }
+                        previousDistanceFromTarget = distanceFromTarget;
+                    } else {
+                        Vector2 leaderPos = getCrowdUnitList().get(0).getPosition();
+                        distanceFromTarget = getCrowdUnitList().get(i).getPosition().dst(leaderPos);
+                        System.out.println(distanceFromTarget);
+                        if (distanceFromTarget > 0.6f) { // TODO
+                            getCrowdUnitList().get(i).move(leaderPos, getCrowdUnitList().get(i).getDimension(), worldModel.getAILattice());
+                        }
+                    }
                 }
-                float distanceFromTarget = getCrowdUnitList().get(0).getPosition().dst(targetPos); // TODO does this actualy work
-                if (distanceFromTarget == previousDistanceFromTarget) {
-                    previousDistanceFromTarget = 0f;
-                    state = State.IDLE;
-                    return;
-                }
-                previousDistanceFromTarget = distanceFromTarget;
                 break;
         }
     }

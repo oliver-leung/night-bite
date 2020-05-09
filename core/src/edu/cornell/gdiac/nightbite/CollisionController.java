@@ -89,6 +89,10 @@ public class CollisionController implements ContactListener {
             contact.setEnabled(false);
         }
 
+//        if (a instanceof CrowdUnitModel && b instanceof CrowdUnitModel) {
+//            contact.setEnabled(false);
+//        }
+
     }
 
     /**
