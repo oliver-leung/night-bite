@@ -8,6 +8,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
@@ -216,6 +218,7 @@ public class Assets {
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = fontPath;
         size2Params.fontParameters.size = fontSize;
+
         manager.load(fontPath, BitmapFont.class, size2Params);
         assets.add(fontPath);
     }
@@ -234,7 +237,7 @@ public class Assets {
                     loadSound(fileName);
                     break;
                 case "ttf":
-                    loadFont(fileName, 12); // TODO: Let's make this a more reasonable size
+                    loadFont(fileName, 36); // TODO: Let's make this a more reasonable size
                     break;
             }
         }

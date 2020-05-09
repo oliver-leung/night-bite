@@ -5,7 +5,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -38,17 +42,29 @@ public class PauseController implements Screen, InputProcessor {
     /** Coordinate variables */
     private int heightY = 0;
 
+    private int[] posTitle = new int[]{0, 0};
     private int[] posResume = new int[]{0, 0};
     private int[] posMenu = new int[]{0, 0};
     private int[] posWASD = new int[]{0, 0};
+    private int[] posWASDSprite = new int[]{0, 0};
+
+    private int[] posMove = new int[]{0, 0};
+
+    /** Display font */
+    private BitmapFont displayFont;
 
     /** Textures */
     private TextureRegion menuTexture;
-    // private TextureRegion pauseTexture;
+    private TextureRegion pauseTexture;
     private TextureRegion resumeTexture;
     private TextureRegion background;
 
     private FilmStrip wasdTexture;
+    private FilmStrip wasdSpriteTexture;
+    private FilmStrip mouseTexture;
+    private FilmStrip escTexture;
+    private FilmStrip mTexture;
+
 
     /** How fast we change frames (one frame per 2 calls to update */
     private static final float ANIMATION_SPEED = 0.5f;
@@ -58,6 +74,8 @@ public class PauseController implements Screen, InputProcessor {
     private float frame;
     /** Number of frames in WASD animation */
     private int NUM_FRAMES_WASD;
+    /** Number of frames in WASD sprite animation */
+    private int NUM_FRAMES_WASDSPRITE;
 
 
     public PauseController(GameCanvas canvas) {
@@ -67,6 +85,8 @@ public class PauseController implements Screen, InputProcessor {
 
     /** Loads UI assets */
     public void loadContent() {
+        displayFont = Assets.getFont();
+
         background = Assets.getTextureRegion("pause/Background.png");
         menuTexture = Assets.getTextureRegion("pause/MainMenuButton.png");
         // pauseTexture = Assets.getTextureRegion("pause/PauseTitle.png");
@@ -75,7 +95,8 @@ public class PauseController implements Screen, InputProcessor {
         // WARNING: MAGIC NUMBERS for frame sizes
         wasdTexture = Assets.getFilmStrip("pause/WASD_FS.png", 144, 105);
         NUM_FRAMES_WASD = wasdTexture.getSize();
-        System.out.println(NUM_FRAMES_WASD);
+        wasdSpriteTexture = Assets.getFilmStrip("pause/WASDSprite_FS.png", 128, 128);
+        NUM_FRAMES_WASDSPRITE = wasdSpriteTexture.getSize();
     }
 
     /** Sets this controller's screen listener */
@@ -92,6 +113,7 @@ public class PauseController implements Screen, InputProcessor {
         }
 
         ((FilmStrip) wasdTexture).setFrame(((int) frame) % NUM_FRAMES_WASD);
+        ((FilmStrip) wasdSpriteTexture).setFrame(((int) frame) % NUM_FRAMES_WASDSPRITE);
     }
 
     /** Draw UI assets */
@@ -111,6 +133,11 @@ public class PauseController implements Screen, InputProcessor {
         // Draw filmstrips
         canvas.draw(wasdTexture, Color.WHITE, Assets.getTextureCenterX(wasdTexture), Assets.getTextureCenterY(wasdTexture),
                     posWASD[0], posWASD[1], 0, scale, scale);
+        canvas.draw(wasdSpriteTexture, Color.WHITE, Assets.getTextureCenterX(wasdSpriteTexture), Assets.getTextureCenterY(wasdSpriteTexture),
+                    posWASDSprite[0], posWASDSprite[1], 0, scale, scale);
+
+        // Draw text
+        canvas.drawText("Move", displayFont, posMove[0], posMove[1]);
 
         canvas.end();
     }
@@ -193,6 +220,12 @@ public class PauseController implements Screen, InputProcessor {
         // Tutorial images
         posWASD[0] = width / 4;
         posWASD[1] = height * 3/4;
+        posWASDSprite[0] = width / 2;
+        posWASDSprite[1] = height * 3/4;
+
+        // Tutorial text
+        posMove[0] = width / 3;
+        posMove[1] = height * 3/4;
     }
 
     /** Default stubs */
