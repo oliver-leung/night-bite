@@ -12,6 +12,7 @@ public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 100;
     private static final int MIN_THROW_COOLDOWN = 60;
     private static final float THROW_DIST = 5;
+    private static final float STOP_DIST = 2.5f;
     private static final float THROW_FORCE = 2f;
     private static final float THROW_TIME = 0.9f; // fudged in seconds
     private static final float MIN_DIST_DEV = 0.4f;
@@ -109,6 +110,17 @@ public class FireEnemyModel extends EnemyModel {
             return targetPos.cpy().sub(getPosition());
         }
         return null;
+    }
+
+    @Override
+    public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
+        if (getPosition().sub(targetPos).len() < STOP_DIST) {
+            if (aiController.canTarget(getPosition(), targetPos, THROW_DIST)) {
+                return Vector2.Zero;
+            }
+        }
+
+        return super.move(targetPos, targetDims, aiLattice);
     }
 
     private void resetThrowCooldown() {
