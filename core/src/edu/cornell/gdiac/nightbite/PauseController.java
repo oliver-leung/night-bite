@@ -76,8 +76,8 @@ public class PauseController implements Screen, InputProcessor {
     private FilmStrip rTexture;
 
 
-    /** How fast we change frames (one frame per 4 calls to update */
-    private static final float ANIMATION_SPEED = 0.25f;
+    /** How fast we change frames (one frame per 5 calls to update */
+    private static final float ANIMATION_SPEED = 0.2f;
     /** Maximum number of frames before resetting to 0 */
     private static final float MAX_FRAMES = 120f;
     /** Current animation frame */
