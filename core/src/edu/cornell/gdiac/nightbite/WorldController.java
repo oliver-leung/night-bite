@@ -430,6 +430,8 @@ public class WorldController implements Screen, InputProcessor {
                     dir = ((FireEnemyModel)e).update(p);
                 } else if (e instanceof OilEnemyModel) {
                     dir = ((OilEnemyModel)e).update(p);
+                } else if (e instanceof CrowdUnitModel) {
+                    dir = ((CrowdUnitModel)e).update();
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);

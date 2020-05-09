@@ -171,7 +171,7 @@ public class CollisionController implements ContactListener {
         }
     }
 
-    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
+    public void handleEnemyToObjectContact(HumanoidModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();

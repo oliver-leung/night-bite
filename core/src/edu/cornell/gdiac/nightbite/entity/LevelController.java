@@ -85,6 +85,15 @@ public class LevelController {
             y++;
             x = 0;
         }
+        // TODO
+        TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
+        float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
+        float pHeight = texture.getRegionHeight() / world.getScale().y;
+        CrowdUnitModel crowdUnit = new CrowdUnitModel( 15, 6, pWidth, pHeight, world);
+        crowdUnit.setDrawScale(world.getScale());
+        crowdUnit.setActualScale(world.getActualScale());
+        crowdUnit.setFixedRotation(true);
+        world.addEnemy(crowdUnit);
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
