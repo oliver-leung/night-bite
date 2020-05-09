@@ -18,6 +18,7 @@ public class InputController extends MechanicController {
     private boolean prevThrow;
 
     private boolean prevDebug;
+    private boolean prevPaused;
     private boolean prevReset;
 
     public InputController(int xbox, int keyboard, boolean debug) {
@@ -26,9 +27,9 @@ public class InputController extends MechanicController {
         this.keyboard = keyboard;
     }
 
-    public InputController(int xbox, int keyboard) {
-        this(xbox, keyboard,false);
-    }
+//    public InputController(int xbox, int keyboard) {
+//        this(xbox, keyboard,false);
+//    }
 
     private boolean notDeadZoned(float vert, float hori) {
         return Math.abs(vert) > DEADZONE || Math.abs(hori) > DEADZONE;
@@ -42,6 +43,7 @@ public class InputController extends MechanicController {
             isThrowing = false;
             isDebug = false;
             isReset = false;
+            isPaused = false;
             return;
         }
 
@@ -99,6 +101,9 @@ public class InputController extends MechanicController {
         temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
+        temp1 = Gdx.input.isKeyPressed(keybinds.PAUSE);
+        isPaused = isPaused || (!prevPaused && temp1);
+
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
 
@@ -113,6 +118,8 @@ public class InputController extends MechanicController {
                 music.setVolume(Assets.EFFECT_VOLUME);
             }
         }
+
+        // TODO we need so set some stuff around here re: prevPaused
     }
 
     private boolean isKeyPressed(int key) {
@@ -124,6 +131,7 @@ public class InputController extends MechanicController {
         prevThrow = isThrowing;
         prevDebug = isDebug;
         prevReset = isReset;
+        prevPaused = isPaused;
     }
 
     public void poll() {

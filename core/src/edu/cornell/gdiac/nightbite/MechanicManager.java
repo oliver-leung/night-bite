@@ -81,16 +81,21 @@ public class MechanicManager {
 
     public boolean didReset() {
         for (MechanicController controller : controllers) {
-            if (controller.isReset()) {
-                return true;
-            }
+            if (controller.isReset()) return true;
+        }
+        return false;
+    }
+
+    public boolean didPause() {
+        for (MechanicController controller : controllers) {
+            if (controller.isPaused()) return true;
         }
         return false;
     }
 
     public boolean didExit() {
         for (MechanicController c : controllers) {
-            if (c.isExit()) { return true; }
+            if (c.isExit()) return true;
         }
         return false;
     }

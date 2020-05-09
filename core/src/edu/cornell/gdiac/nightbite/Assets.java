@@ -8,6 +8,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
@@ -80,6 +82,22 @@ public class Assets {
     }
 
     /**
+     * Get the FilmStrip dimensions of a TextureRegion (if it were a FilmStrip)
+     *
+     * @param textureRegion Raw texture region
+     * @param width         The width of one frame
+     * @param height        The height of one frame
+     * @return [rows, cols, size]
+     */
+    private static int[] getFilmStripDimensions(TextureRegion textureRegion, int width, int height) {
+        int rows = textureRegion.getRegionHeight() / height;
+        int cols = textureRegion.getRegionWidth() / width;
+        int size = rows * cols;
+
+        return new int[]{rows, cols, size};
+    }
+
+    /**
      * Get the FilmStrip associated with this filename, assuming that each frame is 64 x 64 pixels
      *
      * @param fileName File name of FilmStrip
@@ -100,6 +118,23 @@ public class Assets {
         if (filmStrips.get(fileName) == null) {
             TextureRegion rawTexture = textureRegions.get(fileName);
             int[] dims = getFilmStripDimensions(rawTexture, pixels);
+            filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
+        }
+        return new FilmStrip(filmStrips.get(fileName));
+    }
+
+    /**
+     * Get the FilmStrip associated with this filename
+     *
+     * @param fileName File name of FilmStrip
+     * @param width    The width of one frame
+     * @param height   The height of one frame
+     * @return Associated FilmStrip
+     */
+    public static FilmStrip getFilmStrip(String fileName, int width, int height) {
+        if (filmStrips.get(fileName) == null) {
+            TextureRegion rawTexture = textureRegions.get(fileName);
+            int[] dims = getFilmStripDimensions(rawTexture, width, height);
             filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
         return new FilmStrip(filmStrips.get(fileName));
@@ -183,6 +218,7 @@ public class Assets {
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = fontPath;
         size2Params.fontParameters.size = fontSize;
+
         manager.load(fontPath, BitmapFont.class, size2Params);
         assets.add(fontPath);
     }
@@ -201,7 +237,7 @@ public class Assets {
                     loadSound(fileName);
                     break;
                 case "ttf":
-                    loadFont(fileName, 12); // TODO: Let's make this a more reasonable size
+                    loadFont(fileName, 36); // TODO: Let's make this a more reasonable size
                     break;
             }
         }
@@ -255,5 +291,23 @@ public class Assets {
             }
         }
         this.isLoaded = false;
+    }
+
+    /**
+     * Retrieves a texture's center (x coordinate) as an int
+     * @param texture
+     * @return Center x coordinate
+     */
+    public static int getTextureCenterX (TextureRegion texture) {
+        return texture.getRegionWidth() / 2;
+    }
+
+    /**
+     * Retrieves a texture's center (y coordinate) as an int
+     * @param texture
+     * @return Center y coordinate
+     */
+    public static int getTextureCenterY (TextureRegion texture) {
+        return texture.getRegionHeight() / 2;
     }
 }

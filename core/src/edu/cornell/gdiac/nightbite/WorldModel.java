@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -187,9 +188,9 @@ public class WorldModel {
         }
         complete = true;
         if (passedLevel) {
-            LEVEL_EXIT_CODE = LEVEL_COMPLETED;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_PASS;
         } else {
-            LEVEL_EXIT_CODE = LEVEL_TIME_OUT;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_FAIL;
         }
     }
 

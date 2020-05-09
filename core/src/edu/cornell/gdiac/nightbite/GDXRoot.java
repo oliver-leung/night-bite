@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.Logger;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -54,17 +55,20 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	private LoadController loading;
 	/**
-	 * Player mode for the asset loading screen (CONTROLLER CLASS)
+	 * Player mode for the level select screen (CONTROLLER CLASS)
 	 */
 	private LevelSelectController levelSelect;
 	/**
-	 * List of all WorldControllers
+	 * Player mode for the pause screen (CONTROLLER CLASS)
 	 */
-	private WorldController controller;
+	private PauseController pause;
+	/**
+	 * Player mode for the in-game level controller
+	 */
+	private WorldController game;
 
 	// TODO jank shit ill fix after i wake up
 	private boolean loaded = false;
-	private String BLACK_BACKGROUND_FILE = "background/black_background.png";
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -92,9 +96,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = GameCanvas.getInstance();
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
+		pause = new PauseController(canvas);
 
 		assets = new Assets(manager);
-		controller = new WorldController();
+		game = new WorldController();
 
 		loading.setScreenListener(this);
 		setScreen(loading);
@@ -113,7 +118,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Call dispose on our children
 		setScreen(null);
 		assets.unloadContent(manager);
-		controller.dispose();
+		game.dispose();
 
 		canvas.dispose();
 		canvas = null;
@@ -149,49 +154,64 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
 		if (screen == loading) {
-//			if (levelSelect == null) {
-//				levelSelect = new LevelSelectMode(canvas);
-//			}
 			if (!loaded) {
 				assets.loadContent(manager);
+				pause.loadContent();
+				levelSelect.loadContent();
 				loaded = true;
 			}
-			levelSelect.loadContent();
-
 			levelSelect.setScreenListener(this);
+
 			setScreen(levelSelect);
 
 			loading.dispose();
-//			loading = null;
 		} else if (screen == levelSelect) {
-			if (exitCode == LevelSelectController.EXIT_START) {
+			// start the level
+			if (exitCode == ExitCodes.LEVEL) {
 				Gdx.input.setInputProcessor(null);
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.reset();
+				setScreen(game);
 
-				controller.setScreenListener(this);
-				controller.setCanvas(canvas);
-				controller.setLevel(levelSelect.getSelectedLevelJSON());
-
-				controller.reset();
-				setScreen(controller);
-
-				levelSelect.dispose();
-//				levelSelect = null;
-			} else if (exitCode == LevelSelectController.EXIT_MENU) {
-//				loading = new LoadingMode(canvas, manager, 1);
+			} else if (exitCode == ExitCodes.TITLE) {
 				loading.setScreenListener(this);
 				setScreen(loading);
 
-				levelSelect.dispose();
-//				levelSelect = null;
 			}
-		} else if (exitCode == WorldController.EXIT_QUIT) {
+			levelSelect.dispose();
+
+		} else if (screen == pause) {
+			if (exitCode == ExitCodes.SELECT) {
+				Gdx.input.setInputProcessor(null);
+				levelSelect.setScreenListener(this);
+				setScreen(levelSelect);
+
+			} else if (exitCode == ExitCodes.LEVEL) {
+				Gdx.input.setInputProcessor(null);
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				game.setLevel(levelSelect.getSelectedLevelJSON());
+				setScreen(game);
+			}
+			pause.dispose();
+		}
+
+		/* IN-GAME LEVEL EXIT CODES */
+		else if (exitCode == ExitCodes.QUIT) {
 			// We quit the main application
 			Gdx.app.exit();
-		} else if (exitCode == WorldController.EXIT_NEXT) {
-//			controller.reset();
+
+		} else if (exitCode == ExitCodes.SELECT) {
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
+
+		} else if (exitCode == ExitCodes.PAUSE) {
+			Gdx.input.setInputProcessor(null);
+			pause.setScreenListener(this);
+			setScreen(pause);
 		}
 	}
 

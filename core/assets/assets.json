@@ -173,7 +173,7 @@
         "environment/Stalls_64_Darkbg.png",
         "environment/Tree_32.png",
         "environment/Tree_64_palette2.png",
-        "font/RetroGame.ttf",
+        "font/FiraMono-Bold.ttf",
         "item/firecracker_32.png",
         "item/firecracker_64.png",
         "item/firecracker_detonating_32_fs.png",
@@ -222,6 +222,16 @@
         "loading/Title.png",
         "logo/gameplay-screenshot-prebeta.png",
         "logo/night-bite-sign-black-v2.png",
-        "logo/night-bite-sign-black-v3.png"
+        "logo/night-bite-sign-black-v3.png",
+        "pause/Background.png",
+        "pause/esc_FS.png",
+        "pause/M_FS.png",
+        "pause/MainMenuButton.png",
+        "pause/Mouse_FS.png",
+        "pause/PauseTitle.png",
+        "pause/R_FS.png",
+        "pause/ResumeButton.png",
+        "pause/WASD_FS.png",
+        "pause/WASDSprite_FS.png"
     ]
 }

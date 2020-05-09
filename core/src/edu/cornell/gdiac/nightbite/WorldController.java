@@ -21,14 +21,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.LightSource;
-import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.SoundController;
+import edu.cornell.gdiac.util.*;
 
 /**
  * Base class for a world-specific controller.
@@ -45,11 +43,6 @@ import edu.cornell.gdiac.util.SoundController;
  * place nicely with the static assets.
  */
 public class WorldController implements Screen, InputProcessor {
-    /** Exit code for quitting the game */
-    public static final int EXIT_QUIT = 0;
-    /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
-
     /** The amount of time for a physics engine step. */
     public static final float WORLD_STEP = 1 / 60.0f;
     /** Number of velocity iterations for the constrain solvers. */
@@ -205,7 +198,7 @@ public class WorldController implements Screen, InputProcessor {
 
         if (worldModel.isComplete()) {
             displayFont.setColor(Color.YELLOW);
-            if (worldModel.getLevelExitCode() == worldModel.LEVEL_COMPLETED) {
+            if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
                 canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
             } else {
                 canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
@@ -295,16 +288,20 @@ public class WorldController implements Screen, InputProcessor {
 
         // Handle resets
         if (input.didReset()) {
-//            reset();
-            listener.exitScreen(this, EXIT_NEXT);
+            listener.exitScreen(this, ExitCodes.SELECT);
+            return false;
+        }
+
+        if (input.didPause()) {
+            listener.exitScreen(this, ExitCodes.PAUSE);
             return false;
         }
 
         if (input.didExit()) {
-            listener.exitScreen(this, EXIT_QUIT);
+            listener.exitScreen(this, ExitCodes.QUIT);
 			return false;
 		} else if (worldModel.isDone()) {
-			listener.exitScreen(this, EXIT_NEXT);
+			listener.exitScreen(this, ExitCodes.SELECT);
 			return false;
 		}
 		return true;
