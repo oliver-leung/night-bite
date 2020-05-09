@@ -105,8 +105,10 @@ public class LevelController {
 
         if (texture.contains("Lantern")) { // Lantern
             world.setLantern(sprite, x, y);
-        } else { // Brick
+        } else if (texture.contains("Brick")) { // Brick
             world.setBrick(sprite, x, y);
+        } else { // Hole Edge
+            world.setHoleEdge(sprite, x, y);
         }
 
         if (asset.getBoolean("light")) {
