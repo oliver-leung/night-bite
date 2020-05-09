@@ -7,7 +7,6 @@ import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
-import org.graalvm.compiler.lir.alloc.lsra.OptimizingLinearScanWalker_OptionDescriptors;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 100;
