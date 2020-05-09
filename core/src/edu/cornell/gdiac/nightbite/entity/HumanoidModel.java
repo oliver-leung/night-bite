@@ -63,6 +63,10 @@ public class HumanoidModel extends SimpleObstacle {
     private float fallFrame = 0f;
     /** The previous horizontal direction of the humanoid */
     private float prevHoriDir = -1f;
+
+
+    private int curFrameCount = 0;
+    private Animation<TextureRegion> curAnimation = null;
     private Animation<TextureRegion> walkAnimation;
     private Animation<TextureRegion> fallAnimation;
 
@@ -121,22 +125,23 @@ public class HumanoidModel extends SimpleObstacle {
         setTexture(texture);
     }
 
+
     /**
      * Sets the current texture to walking. Changes frames every 10 steps.
      */
     public void setWalkTexture() {
-        defaultTexture.setFrame((walkCounter / 5) % defaultTexture.getSize());
+        defaultTexture.setFrame((curFrameCount / 5) % defaultTexture.getSize());
         if (prevHoriDir == 1) {
             defaultTexture.flip(true, false);
         }
-        walkCounter++;
+        curFrameCount++;
     }
 
     /**
      * If the humanoid is not moving, set the texture to one frame of the walk texture.
      */
     public void setStaticTexture() {
-        walkCounter = 0;
+        curFrameCount = 0;
         ((FilmStrip) texture).setFrame(0);
         if (prevHoriDir == 1) {
             texture.flip(true, false);
@@ -149,13 +154,23 @@ public class HumanoidModel extends SimpleObstacle {
     public void setFallingTexture() {
         fallCounter++;
         fallFrame += ANIMATION_SPEED;
-        if (fallFrame >= NUM_FRAMES_FALL) { fallFrame -= NUM_FRAMES_FALL; }
+        if (fallFrame >= NUM_FRAMES_FALL) {
+            fallFrame -= NUM_FRAMES_FALL;
+        }
 
-        tint.sub(0,0,0, 0.02f); // Fade-out effect
+        tint.sub(0, 0, 0, 0.02f); // Fade-out effect
 
         ((FilmStrip) texture).setFrame((int) fallFrame);
         if (prevHoriDir == 1) {
             texture.flip(true, false);
+        }
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture, tint, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(), actualScale.x, actualScale.y);
         }
     }
 
@@ -358,14 +373,6 @@ public class HumanoidModel extends SimpleObstacle {
         feetRectangleCache.set(getX() - feetBounds.width/2, getY() - dimension.y/2 - feetBounds.y - 0.5f,
                 feetBounds.width, feetBounds.height);
         return feetRectangleCache;
-    }
-
-    @Override
-    public void draw(GameCanvas canvas) {
-        if (texture != null) {
-            canvas.draw(texture, tint, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y,
-                    getAngle(), actualScale.x, actualScale.y);
-        }
     }
 
     public enum HitArea {
