@@ -8,6 +8,7 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class OilEnemyModel extends EnemyModel {
     private static final int DROP_COOLDOWN = 150;
+    private static final float DROP_DIST = 3f;
     private int dropCooldown = 0;
 
     public OilEnemyModel(float x, float y, WorldModel world) {
@@ -30,7 +31,7 @@ public class OilEnemyModel extends EnemyModel {
         Vector2 targetPosition = p.getPosition();
         Vector2 enemyPosition = getPosition();
         float distance = Vector2.dst(targetPosition.x, targetPosition.y, enemyPosition.x, enemyPosition.y);
-        if (distance <= 1.5) {
+        if (distance <= DROP_DIST && OilModel.canAdd()) {
             worldModel.addOil(enemyPosition.x, enemyPosition.y);
             dropCooldown = DROP_COOLDOWN;
         }
