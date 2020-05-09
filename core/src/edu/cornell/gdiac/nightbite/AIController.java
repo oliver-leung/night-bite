@@ -45,13 +45,13 @@ public class AIController {
         walkDirectionCache = new Vector2();
     }
 
-    public void updateAI(AILattice lattice, Vector2 position) {
+    public void updateAI(AILattice lattice, Vector2 position, int aiClass) {
         if (!replan()) {
             return;
         }
 
         positionCache.set((int) position.x, (int) position.y);
-        lattice.findPath(targetPath, target, positionCache);
+        lattice.findPath(targetPath, target, positionCache, aiClass);
     }
 
     public boolean canTarget(Vector2 source, Vector2 target, float dist) {
@@ -244,10 +244,10 @@ public class AIController {
     }
 
 
-    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice) {
+    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass) {
         if (targetPath.isEmpty()) {
             forceReplan();
-            updateAI(aiLattice, feet);
+            updateAI(aiLattice, feet, aiClass);
             if (targetPath.isEmpty()) {
                 return Vector2.Zero;
             }

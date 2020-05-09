@@ -18,6 +18,7 @@ public class FireEnemyModel extends EnemyModel {
     private static final float MAX_DIST_DEV = 1.4f;
     private static final float MAX_DEVIATION = 20f;
     private static final float MIN_DEVIATION = -20f;
+    private static final float TOO_CLOSE_DIST = 1.5f;
     private int throwCooldown;
 
     private Vector2 source, target, targetPred, cache;
@@ -75,10 +76,12 @@ public class FireEnemyModel extends EnemyModel {
             resetThrowCooldown();
             cache.sub(getPosition()).rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
             targetPred.set(getPosition()).add(cache);
-            if (cache.len() > THROW_DIST) {
-                cache.nor().scl(THROW_DIST);
+            if (cache.len() > TOO_CLOSE_DIST) {
+                if (cache.len() > THROW_DIST) {
+                    cache.nor().scl(THROW_DIST);
+                }
+                return cache.cpy();
             }
-            return cache.cpy();
         }
 
         // Can you imagine cosine rule being useful ever?

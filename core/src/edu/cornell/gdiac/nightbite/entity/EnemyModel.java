@@ -39,6 +39,8 @@ public abstract class EnemyModel extends HumanoidModel {
         this.worldModel = worldModel;
         walkCooldown = WALK_COOLDOWN;
         setRespawnCooldown(120);
+
+        aiClass = 0;
     }
 
     public abstract void attack(PlayerModel p, AILattice aiLattice);
@@ -103,8 +105,8 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(rx, by);
         aiController.addTarget(lx, by);
 
-        aiController.updateAI(aiLattice, getFeetPosition());
-        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice).cpy().nor();
+        aiController.updateAI(aiLattice, getFeetPosition(), aiClass);
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, aiClass).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
