@@ -34,10 +34,6 @@ public class HumanoidModel extends SimpleObstacle {
     public FilmStrip defaultTexture;
     public FilmStrip fallTexture;
     protected Vector2 dimension;
-    protected short walkCategoryBits;
-    protected short walkMaskBits;
-    protected short hitCategoryBits;
-    protected short hitMaskBits;
     /** Whether this humanoid is alive */
     protected boolean isAlive;
     private Vector2 cache;
@@ -99,13 +95,6 @@ public class HumanoidModel extends SimpleObstacle {
         feetRectangleCache = new Rectangle();
         dimensionCache = new Vector2();
 
-        // TODO: Move this out
-        walkCategoryBits = Obstacle.WALKBOX;
-        walkMaskBits = 0x0004 | 0x0008;
-
-        hitCategoryBits = Obstacle.HITBOX;
-        hitMaskBits = 0x002 | 0x0020 | 0x0001;
-
         resize(width, height);
     }
 
@@ -124,8 +113,13 @@ public class HumanoidModel extends SimpleObstacle {
     }
 
     /** Respawn cooldown interval */
-    public int getRespawnCooldown() { return respawnCooldown; }
-    public void setRespawnCooldown(int cooldown) { DEFAULT_RESPAWN_COOLDOWN = cooldown; };
+    public int getRespawnCooldown() {
+        return respawnCooldown;
+    }
+
+    public void setRespawnCooldown(int cooldown) {
+        DEFAULT_RESPAWN_COOLDOWN = cooldown;
+    }
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
@@ -194,6 +188,10 @@ public class HumanoidModel extends SimpleObstacle {
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
         return true;
+    }
+
+    public Vector2 getHomePosition() {
+        return homePosition;
     }
 
     public void setHomePosition(Vector2 position) {
@@ -299,8 +297,8 @@ public class HumanoidModel extends SimpleObstacle {
         fixture.shape = hitBoxEdge[0];
         fixture.density /= 2;
         // GROUP INDEX MEANS CAPSULE WILL NOT COLLIDE WITH IMMOVABLE OBSTACLES
-        fixture.filter.maskBits = hitMaskBits;
-        fixture.filter.categoryBits= hitCategoryBits;
+        fixture.filter.maskBits = 0x002 | 0x0020 | 0x0001;
+        fixture.filter.categoryBits = Obstacle.HITBOX;
         capsuleFixtures[0] = body.createFixture(fixture);
 
         fixture.shape = hitBoxCore;
@@ -317,8 +315,8 @@ public class HumanoidModel extends SimpleObstacle {
 
         fixture.shape = feet;
         fixture.density = defaultDensity;
-        fixture.filter.categoryBits = walkCategoryBits;
-        fixture.filter.maskBits = walkMaskBits;
+        fixture.filter.categoryBits = Obstacle.WALKBOX;
+        fixture.filter.maskBits = 0x0004 | 0x0008;
         feetFixture = body.createFixture(fixture);
         feetFixture.setUserData(HitArea.WALKBOX);
 
