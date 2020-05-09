@@ -163,8 +163,11 @@ public class CollisionController implements ContactListener {
                 checkWinCondition(homeObject);
             }
         } else if (object instanceof OilModel) {
-            player.setSlide();
-            ((OilModel) object).markRemoved(true);
+            // Player slides only when oil is completely spilled
+            if (((OilModel) object).isSpilled()) {
+                player.setSlide();
+                ((OilModel) object).markRemoved(true);
+            }
         }
     }
 

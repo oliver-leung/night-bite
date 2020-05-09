@@ -56,6 +56,7 @@ public class HumanoidModel extends SimpleObstacle {
     private Vector2 homePosition;
     /** Time until humanoid respawn */
     private int respawnCooldown;
+    private int DEFAULT_RESPAWN_COOLDOWN = 60;
     /* Keeps track of the falling animation frame */
     private float fallFrame;
     /** The previous horizontal direction of the humanoid */
@@ -71,6 +72,7 @@ public class HumanoidModel extends SimpleObstacle {
         this.texture = texture;
         this.fallTexture = fallTexture;
         setCurrentTexture(texture);
+        tint = new Color(Color.WHITE);
 
         isAlive = true;
 
@@ -107,6 +109,9 @@ public class HumanoidModel extends SimpleObstacle {
         resize(width, height);
     }
 
+    /** Texture tint */
+    public Color tint;
+
     /** Gets whether this humanoid is alive */
     public boolean isAlive() {
         return isAlive;
@@ -115,7 +120,12 @@ public class HumanoidModel extends SimpleObstacle {
     /** Set the liveness state of this humanoid */
     public void setAlive(boolean alive) {
         isAlive = alive;
+        tint.a = 1.0f;
     }
+
+    /** Respawn cooldown interval */
+    public int getRespawnCooldown() { return respawnCooldown; }
+    public void setRespawnCooldown(int cooldown) { DEFAULT_RESPAWN_COOLDOWN = cooldown; };
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
@@ -166,6 +176,9 @@ public class HumanoidModel extends SimpleObstacle {
         fallCounter++;
         fallFrame += ANIMATION_SPEED;
         if (fallFrame >= NUM_FRAMES_FALL) { fallFrame -= NUM_FRAMES_FALL; }
+
+        tint.sub(0,0,0, 0.02f); // Fade-out effect
+
         ((FilmStrip) texture).setFrame((int) fallFrame);
         if (prevHoriDir == 1) {
             texture.flip(true, false);
@@ -181,10 +194,6 @@ public class HumanoidModel extends SimpleObstacle {
         body.setLinearDamping(MOTION_DAMPING);
         body.setFixedRotation(true);
         return true;
-    }
-
-    public Vector2 getHomePosition() {
-        return homePosition;
     }
 
     public void setHomePosition(Vector2 position) {
@@ -211,7 +220,7 @@ public class HumanoidModel extends SimpleObstacle {
     public void respawn() {
         setLinearVelocity(Vector2.Zero);
         if (respawnCooldown == 0) {
-            respawnCooldown = 60;
+            respawnCooldown = DEFAULT_RESPAWN_COOLDOWN;
         }
         respawnCooldown--;
         if (respawnCooldown == 0) {
@@ -378,4 +387,11 @@ public class HumanoidModel extends SimpleObstacle {
         WALKBOX
     }
 
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
+    }
 }

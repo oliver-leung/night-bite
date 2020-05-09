@@ -106,9 +106,11 @@ public class InputController extends MechanicController {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             Music music = Assets.getMusic();
             if (music.getVolume() > 0) {
-                music.setVolume(0);
+                Assets.EFFECT_VOLUME = 0;
+                music.setVolume(Assets.EFFECT_VOLUME);
             } else {
-                music.setVolume(0.1f);
+                Assets.EFFECT_VOLUME = 0.1f;
+                music.setVolume(Assets.EFFECT_VOLUME);
             }
         }
     }

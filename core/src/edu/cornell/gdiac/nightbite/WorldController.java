@@ -180,8 +180,8 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-        worldModel.drawDecorations(true);
-        worldModel.drawDecorations(false);
+        worldModel.drawDecorations(true, false);
+        worldModel.drawDecorations(false, true);
 
         StringBuilder message1 = new StringBuilder("Player 1 score: ");
 
@@ -196,6 +196,9 @@ public class WorldController implements Screen, InputProcessor {
                 }
             }
         }
+
+        // Draw hole edges on top of holes
+        worldModel.drawDecorations(false, false);
 
         // Draw player scores
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);

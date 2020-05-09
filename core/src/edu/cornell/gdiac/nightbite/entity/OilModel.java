@@ -7,7 +7,7 @@ public class OilModel extends ImmovableModel {
     /* How fast we change frames (one frame per 16 calls to update */
     private static final float ANIMATION_SPEED = 0.0625f;
     /* The number of animation frames in our spill filmstrip */
-    private static final float NUM_FRAMES_SPILL = 12;
+    private static final float NUM_FRAMES_SPILL = 11;
     /* Current animation frame */
     private float frame;
     /* Expected timestep age of oil spilling */
@@ -26,6 +26,10 @@ public class OilModel extends ImmovableModel {
             defaultTexture = texture;
         }
         super.setTexture(texture);
+    }
+
+    public boolean isSpilled() {
+        return spillingAge == 0;
     }
 
     public void update(float delta) {
