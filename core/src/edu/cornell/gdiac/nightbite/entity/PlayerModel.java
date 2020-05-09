@@ -402,11 +402,11 @@ public class PlayerModel extends HumanoidModel {
     @Override
     public void draw(GameCanvas canvas) {
         if (!isBoostCooldown() || alternateShadow) {
-            canvas.draw(shadow, Color.WHITE, origin.x - texture.getRegionWidth() / 4.0f, origin.y + texture.getRegionHeight() / 15.0f, getX() * drawScale.x, getY() * drawScale.y,
+            canvas.draw(shadow, tint, origin.x - texture.getRegionWidth() / 4.0f, origin.y + texture.getRegionHeight() / 15.0f, getX() * drawScale.x, getY() * drawScale.y,
                     getAngle(), actualScale.x, actualScale.y);
         }
 
-        canvas.draw(arrow, Color.WHITE, arrow.getRegionWidth() / 2.0f, arrow.getRegionHeight() / 2.0f, getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
+        canvas.draw(arrow, tint, arrow.getRegionWidth() / 2.0f, arrow.getRegionHeight() / 2.0f, getX() * drawScale.x + arrowXOffset, getY() * drawScale.y + arrowYOffset,
                 arrowAngle, actualScale.x, actualScale.y);
 
         super.draw(canvas);
@@ -430,7 +430,7 @@ public class PlayerModel extends HumanoidModel {
 
         // Don't draw weapon when holding item or dead
         if (!hasItem() && isAlive()) {
-            canvas.draw(handheld, Color.WHITE,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
+            canvas.draw(handheld, tint,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
                     getAngle() + angleOffset,actualScale.x,actualScale.y);
         }
     }
