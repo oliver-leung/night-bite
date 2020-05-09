@@ -431,7 +431,7 @@ public class WorldController implements Screen, InputProcessor {
                 } else if (e instanceof OilEnemyModel) {
                     dir = ((OilEnemyModel)e).update(p);
                 } else if (e instanceof CrowdUnitModel) {
-                    dir = ((CrowdUnitModel)e).update();
+                    dir = ((CrowdUnitModel) e).getDir();
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);
@@ -453,6 +453,10 @@ public class WorldController implements Screen, InputProcessor {
 
                 e.setActive(e.isAlive());
             }
+        }
+
+        for (CrowdModel crowd : worldModel.getCrowds()) {
+            crowd.update();
         }
     }
 

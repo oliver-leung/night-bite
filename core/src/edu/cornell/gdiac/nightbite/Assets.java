@@ -235,7 +235,7 @@ public class Assets {
                     break;
             }
         }
-        playMusic();
+//        playMusic(); // TODO
         isLoaded = true;
     }
 

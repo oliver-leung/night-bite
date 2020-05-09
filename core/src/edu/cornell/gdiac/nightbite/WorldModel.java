@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
@@ -66,6 +67,7 @@ public class WorldModel {
     private ArrayList<PlayerModel> players;
 
     private PooledList<HumanoidModel> enemies;
+    private PooledList<CrowdModel> crowds;
 
     /** List of items */
     private ArrayList<ItemModel> items;
@@ -73,6 +75,7 @@ public class WorldModel {
     private ArrayList<Boolean> overlapItem = new ArrayList<>();
     /** List of firecrackers */
     private PooledList<FirecrackerModel> firecrackers;
+    private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
     private PooledList<OilModel> oils;
     /** Objects that don't move during updates */
@@ -107,6 +110,7 @@ public class WorldModel {
         firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
+        crowds = new PooledList<>();
         oils = new PooledList<>();
 
         // TODO: REMOVE
@@ -217,7 +221,7 @@ public class WorldModel {
                     items.iterator(),
                     players.iterator(),
                     enemies.iterator(),
-                    firecrackers.iterator(),
+                    firecrackers.iterator()
             };
 
             // TODO: Do i want to make this more efficient?
@@ -300,6 +304,8 @@ public class WorldModel {
 
     public PooledList<HumanoidModel> getEnemies() { return enemies; }
 
+    public PooledList<CrowdModel> getCrowds() { return crowds; }
+
     public Vector2 getScale() {
         return scale;
     }
@@ -381,6 +387,14 @@ public class WorldModel {
     public void addEnemy(HumanoidModel enemy) {
         initializeObject(enemy);
         enemies.add(enemy);
+    }
+
+    public void addCrowd(CrowdModel crowd) {
+        for (CrowdUnitModel crowdUnit: crowd.getCrowdUnitList()) {
+            initializeObject(crowdUnit);
+            enemies.add(crowdUnit);
+        }
+        crowds.add(crowd);
     }
 
     public void initializeAI() {

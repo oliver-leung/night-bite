@@ -89,11 +89,12 @@ public class LevelController {
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
         float pHeight = texture.getRegionHeight() / world.getScale().y;
-        CrowdUnitModel crowdUnit = new CrowdUnitModel( 15, 6, pWidth, pHeight, world);
-        crowdUnit.setDrawScale(world.getScale());
-        crowdUnit.setActualScale(world.getActualScale());
-        crowdUnit.setFixedRotation(true);
-        world.addEnemy(crowdUnit);
+        CrowdModel crowd = new CrowdModel( 15, 6, pWidth, pHeight, world);
+        world.addCrowd(crowd);
+        crowd = new CrowdModel( 5, 6, pWidth, pHeight, world);
+        world.addCrowd(crowd);
+        crowd = new CrowdModel( 10, 4, pWidth, pHeight, world);
+        world.addCrowd(crowd);
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {

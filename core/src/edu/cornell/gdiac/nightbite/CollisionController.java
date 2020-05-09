@@ -37,10 +37,10 @@ public class CollisionController implements ContactListener {
         }
 
         // Enemy-Object Contact
-        if (a instanceof EnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) a, b);
-        } else if (b instanceof FireEnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) b, a);
+        if (a instanceof EnemyModel) { // || a instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) a, b);
+        } else if (b instanceof EnemyModel) { // || b instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) b, a);
         }
 
         // Item-Object Contact
