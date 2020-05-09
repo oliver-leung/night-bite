@@ -8,11 +8,9 @@ import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.PooledList;
 
-import java.util.ArrayList;
-
 public class AILattice {
     private boolean[][] staticMap;
-    private ArrayList<Boolean[][]> dynamicMap;
+    private boolean[][] dynamicMap;
     private int numW;
     private int numH;
     private PooledList<Node> tempQueue;
@@ -33,7 +31,7 @@ public class AILattice {
         numW = w;
         numH = h;
         staticMap = new boolean [w][h];
-        dynamicMap = new ArrayList<Boolean[][]>();
+        dynamicMap = new boolean[w][h];
         tempQueue = new PooledList<>();
     }
 
@@ -61,7 +59,7 @@ public class AILattice {
     }
 
     public void clearDynamic() {
-        dynamicMap.clear();
+        dynamicMap = new boolean [numW][numH];
     }
 
     public void populateDynamic(Iterable<Obstacle> objects) {
@@ -86,16 +84,16 @@ public class AILattice {
             boolean leftx = bounded( lx, 0, numW);
 
             if (leftx && boty) {
-                dynamicMap.get(o.getAiClass())[lx][by] = true;
+                dynamicMap[lx][by] = true;
             }
             if (rightx && boty) {
-                dynamicMap.get(o.getAiClass())[rx][by] = true;
+                dynamicMap[rx][by] = true;
             }
             if (leftx && topy) {
-                dynamicMap.get(o.getAiClass())[lx][ty] = true;
+                dynamicMap[lx][ty] = true;
             }
             if (rightx && topy) {
-                dynamicMap.get(o.getAiClass())[rx][ty] = true;
+                dynamicMap[rx][ty] = true;
             }
         }
     }
@@ -108,7 +106,7 @@ public class AILattice {
         return val >= min && val < max;
     }
 
-    private Node bfs(Iterable<GridPoint2> target, GridPoint2 position, int ignore) {
+    private Node bfs(Iterable<GridPoint2> target, GridPoint2 position) {
         boolean[][] visited = new boolean[numW][numH];
         tempQueue.clear();
         tempQueue.add(new Node(position.x, position.y, null));
@@ -138,19 +136,8 @@ public class AILattice {
                 return n;
             }
 
-            boolean flag = false;
-
-            for (int i = 0; i < dynamicMap.size(); i ++) {
-                if (i == ignore) {
-                    continue;
-                }
-
-                if (dynamicMap.get(i)[n.x][n.y]) {
-                    flag = true;
-                }
-            }
-
-            if (flag) {
+            if ((dynamicMap[n.x][n.y]) &&
+                    (position.x != n.x || position.y != n.y)) {
                 continue;
             }
 
@@ -219,10 +206,10 @@ public class AILattice {
         return dfs(source, target, dist);
     }
 
-    public void findPath(PooledList<GridPoint2> prev, Iterable<GridPoint2> target, GridPoint2 position, int ignore) {
+    public void findPath(PooledList<GridPoint2> prev, Iterable<GridPoint2> target, GridPoint2 position) {
         prev.clear();
 
-        Node n = bfs(target, position, ignore);
+        Node n = bfs(target, position);
 
         if (n == null) {
             return;
@@ -241,11 +228,8 @@ public class AILattice {
                 if (staticMap[x][y]) {
                     canvas.drawPoint((x + 0.5f) * drawScale.x, (y + 0.5f) * drawScale.y, Color.RED);
                 }
-                for (Boolean[][] dm : dynamicMap) {
-                    // TODO: maybe change color for each class
-                    if (dm[x][y]) {
-                        canvas.drawPoint((x + 0.5f) * drawScale.x, (y + 0.5f) * drawScale.y, Color.GREEN);
-                    }
+                if (dynamicMap[x][y]) {
+                    canvas.drawPoint((x + 0.5f) * drawScale.x, (y + 0.5f) * drawScale.y, Color.GREEN);
                 }
             }
         }
