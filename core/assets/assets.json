@@ -225,8 +225,14 @@
         "logo/night-bite-sign-black-v2.png",
         "logo/night-bite-sign-black-v3.png",
         "pause/Background.png",
+        "pause/esc_FS.png",
+        "pause/M_FS.png",
         "pause/MainMenuButton.png",
+        "pause/Mouse_FS.png",
         "pause/PauseTitle.png",
-        "pause/ResumeButton.png"
+        "pause/R_FS.png",
+        "pause/ResumeButton.png",
+        "pause/WASD_FS.png",
+        "pause/WASDSprite_FS.png"
     ]
 }

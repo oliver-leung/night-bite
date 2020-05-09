@@ -6,7 +6,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.util.ExitCodes;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -35,16 +37,27 @@ public class PauseController implements Screen, InputProcessor {
 
     /** Coordinate variables */
     private int heightY = 0;
-    private int xposResume = 0;
-    private int yposResume = 0;
-    private int xposMenu = 0;
-    private int yposMenu = 0;
+
+    private int[] posResume = new int[]{0, 0};
+    private int[] posMenu = new int[]{0, 0};
+    private int[] posWASD = new int[]{0, 0};
 
     /** Textures */
     private TextureRegion menuTexture;
     // private TextureRegion pauseTexture;
     private TextureRegion resumeTexture;
     private TextureRegion background;
+
+    private FilmStrip wasdTexture;
+
+    /** How fast we change frames (one frame per 2 calls to update */
+    private static final float ANIMATION_SPEED = 0.5f;
+    /** Maximum number of frames before resetting to 0 */
+    private static final float MAX_FRAMES = 120f;
+    /** Current animation frame */
+    private float frame;
+    /** Number of frames in WASD animation */
+    private int NUM_FRAMES_WASD;
 
 
     public PauseController(GameCanvas canvas) {
@@ -58,6 +71,11 @@ public class PauseController implements Screen, InputProcessor {
         menuTexture = Assets.getTextureRegion("pause/MainMenuButton.png");
         // pauseTexture = Assets.getTextureRegion("pause/PauseTitle.png");
         resumeTexture = Assets.getTextureRegion("pause/ResumeButton.png");
+
+        // WARNING: MAGIC NUMBERS for frame sizes
+        wasdTexture = Assets.getFilmStrip("pause/WASD_FS.png", 144, 105);
+        NUM_FRAMES_WASD = wasdTexture.getSize();
+        System.out.println(NUM_FRAMES_WASD);
     }
 
     /** Sets this controller's screen listener */
@@ -66,8 +84,15 @@ public class PauseController implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
 
-    /** TODO Not sure if need yet */
-    private void update(float delta) { }
+    /** Updates and sets filmstrip frames */
+    private void update(float delta) {
+        frame += ANIMATION_SPEED;
+        if (frame >= MAX_FRAMES) {
+            frame = 0f;
+        }
+
+        ((FilmStrip) wasdTexture).setFrame(((int) frame) % NUM_FRAMES_WASD);
+    }
 
     /** Draw UI assets */
     public void draw() {
@@ -79,9 +104,13 @@ public class PauseController implements Screen, InputProcessor {
         Color tintMenu = (pressStateMenu == 1 ? Color.GRAY: Color.WHITE);
         Color tintResume = (pressStateResume == 1 ? Color.GRAY: Color.WHITE);
         canvas.draw(menuTexture, tintMenu, 0, 0,
-                    xposMenu, yposMenu, 0, scale, scale);
-        canvas.draw(resumeTexture, tintResume, resumeTexture.getRegionWidth() / 2f, resumeTexture.getRegionHeight() / 2f,
-                    xposResume, yposResume, 0, scale, scale);
+                    posMenu[0], posMenu[1], 0, scale, scale);
+        canvas.draw(resumeTexture, tintResume, Assets.getTextureCenterX(resumeTexture), Assets.getTextureCenterY(resumeTexture),
+                    posResume[0], posResume[1], 0, scale, scale);
+
+        // Draw filmstrips
+        canvas.draw(wasdTexture, Color.WHITE, Assets.getTextureCenterX(wasdTexture), Assets.getTextureCenterY(wasdTexture),
+                    posWASD[0], posWASD[1], 0, scale, scale);
 
         canvas.end();
     }
@@ -95,8 +124,8 @@ public class PauseController implements Screen, InputProcessor {
 
         // change menu press state
         // jank alert: hard coded because of how the texture is drawn with origin 0,0 instead of a midway coord.
-        boolean inBoundXMenu = screenX >= xposMenu && screenX <= xposMenu+menuTexture.getRegionWidth();
-        boolean inBoundYMenu = screenY >= yposMenu && screenY <= yposMenu+menuTexture.getRegionHeight();
+        boolean inBoundXMenu = screenX >= posMenu[0] && screenX <= posMenu[0]+menuTexture.getRegionWidth();
+        boolean inBoundYMenu = screenY >= posMenu[1] && screenY <= posMenu[1]+menuTexture.getRegionHeight();
 
         if (inBoundXMenu && inBoundYMenu) {
             pressStateMenu = 1;
@@ -106,8 +135,8 @@ public class PauseController implements Screen, InputProcessor {
         float halfWidthResume = resumeTexture.getRegionWidth() / 2f;
         float halfHeightResume = resumeTexture.getRegionHeight() / 2f;
 
-        boolean inBoundXResume = screenX >= xposResume-halfWidthResume && screenX <= xposResume+halfWidthResume;
-        boolean inBoundYResume = screenY >= yposResume-halfHeightResume && screenY <= yposResume+halfHeightResume;
+        boolean inBoundXResume = screenX >= posResume[0]-halfWidthResume && screenX <= posResume[0]+halfWidthResume;
+        boolean inBoundYResume = screenY >= posResume[1]-halfHeightResume && screenY <= posResume[1]+halfHeightResume;
 
         if (inBoundXResume && inBoundYResume) {
             pressStateResume = 1;
@@ -154,12 +183,16 @@ public class PauseController implements Screen, InputProcessor {
         heightY = height;
 
         // Top left corner
-        xposMenu = width / 16;
-        yposMenu = height * 14/16;
+        posMenu[0] = width / 16;
+        posMenu[1] = height * 14/16;
 
         // Bottom middle
-        xposResume = width / 2;
-        yposResume = height / 4;
+        posResume[0] = width / 2;
+        posResume[1] = height / 4;
+
+        // Tutorial images
+        posWASD[0] = width / 4;
+        posWASD[1] = height * 3/4;
     }
 
     /** Default stubs */
@@ -204,5 +237,6 @@ public class PauseController implements Screen, InputProcessor {
     public void dispose() {
         pressStateMenu = 0;
         pressStateResume = 0;
+        frame = 0f;
     }
 }
