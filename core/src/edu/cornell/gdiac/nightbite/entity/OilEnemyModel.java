@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.Vector2;
+import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 
@@ -18,7 +19,7 @@ public class OilEnemyModel extends EnemyModel {
         );
     }
 
-    public void attack(PlayerModel p) {
+    public void attack(PlayerModel p, AILattice aiLattice) {
         // Cool down before dropping another oil
         if (dropCooldown > 0) {
             dropCooldown--;

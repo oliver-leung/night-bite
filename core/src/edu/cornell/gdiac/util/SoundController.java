@@ -107,7 +107,7 @@ public class SoundController {
 		Sound sound = manager.get(filename, Sound.class);
 		soundbank.put(filename, sound);
 
-		System.out.println(soundbank.get(filename));
+		// System.out.println(soundbank.get(filename));
 	}
 
 	/**

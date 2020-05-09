@@ -154,6 +154,11 @@ public class FirecrackerModel extends BoxObstacle {
                 blastDirection.scl(KNOCKBACK_IMPULSE);
                 b.applyLinearImpulse(blastDirection, b.getPosition(), true);
             }
+
+            if (body.getUserData() instanceof EnemyModel) {
+                EnemyModel e = ((EnemyModel) (body.getUserData()));
+                e.forceReplan();
+            }
         }
     }
 

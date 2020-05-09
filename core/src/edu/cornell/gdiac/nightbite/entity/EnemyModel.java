@@ -23,14 +23,16 @@ public abstract class EnemyModel extends HumanoidModel {
     public AIController aiController;
     public WorldModel worldModel;
 
-    private static final int WALK_COOLDOWN = 10;
+    protected static final int WALK_COOLDOWN = 10;
     private static final float WALK_THRUST = 10f;
-    private int walkCooldown;
+    protected int walkCooldown;
 
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setPosition(x, y);
         setHomePosition(new Vector2(x, y));
+
+        super.DEFAULT_RESPAWN_COOLDOWN = 140;
 
         path = new PooledList<>();
         aiController = new AIController(worldModel, this);
@@ -39,10 +41,10 @@ public abstract class EnemyModel extends HumanoidModel {
         setRespawnCooldown(120);
     }
 
-    public abstract void attack(PlayerModel p);
+    public abstract void attack(PlayerModel p, AILattice aiLattice);
 
 
-    public Vector2 update(PlayerModel p) {
+    public Vector2 update(PlayerModel p, AILattice aiLattice) {
         Vector2 homePos = getHomePosition();
         Vector2 dir = new Vector2(0, 0);
         switch (state) {
@@ -54,8 +56,8 @@ public abstract class EnemyModel extends HumanoidModel {
                 break;
             case ATTACK:
                 dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                attack(p);
-                if (!aiController.canDetectPlayer()) { // Player not within detection radius - return to origin
+                attack(p, aiLattice);
+                if (!aiController.canChasePlayer()) { // Player not within chase radius - return to origin
                     state = State.RETURN;
                     aiController.forceReplan();
                 }
@@ -67,7 +69,7 @@ public abstract class EnemyModel extends HumanoidModel {
                     previousDistanceFromHome = 0f; // Reset
                     state = State.IDLE;
                     break;
-                } else if (aiController.canDetectPlayer()) { // Player is within detection radius - attack
+                } else if (aiController.canChasePlayer()) { // Player is within chase radius - attack
                     previousDistanceFromHome = 0f; // Reset
                     state = State.ATTACK;
                     aiController.forceReplan();
@@ -102,7 +104,7 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(lx, by);
 
         aiController.updateAI(aiLattice, getFeetPosition());
-        Vector2 dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
@@ -114,11 +116,16 @@ public abstract class EnemyModel extends HumanoidModel {
     public void respawn() {
         super.respawn();
         aiController.forceReplan();
+        resetState();
     }
 
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         aiController.drawDebug(canvas, drawScale);
+    }
+
+    public void resetState() {
+        state = State.IDLE;
     }
 
     public void setDetectionRadius(float radius) { aiController.setDetectionRadius(radius); }
