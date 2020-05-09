@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -91,8 +90,8 @@ public class PlayerModel extends HumanoidModel {
         super(
                 x, y, width, height,
                 Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Dash_5.png"),
-                Assets.getFilmStrip("character/P1_Falling_5.png")
-        );
+                Assets.getFilmStrip("character/P1_Falling_5.png"),
+                , );
         setBullet(true);
 
         impulse = new Vector2();

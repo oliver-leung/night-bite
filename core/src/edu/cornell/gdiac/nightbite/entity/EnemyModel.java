@@ -28,7 +28,7 @@ public abstract class EnemyModel extends HumanoidModel {
     private int walkCooldown;
 
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
-        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
+        super(x, y, 0.6f, 1f, walk, fall, , ); // TODO: DONT HARDCODE
         setPosition(x, y);
         setHomePosition(new Vector2(x, y));
 

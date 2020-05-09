@@ -1,12 +1,15 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
@@ -60,21 +63,25 @@ public class HumanoidModel extends SimpleObstacle {
     private float fallFrame = 0f;
     /** The previous horizontal direction of the humanoid */
     private float prevHoriDir = -1f;
+    private Animation<TextureRegion> walkAnimation;
+    private Animation<TextureRegion> fallAnimation;
 
-    public HumanoidModel(float x, float y, float width, float height, FilmStrip texture, FilmStrip fallTexture) {
+    public HumanoidModel(float x, float y, float width, float height, FilmStrip walkTexture, FilmStrip fallTexture, String walkFile, String fallFile) {
         super(x, y);
         setBullet(true);
         setDensity(DENSITY);
         setFriction(FRICTION);
         setRestitution(RESTITUTION);
 
-        this.texture = texture;
+        this.texture = walkTexture;
         this.fallTexture = fallTexture;
-        setCurrentTexture(texture);
+        setCurrentTexture(walkTexture);
 
         // TODO: FIX DIMENSION
         dimension = new Vector2(width, height);
         resize(width, height);
+        walkAnimation = Assets.getAnimation(walkFile);
+        fallAnimation = Assets.getAnimation(fallFile);
     }
 
     /** Gets whether this humanoid is alive */

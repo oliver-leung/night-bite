@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
@@ -103,6 +104,26 @@ public class Assets {
             filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
         return new FilmStrip(filmStrips.get(fileName));
+    }
+
+    private static int getFrameDuration(String filename) {
+        // Uses a quirk of the ASCII table to turn a numerical char to an int
+        return filename.charAt(filename.length() - 5) - '0';
+    }
+
+    public static Animation<TextureRegion> getAnimation(String filename) {
+        return getAnimation(filename, 64, getFrameDuration(filename));
+    }
+
+    public static Animation<TextureRegion> getAnimation(String filename, int pixels, int frameDuration) {
+        FilmStrip filmStrip = getFilmStrip(filename, pixels);
+        Array<TextureRegion> frames = new Array<>();
+
+        for (int i = 0; i < filmStrip.getSize(); i++) {
+            filmStrip.setFrame(i);
+            frames.add(new TextureRegion(filmStrip));
+        }
+        return new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP);
     }
 
     public static Music getMusic() {
