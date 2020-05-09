@@ -2,6 +2,7 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.Random;
 
@@ -43,6 +44,29 @@ public class CrowdUnitModel extends HumanoidModel{
         dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
 
+    }
+
+    @Override
+    public void setWalkTexture() {
+        if (walkCounter <= 0) {
+            walkCounter = 20; // TODO
+            int currFrame = ((FilmStrip) texture).getFrame();
+            currFrame++;
+            if (currFrame == ((FilmStrip) texture).getSize()) {
+                ((FilmStrip) texture).setFrame(0);
+            } else {
+                ((FilmStrip) texture).setFrame(currFrame);
+            }
+            if (getPrevHoriDir() == 1) {
+                texture.flip(true, false);
+            }
+        } else {
+            walkCounter--;
+        }
+    }
+
+    public void setStaticTexture() {
+        ((FilmStrip) texture).setFrame(0);
     }
 
     public Vector2 getDir() {

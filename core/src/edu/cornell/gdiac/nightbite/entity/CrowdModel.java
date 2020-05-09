@@ -11,6 +11,7 @@ public class CrowdModel {
     public static int MAX_PEOPLE_IN_CROWD = 5;
     private static final int SPAWN_TO_ROAM_RATE = 5;
     private static final int ROAM_RADIUS = 4;
+    private static final int CHANGE_LEADER_TIME = 100;
 
     private String[] textureList = {"character/Filmstrip/NPC1_Walk_8.png", "character/Filmstrip/NPC2_Walk_8.png", "character/Filmstrip/NPC3_Walk_8.png", "character/Filmstrip/NPC4_Walk_8.png"};
     private enum State {
@@ -18,6 +19,8 @@ public class CrowdModel {
         ROAM
     }
     public State state;
+    public int leaderIndex;
+    public int leaderIndexTime;
     private PooledList<CrowdUnitModel> crowdUnitList;
     public Vector2 targetPos;
     private float previousDistanceFromTarget;
@@ -35,6 +38,8 @@ public class CrowdModel {
         state = State.IDLE;
         targetPos = new Vector2(x, y);
         this.worldModel = worldModel;
+        leaderIndex = 0;
+        leaderIndexTime = CHANGE_LEADER_TIME;
     }
 
     public PooledList<CrowdUnitModel> getCrowdUnitList() {
@@ -74,27 +79,39 @@ public class CrowdModel {
 //                break;
 
                 // leader ai
+
+                updateChangeLeader();
                 float distanceFromTarget;
                 for (int i = 0; i < getCrowdUnitList().size(); i++) {
-                    if (i == 0) { // leader
-                        getCrowdUnitList().get(i).move(targetPos, getCrowdUnitList().get(i).getDimension(), worldModel.getAILattice());
-                        distanceFromTarget = getCrowdUnitList().get(i).getPosition().dst(targetPos);
+                    getCrowdUnitList().get(i).setWalkTexture();
+                    if (i == leaderIndex) { // leader
+                        getCrowdUnitList().get(leaderIndex).move(targetPos, getCrowdUnitList().get(leaderIndex).getDimension(), worldModel.getAILattice());
+                        distanceFromTarget = getCrowdUnitList().get(leaderIndex).getPosition().dst(targetPos);
                         if (distanceFromTarget == previousDistanceFromTarget) {
                             previousDistanceFromTarget = 0f;
                             state = State.IDLE;
+                            leaderIndexTime = CHANGE_LEADER_TIME;
+                            getCrowdUnitList().get(leaderIndex).setStaticTexture();
                             return;
                         }
                         previousDistanceFromTarget = distanceFromTarget;
                     } else {
-                        Vector2 leaderPos = getCrowdUnitList().get(0).getPosition();
+                        Vector2 leaderPos = getCrowdUnitList().get(leaderIndex).getPosition();
                         distanceFromTarget = getCrowdUnitList().get(i).getPosition().dst(leaderPos);
-                        System.out.println(distanceFromTarget);
                         if (distanceFromTarget > 0.6f) { // TODO
                             getCrowdUnitList().get(i).move(leaderPos, getCrowdUnitList().get(i).getDimension(), worldModel.getAILattice());
                         }
                     }
                 }
                 break;
+        }
+    }
+
+    public void updateChangeLeader() {
+        leaderIndexTime--;
+        if (leaderIndexTime == 0) {
+            leaderIndexTime = CHANGE_LEADER_TIME;
+            leaderIndex = new Random().nextInt(getCrowdUnitList().size());
         }
     }
 }

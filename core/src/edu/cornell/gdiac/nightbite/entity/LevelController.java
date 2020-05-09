@@ -76,7 +76,9 @@ public class LevelController {
                         case "wall":
                             createWall(asset, x, y);
                             break;
-
+                        case "crowd":
+                            createCrowd(x, y);
+                            break;
                     }
 
                 }
@@ -85,16 +87,6 @@ public class LevelController {
             y++;
             x = 0;
         }
-        // TODO
-        TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
-        float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
-        float pHeight = texture.getRegionHeight() / world.getScale().y;
-        CrowdModel crowd = new CrowdModel( 15, 6, pWidth, pHeight, world);
-        world.addCrowd(crowd);
-        crowd = new CrowdModel( 5, 6, pWidth, pHeight, world);
-        world.addCrowd(crowd);
-        crowd = new CrowdModel( 10, 4, pWidth, pHeight, world);
-        world.addCrowd(crowd);
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
@@ -233,6 +225,14 @@ public class LevelController {
             LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
             light.attachToBody(enemy.getBody(), light.getX(), light.getY(), light.getDirection());
         }
+    }
+
+    private void createCrowd (int x, int y) {
+        TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
+        float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
+        float pHeight = texture.getRegionHeight() / world.getScale().y;
+        CrowdModel crowd = new CrowdModel( x, y, pWidth, pHeight, world);
+        world.addCrowd(crowd);
     }
 
     private void createHole(JsonValue holeJson, int x, int y) {
