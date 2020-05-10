@@ -29,6 +29,13 @@ public class CollisionController implements ContactListener {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
 
+        // Player-Thief Contact
+        if (a instanceof PlayerModel && b instanceof ThiefEnemyModel) {
+            handlePlayerToThiefContact((PlayerModel) a, (ThiefEnemyModel) b);
+        } else if (b instanceof PlayerModel && a instanceof ThiefEnemyModel) {
+            handlePlayerToThiefContact((PlayerModel) b, (ThiefEnemyModel) a);
+        }
+
         // Player-Object Contact
         if (a instanceof PlayerModel) {
             handlePlayerToObjectContact((PlayerModel) a, b);
@@ -64,10 +71,10 @@ public class CollisionController implements ContactListener {
     public void endContact(Contact contact) {
         Object a = contact.getFixtureA().getBody().getUserData();
         Object b = contact.getFixtureB().getBody().getUserData();
-        if (a instanceof PlayerModel && b instanceof ItemModel) {
+        if ((a instanceof PlayerModel || a instanceof ThiefEnemyModel) && b instanceof ItemModel) {
             int itemId = ((ItemModel) b).getId();
             worldModel.setOverlapItem(itemId, false);
-        } else if (b instanceof PlayerModel && a instanceof ItemModel) {
+        } else if ((b instanceof PlayerModel || b instanceof ThiefEnemyModel) && a instanceof ItemModel) {
             int itemId = ((ItemModel) a).getId();
             worldModel.setOverlapItem(itemId, false);
         }
@@ -119,6 +126,28 @@ public class CollisionController implements ContactListener {
                 playerB.resetBoosting();
                 playerB.getBody().applyLinearImpulse(flyDirection.scl(PUSH_IMPULSE), playerB.getPosition(), true);
             }
+        }
+    }
+
+    public void handlePlayerToThiefContact(PlayerModel player, ThiefEnemyModel thief) {
+        if (thief.contactCooldown <= 0) {
+            if (player.hasItem()) {
+                // Thief takes the item
+                for (ItemModel item_obj : player.getItems()) {
+                    item_obj.setHeld(thief);
+                }
+                player.clearInventory();
+            } else if (thief.hasItem()) {
+                // Player takes the item
+                for (ItemModel item_obj : thief.getItems()) {
+                    item_obj.setHeld(player);
+                }
+                thief.clearInventory();
+
+                thief.resetThief(); // Reset attack status
+            }
+            thief.resetContactcooldown();
+
         }
     }
 
@@ -175,29 +204,37 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
+            if (enemy.hasItem()) {
+                for (ItemModel item_obj : enemy.getItems()) {
+                    item_obj.startRespawn();
+                }
+                enemy.clearInventory();
+            }
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
         }
     }
 
     public void handleItemToObjectContact(ItemModel item, Object object) {
         if (object instanceof HoleModel) {
-            PlayerModel p = item.holdingPlayer;
+            HumanoidModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
                 SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
 
-        } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
-            PlayerModel p = item.holdingPlayer;
-            if (p == null) {
-                item.startRespawn();
-                // add score
-                HomeModel homeObject = (HomeModel) object;
-                homeObject.incrementScore(1);
+        } else if (object instanceof HomeModel && item.lastTouch instanceof PlayerModel) {
+                PlayerModel lastTouchedPlayer = (PlayerModel) item.lastTouch;
+                PlayerModel p = (PlayerModel) item.holdingPlayer;
 
-                // check win condition
-                checkWinCondition(homeObject);
-            }
+                if (p == null && lastTouchedPlayer.getTeam().equals(((HomeModel) object).getTeam())) {
+                    item.startRespawn();
+                    // add score
+                    HomeModel homeObject = (HomeModel) object;
+                    homeObject.incrementScore(1);
+
+                    // check win condition
+                    checkWinCondition(homeObject);
+                }
         }
     }
 

@@ -212,8 +212,9 @@ public class LevelController {
             case "FireEnemy":
                 enemy = new FireEnemyModel(x, y, world);
                 break;
-//            case "ThiefEnemy":
-//                break;
+            case "ThiefEnemy":
+                enemy = new ThiefEnemyModel(x, y, world);
+                break;
         }
         assert enemy != null;
         enemy.setDrawScale(world.getScale());

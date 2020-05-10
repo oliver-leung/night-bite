@@ -8,7 +8,7 @@ import edu.cornell.gdiac.util.SoundController;
 
 
 public class OilEnemyModel extends EnemyModel {
-    private static final int DROP_COOLDOWN = 150;
+    private static final int DROP_COOLDOWN = 200;
     private static final float DROP_DIST = 3f;
     private int dropCooldown = 0;
 
@@ -21,21 +21,23 @@ public class OilEnemyModel extends EnemyModel {
         );
     }
 
-    public void attack(PlayerModel p, AILattice aiLattice) {
+    public Vector2 attack(PlayerModel p, AILattice aiLattice) {
+        Vector2 dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
+
         // Cool down before dropping another oil
         if (dropCooldown > 0) {
             dropCooldown--;
-            return;
+        } else {
+            // Drop oil if close to player
+            Vector2 targetPosition = p.getPosition();
+            Vector2 enemyPosition = getPosition();
+            float distance = Vector2.dst(targetPosition.x, targetPosition.y, enemyPosition.x, enemyPosition.y);
+            if (distance <= DROP_DIST && OilModel.canAdd()) {
+                worldModel.addOil(enemyPosition.x, enemyPosition.y);
+                dropCooldown = DROP_COOLDOWN;
+                SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME);
+            }
         }
-
-        // Drop oil if close to player
-        Vector2 targetPosition = p.getPosition();
-        Vector2 enemyPosition = getPosition();
-        float distance = Vector2.dst(targetPosition.x, targetPosition.y, enemyPosition.x, enemyPosition.y);
-        if (distance <= DROP_DIST && OilModel.canAdd()) {
-            worldModel.addOil(enemyPosition.x, enemyPosition.y);
-            dropCooldown = DROP_COOLDOWN;
-            SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME);
-        }
+        return dir;
     }
 }

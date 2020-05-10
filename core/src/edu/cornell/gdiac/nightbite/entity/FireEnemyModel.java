@@ -42,13 +42,15 @@ public class FireEnemyModel extends EnemyModel {
         setHomePosition(new Vector2(x + 0.5f, y + 0.6f));
     }
 
-    public void attack(PlayerModel p, AILattice aiLattice) {
+    public Vector2 attack(PlayerModel p, AILattice aiLattice) {
+        Vector2 dir = move(p.getPosition(), p.getDimension(), aiLattice);
         Vector2 imp = throwFirecracker(p.getPosition(), p.getLinearVelocity(), aiLattice);
         if (imp != null) {
             FirecrackerModel f = worldModel.addFirecracker(getPosition().x, getPosition().y);
             f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE).scl(MathUtils.random(MIN_DIST_DEV, MAX_DIST_DEV)));
             walkCooldown = WALK_COOLDOWN;
         }
+        return dir;
     }
 
     // TODO: Shouldn't only do shot prediction -- randomized or controlled?

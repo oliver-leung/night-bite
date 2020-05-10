@@ -38,10 +38,6 @@ public class PlayerModel extends HumanoidModel {
     private int grabCooldown;
     /** player identification */
     private String team;
-    /** player-item */
-    private ArrayList<ItemModel> item;
-    /** player texture */
-    private FilmStrip holdTexture;
     /** player extra textures */
     private TextureRegion handheld;
     private TextureRegion defaultHandheld;
@@ -80,8 +76,6 @@ public class PlayerModel extends HumanoidModel {
         cooldown = 0;
         boosting = 0;
 
-        item = new ArrayList<>();
-
         this.home = home;
         team = playerTeam;
         setHomePosition(home.getPosition());
@@ -96,7 +90,7 @@ public class PlayerModel extends HumanoidModel {
         swingCooldown = 0;
         alternateShadow = false;
 
-        this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
+        setHoldTexture(Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png"));
     }
 
     public void playWalkSound() {
@@ -221,23 +215,9 @@ public class PlayerModel extends HumanoidModel {
         sliding = 0;
     }
 
-    public boolean hasItem() {
-        return item.size() > 0;
-    }
-
-    public ArrayList<ItemModel> getItems() {
-        return item;
-    }
-
     public void clearInventory() {
-        item.clear();
-        setTexture(defaultTexture);
+        super.clearInventory();
         handheld = defaultHandheld;
-    }
-
-    public void holdItem(ItemModel i) {
-        item.add(i);
-        setCurrentTexture(holdTexture);
     }
 
     /** cooldown between grabbing/throwing */
