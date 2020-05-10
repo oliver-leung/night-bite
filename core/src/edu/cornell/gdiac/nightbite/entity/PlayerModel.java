@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -8,9 +7,9 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
 
@@ -18,58 +17,31 @@ public class PlayerModel extends HumanoidModel {
 
     /** Regular walking impulse as a scalar */
     private static final float WALK_IMPULSE = 10.0f;
-    // TODO
-    private int NUM_ITEMS = 1;
     private static final float BOOST_IMP = 100.0f;
-
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
     private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
-
-    public enum MoveState {
-        WALK,
-        RUN,
-        STATIC,
-        SLIDE
-    }
-
-    public enum DirectionState {
-        NORTH,
-        NORTHEAST,
-        EAST,
-        SOUTHEAST,
-        SOUTH,
-        SOUTHWEST,
-        WEST,
-        NORTHWEST,
-    }
-
+    private static int GRAB_COOLDOWN_PERIOD = 15;
+    private static int SHADOW_BLINK_FREQUENCY = 15;
     public MoveState state;
+    // TODO
+    private int NUM_ITEMS = 1;
     private int boosting;
     private int cooldown;
     private int sliding;
-
     private int ticks;
-
     private Vector2 impulse;
     private Vector2 boost;
-
     private float slideHorizontal;
     private float slideVertical;
-
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
-    private static int GRAB_COOLDOWN_PERIOD = 15;
-
     /** player identification */
     private String team;
-
     /** player-item */
     private ArrayList<ItemModel> item;
-
     /** player texture */
     private FilmStrip holdTexture;
-
     /** player extra textures */
     private TextureRegion handheld;
     private TextureRegion defaultHandheld;
@@ -80,24 +52,18 @@ public class PlayerModel extends HumanoidModel {
     private boolean swinging;
     private int swingCooldown;
     private int SWING_COOLDOWN_PERIOD = 30;
-
     private TextureRegion shadow;
     private TextureRegion arrow;
     private float arrowAngle;
     private float arrowXOffset;
     private float arrowYOffset;
-
     /** blinking shadow while dashing */
     private boolean alternateShadow;
-    private static int SHADOW_BLINK_FREQUENCY = 15;
-
     /** wok hitbox */
     private int PLAYER_REFLECT_DIST = 2;
     private int FIRECRACKER_REFLECT_DIST = 15;
     private float REFLECT_RANGE = 2f;
-
     private HomeModel home;
-
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(
                 x, y, width, height,
@@ -131,6 +97,15 @@ public class PlayerModel extends HumanoidModel {
         alternateShadow = false;
 
         this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
+    }
+
+    public void playWalkSound() {
+        SoundController soundController = SoundController.getInstance();
+        if (state == MoveState.WALK && !soundController.isActive("audio/walking.wav")) {
+            soundController.play("audio/walking.wav", "audio/walking.wav", true, Assets.VOLUME);
+        } else if (state != MoveState.WALK && soundController.isActive("audio/walking.wav")) {
+            soundController.stop("audio/walking.wav");
+        }
     }
 
     public int getTicks() {
@@ -298,6 +273,7 @@ public class PlayerModel extends HumanoidModel {
                 if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
                     Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
+                    SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME);
                 }
             }
         }
@@ -311,19 +287,8 @@ public class PlayerModel extends HumanoidModel {
                 if (enemy instanceof EnemyModel) {
                     ((EnemyModel) enemy).forceReplan();
                 }
+                SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME);
             }
-        }
-    }
-
-    static class DetectionCallback implements QueryCallback {
-        ArrayList<Fixture> foundFixtures = new ArrayList<>();
-
-        @Override
-        public boolean reportFixture(Fixture fixture) {
-            if (fixture.getUserData() == HumanoidModel.HitArea.HITBOX) {
-                foundFixtures.add(fixture);
-            }
-            return true;
         }
     }
 
@@ -408,8 +373,38 @@ public class PlayerModel extends HumanoidModel {
 
         // Don't draw weapon when holding item or dead
         if (!hasItem() && isAlive()) {
-            canvas.draw(handheld, tint,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
-                    getAngle() + angleOffset,actualScale.x,actualScale.y);
+            canvas.draw(handheld, tint, ox, 0, getX() * drawScale.x + originX, getY() * drawScale.y + originY,
+                    getAngle() + angleOffset, actualScale.x, actualScale.y);
+        }
+    }
+
+    public enum MoveState {
+        WALK,
+        RUN,
+        STATIC,
+        SLIDE
+    }
+
+    public enum DirectionState {
+        NORTH,
+        NORTHEAST,
+        EAST,
+        SOUTHEAST,
+        SOUTH,
+        SOUTHWEST,
+        WEST,
+        NORTHWEST,
+    }
+
+    static class DetectionCallback implements QueryCallback {
+        ArrayList<Fixture> foundFixtures = new ArrayList<>();
+
+        @Override
+        public boolean reportFixture(Fixture fixture) {
+            if (fixture.getUserData() == HumanoidModel.HitArea.HITBOX) {
+                foundFixtures.add(fixture);
+            }
+            return true;
         }
     }
 }

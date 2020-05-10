@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.util.SoundController;
 
 
 public class OilEnemyModel extends EnemyModel {
@@ -34,6 +35,7 @@ public class OilEnemyModel extends EnemyModel {
         if (distance <= DROP_DIST && OilModel.canAdd()) {
             worldModel.addOil(enemyPosition.x, enemyPosition.y);
             dropCooldown = DROP_COOLDOWN;
+            SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME);
         }
     }
 }

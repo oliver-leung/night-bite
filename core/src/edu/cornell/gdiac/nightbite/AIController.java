@@ -5,7 +5,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.entity.HoleModel;
+import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
+import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
@@ -76,7 +79,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (body.getUserData() instanceof ImmovableModel && !(body.getUserData() instanceof HoleModel)
             && body.getPosition().sub(source).len() < dist) {
                 return false;
@@ -107,7 +110,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (!body.getPosition().equals(target)) {
                 return false;
             }
