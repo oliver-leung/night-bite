@@ -33,7 +33,7 @@ public class Debug {
         }
 
         countdown = 60;
-        ai.findPath(path, target, new GridPoint2(9,6));
+        ai.findPath(path, target, new GridPoint2(9,6), -1);
 
         // for (GridPoint2 p : path) {
         //     System.out.printf("(%x, %x)\n", p.x, p.y);

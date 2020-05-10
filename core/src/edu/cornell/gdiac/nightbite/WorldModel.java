@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
@@ -66,7 +67,8 @@ public class WorldModel {
     /** List of players */
     private ArrayList<PlayerModel> players;
 
-    private PooledList<EnemyModel> enemies;
+    private PooledList<HumanoidModel> enemies;
+    private PooledList<CrowdModel> crowds;
 
     /** List of items */
     private ArrayList<ItemModel> items;
@@ -74,6 +76,7 @@ public class WorldModel {
     private ArrayList<Boolean> overlapItem = new ArrayList<>();
     /** List of firecrackers */
     private PooledList<FirecrackerModel> firecrackers;
+    private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
     private PooledList<OilModel> oils;
     /** Objects that don't move during updates */
@@ -110,6 +113,7 @@ public class WorldModel {
         firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
+        crowds = new PooledList<>();
         oils = new PooledList<>();
 
         // TODO: REMOVE
@@ -221,6 +225,7 @@ public class WorldModel {
                     players.iterator(),
                     enemies.iterator(),
                     firecrackers.iterator(),
+                    // crowds.iterator()
             };
 
             // TODO: Do i want to make this more efficient?
@@ -301,7 +306,9 @@ public class WorldModel {
         return players;
     }
 
-    public PooledList<EnemyModel> getEnemies() { return enemies; }
+    public PooledList<HumanoidModel> getEnemies() { return enemies; }
+
+    public PooledList<CrowdModel> getCrowds() { return crowds; }
 
     public Vector2 getScale() {
         return scale;
@@ -381,9 +388,17 @@ public class WorldModel {
         overlapItem.add(false);
     }
 
-    public void addEnemy(EnemyModel enemy) {
+    public void addEnemy(HumanoidModel enemy) {
         initializeObject(enemy);
         enemies.add(enemy);
+    }
+
+    public void addCrowd(CrowdModel crowd) {
+        for (CrowdUnitModel crowdUnit: crowd.getCrowdUnitList()) {
+            initializeObject(crowdUnit);
+            enemies.add(crowdUnit);
+        }
+        crowds.add(crowd);
     }
 
     public void initializeAI() {
@@ -512,6 +527,7 @@ public class WorldModel {
 
         aiLattice.clearDynamic();
         aiLattice.populateDynamic(downcastIterable(players));
+        aiLattice.populateDynamic(downcastIterable(enemies));
         // aiLattice.populateDynamic(downcastIterable(enemies));
 
         // TODO: REMOVE

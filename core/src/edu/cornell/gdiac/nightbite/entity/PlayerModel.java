@@ -285,7 +285,7 @@ public class PlayerModel extends HumanoidModel {
     }
 
     /** swings wok */
-    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<EnemyModel> enemies) {
+    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<HumanoidModel> enemies) {
         Vector2 clickVector = new Vector2(clickPos.x, clickPos.y);
         clickVector.sub(getPosition());
 
@@ -294,8 +294,6 @@ public class PlayerModel extends HumanoidModel {
             startSwing(clickVector.angleRad());
         }
 
-        // hit things // TODO
-//        clickVector.nor();
         if (!hasItem()) {
             for (FirecrackerModel firecracker: firecrackers) {
                 Vector2 firecrackerVector = firecracker.getPosition();
@@ -307,33 +305,17 @@ public class PlayerModel extends HumanoidModel {
             }
         }
 
-        for (EnemyModel enemy : enemies) {
+        for (HumanoidModel enemy : enemies) {
             Vector2 enemyVector = enemy.getPosition();
             enemyVector.sub(getPosition());
             if (enemyVector.angleRad(clickVector) < SWING_RADIUS && enemyVector.angleRad(clickVector) > -SWING_RADIUS && enemyVector.len() < REFLECT_RANGE) {
                 Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
                 enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
-                enemy.forceReplan();
+                if (enemy instanceof EnemyModel) {
+                    ((EnemyModel) enemy).forceReplan();
+                }
             }
         }
-
-
-
-//        DetectionCallback callback = new DetectionCallback();
-//        float lowerX = Math.min(getX(), getX()+clickVector.x);
-//        float lowerY = Math.min(getY(), getY()+clickVector.y);
-//        float upperX = Math.max(getX(), getX()+clickVector.x);
-//        float upperY = Math.max(getY(), getY()+clickVector.y);
-//        world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
-//        for (Fixture f : callback.foundFixtures) {
-//            // TODO check item
-//            if (f.getUserData() != HitArea.HITBOX) {
-//                Vector2 hitDirection = clickPos;
-//                Body b = f.getBody();
-//                hitDirection.sub(b.getPosition());
-//                b.applyLinearImpulse(hitDirection.nor().scl(100), b.getPosition(), true);
-//            }
-//        }
     }
 
     static class DetectionCallback implements QueryCallback {
@@ -350,7 +332,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void startSwing(float swingAngle) {
         startSwingCooldown();
-//        angleOffset = clickAngle - (float)Math.PI/4;
         if (!flipHandheld) {
             clickAngle = swingAngle - (float)Math.PI/4;
         } else {
