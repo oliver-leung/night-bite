@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
@@ -88,6 +89,8 @@ public class WorldModel {
     private Sprite[][] brick = new Sprite[20][12];
     /** 2nd layer foreground textures */
     private Sprite[][] lantern = new Sprite[20][12];
+    /** Hole edge textures to be drawn on top of holes */
+    private Sprite[][] holeEdge = new Sprite[20][12];
 
     private AILattice aiLattice;
     public int LEVEL_COMPLETED = 0;
@@ -189,9 +192,9 @@ public class WorldModel {
         }
         complete = true;
         if (passedLevel) {
-            LEVEL_EXIT_CODE = LEVEL_COMPLETED;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_PASS;
         } else {
-            LEVEL_EXIT_CODE = LEVEL_TIME_OUT;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_FAIL;
         }
     }
 
@@ -598,6 +601,8 @@ public class WorldModel {
         lantern[x][y] = sprite;
     }
 
+    public void setHoleEdge(Sprite sprite, int x, int y) { holeEdge[x][y] = sprite; }
+
     public void setPixelBounds() {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
@@ -642,14 +647,16 @@ public class WorldModel {
 //        canonicalToActual.applyTo(actualScale);
     }
 
-    public void drawDecorations(boolean isbrick) {
+    public void drawDecorations(boolean isbrick, boolean isLantern) {
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
                 Sprite sprite;
                 if (isbrick) {
                     sprite = brick[i][j];
-                } else {
+                } else if (isLantern) {
                     sprite = lantern[i][j];
+                } else {
+                    sprite = holeEdge[i][j];
                 }
 
                 if (sprite != null) {

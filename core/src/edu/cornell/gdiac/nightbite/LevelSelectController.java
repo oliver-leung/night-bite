@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.ScreenListener;
 
 public class LevelSelectController implements Screen, InputProcessor {
@@ -55,12 +56,6 @@ public class LevelSelectController implements Screen, InputProcessor {
 
     /** The current state of the play button */
     private int pressState;
-
-    /** Exit code for starting the game */
-    public static final int EXIT_START = 0;
-    /** Exit code for heading back to game menu */
-    public static final int EXIT_MENU = 1;
-
 
     /** Flags */
     private boolean startGame;
@@ -202,9 +197,9 @@ public class LevelSelectController implements Screen, InputProcessor {
             draw();
 
             if (startGame && listener != null) {
-                listener.exitScreen(this, EXIT_START);
+                listener.exitScreen(this, ExitCodes.LEVEL);
             } else if (pressState == 2 && listener != null) {
-                listener.exitScreen(this, EXIT_MENU);
+                listener.exitScreen(this, ExitCodes.TITLE);
             }
         }
     }

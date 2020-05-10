@@ -14,8 +14,9 @@ public class KeyboardMap {
         public final int GRAB;
         public final int DEBUG;
         public final int RESET;
+        public final int PAUSE;
 
-        public Player(int up, int down, int left, int right, int dash, int grab, int debug, int reset) {
+        public Player(int up, int down, int left, int right, int dash, int grab, int debug, int reset, int pause) {
             UP = up;
             DOWN = down;
             LEFT = left;
@@ -24,6 +25,7 @@ public class KeyboardMap {
             GRAB = grab;
             DEBUG = debug;
             RESET = reset;
+            PAUSE = pause;
         }
     }
 
@@ -35,7 +37,8 @@ public class KeyboardMap {
             Keys.SHIFT_LEFT,
             Keys.SPACE,
             Keys.Y,
-            Keys.R);
+            Keys.R,
+            Keys.ESCAPE);
 
     private static Player PLAYER1 = new Player(
             Keys.valueOf("Up"),
@@ -44,6 +47,7 @@ public class KeyboardMap {
             Keys.RIGHT,
             Keys.SLASH,
             Keys.PERIOD,
+            Keys.UNKNOWN,
             Keys.UNKNOWN,
             Keys.UNKNOWN);
 
