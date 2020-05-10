@@ -408,4 +408,8 @@ public class HumanoidModel extends SimpleObstacle {
                     getAngle(),actualScale.x,actualScale.y);
         }
     }
+
+    public float getBottom() {
+        return getY() - getHeight()/2;
+    }
 }

@@ -899,4 +899,5 @@ public abstract class SimpleObstacle extends Obstacle {
 			createFixtures();
 		}
 	}
+
 }

@@ -23,9 +23,7 @@ import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class WorldModel {
     /** World width in Box2D units */
@@ -212,27 +210,54 @@ public class WorldModel {
      * @return Combined iterable of all obstacles in the world
      */
     public Iterable<Obstacle> getObjects() {
+        class comp implements Comparator<Obstacle> {
+            @Override
+            public int compare(Obstacle obstacle, Obstacle t1) {
+                return (int) Math.signum((- obstacle.getBottom() + t1.getBottom()));
+            }
+        }
 
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
             // Raw iterator. I love unsafe code.
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
-            Iterator<?>[] iters = {
-                    staticObjects.iterator(),
-                    oils.iterator(),
-                    items.iterator(),
-                    players.iterator(),
-                    enemies.iterator(),
-                    firecrackers.iterator(),
-                    // crowds.iterator()
+            final List<?>[] objs = {
+                    staticObjects,
+                    oils,
+                    items,
+                    players,
+                    enemies,
+                    firecrackers,
             };
+
+            final Obstacle[] peek = new Obstacle[objs.length];
+
+            final Iterator<?>[] iters = new Iterator<?>[objs.length];
+
+            final Comparator<Obstacle> comp = new comp();
+
+            public objectIterable() {
+                for (List o : objs) {
+                    o.sort(comp);
+                }
+                for (int i = 0; i < objs.length; i ++) {
+                    iters[i] = objs[i].iterator();
+                }
+                for (int i = 0; i < objs.length; i ++) {
+                    try{
+                        peek[i] = (Obstacle) iters[i].next();
+                    } catch (NoSuchElementException e) {
+                        peek[i] = null;
+                    }
+                }
+            }
 
             // TODO: Do i want to make this more efficient?
             @Override
             public boolean hasNext() {
-                for (Iterator<?> iter : iters) {
-                    if (iter.hasNext()) {
+                for (Obstacle o : peek) {
+                    if (o != null) {
                         return true;
                     }
                 }
@@ -241,12 +266,41 @@ public class WorldModel {
 
             @Override
             public Obstacle next() {
-                for (Iterator<?> iter : iters) {
-                    if (iter.hasNext()) {
-                        return (Obstacle) iter.next();
+                Obstacle min = null;
+                int m = -1;
+                for (int i = 0; i < iters.length; i ++) {
+                    if (min == null) {
+                        min = peek[i];
+                        m = i;
+                        continue;
+                    }
+
+                    if (peek[i] == null) {
+                        continue;
+                    }
+
+                    if (peek[i].getBottom() > min.getBottom()) {
+                        min = peek[i];
+                        m = i;
+                        continue;
                     }
                 }
-                throw new NoSuchElementException();
+
+                if (min == null) {
+                    throw new NoSuchElementException();
+                } try {
+                    peek[m] = (Obstacle) iters[m].next();
+                } catch (NoSuchElementException e) {
+                    peek[m] = null;
+                }
+                return min;
+
+                // for (Iterator<?> iter : iters) {
+                //     if (iter.hasNext()) {
+                //         return (Obstacle) iter.next();
+                //     }
+                // }
+                // throw new NoSuchElementException();
             }
 
             @Override
