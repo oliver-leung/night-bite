@@ -310,11 +310,16 @@ public class Assets {
         if (!isMuted) {
             isMuted = true;
             VOLUME = 0;
-            pauseMusic();
         } else {
             isMuted = false;
             VOLUME = 0.1f;
-            resumeMusic();
+        }
+        changeMusicVolume();
+    }
+
+    private static void changeMusicVolume() {
+        if (activeMusic != null) {
+            activeMusic.setVolume(VOLUME);
         }
     }
 

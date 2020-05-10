@@ -28,8 +28,6 @@ import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.*;
 
-import java.util.Timer;
-
 /**
  * Base class for a world-specific controller.
  * <p>
@@ -453,7 +451,7 @@ public class WorldController implements Screen, InputProcessor {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
                 if (e instanceof FireEnemyModel) {
-                    dir = e.update(p, worldModel.getAILattice());
+                    dir = ((FireEnemyModel) e).update(p, worldModel.getAILattice());
                 } else if (e instanceof OilEnemyModel) {
                     dir = ((OilEnemyModel)e).update(p, worldModel.getAILattice());
                 } else if (e instanceof CrowdUnitModel) {
@@ -523,7 +521,7 @@ public class WorldController implements Screen, InputProcessor {
      * M:SS
      */
     public String secondsToStringTime(int seconds) {
-        StringBuilder time = new StringBuilder("");
+        StringBuilder time = new StringBuilder();
 
         int min = seconds / 60;
         int sec = seconds % 60;
