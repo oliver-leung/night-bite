@@ -140,9 +140,10 @@ public class CollisionController implements ContactListener {
         } else if (object instanceof ItemModel) {
 
             // Player-Item
-            int id = ((ItemModel) object).getId();
-            worldModel.setOverlapItem(id, true);
-
+            if (! ((ItemModel) object).isDead()) {
+                int id = ((ItemModel) object).getId();
+                worldModel.setOverlapItem(id, true);
+            }
         } else if (object instanceof HomeModel) {
 
             // Player-Home
