@@ -983,6 +983,9 @@
           "type": "ground",
           "light": false,
           "enemyType": null
+        },
+        {
+        "type": "crowd"
         }
       ],
       [
@@ -994,7 +997,7 @@
           "type": "ground",
           "light": false,
           "enemyType": null
-        }
+        },
       ],
       [
         {

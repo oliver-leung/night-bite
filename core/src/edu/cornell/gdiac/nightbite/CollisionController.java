@@ -37,10 +37,10 @@ public class CollisionController implements ContactListener {
         }
 
         // Enemy-Object Contact
-        if (a instanceof EnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) a, b);
-        } else if (b instanceof FireEnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) b, a);
+        if (a instanceof EnemyModel) { // || a instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) a, b);
+        } else if (b instanceof EnemyModel) { // || b instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) b, a);
         }
 
         // Item-Object Contact
@@ -88,7 +88,6 @@ public class CollisionController implements ContactListener {
         } else if ((a instanceof HumanoidModel && b instanceof FirecrackerModel) || (b instanceof HumanoidModel && a instanceof FirecrackerModel)) {
             contact.setEnabled(false);
         }
-
     }
 
     /**
@@ -171,7 +170,7 @@ public class CollisionController implements ContactListener {
         }
     }
 
-    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
+    public void handleEnemyToObjectContact(HumanoidModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
