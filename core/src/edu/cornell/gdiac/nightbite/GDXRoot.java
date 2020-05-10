@@ -39,7 +39,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  */
 public class GDXRoot extends Game implements ScreenListener {
 	public static final String THEME_MUSIC_FILE = "audio/Night_Bite_(Theme)_v6.mp3";
-	private static final String LEVEL_MUSIC_FILE = "audio/Night_Bite_(Level)_draft.mp3";
+	private static final String LEVEL_MUSIC_FILE = "audio/Night_Bite_(Level)_v2.mp3";
 	/**
 	 * AssetManager to load game assets (textures, sounds, etc.)
 	 */
