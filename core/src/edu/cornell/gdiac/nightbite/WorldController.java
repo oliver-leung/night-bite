@@ -183,8 +183,8 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-        worldModel.drawDecorations(true, false);
-        worldModel.drawDecorations(false, true);
+        worldModel.drawDecorations(true);
+        worldModel.drawDecorations(false);
 
         // Draw objects
         for (Obstacle obj : worldModel.getObjects()) {
@@ -197,9 +197,6 @@ public class WorldController implements Screen, InputProcessor {
                 }
             }
         }
-
-        // Draw hole edges on top of holes
-        worldModel.drawDecorations(false, false);
 
         // Draw player scores
         // Hardcoded coordinates!
