@@ -197,11 +197,10 @@ public class WorldController implements Screen, InputProcessor {
         canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
 
         if (worldModel.isComplete()) {
-            displayFont.setColor(Color.YELLOW);
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
-                canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_PASS);
             } else {
-                canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_FAIL);
             }
         }
         canvas.end();
