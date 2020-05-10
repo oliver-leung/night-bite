@@ -101,8 +101,6 @@ public class PlayerModel extends HumanoidModel {
     private static int SHADOW_BLINK_FREQUENCY = 15;
 
     /** wok hitbox */
-    private PolygonObstacle wokHitbox;
-    private World world;
     private int PLAYER_REFLECT_DIST = 2;
     private int FIRECRACKER_REFLECT_DIST = 15;
     private float REFLECT_RANGE = 2f;
@@ -142,7 +140,6 @@ public class PlayerModel extends HumanoidModel {
         alternateShadow = false;
 
         this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
-        this.world = world;
     }
 
     public int getTicks() {
@@ -204,7 +201,6 @@ public class PlayerModel extends HumanoidModel {
         if (boosting > 0 || sliding > 0) { return; }
         state = MoveState.WALK;
         setWalkTexture();
-
     }
 
     public void setStatic() {
@@ -295,7 +291,7 @@ public class PlayerModel extends HumanoidModel {
     }
 
     /** swings wok */
-    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<EnemyModel> enemies) {
+    public void swingWok(Vector2 clickPos, PooledList<FirecrackerModel> firecrackers, PooledList<HumanoidModel> enemies) {
         Vector2 clickVector = new Vector2(clickPos.x, clickPos.y);
         clickVector.sub(getPosition());
 
@@ -316,34 +312,18 @@ public class PlayerModel extends HumanoidModel {
             }
         }
 
-        for (EnemyModel enemy : enemies) {
+        for (HumanoidModel enemy : enemies) {
             Vector2 enemyVector = enemy.getPosition();
             enemyVector.sub(getPosition());
             if (enemyVector.angleRad(clickVector) < SWING_RADIUS && enemyVector.angleRad(clickVector) > -SWING_RADIUS && enemyVector.len() < REFLECT_RANGE) {
                 Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
                 enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
-                enemy.forceReplan();
+                if (enemy instanceof EnemyModel) {
+                    ((EnemyModel) enemy).forceReplan();
+                }
                 SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME);
             }
         }
-
-
-
-//        DetectionCallback callback = new DetectionCallback();
-//        float lowerX = Math.min(getX(), getX()+clickVector.x);
-//        float lowerY = Math.min(getY(), getY()+clickVector.y);
-//        float upperX = Math.max(getX(), getX()+clickVector.x);
-//        float upperY = Math.max(getY(), getY()+clickVector.y);
-//        world.QueryAABB(callback, lowerX, lowerY, upperX, upperY);
-//        for (Fixture f : callback.foundFixtures) {
-//            // TODO check item
-//            if (f.getUserData() != HitArea.HITBOX) {
-//                Vector2 hitDirection = clickPos;
-//                Body b = f.getBody();
-//                hitDirection.sub(b.getPosition());
-//                b.applyLinearImpulse(hitDirection.nor().scl(100), b.getPosition(), true);
-//            }
-//        }
     }
 
     static class DetectionCallback implements QueryCallback {
@@ -360,7 +340,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void startSwing(float swingAngle) {
         startSwingCooldown();
-//        angleOffset = clickAngle - (float)Math.PI/4;
         if (!flipHandheld) {
             clickAngle = swingAngle - (float)Math.PI/4;
         } else {

@@ -33,12 +33,14 @@ public class Assets {
     private static Map<String, FilmStrip> filmStrips = new HashMap<>();
     /** Mapping from file names to in-game texture assets */
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
-    /** In-game music asset */
+    /** In-game music assets */
     private static Map<String, Music> musics = new HashMap<>();
+    /** Currently played music */
     private static Music activeMusic;
+    /** Whether sound effects/music are muted */
+    private static boolean isMuted = false;
     /** In-game font asset */
     private static BitmapFont font;
-    private static boolean isMuted = false;
     /** Reference to the sound effect controller */
     private final SoundController soundController = SoundController.getInstance();
     /** Track all loaded assets (for unloading purposes) */

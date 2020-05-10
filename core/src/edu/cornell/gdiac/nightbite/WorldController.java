@@ -22,10 +22,13 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.*;
+
+import java.util.Timer;
 
 /**
  * Base class for a world-specific controller.
@@ -56,6 +59,9 @@ public class WorldController implements Screen, InputProcessor {
     protected PooledList<Obstacle> addQueue = new PooledList<>();
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    /** Textures for in-game UI */
+    protected FilmStrip scoreTexture;
+    protected TextureRegion timerTexture;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Reference to custom Box2D physics world */
@@ -70,8 +76,10 @@ public class WorldController implements Screen, InputProcessor {
     private float screenWidth;
     private float screenHeight;
 
-    private static int GAME_DURATION = 150;
-    private float gameTimeElapsed;
+    private static int GAME_DURATION = 120;  // in seconds
+    private long timerStart;  // in nanoseconds
+    private long timerEnd;
+    private long timeElapsed;
 
     /** Create a new game world */
     protected WorldController() {
@@ -83,11 +91,20 @@ public class WorldController implements Screen, InputProcessor {
     }
 
     public void resetTimer() {
-        gameTimeElapsed = System.nanoTime();
+        timerStart = System.nanoTime();
+        timerEnd = System.nanoTime();
+        timeElapsed = timerEnd - timerStart;
+    }
+
+    /** ??? Adds some time to the timeElapsed? This is so freaking jank */
+    public void accumTimer() {
+        timerEnd = System.nanoTime();
+        timeElapsed += timerEnd - timerStart;
+        timerStart = timerEnd;
     }
 
     public void checkTimeOut() {
-        if ((System.nanoTime() - gameTimeElapsed) / 1000000000 > GAME_DURATION) {
+        if (timeElapsed / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
             Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
         }
@@ -147,15 +164,10 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
+        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 203, 75);
+        timerTexture = Assets.getTextureRegion("ui/TimerRectangle.png");
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-//        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
-//        enemy.setDrawScale(worldModel.scale);
-//        enemy.setName("wtf");
-//        enemy.setActualScale(worldModel.getActualScale());
-//        enemy.setFixedRotation(true);
-//        worldModel.addEnemy(enemy);
         worldModel.initializeAI();
-        // worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -176,8 +188,6 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.drawDecorations(true, false);
         worldModel.drawDecorations(false, true);
 
-        StringBuilder message1 = new StringBuilder("Player 1 score: ");
-
         // Draw objects
         for (Obstacle obj : worldModel.getObjects()) {
             if (obj.draw) {
@@ -185,7 +195,7 @@ public class WorldController implements Screen, InputProcessor {
 
                 // Add player scores
                 if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
-                    message1.append(((HomeModel) obj).getScore());
+                    scoreTexture.setFrame(((HomeModel) obj).getScore());  // score texture represents items retrieved
                 }
             }
         }
@@ -194,7 +204,15 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.drawDecorations(false, false);
 
         // Draw player scores
-        canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
+        // Hardcoded coordinates!
+        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-100f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
+
+        // Draw timer
+        // TODO create another font!!! jesus
+        canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        displayFont.setColor(Color.BLACK);
+        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-60f);
+        displayFont.setColor(Color.WHITE);
 
         if (worldModel.isComplete()) {
             displayFont.setColor(Color.YELLOW);
@@ -203,6 +221,9 @@ public class WorldController implements Screen, InputProcessor {
             } else {
                 canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
             }
+        }
+        if (debug) {
+            canvas.drawText(String.format("fps: %f", 1/delta), displayFont, 800f, canvas.getHeight() - 6 * 5f);
         }
         canvas.end();
 
@@ -243,6 +264,7 @@ public class WorldController implements Screen, InputProcessor {
         addQueue.clear();
         addQueue = null;
         canvas = null;
+        resetTimer();
     }
 
     public void reset() {
@@ -308,6 +330,7 @@ public class WorldController implements Screen, InputProcessor {
     }
 
     public void update(float dt) {
+        accumTimer();
         checkTimeOut();
         // TODO: Refactor all player movement
 
@@ -426,13 +449,15 @@ public class WorldController implements Screen, InputProcessor {
 
         Vector2 dir = new Vector2(0,0);
 
-        for (EnemyModel e : worldModel.getEnemies()) {
+        for (HumanoidModel e : worldModel.getEnemies()) {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
                 if (e instanceof FireEnemyModel) {
                     dir = e.update(p, worldModel.getAILattice());
                 } else if (e instanceof OilEnemyModel) {
-                    dir = e.update(p, worldModel.getAILattice());
+                    dir = ((OilEnemyModel)e).update(p, worldModel.getAILattice());
+                } else if (e instanceof CrowdUnitModel) {
+                    dir = ((CrowdUnitModel) e).getDir();
                 }
 
                 int enemyHorizontal = Integer.signum((int)dir.x);
@@ -454,6 +479,10 @@ public class WorldController implements Screen, InputProcessor {
 
                 e.setActive(e.isAlive());
             }
+        }
+
+        for (CrowdModel crowd : worldModel.getCrowds()) {
+            crowd.update();
         }
     }
 
@@ -487,6 +516,22 @@ public class WorldController implements Screen, InputProcessor {
         // This is O(n) without copying.
         // Also update all objects lol
         worldModel.updateAndCullObjects(dt);
+    }
+
+    /**
+     * Converts the number of seconds remaining to the following String format:
+     * M:SS
+     */
+    public String secondsToStringTime(int seconds) {
+        StringBuilder time = new StringBuilder("");
+
+        int min = seconds / 60;
+        int sec = seconds % 60;
+
+        time.append(min).append(":");
+        if (sec < 10) time.append(0);
+        time.append(sec);
+        return time.toString();
     }
 
 
