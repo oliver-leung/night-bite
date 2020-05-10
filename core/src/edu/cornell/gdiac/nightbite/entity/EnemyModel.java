@@ -42,7 +42,7 @@ public abstract class EnemyModel extends HumanoidModel {
         walkCooldown = WALK_COOLDOWN;
         setRespawnCooldown(120);
 
-        aiClass = 0;
+        aiClass = 1;
     }
 
     public abstract void attack(PlayerModel p, AILattice aiLattice);

@@ -509,6 +509,7 @@ public class WorldModel {
 
         aiLattice.clearDynamic();
         aiLattice.populateDynamic(downcastIterable(players));
+        aiLattice.populateDynamic(downcastIterable(enemies));
         // aiLattice.populateDynamic(downcastIterable(enemies));
 
         // TODO: REMOVE
