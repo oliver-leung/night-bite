@@ -232,6 +232,10 @@
         "pause/R_FS.png",
         "pause/ResumeButton.png",
         "pause/WASD_FS.png",
-        "pause/WASDSprite_FS.png"
+        "pause/WASDSprite_FS.png",
+        "ui/Check.png",
+        "ui/PlayerScore_FS.png",
+        "ui/PlayerSignEmpty.png",
+        "ui/TimerRectangle.png"
     ]
 }
