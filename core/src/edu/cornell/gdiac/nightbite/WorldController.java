@@ -204,6 +204,9 @@ public class WorldController implements Screen, InputProcessor {
                 canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
             }
         }
+        if (debug) {
+            canvas.drawText(String.format("fps: %f", 1/delta), displayFont, 800f, canvas.getHeight() - 6 * 5f);
+        }
         canvas.end();
 
         // Draw with rayhandler

@@ -92,8 +92,6 @@ public class PlayerModel extends HumanoidModel {
     private static int SHADOW_BLINK_FREQUENCY = 15;
 
     /** wok hitbox */
-    private PolygonObstacle wokHitbox;
-    private World world;
     private int PLAYER_REFLECT_DIST = 2;
     private int FIRECRACKER_REFLECT_DIST = 15;
     private float REFLECT_RANGE = 2f;
@@ -133,7 +131,6 @@ public class PlayerModel extends HumanoidModel {
         alternateShadow = false;
 
         this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
-        this.world = world;
     }
 
     public int getTicks() {
