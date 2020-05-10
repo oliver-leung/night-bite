@@ -89,6 +89,7 @@ public class WorldController implements Screen, InputProcessor {
     public void checkTimeOut() {
         if ((System.nanoTime() - gameTimeElapsed) / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
+            Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
         }
     }
 
@@ -341,7 +342,7 @@ public class WorldController implements Screen, InputProcessor {
                 p.setIY(slideDirection.y);
                 playerDidBoost = false;
                 playerDidThrow = false;
-                SoundController.getInstance().play("audio/sliding.wav", "audio/sliding.wav", false, Assets.EFFECT_VOLUME);
+                SoundController.getInstance().play("audio/sliding.wav", "audio/sliding.wav", false, Assets.VOLUME);
             } else {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
@@ -384,7 +385,7 @@ public class WorldController implements Screen, InputProcessor {
                 if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
-                    SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.EFFECT_VOLUME);
+                    SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.VOLUME);
                 }
                 j++;
             }

@@ -2,7 +2,6 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Music;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
@@ -109,14 +108,7 @@ public class InputController extends MechanicController {
 
         // Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            Music music = Assets.getMusic();
-            if (music.getVolume() > 0) {
-                Assets.EFFECT_VOLUME = 0;
-                music.setVolume(Assets.EFFECT_VOLUME);
-            } else {
-                Assets.EFFECT_VOLUME = 0.1f;
-                music.setVolume(Assets.EFFECT_VOLUME);
-            }
+            Assets.changeMute();
         }
 
         // TODO we need so set some stuff around here re: prevPaused

@@ -8,8 +8,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
@@ -28,7 +26,7 @@ import java.util.Map;
 
 public class Assets {
     /** Sound effect volume */
-    public static float EFFECT_VOLUME = 0.1f;
+    public static float VOLUME = 0.1f;
     /** Asset Manager */
     private static AssetManager manager;
     /** Mapping from file names to in-game film strip assets */
@@ -37,8 +35,10 @@ public class Assets {
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
     /** In-game music asset */
     private static Map<String, Music> musics = new HashMap<>();
+    private static Music activeMusic;
     /** In-game font asset */
     private static BitmapFont font;
+    private static boolean isMuted = false;
     /** Reference to the sound effect controller */
     private final SoundController soundController = SoundController.getInstance();
     /** Track all loaded assets (for unloading purposes) */
@@ -140,10 +140,6 @@ public class Assets {
         return new FilmStrip(filmStrips.get(fileName));
     }
 
-    public static Music getMusic() {
-        return musics.get("audio/Night_Bite_(Theme)_v6.mp3");
-    }
-
     public static Music getMusic(String filename) {
         return musics.get(filename);
     }
@@ -183,6 +179,10 @@ public class Assets {
             return region;
         }
         return null;
+    }
+
+    public static Music getActiveMusic() {
+        return activeMusic;
     }
 
     /**
@@ -271,16 +271,49 @@ public class Assets {
                     break;
             }
         }
-        playMusic();
         isLoaded = true;
     }
 
-    // TODO: Potentially refactor this out to another class
-    private void playMusic() {
-        Music music = getMusic();
-        music.setLooping(true);
-        music.play();
-        music.setVolume(0.1f);
+    public static void playMusic(String fileName, boolean loop) {
+        if (activeMusic != null) {
+            stopMusic();
+        }
+
+        activeMusic = getMusic(fileName);
+        activeMusic.setLooping(loop);
+        activeMusic.setVolume(VOLUME);
+        activeMusic.play();
+    }
+
+    public static void pauseMusic() {
+        if (activeMusic != null) {
+            activeMusic.pause();
+        }
+    }
+
+    public static void resumeMusic() {
+        if (activeMusic != null) {
+            activeMusic.play();
+        }
+    }
+
+    public static void stopMusic() {
+        if (activeMusic != null) {
+            activeMusic.stop();
+        }
+        activeMusic = null;
+    }
+
+    public static void changeMute() {
+        if (!isMuted) {
+            isMuted = true;
+            VOLUME = 0;
+            pauseMusic();
+        } else {
+            isMuted = false;
+            VOLUME = 0.1f;
+            resumeMusic();
+        }
     }
 
     /** Unloads the assets for this game. */

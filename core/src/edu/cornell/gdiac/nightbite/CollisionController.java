@@ -136,7 +136,7 @@ public class CollisionController implements ContactListener {
                 player.clearInventory();
             }
 
-            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
 
         } else if (object instanceof ItemModel) {
 
@@ -175,7 +175,7 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
-            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
         }
     }
 
@@ -184,7 +184,7 @@ public class CollisionController implements ContactListener {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
-                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
 
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
@@ -216,6 +216,7 @@ public class CollisionController implements ContactListener {
     public void checkWinCondition(HomeModel homeObject) {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel(true);
+            Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
             if (homeObject.getTeam().equals("teamA")) {
                 worldModel.winner = "PLAYER 1 ";
             } else if (homeObject.getTeam().equals("teamB")) {
