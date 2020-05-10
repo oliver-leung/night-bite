@@ -103,7 +103,7 @@ public class PlayerModel extends HumanoidModel {
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(
                 x, y, width, height,
-                Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Dash_5.png"),
+                Assets.getFilmStrip("character/Filmstrip/Player_1/Dash_FS_5_NoArms.png"),
                 Assets.getFilmStrip("character/P1_Falling_5.png")
         );
         setBullet(true);
@@ -122,8 +122,8 @@ public class PlayerModel extends HumanoidModel {
         team = playerTeam;
         setHomePosition(home.getPosition());
 
-        defaultHandheld = Assets.getTextureRegion("character/wok_64_nohand.png");
-        handheld = Assets.getTextureRegion("character/wok_64_nohand.png");
+        defaultHandheld = Assets.getTextureRegion("character/panarm.png");
+        handheld = Assets.getTextureRegion("character/panarm.png");
         flipHandheld = false;
         angleOffset = 0;
         swinging = false;
@@ -392,27 +392,27 @@ public class PlayerModel extends HumanoidModel {
 
         super.draw(canvas);
 
-        float originX;
-        float originY;
-        float ox;
-        if (flipHandheld) {
-            originX = -texture.getRegionWidth() / 5.0f;
-            ox = handheld.getRegionWidth();
-        } else {
-            originX = texture.getRegionWidth() / 5.0f;
-            ox = 0;
-        }
-
-        if (((FilmStrip) texture).getFrame() == 1) {
-            originY = -texture.getRegionHeight() / 3.0f;
-        } else {
-            originY = -texture.getRegionHeight() / 5.0f;
-        }
+//        float originX;
+//        float originY;
+//        float ox;
+//        if (flipHandheld) {
+//            originX = -texture.getRegionWidth() / 5.0f;
+//            ox = handheld.getRegionWidth();
+//        } else {
+//            originX = texture.getRegionWidth() / 5.0f;
+//            ox = 0;
+//        }
+//
+//        if (((FilmStrip) texture).getFrame() == 1) {
+//            originY = -texture.getRegionHeight() / 3.0f;
+//        } else {
+//            originY = -texture.getRegionHeight() / 5.0f;
+//        }
 
         // Don't draw weapon when holding item or dead
         if (!hasItem() && isAlive()) {
-            canvas.draw(handheld, tint,ox,0,getX() * drawScale.x + originX, getY() * drawScale.y + originY,
-                    getAngle() + angleOffset,actualScale.x,actualScale.y);
+            canvas.draw(handheld, tint, 0,0,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle() + angleOffset, actualScale.x, actualScale.y);
         }
     }
 }
