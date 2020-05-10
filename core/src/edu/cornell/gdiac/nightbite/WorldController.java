@@ -626,7 +626,9 @@ public class WorldController implements Screen, InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         float clickX = screenX * worldModel.getWidth() / screenWidth;
         float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
-        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers(), worldModel.getEnemies());
+        // Swing wok only if player doesn't have an item
+        PlayerModel player = worldModel.getPlayers().get(0);
+        if (!player.hasItem()) player.swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers(), worldModel.getEnemies());
         return true;
     }
 
