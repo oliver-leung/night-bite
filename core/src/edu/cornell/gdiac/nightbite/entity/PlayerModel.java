@@ -241,7 +241,7 @@ public class PlayerModel extends HumanoidModel {
         }
         if (!swinging) {
 //            System.out.println(pointWokDir);
-//            updateWokDirection(pointWokDir);
+            updateWokDirection(pointWokDir);
         }
         sliding = Math.max(0, sliding - 1);
     }
