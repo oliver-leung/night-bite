@@ -407,7 +407,7 @@ public class PlayerModel extends HumanoidModel {
 
         super.draw(canvas);
 
-        if (isAlive) {
+        if (isAlive && !hasItem()) {
             float originX;
             float originY;
             float ox;
