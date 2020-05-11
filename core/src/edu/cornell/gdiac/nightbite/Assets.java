@@ -282,10 +282,13 @@ public class Assets {
         }
 
         activeMusic = getMusic(fileName);
+        activeMusic.setOnCompletionListener(music -> {System.out.println("done");});
         activeMusic.setLooping(loop);
+        // activeMusic.setVolume(0);
         activeMusic.setVolume(VOLUME * 0.7f);
         activeMusic.play();
-
+        // activeMusic.setVolume(0);
+        // activeMusic.setVolume(VOLUME * 0.7f);
     }
 
     public static void pauseMusic() {
@@ -322,6 +325,7 @@ public class Assets {
 
     private static void changeMusicVolume() {
         if (activeMusic != null) {
+            System.out.println("vol");
             activeMusic.setVolume(VOLUME * 0.7f);
         }
     }
@@ -353,4 +357,5 @@ public class Assets {
     public static int getTextureCenterY (TextureRegion texture) {
         return texture.getRegionHeight() / 2;
     }
+
 }

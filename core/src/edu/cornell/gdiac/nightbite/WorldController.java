@@ -72,8 +72,8 @@ public class WorldController implements Screen, InputProcessor {
     private String selectedLevelJSON;
     private String levelItemName;
 
-    private float screenWidth;
-    private float screenHeight;
+    public float screenWidth;
+    public float screenHeight;
 
     private static int GAME_DURATION = 120;  // in seconds
     private long timerStart;  // in nanoseconds
@@ -163,8 +163,8 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 203, 75);
-        timerTexture = Assets.getTextureRegion("ui/TimerRectangle.png");
+        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 304, 110);
+        timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
         LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
     }
@@ -201,14 +201,12 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw player scores
         // Hardcoded coordinates!
-        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-100f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
+        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-125f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
 
         // Draw timer
         // TODO create another font!!! jesus
         canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
-        displayFont.setColor(Color.BLACK);
-        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-60f);
-        displayFont.setColor(Color.WHITE);
+        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-55f);
 
         if (worldModel.isComplete()) {
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
@@ -371,9 +369,9 @@ public class WorldController implements Screen, InputProcessor {
                 }
 
                 // handle player facing left-right
-                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                    p.flipTexture();
-                }
+//                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+//                    p.flipTexture();
+//                }
 
                 // Set player movement impulse
                 p.setIX(playerHorizontal);
@@ -383,6 +381,11 @@ public class WorldController implements Screen, InputProcessor {
                     p.setBoostImpulse(playerHorizontal, playerVertical);
                 }
             }
+
+            // update horizontal direction
+//            if (playerHorizontal != 0) {
+//                p.setPrevHoriDir(playerHorizontal);
+//            }
 
             // Move player
             p.applyImpulse();
@@ -427,14 +430,11 @@ public class WorldController implements Screen, InputProcessor {
                 p.resetTexture();
             }
 
-            // update horizontal direction
-            if (playerHorizontal != 0) {
-                p.setPrevHoriDir(playerHorizontal);
-            }
             p.setSlideDirection(playerHorizontal, playerVertical);
 
             // player updates (for respawn and dash cool down)
-            p.update();
+            Vector2 pointWokDir = new Vector2(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            p.update(pointWokDir);
 
             p.playWalkSound();
 
@@ -509,6 +509,9 @@ public class WorldController implements Screen, InputProcessor {
         if (rayhandler != null) {
             rayhandler.update();
         }
+
+        Assets.changeMute();
+        Assets.changeMute();
 
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);

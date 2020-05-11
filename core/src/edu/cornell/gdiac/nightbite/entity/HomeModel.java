@@ -2,21 +2,29 @@ package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
 
 public class HomeModel extends ImmovableModel {
 
     private static String FX_DELIVER_FILE = "audio/delivered.wav";
+    private final WorldModel worldModel;
     private String team;
     private int score;
 
+    private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_filmstrip_64.png", 44, 64);
+    private int flagTicks = 0;
+
     /**
-     * @param x    X position of the home
-     * @param y    Y position of the home
-     * @param team Team that the home belongs to
+     * @param x          X position of the home
+     * @param y          Y position of the home
+     * @param team       Team that the home belongs to
+     * @param worldModel WorldModel that the home belongs to
      */
-    public HomeModel(float x, float y, String team, String stallTexture) {
+    public HomeModel(float x, float y, String team, String stallTexture, WorldModel worldModel) {
         super(x, y, 0);
         this.texture = Assets.getFilmStrip(stallTexture, 128);
         setTexture(this.texture);
@@ -29,6 +37,7 @@ public class HomeModel extends ImmovableModel {
         setX(getX() + 0.5f);
         setY(getY() - 0.5f);
         setName(team);
+        this.worldModel = worldModel;
     }
 
     public int getScore() {
@@ -60,4 +69,14 @@ public class HomeModel extends ImmovableModel {
         return true;
     }
 
+    @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        canvas.draw(
+                flagFilmstrip,
+                (int) (getPosition().x + 1) * worldModel.getScale().x,
+                (int) getPosition().y * worldModel.getScale().y);
+        flagTicks++;
+        flagFilmstrip.setFrame((flagTicks / 6) % flagFilmstrip.getSize());
+    }
 }

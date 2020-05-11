@@ -131,6 +131,16 @@ public class FireEnemyModel extends EnemyModel {
     }
 
     @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        if (state == State.ATTACK && (throwCooldown / 15) % 2 == 0) {
+            canvas.draw(EXCLAMATION,
+                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+        }
+    }
+
+    @Override
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         // cuz screw this particular point in general

@@ -222,7 +222,7 @@ public class LevelController {
     private void createTeam(JsonValue teamJson, int x, int y) {
         String teamName = teamJson.getString("name");
 
-        HomeModel home = new HomeModel(x, y, teamName, homeStallFile);
+        HomeModel home = new HomeModel(x, y, teamName, homeStallFile, world);
         home.setDrawScale(world.getScale());
         home.setActualScale(world.getActualScale());
 
