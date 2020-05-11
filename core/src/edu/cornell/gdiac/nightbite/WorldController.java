@@ -75,7 +75,7 @@ public class WorldController implements Screen, InputProcessor {
     public float screenWidth;
     public float screenHeight;
 
-    private static int GAME_DURATION = 120;  // in seconds
+    private static int GAME_DURATION = 180;  // in seconds
     private long timerStart;  // in nanoseconds
     private long timerEnd;
     private long timeElapsed;

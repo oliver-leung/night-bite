@@ -57,7 +57,7 @@ public class PlayerModel extends HumanoidModel {
     private float targetAngle;
     private float prevAngleOffset;
     private float clickAngle;
-    private float SWING_RADIUS = 0.7f;
+    private float SWING_RADIUS = 0.8f;
     private boolean swinging;
     private int swingCooldown;
     private int SWING_COOLDOWN_PERIOD = 30;

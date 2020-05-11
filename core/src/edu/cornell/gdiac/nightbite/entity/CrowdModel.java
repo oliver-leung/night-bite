@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class CrowdModel {
 
-    public static int MAX_PEOPLE_IN_CROWD = 5;
+    public static int MAX_PEOPLE_IN_CROWD = 1;  // change back to 5 eventually... when less crowded
     private static final int SPAWN_TO_ROAM_RATE = 5;
     private static final int ROAM_RADIUS = 4;
     private static final int CHANGE_LEADER_TIME = 100;
