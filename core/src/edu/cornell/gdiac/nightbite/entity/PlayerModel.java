@@ -120,13 +120,29 @@ public class PlayerModel extends HumanoidModel {
         return team;
     }
 
+    @Override
+    public void setWalkTexture() {
+        FilmStrip filmStrip = (FilmStrip) this.texture;
+        filmStrip.setFrame((walkCounter / 5) % filmStrip.getSize());
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+        walkCounter++;
+    }
+
     /** player movement */
 
-    public Vector2 getImpulse() { return impulse; }
+    public Vector2 getImpulse() {
+        return impulse;
+    }
 
-    public void setIX(float value) { impulse.x = value; }
+    public void setIX(float value) {
+        impulse.x = value;
+    }
 
-    public void setIY(float value) { impulse.y = value; }
+    public void setIY(float value) {
+        impulse.y = value;
+    }
 
     public void setBoostImpulse(float hori, float vert) {
         if (cooldown > 0 || hasItem()) { return; }

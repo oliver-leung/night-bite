@@ -13,7 +13,7 @@ import edu.cornell.gdiac.util.FilmStrip;
 
 import java.util.ArrayList;
 
-public class HumanoidModel extends SimpleObstacle {
+public abstract class HumanoidModel extends SimpleObstacle {
     /** items */
     private ArrayList<ItemModel> item;
 
@@ -69,7 +69,7 @@ public class HumanoidModel extends SimpleObstacle {
     public int fallCounter;
 
     /** The previous horizontal direction of the humanoid */
-    private float prevHoriDir;
+    protected float prevHoriDir;
 
     /** Textures */
     public FilmStrip defaultTexture;
@@ -88,8 +88,13 @@ public class HumanoidModel extends SimpleObstacle {
     }
 
     /** Respawn cooldown interval */
-    public int getRespawnCooldown() { return respawnCooldown; }
-    public void setRespawnCooldown(int cooldown) { DEFAULT_RESPAWN_COOLDOWN = cooldown; };
+    public int getRespawnCooldown() {
+        return respawnCooldown;
+    }
+
+    public void setRespawnCooldown(int cooldown) {
+        DEFAULT_RESPAWN_COOLDOWN = cooldown;
+    }
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {

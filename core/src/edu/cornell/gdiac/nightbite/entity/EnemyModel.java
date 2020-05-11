@@ -59,6 +59,15 @@ public abstract class EnemyModel extends HumanoidModel {
 
     public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
 
+    @Override
+    public void setWalkTexture() {
+        FilmStrip filmStrip = (FilmStrip) this.texture;
+        filmStrip.setFrame((walkCounter / 8) % filmStrip.getSize());
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+        walkCounter++;
+    }
 
     public Vector2 update(PlayerModel p) {
         Vector2 homePos = getHomePosition();
