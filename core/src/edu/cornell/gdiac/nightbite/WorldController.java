@@ -458,7 +458,6 @@ public class WorldController implements Screen, InputProcessor {
                 }
 
                 if (dir.epsilonEquals(Vector2.Zero)) {
-                    System.out.println("stat" + Math.random());
                     e.setStaticTexture();
                 } else {
                     e.setWalkTexture();
