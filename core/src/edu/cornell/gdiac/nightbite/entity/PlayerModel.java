@@ -256,7 +256,6 @@ public class PlayerModel extends HumanoidModel {
 
     public void clearInventory() {
         super.clearInventory();
-        handheld = defaultHandheld;
     }
 
     /** cooldown between grabbing/throwing */
