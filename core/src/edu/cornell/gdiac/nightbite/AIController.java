@@ -76,7 +76,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (body.getUserData() instanceof ImmovableModel && !(body.getUserData() instanceof HoleModel)
             && body.getPosition().sub(source).len() < dist) {
                 return false;
@@ -107,7 +107,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (!body.getPosition().equals(target)) {
                 return false;
             }

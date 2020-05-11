@@ -60,7 +60,7 @@ public class FireEnemyModel extends EnemyModel {
         // TODO: average walk velocity? or is that overkill
         // Estimated walk vector
         Vector2 walk = cache.set(targetVelocity).scl(THROW_TIME);
-        System.out.println(walk);
+//        System.out.println(walk);
         cache.add(targetPos);
         // cache.rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
         targetPred.set(cache);
