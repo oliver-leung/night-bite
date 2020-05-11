@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ public class FirecrackerModel extends BoxObstacle {
     private static final int LIT_AGE = 50;
     /* Expected timestep age of firecracker before becoming destroyed */
     private static final int DETONATING_AGE = 80;
+    /* Expected timestep age of firecracker in which players will be pushed */
+    private static final int DETONATING_TIME = 10;
 
     /* How far out will humanoid bodies be affected by the detonation */
     private static final float BLAST_RADIUS = 0.7f;
@@ -58,6 +61,11 @@ public class FirecrackerModel extends BoxObstacle {
 
     /* Reference to the existing world but also like jesus this is bad practice */
     private World world;
+
+    /** The light that appears when a firecracker is detonating */
+    private LightSource light;
+    /** Transparency of the explosion light */
+    private float lightAlpha = 0.75f;
 
     /**
      * Get whether this firecracker is lit or not
@@ -162,6 +170,23 @@ public class FirecrackerModel extends BoxObstacle {
         }
     }
 
+    /** Sets the light for this body */
+    public void setLight(LightSource light) {
+        this.light = light;
+    }
+
+    /** Removes the light for this body */
+    public void deactivateLight() {
+        if (light != null) {
+            light.remove();
+        }
+    }
+
+    /** To be called when fading out the detonation light */
+    private void decrLightAlpha() {
+        if (lightAlpha - 0.05 > 0) lightAlpha -= 0.05;
+    }
+
     /**
      * Activate physics for this firecracker in the world
      */
@@ -221,12 +246,20 @@ public class FirecrackerModel extends BoxObstacle {
             if (detonating_age == 0) {
                 detonating = false;
                 markRemoved(true);
+                deactivateLight();
             } else {
                 frame += ANIMATION_SPEED;
                 if (frame >= NUM_FRAMES_DET) { frame -= NUM_FRAMES_DET; }
                 ((FilmStrip) texture).setFrame((int) frame);
+                if (light != null) {
+                    light.setColor(0.15f, 0.05f, 0.0f, lightAlpha);
+                    decrLightAlpha();
+                    light.setDistance(3.0f);
+                }
+                // only push back during first moment of explosion
+                if (detonating_age > DETONATING_AGE - DETONATING_TIME) blastSurroundingBodies(world);
             }
-            blastSurroundingBodies(world);
+
         }
     }
 }

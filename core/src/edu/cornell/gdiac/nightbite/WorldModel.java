@@ -548,7 +548,7 @@ public class WorldModel {
         Filter f = new Filter();
         f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
         point.setContactFilter(f);
-        point.setActive(false); // TURN ON LATER
+        point.setActive(true);
         lights.add(point);
         return point;
     }
