@@ -124,4 +124,11 @@ public class ItemModel extends BoxObstacle {
     public boolean isDead() {
         return respawn > 0;
     }
+
+    public float getBottom() {
+        if (isHeld()) {
+            return holdingPlayer.getBottom();
+        }
+        return super.getBottom();
+    }
 }
