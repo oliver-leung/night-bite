@@ -35,7 +35,7 @@ public class OilEnemyModel extends EnemyModel {
             if (distance <= DROP_DIST && OilModel.canAdd()) {
                 worldModel.addOil(enemyPosition.x, enemyPosition.y);
                 dropCooldown = DROP_COOLDOWN;
-                SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME * 1.5f);
+                SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME * 6f);
             }
         }
         return dir;
