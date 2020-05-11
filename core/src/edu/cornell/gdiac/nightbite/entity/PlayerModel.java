@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.nightbite.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -9,12 +8,7 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
-
-import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
-import edu.cornell.gdiac.util.FilmStrip;
-import edu.cornell.gdiac.util.PooledList;
-
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.SoundController;
@@ -429,8 +423,8 @@ public class PlayerModel extends HumanoidModel {
             float ox;
             if (flipHandheld) {
                 originX = - texture.getRegionWidth() / 11.0f;
-                originY = - texture.getRegionHeight() / 10.0f;
-                ox = handheld.getRegionWidth() * 17/20;
+                originY = -texture.getRegionHeight() / 10.0f;
+                ox = handheld.getRegionWidth() * 17f / 20f;
             } else {
                 originX = texture.getRegionWidth() / 10.0f;
                 originY = - texture.getRegionHeight() / 9.0f;
