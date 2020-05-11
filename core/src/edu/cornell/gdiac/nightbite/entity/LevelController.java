@@ -76,9 +76,6 @@ public class LevelController {
                         case "wall":
                             createWall(asset, x, y);
                             break;
-                        case "crowd":
-                            createCrowd(x, y);
-                            break;
                     }
 
                 }
@@ -215,6 +212,9 @@ public class LevelController {
             case "ThiefEnemy":
                 enemy = new ThiefEnemyModel(x, y, world);
                 break;
+            case "Crowd":
+                createCrowd(x,y);
+                return;
         }
         assert enemy != null;
         enemy.setDrawScale(world.getScale());
