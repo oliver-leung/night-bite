@@ -240,7 +240,7 @@ public class PlayerModel extends HumanoidModel {
             updateSwingCooldown();
         }
         if (!swinging) {
-            System.out.println(pointWokDir);
+//            System.out.println(pointWokDir);
             updateWokDirection(pointWokDir);
         }
         sliding = Math.max(0, sliding - 1);
