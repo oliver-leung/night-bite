@@ -34,9 +34,9 @@ public class KeyboardMap {
             Keys.S,
             Keys.A,
             Keys.D,
-            Keys.SHIFT_LEFT,
+            Keys.UNKNOWN,
             Keys.SPACE,
-            Keys.Y,
+            Keys.BACKSPACE,
             Keys.R,
             Keys.ESCAPE);
 

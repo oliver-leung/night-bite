@@ -169,6 +169,7 @@ public class LevelEndedController implements Screen, InputProcessor {
 
             } else if (pressStateRight == 2 && listener != null) {
                 if (isWin) {
+                    Assets.stopMusic();
                     listener.exitScreen(this, ExitCodes.NEXT);
                 }
                 else {
