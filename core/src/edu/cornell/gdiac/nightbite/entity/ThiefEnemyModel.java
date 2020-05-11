@@ -3,6 +3,7 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class ThiefEnemyModel extends EnemyModel {
@@ -19,6 +20,7 @@ public class ThiefEnemyModel extends EnemyModel {
 
     /** Indicates whether previous iteration was on phase 1 of attack */
     private boolean previousPhaseOne = true;
+    private int flashCooldown = 0;
 
     public ThiefEnemyModel(float x, float y, WorldModel world) {
         super(
@@ -80,5 +82,16 @@ public class ThiefEnemyModel extends EnemyModel {
     public Vector2 update(PlayerModel p) {
         contactCooldown--;
         return super.update(p);
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        if (state == State.ATTACK && (flashCooldown / 15) % 2 == 0) {
+            canvas.draw(EXCLAMATION,
+                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+        }
+        flashCooldown++;
     }
 }

@@ -1,7 +1,6 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
@@ -25,7 +24,6 @@ public class FireEnemyModel extends EnemyModel {
     private int throwCooldown;
 
     private Vector2 source, target, targetPred, cache;
-    private final TextureRegion EXCLAMATION = Assets.getTextureRegion("character/Enemies/exclamation_64.png");
 
     public FireEnemyModel(float x, float y, WorldModel world) {
         super(

@@ -1,15 +1,15 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.AIController;
-import edu.cornell.gdiac.nightbite.AILattice;
-import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.nightbite.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 public abstract class EnemyModel extends HumanoidModel {
+    protected final TextureRegion EXCLAMATION = Assets.getTextureRegion("character/Enemies/exclamation_64.png");
+
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setPosition(x, y);
