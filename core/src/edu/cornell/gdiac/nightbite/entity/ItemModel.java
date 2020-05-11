@@ -121,4 +121,7 @@ public class ItemModel extends BoxObstacle {
         return true;
     }
 
+    public boolean isDead() {
+        return respawn > 0;
+    }
 }

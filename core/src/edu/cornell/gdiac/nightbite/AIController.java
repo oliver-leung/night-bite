@@ -5,7 +5,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.entity.HoleModel;
+import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
+import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
@@ -32,6 +35,8 @@ public class AIController {
     private PooledList<GridPoint2> targetPath;
     private Vector2 walkDirectionCache;
 
+    private Vector2 cache;
+
     /** Number of frames until the next path replan */
     private int replanCountdown;
 
@@ -43,15 +48,16 @@ public class AIController {
         positionCache = new GridPoint2();
         targetPath = new PooledList<>();
         walkDirectionCache = new Vector2();
+        cache = new Vector2();
     }
 
-    public void updateAI(AILattice lattice, Vector2 position) {
+    public void updateAI(AILattice lattice, Vector2 position, int aiClass) {
         if (!replan()) {
             return;
         }
 
         positionCache.set((int) position.x, (int) position.y);
-        lattice.findPath(targetPath, target, positionCache);
+        lattice.findPath(targetPath, target, positionCache, aiClass);
     }
 
     public boolean canTarget(Vector2 source, Vector2 target, float dist) {
@@ -61,6 +67,9 @@ public class AIController {
     // like canSee but instead of checking if it hits the target,
     // checks if there's an immovable object blocking the ray within dist
     public boolean canTarget(Vector2 source, Vector2 target, float offset, float dist) {
+        if (cache.set(source).sub(target).len2() <= 0) {
+            return true;
+        }
         VisionCallback callback = new VisionCallback();
         Vector2 normal = new Vector2(target).sub(source);
         normal.set(-normal.y, normal.x).nor().scl(offset);
@@ -70,7 +79,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (body.getUserData() instanceof ImmovableModel && !(body.getUserData() instanceof HoleModel)
             && body.getPosition().sub(source).len() < dist) {
                 return false;
@@ -89,6 +98,9 @@ public class AIController {
     }
 
     public boolean canSee(Vector2 source, Vector2 target, float offset) {
+        if (cache.set(source).sub(target).len2() <= 0) {
+            return true;
+        }
         VisionCallback callback = new VisionCallback();
         Vector2 normal = new Vector2(target).sub(source);
         normal.set(-normal.y, normal.x).nor().scl(offset);
@@ -98,7 +110,7 @@ public class AIController {
         world.rayCast(callback, new Vector2(source).sub(normal), new Vector2(target).sub(normal));
 
         for (Body body : callback.seenBodies) {
-            System.out.println(callback.seenBodies);
+//            System.out.println(callback.seenBodies);
             if (!body.getPosition().equals(target)) {
                 return false;
             }
@@ -244,10 +256,10 @@ public class AIController {
     }
 
 
-    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice) {
+    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass) {
         if (targetPath.isEmpty()) {
             forceReplan();
-            updateAI(aiLattice, feet);
+            updateAI(aiLattice, feet, aiClass);
             if (targetPath.isEmpty()) {
                 return Vector2.Zero;
             }

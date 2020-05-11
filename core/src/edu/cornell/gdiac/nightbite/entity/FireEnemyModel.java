@@ -1,8 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
@@ -12,12 +12,14 @@ public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 100;
     private static final int MIN_THROW_COOLDOWN = 60;
     private static final float THROW_DIST = 5;
+    private static final float STOP_DIST = 2.5f;
     private static final float THROW_FORCE = 2f;
     private static final float THROW_TIME = 0.9f; // fudged in seconds
     private static final float MIN_DIST_DEV = 0.4f;
     private static final float MAX_DIST_DEV = 1.4f;
     private static final float MAX_DEVIATION = 20f;
     private static final float MIN_DEVIATION = -20f;
+    private static final float TOO_CLOSE_DIST = 1.5f;
     private int throwCooldown;
 
     private Vector2 source, target, targetPred, cache;
@@ -58,7 +60,6 @@ public class FireEnemyModel extends EnemyModel {
         // TODO: average walk velocity? or is that overkill
         // Estimated walk vector
         Vector2 walk = cache.set(targetVelocity).scl(THROW_TIME);
-        System.out.println(walk);
         cache.add(targetPos);
         // cache.rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
         targetPred.set(cache);
@@ -75,10 +76,12 @@ public class FireEnemyModel extends EnemyModel {
             resetThrowCooldown();
             cache.sub(getPosition()).rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
             targetPred.set(getPosition()).add(cache);
-            if (cache.len() > THROW_DIST) {
-                cache.nor().scl(THROW_DIST);
+            if (cache.len() > TOO_CLOSE_DIST) {
+                if (cache.len() > THROW_DIST) {
+                    cache.nor().scl(THROW_DIST);
+                }
+                return cache.cpy();
             }
-            return cache.cpy();
         }
 
         // Can you imagine cosine rule being useful ever?
@@ -106,6 +109,15 @@ public class FireEnemyModel extends EnemyModel {
             return targetPos.cpy().sub(getPosition());
         }
         return null;
+    }
+
+    @Override
+    public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
+        if (getPosition().sub(targetPos).len() < STOP_DIST && aiController.canTarget(getPosition(), targetPos, STOP_DIST)) {
+            return Vector2.Zero;
+        }
+
+        return super.move(targetPos, targetDims, aiLattice);
     }
 
     private void resetThrowCooldown() {

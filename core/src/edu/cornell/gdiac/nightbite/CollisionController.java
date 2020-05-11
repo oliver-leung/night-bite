@@ -37,10 +37,10 @@ public class CollisionController implements ContactListener {
         }
 
         // Enemy-Object Contact
-        if (a instanceof EnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) a, b);
-        } else if (b instanceof FireEnemyModel) {
-            handleEnemyToObjectContact((EnemyModel) b, a);
+        if (a instanceof EnemyModel) { // || a instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) a, b);
+        } else if (b instanceof EnemyModel) { // || b instanceof CrowdUnitModel
+            handleEnemyToObjectContact((HumanoidModel) b, a);
         }
 
         // Item-Object Contact
@@ -88,7 +88,6 @@ public class CollisionController implements ContactListener {
         } else if ((a instanceof HumanoidModel && b instanceof FirecrackerModel) || (b instanceof HumanoidModel && a instanceof FirecrackerModel)) {
             contact.setEnabled(false);
         }
-
     }
 
     /**
@@ -136,14 +135,15 @@ public class CollisionController implements ContactListener {
                 player.clearInventory();
             }
 
-            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
 
         } else if (object instanceof ItemModel) {
 
             // Player-Item
-            int id = ((ItemModel) object).getId();
-            worldModel.setOverlapItem(id, true);
-
+            if (! ((ItemModel) object).isDead()) {
+                int id = ((ItemModel) object).getId();
+                worldModel.setOverlapItem(id, true);
+            }
         } else if (object instanceof HomeModel) {
 
             // Player-Home
@@ -171,11 +171,11 @@ public class CollisionController implements ContactListener {
         }
     }
 
-    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
+    public void handleEnemyToObjectContact(HumanoidModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
-            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+            SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
         }
     }
 
@@ -184,7 +184,7 @@ public class CollisionController implements ContactListener {
             PlayerModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
-                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.EFFECT_VOLUME);
+                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
 
         } else if (object instanceof HomeModel && item.lastTouch.getTeam().equals(((HomeModel) object).getTeam())) {
@@ -216,6 +216,7 @@ public class CollisionController implements ContactListener {
     public void checkWinCondition(HomeModel homeObject) {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel(true);
+            Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
             if (homeObject.getTeam().equals("teamA")) {
                 worldModel.winner = "PLAYER 1 ";
             } else if (homeObject.getTeam().equals("teamB")) {

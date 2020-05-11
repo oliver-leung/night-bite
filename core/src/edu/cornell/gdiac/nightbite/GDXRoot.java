@@ -38,6 +38,8 @@ import edu.cornell.gdiac.util.ScreenListener;
  * and you would draw it as a root class in an architecture specification.
  */
 public class GDXRoot extends Game implements ScreenListener {
+	public static final String THEME_MUSIC_FILE = "audio/Night_Bite_(Theme)_v6.mp3";
+	private static final String LEVEL_MUSIC_FILE = "audio/Night_Bite_(Level)_v2.mp3";
 	/**
 	 * AssetManager to load game assets (textures, sounds, etc.)
 	 */
@@ -169,6 +171,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelSelect.setScreenListener(this);
 
 			setScreen(levelSelect);
+			Assets.playMusic(THEME_MUSIC_FILE, true);
 
 			loading.dispose();
 		} else if (screen == levelSelect) {
@@ -180,10 +183,12 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				game.reset();
 				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
 
 			} else if (exitCode == ExitCodes.TITLE) {
 				loading.setScreenListener(this);
 				setScreen(loading);
+				Assets.stopMusic();
 
 			}
 			levelSelect.dispose();
@@ -193,6 +198,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				levelSelect.setScreenListener(this);
 				setScreen(levelSelect);
+				Assets.playMusic(THEME_MUSIC_FILE, true);
 
 			} else if (exitCode == ExitCodes.LEVEL) {
 				Gdx.input.setInputProcessor(null);
@@ -200,6 +206,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setCanvas(canvas);
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				setScreen(game);
+				Assets.resumeMusic();
 			}
 			pause.dispose();
 
@@ -238,11 +245,13 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
+			Assets.playMusic(THEME_MUSIC_FILE, true);
 
 		} else if (exitCode == ExitCodes.PAUSE) {
 			Gdx.input.setInputProcessor(null);
 			pause.setScreenListener(this);
 			setScreen(pause);
+			Assets.pauseMusic();
 
 		} else if (exitCode == ExitCodes.LEVEL_PASS) {
 			Gdx.input.setInputProcessor(null);

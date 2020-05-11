@@ -62,6 +62,11 @@ public abstract class Obstacle {
 
 	protected Affine2 transformToPixel;
 
+	protected int aiClass;
+
+	public int getAiClass() {
+		return aiClass;
+	}
 	/// Track garbage collection status
 	/** Whether the object should be removed from the world on next pass */
 	private boolean toRemove;
@@ -1027,4 +1032,7 @@ public abstract class Obstacle {
 	 * @param canvas Drawing context
 	 */
 	public abstract void drawDebug(GameCanvas canvas);
+
+	public abstract float getBottom();
+
 }

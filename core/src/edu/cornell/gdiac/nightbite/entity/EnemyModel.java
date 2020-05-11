@@ -27,6 +27,8 @@ public abstract class EnemyModel extends HumanoidModel {
     private static final float WALK_THRUST = 10f;
     protected int walkCooldown;
 
+    private static final float STOP_DIST = 2;
+
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setPosition(x, y);
@@ -39,6 +41,8 @@ public abstract class EnemyModel extends HumanoidModel {
         this.worldModel = worldModel;
         walkCooldown = WALK_COOLDOWN;
         setRespawnCooldown(120);
+
+        aiClass = 1;
     }
 
     public abstract void attack(PlayerModel p, AILattice aiLattice);
@@ -86,9 +90,14 @@ public abstract class EnemyModel extends HumanoidModel {
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
 //        body.setLinearVelocity(Vector2.Zero);
 
+        if (getPosition().sub(targetPos).len() < STOP_DIST &&
+                aiController.canTarget(getPosition(), targetPos, STOP_DIST)) {
+            return Vector2.Zero;
+        }
+
         if (walkCooldown > 0) {
             walkCooldown --;
-            return new Vector2(0,0);
+            return Vector2.Zero;
         }
 
         aiController.clearTarget();
@@ -103,8 +112,8 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(rx, by);
         aiController.addTarget(lx, by);
 
-        aiController.updateAI(aiLattice, getFeetPosition());
-        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice).cpy().nor();
+        aiController.updateAI(aiLattice, getFeetPosition(), aiClass);
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, aiClass).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
