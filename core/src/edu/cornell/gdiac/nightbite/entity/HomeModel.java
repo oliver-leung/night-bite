@@ -14,7 +14,7 @@ public class HomeModel extends ImmovableModel {
     private String team;
     private int score;
 
-    private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_filmstrip_64.png", 20, 32);
+    private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_animation_64.png", 40, 64);
     private int flagTicks = 0;
 
     /**
