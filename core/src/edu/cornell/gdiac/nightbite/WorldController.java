@@ -508,6 +508,9 @@ public class WorldController implements Screen, InputProcessor {
             rayhandler.update();
         }
 
+        Assets.changeMute();
+        Assets.changeMute();
+
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
