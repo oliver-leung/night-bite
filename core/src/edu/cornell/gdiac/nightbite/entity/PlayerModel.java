@@ -129,12 +129,14 @@ public class PlayerModel extends HumanoidModel {
     public void setIY(float value) { impulse.y = value; }
 
     public void setBoostImpulse(float hori, float vert) {
-        if (cooldown > 0 || hasItem()) { return; }
-        state = MoveState.RUN;
-        boosting = BOOST_FRAMES;
-        cooldown = COOLDOWN_FRAMES;
-        boost.x = hori;
-        boost.y = vert;
+        // you can't boost
+        return;
+        // if (cooldown > 0 || hasItem()) { return; }
+        // state = MoveState.RUN;
+        // boosting = BOOST_FRAMES;
+        // cooldown = COOLDOWN_FRAMES;
+        // boost.x = hori;
+        // boost.y = vert;
     }
 
     public void applyImpulse() {
