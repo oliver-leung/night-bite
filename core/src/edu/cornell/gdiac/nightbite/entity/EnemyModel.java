@@ -10,11 +10,22 @@ import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 public abstract class EnemyModel extends HumanoidModel {
-    private enum State {
-        IDLE,
-        ATTACK,
-        RETURN
+    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
+        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
+        setPosition(x, y);
+        setHomePosition(new Vector2(x, y));
+
+        super.DEFAULT_RESPAWN_COOLDOWN = 4 * 60;
+
+        path = new PooledList<>();
+        aiController = new AIController(worldModel, this);
+        this.worldModel = worldModel;
+        walkCooldown = WALK_COOLDOWN;
+        setRespawnCooldown(4 * 60);
+
+        aiClass = 1;
     }
+
     public State state = State.IDLE;
 
     private float previousDistanceFromHome;
@@ -28,26 +39,22 @@ public abstract class EnemyModel extends HumanoidModel {
     protected int walkCooldown;
 
     private static float STOP_DIST = 2;
-    public void setStopDist(float stopDist) { STOP_DIST = stopDist; }
+
+    public void setStopDist(float stopDist) {
+        STOP_DIST = stopDist;
+    }
 
     // Only relevant for thief enemy
     public boolean isDoneAttacking = true;
-    public void setIsDoneAttacking(boolean bool) { isDoneAttacking = bool; }
 
-    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
-        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
-        setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
+    public void setIsDoneAttacking(boolean bool) {
+        isDoneAttacking = bool;
+    }
 
-        super.DEFAULT_RESPAWN_COOLDOWN = 140;
-
-        path = new PooledList<>();
-        aiController = new AIController(worldModel, this);
-        this.worldModel = worldModel;
-        walkCooldown = WALK_COOLDOWN;
-        setRespawnCooldown(120);
-
-        aiClass = 1;
+    protected enum State {
+        IDLE,
+        ATTACK,
+        RETURN
     }
 
     public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
