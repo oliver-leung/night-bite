@@ -211,15 +211,16 @@ public class GDXRoot extends Game implements ScreenListener {
 			pause.dispose();
 
 		} else if (screen == levelEnded) {
-			if (exitCode == ExitCodes.LEVEL) {  		// restart level
+			if (exitCode == ExitCodes.LEVEL) {        // restart level
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				game.reset();
 				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
 
-			} else if (exitCode == ExitCodes.NEXT) {  	// next level
+			} else if (exitCode == ExitCodes.NEXT) {    // next level
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
@@ -227,11 +228,14 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				game.reset();
 				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
 
 			} else if (exitCode == ExitCodes.SELECT) {  // return to level select
 				Gdx.input.setInputProcessor(null);
 				levelSelect.setScreenListener(this);
 				setScreen(levelSelect);
+				Assets.playMusic(THEME_MUSIC_FILE, true);
+
 			}
 			levelEnded.dispose();
 		}
@@ -258,12 +262,15 @@ public class GDXRoot extends Game implements ScreenListener {
 			levelEnded.setWinScreen(true);
 			levelEnded.setScreenListener(this);
 			setScreen(levelEnded);
+			Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
 
 		} else if (exitCode == ExitCodes.LEVEL_FAIL) {
 			Gdx.input.setInputProcessor(null);
 			levelEnded.setWinScreen(false);
 			levelEnded.setScreenListener(this);
 			setScreen(levelEnded);
+			Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
+
 		}
 	}
 

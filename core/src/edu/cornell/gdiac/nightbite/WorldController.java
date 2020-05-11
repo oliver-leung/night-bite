@@ -104,7 +104,6 @@ public class WorldController implements Screen, InputProcessor {
     public void checkTimeOut() {
         if (timeElapsed / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
-            Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
         }
     }
 

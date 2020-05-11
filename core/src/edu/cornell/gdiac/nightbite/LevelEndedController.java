@@ -170,7 +170,6 @@ public class LevelEndedController implements Screen, InputProcessor {
             } else if (pressStateRight == 2 && listener != null) {
                 if (isWin) {
                     listener.exitScreen(this, ExitCodes.NEXT);
-                    System.out.println("next level button clicked");
                 }
                 else {
                     listener.exitScreen(this, ExitCodes.SELECT);

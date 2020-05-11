@@ -216,7 +216,6 @@ public class CollisionController implements ContactListener {
     public void checkWinCondition(HomeModel homeObject) {
         if (homeObject.getScore() >= ITEMS_TO_WIN) {
             worldModel.completeLevel(true);
-            Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
             if (homeObject.getTeam().equals("teamA")) {
                 worldModel.winner = "PLAYER 1 ";
             } else if (homeObject.getTeam().equals("teamB")) {
