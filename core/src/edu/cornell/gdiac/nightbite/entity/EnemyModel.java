@@ -1,20 +1,31 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.AIController;
-import edu.cornell.gdiac.nightbite.AILattice;
-import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.nightbite.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 public abstract class EnemyModel extends HumanoidModel {
-    private enum State {
-        IDLE,
-        ATTACK,
-        RETURN
+    protected final TextureRegion EXCLAMATION = Assets.getTextureRegion("character/Enemies/exclamation_64.png");
+
+    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
+        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
+        setPosition(x, y);
+        setHomePosition(new Vector2(x, y));
+
+        super.DEFAULT_RESPAWN_COOLDOWN = 4 * 60;
+
+        path = new PooledList<>();
+        aiController = new AIController(worldModel, this);
+        this.worldModel = worldModel;
+        walkCooldown = WALK_COOLDOWN;
+        setRespawnCooldown(4 * 60);
+
+        aiClass = 1;
     }
+
     public State state = State.IDLE;
 
     private float previousDistanceFromHome;
@@ -27,28 +38,29 @@ public abstract class EnemyModel extends HumanoidModel {
     private static final float WALK_THRUST = 10f;
     protected int walkCooldown;
 
-    private static final float STOP_DIST = 2;
+    private static float STOP_DIST = 2;
 
-    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
-        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
-        setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
-
-        super.DEFAULT_RESPAWN_COOLDOWN = 140;
-
-        path = new PooledList<>();
-        aiController = new AIController(worldModel, this);
-        this.worldModel = worldModel;
-        walkCooldown = WALK_COOLDOWN;
-        setRespawnCooldown(120);
-
-        aiClass = 1;
+    public void setStopDist(float stopDist) {
+        STOP_DIST = stopDist;
     }
 
-    public abstract void attack(PlayerModel p, AILattice aiLattice);
+    // Only relevant for thief enemy
+    public boolean isDoneAttacking = true;
+
+    public void setIsDoneAttacking(boolean bool) {
+        isDoneAttacking = bool;
+    }
+
+    protected enum State {
+        IDLE,
+        ATTACK,
+        RETURN
+    }
+
+    public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
 
 
-    public Vector2 update(PlayerModel p, AILattice aiLattice) {
+    public Vector2 update(PlayerModel p) {
         Vector2 homePos = getHomePosition();
         Vector2 dir = new Vector2(0, 0);
         switch (state) {
@@ -59,9 +71,8 @@ public abstract class EnemyModel extends HumanoidModel {
                 }
                 break;
             case ATTACK:
-                dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                attack(p, aiLattice);
-                if (!aiController.canChasePlayer()) { // Player not within chase radius - return to origin
+                dir = attack(p, worldModel.getAILattice());
+                if (isDoneAttacking && !aiController.canChasePlayer()) { // Player not within chase radius - return to origin
                     state = State.RETURN;
                     aiController.forceReplan();
                 }

@@ -117,4 +117,8 @@ public class WheelObstacle extends SimpleObstacle {
 		canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
 	}
 
+	public float getBottom() {
+	 	throw new UnsupportedOperationException();
+	}
+
 }

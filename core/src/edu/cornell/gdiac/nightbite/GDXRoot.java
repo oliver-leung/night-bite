@@ -38,6 +38,8 @@ import edu.cornell.gdiac.util.ScreenListener;
  * and you would draw it as a root class in an architecture specification.
  */
 public class GDXRoot extends Game implements ScreenListener {
+	public static final String THEME_MUSIC_FILE = "audio/Night_Bite_(Theme)_v6.mp3";
+	private static final String LEVEL_MUSIC_FILE = "audio/Night_Bite_(Level)_v2.mp3";
 	/**
 	 * AssetManager to load game assets (textures, sounds, etc.)
 	 */
@@ -62,6 +64,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * Player mode for the pause screen (CONTROLLER CLASS)
 	 */
 	private PauseController pause;
+	/**
+	 * Private mode for the level end (win/fail) screen (CONTROLLER CLASS)
+	 */
+	private LevelEndedController levelEnded;
 	/**
 	 * Player mode for the in-game level controller
 	 */
@@ -97,6 +103,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
 		pause = new PauseController(canvas);
+		levelEnded = new LevelEndedController(canvas);
 
 		assets = new Assets(manager);
 		game = new WorldController();
@@ -152,17 +159,19 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param screen   The screen requesting to exit
 	 * @param exitCode The state of the screen upon exit
 	 */
-	public void exitScreen(Screen screen, int exitCode) { // TODO fix whack shit
+	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
 			if (!loaded) {
 				assets.loadContent(manager);
 				pause.loadContent();
 				levelSelect.loadContent();
+				levelEnded.loadContent();
 				loaded = true;
 			}
 			levelSelect.setScreenListener(this);
 
 			setScreen(levelSelect);
+			Assets.playMusic(THEME_MUSIC_FILE, true);
 
 			loading.dispose();
 		} else if (screen == levelSelect) {
@@ -174,10 +183,12 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				game.reset();
 				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
 
 			} else if (exitCode == ExitCodes.TITLE) {
 				loading.setScreenListener(this);
 				setScreen(loading);
+				Assets.stopMusic();
 
 			}
 			levelSelect.dispose();
@@ -187,6 +198,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				levelSelect.setScreenListener(this);
 				setScreen(levelSelect);
+				Assets.playMusic(THEME_MUSIC_FILE, true);
 
 			} else if (exitCode == ExitCodes.LEVEL) {
 				Gdx.input.setInputProcessor(null);
@@ -194,8 +206,38 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setCanvas(canvas);
 				game.setLevel(levelSelect.getSelectedLevelJSON());
 				setScreen(game);
+				Assets.resumeMusic();
 			}
 			pause.dispose();
+
+		} else if (screen == levelEnded) {
+			if (exitCode == ExitCodes.LEVEL) {        // restart level
+				Gdx.input.setInputProcessor(null);
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.reset();
+				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
+
+			} else if (exitCode == ExitCodes.NEXT) {    // next level
+				Gdx.input.setInputProcessor(null);
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				levelSelect.incrSelectedLevelJSON();
+				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.reset();
+				setScreen(game);
+				Assets.playMusic(LEVEL_MUSIC_FILE, true);
+
+			} else if (exitCode == ExitCodes.SELECT) {  // return to level select
+				Gdx.input.setInputProcessor(null);
+				levelSelect.setScreenListener(this);
+				setScreen(levelSelect);
+				Assets.playMusic(THEME_MUSIC_FILE, true);
+
+			}
+			levelEnded.dispose();
 		}
 
 		/* IN-GAME LEVEL EXIT CODES */
@@ -207,11 +249,28 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.input.setInputProcessor(null);
 			levelSelect.setScreenListener(this);
 			setScreen(levelSelect);
+			Assets.playMusic(THEME_MUSIC_FILE, true);
 
 		} else if (exitCode == ExitCodes.PAUSE) {
 			Gdx.input.setInputProcessor(null);
 			pause.setScreenListener(this);
 			setScreen(pause);
+			Assets.pauseMusic();
+
+		} else if (exitCode == ExitCodes.LEVEL_PASS) {
+			Gdx.input.setInputProcessor(null);
+			levelEnded.setWinScreen(true);
+			levelEnded.setScreenListener(this);
+			setScreen(levelEnded);
+			Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
+
+		} else if (exitCode == ExitCodes.LEVEL_FAIL) {
+			Gdx.input.setInputProcessor(null);
+			levelEnded.setWinScreen(false);
+			levelEnded.setScreenListener(this);
+			setScreen(levelEnded);
+			Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
+
 		}
 	}
 

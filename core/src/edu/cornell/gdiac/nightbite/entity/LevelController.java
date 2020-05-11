@@ -76,9 +76,6 @@ public class LevelController {
                         case "wall":
                             createWall(asset, x, y);
                             break;
-                        case "crowd":
-                            createCrowd(x, y);
-                            break;
                     }
 
                 }
@@ -184,7 +181,7 @@ public class LevelController {
     private void createTeam(JsonValue teamJson, int x, int y) {
         String teamName = teamJson.getString("name");
 
-        HomeModel home = new HomeModel(x, y, teamName);
+        HomeModel home = new HomeModel(x, y, teamName, world);
         home.setDrawScale(world.getScale());
         home.setActualScale(world.getActualScale());
 
@@ -212,8 +209,12 @@ public class LevelController {
             case "FireEnemy":
                 enemy = new FireEnemyModel(x, y, world);
                 break;
-//            case "ThiefEnemy":
-//                break;
+            case "ThiefEnemy":
+                enemy = new ThiefEnemyModel(x, y, world);
+                break;
+            case "Crowd":
+                createCrowd(x,y);
+                return;
         }
         assert enemy != null;
         enemy.setDrawScale(world.getScale());

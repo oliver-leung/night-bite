@@ -5,7 +5,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import edu.cornell.gdiac.nightbite.entity.*;
+import edu.cornell.gdiac.nightbite.entity.HoleModel;
+import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
+import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
+import edu.cornell.gdiac.nightbite.entity.PlayerModel;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;

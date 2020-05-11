@@ -9,11 +9,15 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
+
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
-import sun.nio.cs.ext.MacThai;
+
+import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.ArrayList;
 
@@ -21,10 +25,7 @@ public class PlayerModel extends HumanoidModel {
 
     /** Regular walking impulse as a scalar */
     private static final float WALK_IMPULSE = 10.0f;
-    // TODO
-    private int NUM_ITEMS = 1;
     private static final float BOOST_IMP = 100.0f;
-
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
     private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
@@ -36,32 +37,24 @@ public class PlayerModel extends HumanoidModel {
         SLIDE
     }
 
+    private static int GRAB_COOLDOWN_PERIOD = 15;
+    private static int SHADOW_BLINK_FREQUENCY = 15;
+
     public MoveState state;
+    // TODO
+    private int NUM_ITEMS = 1;
     private int boosting;
     private int cooldown;
     private int sliding;
-
     private int ticks;
-
     private Vector2 impulse;
     private Vector2 boost;
-
     private float slideHorizontal;
     private float slideVertical;
-
     /** cooldown for grabbing and throwing items */
     private int grabCooldown;
-    private static int GRAB_COOLDOWN_PERIOD = 15;
-
     /** player identification */
     private String team;
-
-    /** player-item */
-    private ArrayList<ItemModel> item;
-
-    /** player texture */
-    private FilmStrip holdTexture;
-
     /** player extra textures */
     private TextureRegion handheld;
     private TextureRegion defaultHandheld;
@@ -74,27 +67,23 @@ public class PlayerModel extends HumanoidModel {
     private boolean swinging;
     private int swingCooldown;
     private int SWING_COOLDOWN_PERIOD = 30;
-
     private TextureRegion shadow;
     private TextureRegion arrow;
     private float arrowAngle;
     private float arrowXOffset;
     private float arrowYOffset;
-
     /** blinking shadow while dashing */
     private boolean alternateShadow;
-    private static int SHADOW_BLINK_FREQUENCY = 15;
-
     /** wok hitbox */
     private PolygonObstacle wokHitbox;
-    private WorldModel world;
+    private World world;
+
     private int PLAYER_REFLECT_DIST = 2;
     private int FIRECRACKER_REFLECT_DIST = 15;
     private float REFLECT_RANGE = 2f;
-
     private HomeModel home;
 
-    public PlayerModel(float x, float y, float width, float height, WorldModel world, String playerTeam, HomeModel home) {
+    public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(
                 x, y, width, height,
                 Assets.getFilmStrip("character/Filmstrip/Player_1/Dash_FS_5_NoArms.png"),
@@ -109,8 +98,6 @@ public class PlayerModel extends HumanoidModel {
 
         cooldown = 0;
         boosting = 0;
-
-        item = new ArrayList<>();
 
         this.home = home;
         team = playerTeam;
@@ -127,8 +114,16 @@ public class PlayerModel extends HumanoidModel {
         swingCooldown = 0;
         alternateShadow = false;
 
-        this.holdTexture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png");
-        this.world = world;
+        setHoldTexture(Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png"));
+    }
+
+    public void playWalkSound() {
+        SoundController soundController = SoundController.getInstance();
+        if (state == MoveState.WALK && !soundController.isActive("audio/walking.wav")) {
+            soundController.play("audio/walking.wav", "audio/walking.wav", true, Assets.VOLUME * 1.5f);
+        } else if (state != MoveState.WALK && soundController.isActive("audio/walking.wav")) {
+            soundController.stop("audio/walking.wav");
+        }
     }
 
     public int getTicks() {
@@ -158,12 +153,14 @@ public class PlayerModel extends HumanoidModel {
     public void setIY(float value) { impulse.y = value; }
 
     public void setBoostImpulse(float hori, float vert) {
-        if (cooldown > 0 || hasItem()) { return; }
-        state = MoveState.RUN;
-        boosting = BOOST_FRAMES;
-        cooldown = COOLDOWN_FRAMES;
-        boost.x = hori;
-        boost.y = vert;
+        // you can't boost
+        return;
+        // if (cooldown > 0 || hasItem()) { return; }
+        // state = MoveState.RUN;
+        // boosting = BOOST_FRAMES;
+        // cooldown = COOLDOWN_FRAMES;
+        // boost.x = hori;
+        // boost.y = vert;
     }
 
     public void applyImpulse() {
@@ -247,23 +244,9 @@ public class PlayerModel extends HumanoidModel {
         sliding = 0;
     }
 
-    public boolean hasItem() {
-        return item.size() > 0;
-    }
-
-    public ArrayList<ItemModel> getItems() {
-        return item;
-    }
-
     public void clearInventory() {
-        item.clear();
-        setTexture(defaultTexture);
+        super.clearInventory();
         handheld = defaultHandheld;
-    }
-
-    public void holdItem(ItemModel i) {
-        item.add(i);
-        setCurrentTexture(holdTexture);
     }
 
     /** cooldown between grabbing/throwing */
@@ -297,9 +280,13 @@ public class PlayerModel extends HumanoidModel {
             for (FirecrackerModel firecracker: firecrackers) {
                 Vector2 firecrackerVector = firecracker.getPosition();
                 firecrackerVector.sub(getPosition());
-                if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
+                if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS
+                        && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS
+                        && firecrackerVector.len() < REFLECT_RANGE
+                        && !firecracker.isDetonating()) {
                     Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
+                    SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
                 }
             }
 
@@ -313,6 +300,7 @@ public class PlayerModel extends HumanoidModel {
                         ((EnemyModel) enemy).forceReplan();
                     }
                 }
+                SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
             }
         }
     }

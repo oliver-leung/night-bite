@@ -387,5 +387,14 @@ public class PolygonObstacle extends SimpleObstacle {
 			canvas.drawPhysics(tri,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
 		}
 	}
-	
+
+	public float getBottom() {
+		float min = Float.parseFloat("inf");
+		for (int i = 1; i < vertices.length; i += 2) {
+			if (vertices[i] < min) {
+				min =  vertices[i];
+			}
+		}
+		return min;
+	}
 }

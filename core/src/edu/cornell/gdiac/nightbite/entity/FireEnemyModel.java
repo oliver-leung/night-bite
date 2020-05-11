@@ -1,12 +1,13 @@
 package edu.cornell.gdiac.nightbite.entity;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.util.LightSource;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 100;
@@ -42,13 +43,18 @@ public class FireEnemyModel extends EnemyModel {
         setHomePosition(new Vector2(x + 0.5f, y + 0.6f));
     }
 
-    public void attack(PlayerModel p, AILattice aiLattice) {
+    public Vector2 attack(PlayerModel p, AILattice aiLattice) {
+        Vector2 dir = move(p.getPosition(), p.getDimension(), aiLattice);
         Vector2 imp = throwFirecracker(p.getPosition(), p.getLinearVelocity(), aiLattice);
         if (imp != null) {
             FirecrackerModel f = worldModel.addFirecracker(getPosition().x, getPosition().y);
+            LightSource light = worldModel.createPointLight(new float[]{0.15f, 0f, 0f, 1.0f}, 1.5f);
+            light.attachToBody(f.getBody());
+            f.setLight(light);
             f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE).scl(MathUtils.random(MIN_DIST_DEV, MAX_DIST_DEV)));
             walkCooldown = WALK_COOLDOWN;
         }
+        return dir;
     }
 
     // TODO: Shouldn't only do shot prediction -- randomized or controlled?
@@ -60,7 +66,6 @@ public class FireEnemyModel extends EnemyModel {
         // TODO: average walk velocity? or is that overkill
         // Estimated walk vector
         Vector2 walk = cache.set(targetVelocity).scl(THROW_TIME);
-//        System.out.println(walk);
         cache.add(targetPos);
         // cache.rotate(MathUtils.random(MIN_DEVIATION, MAX_DEVIATION));
         targetPred.set(cache);
@@ -123,6 +128,16 @@ public class FireEnemyModel extends EnemyModel {
 
     private void resetThrowCooldown() {
         throwCooldown = MathUtils.random(MIN_THROW_COOLDOWN, MAX_THROW_COOLDOWN);
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        if (state == State.ATTACK && (throwCooldown / 15) % 2 == 0) {
+            canvas.draw(EXCLAMATION,
+                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+        }
     }
 
     @Override

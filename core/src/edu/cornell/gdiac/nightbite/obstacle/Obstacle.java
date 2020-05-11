@@ -1032,4 +1032,7 @@ public abstract class Obstacle {
 	 * @param canvas Drawing context
 	 */
 	public abstract void drawDebug(GameCanvas canvas);
+
+	public abstract float getBottom();
+
 }

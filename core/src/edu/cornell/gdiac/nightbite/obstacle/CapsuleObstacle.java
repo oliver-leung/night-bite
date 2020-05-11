@@ -548,4 +548,8 @@ public class CapsuleObstacle extends SimpleObstacle {
 		}
 	}
 
+	@Override
+	public float getBottom() {
+		return getY() - getHeight()/2;
+	}
 }
