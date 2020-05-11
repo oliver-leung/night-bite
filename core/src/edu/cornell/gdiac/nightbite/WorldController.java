@@ -104,7 +104,6 @@ public class WorldController implements Screen, InputProcessor {
     public void checkTimeOut() {
         if (timeElapsed / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
-            Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
         }
     }
 
@@ -213,11 +212,10 @@ public class WorldController implements Screen, InputProcessor {
         displayFont.setColor(Color.WHITE);
 
         if (worldModel.isComplete()) {
-            displayFont.setColor(Color.YELLOW);
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
-                canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_PASS);
             } else {
-                canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_FAIL);
             }
         }
         if (debug) {

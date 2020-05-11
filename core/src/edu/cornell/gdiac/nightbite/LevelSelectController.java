@@ -111,6 +111,13 @@ public class LevelSelectController implements Screen, InputProcessor {
         return levelJSONList[levelChoiceindex];
     }
 
+    /** Increment the level selection index if in bounds*/
+    public void incrSelectedLevelJSON() {
+        if (levelChoiceindex < levelJSONList.length - 1) {
+            levelChoiceindex++;
+        }
+    }
+
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
         Gdx.input.setInputProcessor(this);
