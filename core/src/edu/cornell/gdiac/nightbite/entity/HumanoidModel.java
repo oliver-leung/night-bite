@@ -139,6 +139,9 @@ public abstract class HumanoidModel extends SimpleObstacle {
      * If the humanoid is not moving, set the texture to one frame of the walk texture.
      */
     public void setStaticTexture() {
+        if (walkCounter % 20 != 0) {
+            return;
+        }
         walkCounter = 0;
         ((FilmStrip) texture).setFrame(0);
         if (prevHoriDir == 1) {
