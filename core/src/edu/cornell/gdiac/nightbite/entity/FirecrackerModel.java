@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class FirecrackerModel extends BoxObstacle {
 
     /* Expected timestep age of firecracker before becoming lit */
-    private static final int AGE = 30;
+    private static final int AGE = 1;
     /* Expected timestep age of firecracker before detonating */
-    private static final int LIT_AGE = 50;
+    private static final int LIT_AGE = 43;
     /* Expected timestep age of firecracker before becoming destroyed */
     private static final int DETONATING_AGE = 80;
     /* Expected timestep age of firecracker in which players will be pushed */
@@ -178,7 +178,7 @@ public class FirecrackerModel extends BoxObstacle {
     /** Removes the light for this body */
     public void deactivateLight() {
         if (light != null) {
-            light.remove();
+            light.setActive(false);
         }
     }
 
