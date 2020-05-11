@@ -96,7 +96,7 @@ public class PlayerModel extends HumanoidModel {
     public void playWalkSound() {
         SoundController soundController = SoundController.getInstance();
         if (state == MoveState.WALK && !soundController.isActive("audio/walking.wav")) {
-            soundController.play("audio/walking.wav", "audio/walking.wav", true, Assets.VOLUME);
+            soundController.play("audio/walking.wav", "audio/walking.wav", true, Assets.VOLUME * 1.5f);
         } else if (state != MoveState.WALK && soundController.isActive("audio/walking.wav")) {
             soundController.stop("audio/walking.wav");
         }
@@ -253,7 +253,7 @@ public class PlayerModel extends HumanoidModel {
                 if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
                     Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
-                    SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME);
+                    SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME * 1.8f);
                 }
             }
         }
@@ -267,7 +267,7 @@ public class PlayerModel extends HumanoidModel {
                 if (enemy instanceof EnemyModel) {
                     ((EnemyModel) enemy).forceReplan();
                 }
-                SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME);
+                SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME * 1.8f);
             }
         }
     }
