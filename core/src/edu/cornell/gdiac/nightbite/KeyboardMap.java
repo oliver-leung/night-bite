@@ -34,10 +34,10 @@ public class KeyboardMap {
             Keys.S,
             Keys.A,
             Keys.D,
-            Keys.SHIFT_LEFT,
+            Keys.UNKNOWN,
             Keys.SPACE,
-            Keys.Y,
-            Keys.R,
+            Keys.BACKSPACE,
+            Keys.DEL,
             Keys.ESCAPE);
 
     private static Player PLAYER1 = new Player(
