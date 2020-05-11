@@ -161,8 +161,8 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 203, 75);
-        timerTexture = Assets.getTextureRegion("ui/TimerRectangle.png");
+        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 304, 110);
+        timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
         LevelController.getInstance().populate(worldModel, selectedLevelJSON);
         worldModel.initializeAI();
     }
@@ -199,14 +199,12 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw player scores
         // Hardcoded coordinates!
-        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-100f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
+        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-125f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
 
         // Draw timer
         // TODO create another font!!! jesus
         canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
-        displayFont.setColor(Color.BLACK);
-        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-60f);
-        displayFont.setColor(Color.WHITE);
+        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-55f);
 
         if (worldModel.isComplete()) {
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
