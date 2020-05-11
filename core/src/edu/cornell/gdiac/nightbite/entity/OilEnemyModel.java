@@ -3,6 +3,7 @@ package edu.cornell.gdiac.nightbite.entity;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.SoundController;
 
@@ -39,5 +40,15 @@ public class OilEnemyModel extends EnemyModel {
             }
         }
         return dir;
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        if (state == State.ATTACK && (dropCooldown / 15) % 2 == 0) {
+            canvas.draw(EXCLAMATION,
+                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+        }
     }
 }

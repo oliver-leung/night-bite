@@ -64,7 +64,7 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int moveCooldown;
     private int MOVE_COOLDOWN_PERIOD = 15;
     private int prevDir;
-    private int levelChoiceindex;
+    private int levelChoiceindex = 0;
 
     private String[] levelJSONList = new String[]{
             "jsons/level_tutorial1.json",
@@ -81,7 +81,6 @@ public class LevelSelectController implements Screen, InputProcessor {
 
         active = true;
         startGame = false;
-        levelChoiceindex = 1;
         moveCooldown = 0;
         prevDir = 1;
     }

@@ -298,7 +298,9 @@ public class FirecrackerModel extends BoxObstacle {
                 deactivateLight();
             } else {
                 frame += ANIMATION_SPEED;
-                if (frame >= NUM_FRAMES_DET) { frame -= NUM_FRAMES_DET; }
+                if (frame >= NUM_FRAMES_DET) {
+                    frame -= NUM_FRAMES_DET;
+                }
                 ((FilmStrip) texture).setFrame((int) frame);
                 if (light != null) {
                     light.setColor(0.15f, 0.05f, 0.0f, lightAlpha);
@@ -306,7 +308,8 @@ public class FirecrackerModel extends BoxObstacle {
                     light.setDistance(3.0f);
                 }
                 // only push back during first moment of explosion
-                if (detonating_age > DETONATING_AGE - DETONATING_TIME) blastSurroundingBodies(world);
+                if (detonating_age > DETONATING_AGE - DETONATING_TIME)
+                    blastSurroundingBodies(world);
             }
 
         }

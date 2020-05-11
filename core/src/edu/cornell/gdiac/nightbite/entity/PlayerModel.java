@@ -250,10 +250,13 @@ public class PlayerModel extends HumanoidModel {
             for (FirecrackerModel firecracker: firecrackers) {
                 Vector2 firecrackerVector = firecracker.getPosition();
                 firecrackerVector.sub(getPosition());
-                if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS && firecrackerVector.len() < REFLECT_RANGE) {
+                if (firecrackerVector.angleRad(clickVector) < SWING_RADIUS
+                        && firecrackerVector.angleRad(clickVector) > -SWING_RADIUS
+                        && firecrackerVector.len() < REFLECT_RANGE
+                        && !firecracker.isDetonating()) {
                     Vector2 reflectDirection = new Vector2(firecrackerVector.nor().scl(FIRECRACKER_REFLECT_DIST));
                     firecracker.throwItem(reflectDirection);
-                    SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME * 1.8f);
+                    SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
                 }
             }
         }
@@ -267,7 +270,7 @@ public class PlayerModel extends HumanoidModel {
                 if (enemy instanceof EnemyModel) {
                     ((EnemyModel) enemy).forceReplan();
                 }
-                SoundController.getInstance().play("audio/whack3.wav", "audio/whack3.wav", false, Assets.VOLUME * 1.8f);
+                SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
             }
         }
     }
