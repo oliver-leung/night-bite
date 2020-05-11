@@ -18,9 +18,21 @@ public class LevelSelectController implements Screen, InputProcessor {
     private TextureRegion tile4Texture;
     private TextureRegion tile5Texture;
     private TextureRegion tile6Texture;
+    private TextureRegion tile7Texture;
+    private TextureRegion tile8Texture;
+    private TextureRegion tile9Texture;
+    private TextureRegion tile10Texture;
+    private TextureRegion tile11Texture;
+    private TextureRegion tile12Texture;
     private TextureRegion store1Texture;
     private TextureRegion store2Texture;
     private TextureRegion store3Texture;
+    private TextureRegion bokchoiStallTexture;
+    private TextureRegion carrotStallTexture;
+    private TextureRegion eggStallTexture;
+    private TextureRegion fishStallTexture;
+    private TextureRegion greenOnionStallTexture;
+    private TextureRegion milkStallTexture;
     private TextureRegion arrowTexture;
     private TextureRegion arrowTextureFlipped;
     private TextureRegion backTexture;
@@ -67,12 +79,18 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int levelChoiceindex = 0;
 
     private String[] levelJSONList = new String[]{
-            "jsons/level_tutorial1.json",
-            "jsons/level_tutorial2.json",
-            "jsons/level_test.json",
-            "jsons/intro_bridge_level_v2.json",
-            "jsons/beta_medium.json",
-            "jsons/beta_hard.json"
+            "jsons/01_golden_tutorial_basic.json",
+            "jsons/02_golden_tutorial_firecracker.json",
+            "jsons/03_golden_tutorial_oil.json",
+            "jsons/04_golden_spiral.json",
+            "jsons/05_golden_moat.json",
+            "jsons/06_golden_doublehole.json",
+            "jsons/07_golden_holegrid.json",
+            "jsons/08_golden_hard_nothief.json",
+            "jsons/09_golden_zigzag.json",
+            "jsons/10_golden_diagonalhole.json",
+            "jsons/11_golden_medium.json",
+            "jsons/12_golden_messy.json"
     };
     private int[] xposList;
 
@@ -87,20 +105,37 @@ public class LevelSelectController implements Screen, InputProcessor {
 
     public void loadContent() {
         background = Assets.getTextureRegion("level_select/Background.png");
+
+        bokchoiStallTexture = Assets.getTextureRegion("level_select/levelselect_bokchoi.png");
+        carrotStallTexture = Assets.getTextureRegion("level_select/levelselect_carrot.png");
+        eggStallTexture = Assets.getTextureRegion("level_select/levelselect_egg.png");
+        fishStallTexture = Assets.getTextureRegion("level_select/levelselect_fish.png");
+        greenOnionStallTexture = Assets.getTextureRegion("level_select/levelselect_greenonion.png");
+        milkStallTexture = Assets.getTextureRegion("level_select/levelselect_milk.png");
+
         tile1Texture = Assets.getTextureRegion("level_select/1.png");
         tile2Texture = Assets.getTextureRegion("level_select/2.png");
         tile3Texture = Assets.getTextureRegion("level_select/3.png");
+        tile4Texture = Assets.getTextureRegion("level_select/4.png");
+        tile5Texture = Assets.getTextureRegion("level_select/5.png");
+        tile6Texture = Assets.getTextureRegion("level_select/6.png");
+        tile7Texture = Assets.getTextureRegion("level_select/#7.png");
+        tile8Texture = Assets.getTextureRegion("level_select/#8.png");
+        tile9Texture = Assets.getTextureRegion("level_select/#9.png");
+        tile10Texture = Assets.getTextureRegion("level_select/#10.png");
+        tile11Texture = Assets.getTextureRegion("level_select/#11.png");
+        tile12Texture = Assets.getTextureRegion("level_select/#12.png");
+
         store1Texture = Assets.getTextureRegion("level_select/LVL1_Stall.png");
         store2Texture = Assets.getTextureRegion("level_select/LVL2_Stall.png");
         store3Texture = Assets.getTextureRegion("level_select/LVL3_Stall.png");
+
         arrowTexture = Assets.getTextureRegion("level_select/Arrow.png");
         backTexture = Assets.getTextureRegion("level_select/Back.png");
         headerTexture = Assets.getTextureRegion("level_select/Header.png");
         playerTexture = Assets.getTextureRegion("level_select/Lin_128px.png");
 
-        tile4Texture = Assets.getTextureRegion("level_select/4.png");
-        tile5Texture = Assets.getTextureRegion("level_select/5.png");
-        tile6Texture = Assets.getTextureRegion("level_select/6.png");
+
         arrowTexture = Assets.getTextureRegion("level_select/Arrow.png");
         arrowTextureFlipped = Assets.getTextureRegion("level_select/Arrow.png");
         arrowTextureFlipped.flip(true, false);
@@ -108,6 +143,40 @@ public class LevelSelectController implements Screen, InputProcessor {
 
     public String getSelectedLevelJSON () {
         return levelJSONList[levelChoiceindex];
+    }
+
+    public String getItemTheme () {
+        String itemName;
+        switch(levelChoiceindex) {
+            case 0:
+            case 6:
+                itemName = "bokchoi";
+                break;
+            case 1:
+            case 7:
+                itemName = "carrot";
+                break;
+            case 2:
+            case 8:
+                itemName = "egg";
+                break;
+            case 3:
+            case 9:
+                itemName = "fish";
+                break;
+            case 4:
+            case 10:
+                itemName = "greenonion";
+                break;
+            case 5:
+            case 11:
+                itemName = "milk";
+                break;
+            default:
+                itemName = "bokchoi";
+                break;
+        }
+        return itemName;
     }
 
     /** Increment the level selection index if in bounds*/
@@ -175,21 +244,48 @@ public class LevelSelectController implements Screen, InputProcessor {
         canvas.draw(headerTexture, Color.WHITE, headerTexture.getRegionWidth() / 2.0f, headerTexture.getRegionHeight() / 2.0f, xpos2, yposHeader, 0, scale, scale);
         canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
 
+        float storeOx = store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f;
+        float storeOy = store1Texture.getRegionHeight() / 2.0f - 10;
+
         if (getPage() == 0) {
             canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
             canvas.draw(tile1Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
             canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
             canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+
+            canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 1) {
             canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
             canvas.draw(tile4Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
             canvas.draw(tile5Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
             canvas.draw(tile6Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
-        }
+            canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
 
-        canvas.draw(store1Texture, Color.WHITE, store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f, store1Texture.getRegionHeight() / 2.0f - 10, xpos1, yposStall, 0, scale, scale);
-        canvas.draw(store2Texture, Color.WHITE, store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f, store1Texture.getRegionHeight() / 2.0f - 10, xpos2, yposStall, 0, scale, scale);
-        canvas.draw(store3Texture, Color.WHITE, store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f, store1Texture.getRegionHeight() / 2.0f - 10, xpos3, yposStall, 0, scale, scale);
+            canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
+        } else if (getPage() == 2) {
+            canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
+            canvas.draw(tile7Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile8Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile9Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
+
+            canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
+        } else if (getPage() == 3) {
+            canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
+            canvas.draw(tile10Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile11Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile12Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+
+            canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
+        }
 
         canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f - tile1Texture.getRegionHeight() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
 

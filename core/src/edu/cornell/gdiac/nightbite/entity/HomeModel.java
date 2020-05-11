@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
 
@@ -23,9 +24,9 @@ public class HomeModel extends ImmovableModel {
      * @param team       Team that the home belongs to
      * @param worldModel WorldModel that the home belongs to
      */
-    public HomeModel(float x, float y, String team, WorldModel worldModel) {
+    public HomeModel(float x, float y, String team, String stallTexture, WorldModel worldModel) {
         super(x, y, 0);
-        this.texture = Assets.getFilmStrip("environment/StallHome_64_fs.png", 128);
+        this.texture = Assets.getFilmStrip(stallTexture, 128);
         setTexture(this.texture);
 
         this.team = team;
