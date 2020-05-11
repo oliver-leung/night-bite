@@ -283,7 +283,7 @@ public class Assets {
 
         activeMusic = getMusic(fileName);
         activeMusic.setLooping(loop);
-        activeMusic.setVolume(VOLUME);
+        activeMusic.setVolume(VOLUME * 0.7f);
         activeMusic.play();
 
     }
@@ -322,7 +322,7 @@ public class Assets {
 
     private static void changeMusicVolume() {
         if (activeMusic != null) {
-            activeMusic.setVolume(VOLUME);
+            activeMusic.setVolume(VOLUME * 0.7f);
         }
     }
 

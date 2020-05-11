@@ -270,7 +270,7 @@ public class FirecrackerModel extends BoxObstacle {
                 frame = 0f;
                 setTexture(litTexture);
                 String firecrackerSoundFile = "audio/firecracker.wav";
-                SoundController.getInstance().play(firecrackerSoundFile, firecrackerSoundFile, false, Assets.VOLUME);
+                SoundController.getInstance().play(firecrackerSoundFile, firecrackerSoundFile, false, Assets.VOLUME * 0.4f);
             }
         }
 
