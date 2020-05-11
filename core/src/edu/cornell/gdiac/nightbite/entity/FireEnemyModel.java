@@ -7,6 +7,7 @@ import edu.cornell.gdiac.nightbite.AILattice;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.util.LightSource;
 
 public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 100;
@@ -47,6 +48,9 @@ public class FireEnemyModel extends EnemyModel {
         Vector2 imp = throwFirecracker(p.getPosition(), p.getLinearVelocity(), aiLattice);
         if (imp != null) {
             FirecrackerModel f = worldModel.addFirecracker(getPosition().x, getPosition().y);
+            LightSource light = worldModel.createPointLight(new float[]{0.15f, 0f, 0f, 1.0f}, 1.5f);
+            light.attachToBody(f.getBody());
+            f.setLight(light);
             f.throwItem(imp.scl(imp.len()).scl(THROW_FORCE).scl(MathUtils.random(MIN_DIST_DEV, MAX_DIST_DEV)));
             walkCooldown = WALK_COOLDOWN;
         }
