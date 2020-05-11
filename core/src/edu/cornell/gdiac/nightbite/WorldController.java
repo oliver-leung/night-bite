@@ -453,11 +453,18 @@ public class WorldController implements Screen, InputProcessor {
                     dir = ((CrowdUnitModel) e).getDir();
                 }
 
-                int enemyHorizontal = Integer.signum((int)dir.x);
+                int enemyHorizontal = (int) Math.signum(dir.x);
                 // handle enemy facing left-right
                 if (enemyHorizontal != 0 && enemyHorizontal != e.getPrevHoriDir()) {
                     e.flipTexture();
                 }
+
+                if (dir.epsilonEquals(Vector2.Zero)) {
+                    e.setStaticTexture();
+                } else {
+                    e.setWalkTexture();
+                }
+
 
                 /* IF ITEM IN ENEMY HANDS */
                 if (e.hasItem()) {

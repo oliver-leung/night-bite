@@ -23,7 +23,7 @@ public class FireEnemyModel extends EnemyModel {
     private static final float TOO_CLOSE_DIST = 1.5f;
     private int throwCooldown;
 
-    private Vector2 source, target, targetPred, cache;
+    private final Vector2 source, target, targetPred, cache;
 
     public FireEnemyModel(float x, float y, WorldModel world) {
         super(
@@ -41,6 +41,7 @@ public class FireEnemyModel extends EnemyModel {
         //TODO: FIX BELOW
         setPosition(x, y + 0.1f); // this is moved up so they dont spawn and die
         setHomePosition(new Vector2(x + 0.5f, y + 0.6f));
+
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {
