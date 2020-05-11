@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.Logger;
 import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.util.SoundController;
 
 /**
  * Root class for a LibGDX.
@@ -258,6 +259,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			Assets.pauseMusic();
 
 		} else if (exitCode == ExitCodes.LEVEL_PASS) {
+			SoundController soundController = SoundController.getInstance();
+			soundController.stopAll();
 			Gdx.input.setInputProcessor(null);
 			levelEnded.setWinScreen(true);
 			levelEnded.setScreenListener(this);
@@ -265,6 +268,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			Assets.playMusic("audio/Night_Bite_(Win).mp3", false);
 
 		} else if (exitCode == ExitCodes.LEVEL_FAIL) {
+			SoundController soundController = SoundController.getInstance();
+			soundController.stopAll();
 			Gdx.input.setInputProcessor(null);
 			levelEnded.setWinScreen(false);
 			levelEnded.setScreenListener(this);
