@@ -14,7 +14,7 @@ public class HomeModel extends ImmovableModel {
     private String team;
     private int score;
 
-    private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_animation_64.png", 40, 64);
+    private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_filmstrip_64.png", 44, 64);
     private int flagTicks = 0;
 
     /**
@@ -73,8 +73,8 @@ public class HomeModel extends ImmovableModel {
         super.draw(canvas);
         canvas.draw(
                 flagFilmstrip,
-                (getPosition().x + 0.98f) * worldModel.getScale().x,
-                (getPosition().y + 0.5f) * worldModel.getScale().y);
+                (int) (getPosition().x + 1) * worldModel.getScale().x,
+                (int) getPosition().y * worldModel.getScale().y);
         flagTicks++;
         flagFilmstrip.setFrame((flagTicks / 6) % flagFilmstrip.getSize());
     }
