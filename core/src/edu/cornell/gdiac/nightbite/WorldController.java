@@ -71,8 +71,8 @@ public class WorldController implements Screen, InputProcessor {
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
 
-    private float screenWidth;
-    private float screenHeight;
+    public float screenWidth;
+    public float screenHeight;
 
     private static int GAME_DURATION = 120;  // in seconds
     private long timerStart;  // in nanoseconds
@@ -369,9 +369,9 @@ public class WorldController implements Screen, InputProcessor {
                 }
 
                 // handle player facing left-right
-                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                    p.flipTexture();
-                }
+//                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+//                    p.flipTexture();
+//                }
 
                 // Set player movement impulse
                 p.setIX(playerHorizontal);
@@ -381,6 +381,11 @@ public class WorldController implements Screen, InputProcessor {
                     p.setBoostImpulse(playerHorizontal, playerVertical);
                 }
             }
+
+            // update horizontal direction
+//            if (playerHorizontal != 0) {
+//                p.setPrevHoriDir(playerHorizontal);
+//            }
 
             // Move player
             p.applyImpulse();
@@ -425,14 +430,11 @@ public class WorldController implements Screen, InputProcessor {
                 p.resetTexture();
             }
 
-            // update horizontal direction
-            if (playerHorizontal != 0) {
-                p.setPrevHoriDir(playerHorizontal);
-            }
             p.setSlideDirection(playerHorizontal, playerVertical);
 
             // player updates (for respawn and dash cool down)
-            p.update();
+            Vector2 pointWokDir = new Vector2(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            p.update(pointWokDir);
 
             p.playWalkSound();
 
