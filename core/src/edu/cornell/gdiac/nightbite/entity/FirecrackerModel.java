@@ -1,8 +1,10 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
@@ -67,6 +69,22 @@ public class FirecrackerModel extends BoxObstacle {
     /** Transparency of the explosion light */
     private float lightAlpha = 0.75f;
 
+    /** Min velocity for firecracker to be considered 'not flying' */
+    private final float stop_velocity = 1f;
+
+    /** List of holes the firecracker is in contact with */
+    private ArrayList<HoleModel> contactHoles;
+    public void addContactHole(HoleModel hole) { contactHoles.add(hole); }
+    public void removeContactHole(HoleModel hole) { contactHoles.remove(hole); }
+
+    /** Indicators for fading out firecrackers when it lands in a hole */
+    private boolean fadeOut = false;
+    private int fadeOutFrame;
+    private static final int NUM_FRAMES_FADE_OUT = 15;
+
+    /** Texture tint */
+    public Color tint = new Color(Color.WHITE);
+
     /**
      * Get whether this firecracker is lit or not
      */
@@ -104,6 +122,8 @@ public class FirecrackerModel extends BoxObstacle {
         // TODO shouldn't need - firecracker should move relatively slowly
         setBullet(true);
         setName("firecracker");
+
+        contactHoles = new ArrayList<HoleModel>();
 
         age = AGE;
         lit_age = LIT_AGE;
@@ -212,6 +232,35 @@ public class FirecrackerModel extends BoxObstacle {
     public void update(float delta) {
         super.update(delta);
 
+        if (fadeOut) { // In fade out mode
+            if (fadeOutFrame == 0) { // When done fading out, remove firecracker & point light
+               markRemoved(true);
+               deactivateLight();
+            }
+            // Fade-out effect for firecracker & light
+            decrLightAlpha();
+            tint.sub(0,0,0, 0.03f);
+            fadeOutFrame -= 1;
+        } else if (!contactHoles.isEmpty() && Math.abs(getVX()) <= stop_velocity && Math.abs(getVY()) <= stop_velocity ) {
+            // ^ Check that firecracker 'landed' and is in contact with holes
+            Vector2 position = getPosition();
+            for (HoleModel hole : contactHoles) {
+                float holeOffsetX = hole.getDimension().cpy().x/2;
+                float holeOffsetY = hole.getDimension().cpy().y/2;
+                float holeLeft = hole.getX() - holeOffsetX;
+                float holeRight = hole.getX() + holeOffsetX;
+                float holeDown = hole.getY() - holeOffsetY;
+                float holeUp = hole.getY() + holeOffsetY;
+
+                // If center of firecracker is in a hole, remove firecracker
+                if (position.x > holeLeft && position.x < holeRight && position.y > holeDown && position.y < holeUp) {
+                    fadeOut = true;
+                    fadeOutFrame = NUM_FRAMES_FADE_OUT;
+                    break;
+                }
+            }
+        }
+
         // Cold age countdown
         if (!lit && !detonating) {
             age--;
@@ -263,6 +312,14 @@ public class FirecrackerModel extends BoxObstacle {
                     blastSurroundingBodies(world);
             }
 
+        }
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
         }
     }
 }
