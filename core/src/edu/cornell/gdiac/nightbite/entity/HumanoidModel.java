@@ -11,7 +11,11 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
+import java.util.ArrayList;
+
 public class HumanoidModel extends SimpleObstacle {
+    /** items */
+    private ArrayList<ItemModel> item;
 
     /**
      * Movable object parameters
@@ -70,6 +74,7 @@ public class HumanoidModel extends SimpleObstacle {
     /** Textures */
     public FilmStrip defaultTexture;
     public FilmStrip fallTexture;
+    private FilmStrip holdTexture;
 
     /** Texture tint */
     public Color tint;
@@ -122,6 +127,8 @@ public class HumanoidModel extends SimpleObstacle {
         }
         walkCounter++;
     }
+
+    public void setHoldTexture(FilmStrip holdTexture) { this.holdTexture = holdTexture; }
 
     /**
      * If the humanoid is not moving, set the texture to one frame of the walk texture.
@@ -181,6 +188,8 @@ public class HumanoidModel extends SimpleObstacle {
 
         isAlive = true;
 
+        item = new ArrayList<>();
+
         walkCounter = 0;
         fallCounter = 0;
         fallFrame = 0f;
@@ -212,6 +221,25 @@ public class HumanoidModel extends SimpleObstacle {
         hitMaskBits = 0x002 | 0x0020 | 0x0001;
 
         resize(width, height);
+    }
+
+    /** Items */
+    public boolean hasItem() {
+        return item.size() > 0;
+    }
+
+    public ArrayList<ItemModel> getItems() {
+        return item;
+    }
+
+    public void clearInventory() {
+        item.clear();
+        setTexture(defaultTexture);
+    }
+
+    public void holdItem(ItemModel i) {
+        item.add(i);
+        setCurrentTexture(holdTexture);
     }
 
     /**

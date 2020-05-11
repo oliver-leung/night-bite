@@ -445,10 +445,8 @@ public class WorldController implements Screen, InputProcessor {
         for (HumanoidModel e : worldModel.getEnemies()) {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
-                if (e instanceof FireEnemyModel) {
-                    dir = ((FireEnemyModel) e).update(p, worldModel.getAILattice());
-                } else if (e instanceof OilEnemyModel) {
-                    dir = ((OilEnemyModel)e).update(p, worldModel.getAILattice());
+                if (e instanceof EnemyModel) {
+                    dir = ((EnemyModel) e).update(p);
                 } else if (e instanceof CrowdUnitModel) {
                     dir = ((CrowdUnitModel) e).getDir();
                 }
@@ -457,6 +455,15 @@ public class WorldController implements Screen, InputProcessor {
                 // handle enemy facing left-right
                 if (enemyHorizontal != 0 && enemyHorizontal != e.getPrevHoriDir()) {
                     e.flipTexture();
+                }
+
+                /* IF ITEM IN ENEMY HANDS */
+                if (e.hasItem()) {
+                    float offset = 1;
+                    for (ItemModel heldItem : e.getItems()) {
+                        heldItem.setPosition(e.getX(), e.getY() + offset);
+                        offset += 0.6;
+                    }
                 }
 
                 // update horizontal direction

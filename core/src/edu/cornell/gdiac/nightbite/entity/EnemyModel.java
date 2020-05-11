@@ -27,7 +27,12 @@ public abstract class EnemyModel extends HumanoidModel {
     private static final float WALK_THRUST = 10f;
     protected int walkCooldown;
 
-    private static final float STOP_DIST = 2;
+    private static float STOP_DIST = 2;
+    public void setStopDist(float stopDist) { STOP_DIST = stopDist; }
+
+    // Only relevant for thief enemy
+    public boolean isDoneAttacking = true;
+    public void setIsDoneAttacking(boolean bool) { isDoneAttacking = bool; }
 
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
@@ -45,10 +50,10 @@ public abstract class EnemyModel extends HumanoidModel {
         aiClass = 1;
     }
 
-    public abstract void attack(PlayerModel p, AILattice aiLattice);
+    public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
 
 
-    public Vector2 update(PlayerModel p, AILattice aiLattice) {
+    public Vector2 update(PlayerModel p) {
         Vector2 homePos = getHomePosition();
         Vector2 dir = new Vector2(0, 0);
         switch (state) {
@@ -59,9 +64,8 @@ public abstract class EnemyModel extends HumanoidModel {
                 }
                 break;
             case ATTACK:
-                dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                attack(p, aiLattice);
-                if (!aiController.canChasePlayer()) { // Player not within chase radius - return to origin
+                dir = attack(p, worldModel.getAILattice());
+                if (isDoneAttacking && !aiController.canChasePlayer()) { // Player not within chase radius - return to origin
                     state = State.RETURN;
                     aiController.forceReplan();
                 }
