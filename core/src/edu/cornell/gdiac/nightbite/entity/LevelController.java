@@ -293,10 +293,10 @@ public class LevelController {
         wall.setDrawScale(world.getScale());
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
-//        String texture =  wallJson.getString("texture");
-        FilmStrip wallTexture = Assets.getFilmStrip(itemStallFile, 128);
-        wallTexture.setFrame(3);
-        wall.setTexture(wallTexture);
+        String texture = wallJson.getString("texture");
+//        FilmStrip wallTexture = Assets.getFilmStrip(texture, 128);
+//        wallTexture.setFrame(3);
+        wall.setTexture(Assets.getTextureRegion(texture));
 
         int width = wall.getTexture().getRegionWidth();
         int height = wall.getTexture().getRegionHeight();
