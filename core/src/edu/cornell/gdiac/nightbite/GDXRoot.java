@@ -180,7 +180,8 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
+				System.out.println(levelSelect.getItemTheme());
 				game.reset();
 				setScreen(game);
 				Assets.playMusic(LEVEL_MUSIC_FILE, true);
@@ -204,7 +205,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
 				setScreen(game);
 				Assets.resumeMusic();
 			}
@@ -215,7 +216,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
 				game.reset();
 				setScreen(game);
 				Assets.playMusic(LEVEL_MUSIC_FILE, true);
@@ -225,7 +226,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
 				levelSelect.incrSelectedLevelJSON();
-				game.setLevel(levelSelect.getSelectedLevelJSON());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
 				game.reset();
 				setScreen(game);
 				Assets.playMusic(LEVEL_MUSIC_FILE, true);

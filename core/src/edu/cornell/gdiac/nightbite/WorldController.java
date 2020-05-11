@@ -70,6 +70,7 @@ public class WorldController implements Screen, InputProcessor {
     private boolean debug;
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
+    private String levelItemName;
 
     private float screenWidth;
     private float screenHeight;
@@ -152,8 +153,9 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.setPixelBounds();
     }
 
-    public void setLevel(String selectedLevelJSON) {
+    public void setLevel(String selectedLevelJSON, String itemName) {
         this.selectedLevelJSON = selectedLevelJSON;
+        this.levelItemName = itemName;
     }
 
     private FireEnemyModel enemy;
@@ -163,7 +165,7 @@ public class WorldController implements Screen, InputProcessor {
         displayFont = Assets.getFont();
         scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 203, 75);
         timerTexture = Assets.getTextureRegion("ui/TimerRectangle.png");
-        LevelController.getInstance().populate(worldModel, selectedLevelJSON);
+        LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
     }
 
