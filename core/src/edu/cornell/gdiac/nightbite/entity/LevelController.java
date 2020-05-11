@@ -188,7 +188,7 @@ public class LevelController {
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
         float pHeight = texture.getRegionHeight() / world.getScale().y;
-        PlayerModel player = new PlayerModel(x, y, pWidth, pHeight, world, teamName, home);
+        PlayerModel player = new PlayerModel(x, y, pWidth, pHeight, world.getWorld(), teamName, home);
         player.setDrawScale(world.getScale());
         player.setActualScale(world.getActualScale());
         player.setName("player " + teamName);
