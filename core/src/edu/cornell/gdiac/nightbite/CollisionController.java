@@ -77,6 +77,10 @@ public class CollisionController implements ContactListener {
         } else if ((b instanceof PlayerModel || b instanceof ThiefEnemyModel) && a instanceof ItemModel) {
             int itemId = ((ItemModel) a).getId();
             worldModel.setOverlapItem(itemId, false);
+        } else if (a instanceof HoleModel && b instanceof FirecrackerModel) {
+            ((FirecrackerModel) b).removeContactHole((HoleModel) a);
+        } else if (b instanceof HoleModel && a instanceof FirecrackerModel) {
+            ((FirecrackerModel) a).removeContactHole((HoleModel) b);
         }
     }
 
@@ -243,10 +247,7 @@ public class CollisionController implements ContactListener {
      */
     public void handleFirecrackerToObjectContact(FirecrackerModel firecracker, Object object) {
         if (object instanceof HoleModel) {
-            // Only remove firecracker if it is still
-            if (firecracker.getVX() == 0 && firecracker.getVY() == 0) {
-                firecracker.markRemoved(true);
-            }
+            firecracker.addContactHole((HoleModel) object);
         }
     }
 
