@@ -104,7 +104,6 @@ public class WorldController implements Screen, InputProcessor {
     public void checkTimeOut() {
         if (timeElapsed / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
-            Assets.playMusic("audio/Night_Bite_(Lose).mp3", false);
         }
     }
 
@@ -183,8 +182,8 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-        worldModel.drawDecorations(true, false);
-        worldModel.drawDecorations(false, true);
+        worldModel.drawDecorations(true);
+        worldModel.drawDecorations(false);
 
         // Draw objects
         for (Obstacle obj : worldModel.getObjects()) {
@@ -198,9 +197,6 @@ public class WorldController implements Screen, InputProcessor {
             }
         }
 
-        // Draw hole edges on top of holes
-        worldModel.drawDecorations(false, false);
-
         // Draw player scores
         // Hardcoded coordinates!
         canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-100f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
@@ -213,11 +209,10 @@ public class WorldController implements Screen, InputProcessor {
         displayFont.setColor(Color.WHITE);
 
         if (worldModel.isComplete()) {
-            displayFont.setColor(Color.YELLOW);
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
-                canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_PASS);
             } else {
-                canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_FAIL);
             }
         }
         if (debug) {

@@ -285,17 +285,20 @@ public class Assets {
         activeMusic.setLooping(loop);
         activeMusic.setVolume(VOLUME);
         activeMusic.play();
+
     }
 
     public static void pauseMusic() {
         if (activeMusic != null) {
             activeMusic.pause();
+
         }
     }
 
     public static void resumeMusic() {
         if (activeMusic != null) {
             activeMusic.play();
+
         }
     }
 

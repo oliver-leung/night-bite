@@ -1,6 +1,10 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import edu.cornell.gdiac.nightbite.GameCanvas;
+
 public class HoleModel extends ImmovableModel {
+    private Sprite holeEdge;
     public HoleModel(float x, float y, int rotate) {
         super(x, y, rotate);
     }
@@ -10,5 +14,17 @@ public class HoleModel extends ImmovableModel {
     @Override
     public float getBottom() {
         return Float.POSITIVE_INFINITY;
+    }
+
+    public void addHoleEdge(Sprite sprite) {
+        holeEdge = sprite;
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        super.draw(canvas);
+        if (holeEdge != null) {
+            holeEdge.draw(GameCanvas.getInstance().getSpriteBatch());
+        }
     }
 }
