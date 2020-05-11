@@ -37,7 +37,7 @@ public class KeyboardMap {
             Keys.UNKNOWN,
             Keys.SPACE,
             Keys.BACKSPACE,
-            Keys.DEL,
+            Keys.R,
             Keys.ESCAPE);
 
     private static Player PLAYER1 = new Player(
