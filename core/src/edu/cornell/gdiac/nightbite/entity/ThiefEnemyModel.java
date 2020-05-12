@@ -24,7 +24,7 @@ public class ThiefEnemyModel extends EnemyModel {
 
     public ThiefEnemyModel(float x, float y, WorldModel world) {
         super(
-                x+0.5f, y+0.5f,
+                x, y,
                 Assets.getFilmStrip("character/Enemies/E3_64_Walk_FS_8.png"),
                 Assets.getFilmStrip("character/Enemies/E3_64_Falling_FS_5.png"),
                 world
@@ -87,11 +87,11 @@ public class ThiefEnemyModel extends EnemyModel {
     @Override
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
-        if (state == State.ATTACK && (flashCooldown / 15) % 2 == 0) {
-            canvas.draw(EXCLAMATION,
-                    (getPosition().x - 0.5f) * worldModel.getScale().x,
-                    (getPosition().y + 0.5f) * worldModel.getScale().y);
-        }
+//        if (state == State.ATTACK && (flashCooldown / 15) % 2 == 0) {
+//            canvas.draw(EXCLAMATION,
+//                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+//                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+//        }
         flashCooldown++;
     }
 }

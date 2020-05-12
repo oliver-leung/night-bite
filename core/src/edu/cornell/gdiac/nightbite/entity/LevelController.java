@@ -64,17 +64,17 @@ public class LevelController {
             case "fish":
                 itemFile = "item/food6_64.png";
                 homeStallFile = "environment/StallIHome_fish_fs.png";
-                itemStallFile = "environment/StallItem4_64_fs.png";
+                itemStallFile = "environment/StallItem6_64_fs.png";
                 break;
             case "greenonion":
                 itemFile = "item/food4_64.png";
                 homeStallFile = "environment/StallIHome_greenonion_fs.png";
-                itemStallFile = "environment/StallItem5_64_fs.png";
+                itemStallFile = "environment/StallItem4_64_fs.png";
                 break;
             case "milk":
                 itemFile = "item/food5_64.png";
                 homeStallFile = "environment/StallIHome_milk_fs.png";
-                itemStallFile = "environment/StallItem6_64_fs.png";
+                itemStallFile = "environment/StallItem5_64_fs.png";
                 break;
             default:
                 break;

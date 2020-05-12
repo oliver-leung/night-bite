@@ -13,15 +13,15 @@ public abstract class EnemyModel extends HumanoidModel {
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
+        setHomePosition(new Vector2(x+0.5f, y+0.5f));  // TODO
 
-        super.DEFAULT_RESPAWN_COOLDOWN = 4 * 60;
+        super.DEFAULT_RESPAWN_COOLDOWN = 6 * 60;
 
         path = new PooledList<>();
         aiController = new AIController(worldModel, this);
         this.worldModel = worldModel;
         walkCooldown = WALK_COOLDOWN;
-        setRespawnCooldown(4 * 60);
+        setRespawnCooldown(6 * 60);
 
         aiClass = 1;
     }

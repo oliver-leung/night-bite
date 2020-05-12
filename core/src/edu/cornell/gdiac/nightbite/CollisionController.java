@@ -223,7 +223,7 @@ public class CollisionController implements ContactListener {
             HumanoidModel p = item.holdingPlayer;
             if (p == null) {
                 item.startRespawn();
-                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
+                // SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
 
         } else if (object instanceof HomeModel && item.lastTouch instanceof PlayerModel) {
