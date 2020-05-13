@@ -37,8 +37,9 @@ public class DesktopLauncher {
 		// These are the configuration attributes
 		config.width = 1280;
 		config.height = 768;
-		config.resizable = true;
+		config.resizable = false;
 		config.foregroundFPS = 60;
+		config.title = "Night Bite";
 
 		// THERE IS NO FULLSCREEN SUPPORT FOR RETINA MACS...
 		// ... until LibGDX updates to LWGJL 3 (still testing as of December 2015) 
