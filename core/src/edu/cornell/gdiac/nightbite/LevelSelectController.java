@@ -196,7 +196,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         MechanicManager manager = MechanicManager.getInstance();
         manager.update();
         int playerHorizontal = (int) manager.getVelX(0);
-        boolean playerDidThrow = manager.isThrowing(0);
+        boolean playerDidThrow = manager.didEnter();
 
         // move selection
         updateMoveCooldown();
