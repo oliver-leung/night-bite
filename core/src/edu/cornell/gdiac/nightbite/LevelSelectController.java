@@ -196,7 +196,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         MechanicManager manager = MechanicManager.getInstance();
         manager.update();
         int playerHorizontal = (int) manager.getVelX(0);
-        boolean playerDidThrow = manager.didEnter();
+        boolean playerDidEnter = manager.didEnter();
 
         // move selection
         updateMoveCooldown();
@@ -214,7 +214,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         }
 
         // choose selection
-        if (playerDidThrow) {
+        if (playerDidEnter) {
             startGame = true;
         }
     }
@@ -244,23 +244,25 @@ public class LevelSelectController implements Screen, InputProcessor {
         canvas.draw(headerTexture, Color.WHITE, headerTexture.getRegionWidth() / 2.0f, headerTexture.getRegionHeight() / 2.0f, xpos2, yposHeader, 0, scale, scale);
         canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
 
-        float storeOx = store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f;
-        float storeOy = store1Texture.getRegionHeight() / 2.0f - 10;
+        float storeOx = store1Texture.getRegionWidth() / 2.0f;
+        float storeOy = store1Texture.getRegionHeight() / 2.0f;
+        float numberOx = tile1Texture.getRegionWidth() / 2.0f;
+        float numberOy = 0;
 
         if (getPage() == 0) {
             canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile1Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(tile1Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile2Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile3Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
 
             canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 1) {
             canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile4Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile5Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile6Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(tile4Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile5Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile6Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
             canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
 
             canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
@@ -268,9 +270,9 @@ public class LevelSelectController implements Screen, InputProcessor {
             canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 2) {
             canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile7Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile8Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile9Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(tile7Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile8Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile9Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
             canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
 
             canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
@@ -278,16 +280,17 @@ public class LevelSelectController implements Screen, InputProcessor {
             canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 3) {
             canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile10Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile11Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile12Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(tile10Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile11Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile12Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
 
             canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         }
 
-        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f - tile1Texture.getRegionHeight() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
+        System.out.println(levelChoiceindex);
+        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
 
         canvas.end();
     }
@@ -392,11 +395,30 @@ public class LevelSelectController implements Screen, InputProcessor {
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
 
+        // back to intro screen
         float radius = backTexture.getRegionWidth()/2.0f;
         float dist = (screenX-xLeftEnd)*(screenX-xLeftEnd)+(screenY-yposTop)*(screenY-yposTop);
         if (dist < radius*radius) {
             pressState = 1;
         }
+
+        // choosing levels
+        float halfWidthStall = bokchoiStallTexture.getRegionWidth() / 2.0f * scale;
+        float halfHeightStall = bokchoiStallTexture.getRegionHeight() / 3.0f;
+
+        if (screenX < xpos1 + halfWidthStall && screenX > xpos1 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+            levelChoiceindex = 0 + getPage() * 3;
+            startGame = true;
+        }
+        else if (screenX < xpos2 + halfWidthStall && screenX > xpos2 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+            levelChoiceindex = 1 + getPage() * 3;
+            startGame = true;
+        }
+        else if (screenX < xpos3 + halfWidthStall && screenX > xpos3 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+            levelChoiceindex = 2 + getPage() * 3;
+            startGame = true;
+        }
+
         return false;
     }
 
