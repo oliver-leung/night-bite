@@ -201,15 +201,21 @@ public class LevelController {
     }
 
     private void createItem(JsonValue itemJson, int x, int y) {
-        ItemModel item = new ItemModel(
-                x, y, itemNum,
-                Assets.getTextureRegion(itemFile)
-        );
+        ItemModel item;
+        if (world.getNumItems()==0) { // Create item on first call
+            item = new ItemModel(
+                    x, y, itemNum,
+                    Assets.getTextureRegion(itemFile)
+            );
 
-        item.setName("item" + itemNum);
-        item.setDrawScale(world.getScale());
-        item.setActualScale(world.getActualScale());
-        world.addItem(item);
+            item.setName("item" + itemNum);
+            item.setDrawScale(world.getScale());
+            item.setActualScale(world.getActualScale());
+            world.addItem(item);
+        } else { // On subsequent calls, add respawn positions to existing item
+            item = world.getItem(0);
+            item.addItemInitPosition(x, y);
+        }
 
         // TODO: Adjust light colors if needed
         if (itemJson.getBoolean("light")) {
@@ -293,9 +299,13 @@ public class LevelController {
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
         String texture = wallJson.getString("texture");
+        if (texture.contains("StallItem1_64")) { // item stall
+            wall.setTexture(Assets.getTextureRegion(itemStallFile));
+        } else {
+            wall.setTexture(Assets.getTextureRegion(texture));
+        }
 //        FilmStrip wallTexture = Assets.getFilmStrip(texture, 128);
 //        wallTexture.setFrame(3);
-        wall.setTexture(Assets.getTextureRegion(texture));
 
         int width = wall.getTexture().getRegionWidth();
         int height = wall.getTexture().getRegionHeight();
