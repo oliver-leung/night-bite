@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
 
 public class LevelController {
@@ -152,7 +151,7 @@ public class LevelController {
         }
 
         if (asset.getBoolean("light")) {
-            world.addLightBody(x, y);
+            world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x, y);
         }
     }
 
@@ -312,7 +311,7 @@ public class LevelController {
         }
 
         if (wallJson.getBoolean("light")) {
-            world.addLightBody(x, y);
+            world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x, y);
         }
 
         world.addStaticObject(wall);
