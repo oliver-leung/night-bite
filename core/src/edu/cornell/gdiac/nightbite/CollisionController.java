@@ -221,7 +221,7 @@ public class CollisionController implements ContactListener {
     public void handleItemToObjectContact(ItemModel item, Object object) {
         if (object instanceof HoleModel) {
             HumanoidModel p = item.holdingPlayer;
-            if (p == null) {
+            if (p == null && (item.getVX()!=0f || item.getVY()!=0)) {
                 item.startRespawn();
                 // SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
