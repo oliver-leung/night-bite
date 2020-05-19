@@ -11,7 +11,11 @@ import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.SimpleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
-public class HumanoidModel extends SimpleObstacle {
+import java.util.ArrayList;
+
+public abstract class HumanoidModel extends SimpleObstacle {
+    /** items */
+    private ArrayList<ItemModel> item;
 
     /**
      * Movable object parameters
@@ -50,6 +54,7 @@ public class HumanoidModel extends SimpleObstacle {
 
     /** Time until humanoid respawn */
     private int respawnCooldown;
+    protected int DEFAULT_RESPAWN_COOLDOWN = 60;
 
     /* How fast we change frames (one frame per 8 calls to update */
     private static final float ANIMATION_SPEED = 0.125f;
@@ -64,16 +69,32 @@ public class HumanoidModel extends SimpleObstacle {
     public int fallCounter;
 
     /** The previous horizontal direction of the humanoid */
-    private float prevHoriDir;
+    protected float prevHoriDir;
 
     /** Textures */
     public FilmStrip defaultTexture;
     public FilmStrip fallTexture;
+    private FilmStrip holdTexture;
+
+    /** Texture tint */
+    public Color tint;
 
     /** Gets whether this humanoid is alive */
     public boolean isAlive() { return isAlive; }
     /** Set the liveness state of this humanoid */
-    public void setAlive(boolean alive) { isAlive = alive; }
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+        tint.a = 1.0f;
+    }
+
+    /** Respawn cooldown interval */
+    public int getRespawnCooldown() {
+        return respawnCooldown;
+    }
+
+    public void setRespawnCooldown(int cooldown) {
+        DEFAULT_RESPAWN_COOLDOWN = cooldown;
+    }
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
@@ -112,10 +133,15 @@ public class HumanoidModel extends SimpleObstacle {
         walkCounter++;
     }
 
+    public void setHoldTexture(FilmStrip holdTexture) { this.holdTexture = holdTexture; }
+
     /**
      * If the humanoid is not moving, set the texture to one frame of the walk texture.
      */
     public void setStaticTexture() {
+        if (walkCounter % 20 != 0) {
+            return;
+        }
         walkCounter = 0;
         ((FilmStrip) texture).setFrame(0);
         if (prevHoriDir == 1) {
@@ -130,6 +156,9 @@ public class HumanoidModel extends SimpleObstacle {
         fallCounter++;
         fallFrame += ANIMATION_SPEED;
         if (fallFrame >= NUM_FRAMES_FALL) { fallFrame -= NUM_FRAMES_FALL; }
+
+        tint.sub(0,0,0, 0.02f); // Fade-out effect
+
         ((FilmStrip) texture).setFrame((int) fallFrame);
         if (prevHoriDir == 1) {
             texture.flip(true, false);
@@ -163,8 +192,11 @@ public class HumanoidModel extends SimpleObstacle {
         this.texture = texture;
         this.fallTexture = fallTexture;
         setCurrentTexture(texture);
+        tint = new Color(Color.WHITE);
 
         isAlive = true;
+
+        item = new ArrayList<>();
 
         walkCounter = 0;
         fallCounter = 0;
@@ -199,6 +231,25 @@ public class HumanoidModel extends SimpleObstacle {
         resize(width, height);
     }
 
+    /** Items */
+    public boolean hasItem() {
+        return item.size() > 0;
+    }
+
+    public ArrayList<ItemModel> getItems() {
+        return item;
+    }
+
+    public void clearInventory() {
+        item.clear();
+        setTexture(defaultTexture);
+    }
+
+    public void holdItem(ItemModel i) {
+        item.add(i);
+        setCurrentTexture(holdTexture);
+    }
+
     /**
      * Resets the current texture to the default (walking) texture
      */
@@ -219,7 +270,7 @@ public class HumanoidModel extends SimpleObstacle {
     public void respawn() {
         setLinearVelocity(Vector2.Zero);
         if (respawnCooldown == 0) {
-            respawnCooldown = 60;
+            respawnCooldown = DEFAULT_RESPAWN_COOLDOWN;
         }
         respawnCooldown--;
         if (respawnCooldown == 0) {
@@ -386,4 +437,15 @@ public class HumanoidModel extends SimpleObstacle {
         WALKBOX
     }
 
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
+    }
+
+    public float getBottom() {
+        return getY() - getHeight()/2;
+    }
 }

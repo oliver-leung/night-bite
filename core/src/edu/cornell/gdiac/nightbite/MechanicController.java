@@ -11,6 +11,7 @@ public abstract class MechanicController {
 
     protected boolean isDebug;
     protected boolean isReset;
+    protected boolean isPaused;
     protected boolean isExit;
 
     public float getVelX() {
@@ -36,6 +37,8 @@ public abstract class MechanicController {
     public boolean isReset() {
         return isReset && sudo;
     }
+
+    public boolean isPaused() { return isPaused; }
 
     public boolean isExit() {
         return isExit && sudo;

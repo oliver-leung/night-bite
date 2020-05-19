@@ -2,8 +2,6 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
-import edu.cornell.gdiac.util.SoundController;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
@@ -19,6 +17,7 @@ public class InputController extends MechanicController {
     private boolean prevThrow;
 
     private boolean prevDebug;
+    private boolean prevPaused;
     private boolean prevReset;
 
     public InputController(int xbox, int keyboard, boolean debug) {
@@ -27,9 +26,9 @@ public class InputController extends MechanicController {
         this.keyboard = keyboard;
     }
 
-    public InputController(int xbox, int keyboard) {
-        this(xbox, keyboard,false);
-    }
+//    public InputController(int xbox, int keyboard) {
+//        this(xbox, keyboard,false);
+//    }
 
     private boolean notDeadZoned(float vert, float hori) {
         return Math.abs(vert) > DEADZONE || Math.abs(hori) > DEADZONE;
@@ -43,6 +42,7 @@ public class InputController extends MechanicController {
             isThrowing = false;
             isDebug = false;
             isReset = false;
+            isPaused = false;
             return;
         }
 
@@ -100,18 +100,18 @@ public class InputController extends MechanicController {
         temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
         isDebug = isDebug || (!prevDebug && temp1);
 
+        temp1 = Gdx.input.isKeyPressed(keybinds.PAUSE);
+        isPaused = isPaused || (!prevPaused && temp1);
+
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
 
         // Music
-        // TODO: Remove reference to Assets class
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            if (Assets.MUSIC.getVolume() > 0) {
-                Assets.MUSIC.setVolume(0);
-            } else {
-                Assets.MUSIC.setVolume(0.1f);
-            }
+            Assets.changeMute();
         }
+
+        // TODO we need so set some stuff around here re: prevPaused
     }
 
     private boolean isKeyPressed(int key) {
@@ -123,6 +123,7 @@ public class InputController extends MechanicController {
         prevThrow = isThrowing;
         prevDebug = isDebug;
         prevReset = isReset;
+        prevPaused = isPaused;
     }
 
     public void poll() {

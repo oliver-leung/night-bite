@@ -21,7 +21,9 @@ package edu.cornell.gdiac.util;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IdentityMap;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A singleton class for controlling sound effects in LibGDX
@@ -45,46 +47,15 @@ import com.badlogic.gdx.utils.IdentityMap;
  * from playing too many sounds during the same animation frame (which can
  * lead to distortion).  This is not as good as being able to tell when a
  * sound is finished, but it works for most applications.
- * 
+ *
  * Finally, for (3), we never actually stop a Sound.  Instead we turn its
  * volume to 0 and allow it to be garbage collected when done.  This is why
  * we never allow you to access a sound object directly.
  */
 public class SoundController {
 
-	/**
-	 * Inner class to track and active sound instance
-	 * 
-	 * A sound instance is a Sound object and a number.  That is because
-	 * a single Sound object may have multiple instances.  We do not 
-	 * know when a sound ends.  Therefore, we simply let the sound go
-	 * and we garbage collect when the lifespace is greater than the
-	 * sound limit.
-	 */
-	private class ActiveSound {
-		/** Reference to the sound resource */
-		public Sound sound;
-		/** The id number representing the sound instance */
-		public long  id;
-		/** Is the sound looping (so no garbage collection) */
-		public boolean loop;
-		/** How long this sound has been running */
-		public long lifespan;
-		
-		/**
-		 * Creates a new active sound with the given values
-		 * 
-		 * @param s	Reference to the sound resource
-		 * @param n The id number representing the sound instance
-		 * @param b Is the sound looping (so no garbage collection)
-		 */
-		public ActiveSound(Sound s, long n, boolean b) {
-			sound = s;
-			id = n;
-			loop = b;
-			lifespan = 0;
-		}
-	}
+	/** Keeps track of all of the allocated sound resources */
+	private HashMap<String, Sound> soundbank;
 
 	/** The default sound cooldown */
 	private static final int DEFAULT_COOL = 20;
@@ -92,18 +63,29 @@ public class SoundController {
 	private static final int DEFAULT_LIMIT = 120;
 	/** The default limit on sounds per frame */
 	private static final int DEFAULT_FRAME = 2;
-	
+
 	/** The singleton Sound controller instance */
 	private static SoundController controller;
-	
-	/** Keeps track of all of the allocated sound resources */
-	private IdentityMap<String,Sound> soundbank;
 	/** Keeps track of all of the "active" sounds */
-	private IdentityMap<String,ActiveSound> actives;
+	private HashMap<String, ActiveSound> actives;
+
+	/**
+	 * Creates a new SoundController with the default settings.
+	 */
+	private SoundController() {
+		soundbank = new HashMap<>();
+		actives = new HashMap<>();
+		collection = new Array<>();
+		cooldown = DEFAULT_COOL;
+		timeLimit = DEFAULT_LIMIT;
+		frameLimit = DEFAULT_FRAME;
+		current = 0;
+	}
+
 	/** Support class for garbage collection */
 	private Array<String> collection;
-	
-	
+
+
 	/** The number of animation frames before a key can be reused */
 	private long cooldown;
 	/** The maximum amount of animation frames a sound can run */
@@ -113,17 +95,20 @@ public class SoundController {
 	/** The number of sounds we have played this animation frame */
 	private int current;
 
-	/** 
-	 * Creates a new SoundController with the default settings.
+	/**
+	 * Uses the asset manager to allocate a sound
+	 * <p>
+	 * All sound assets are managed internally by the controller.  Do not try
+	 * to access the sound directly.  Use the play and stop methods instead.
+	 *
+	 * @param manager  A reference to the asset manager loading the sound
+	 * @param filename The filename for the sound asset
 	 */
-	private SoundController() {
-		soundbank = new IdentityMap<String,Sound>();
-		actives = new IdentityMap<String,ActiveSound>();
-		collection = new Array<String>();
-		cooldown = DEFAULT_COOL;
-		timeLimit = DEFAULT_LIMIT;
-		frameLimit = DEFAULT_FRAME;
-		current = 0;
+	public void allocate(AssetManager manager, String filename) {
+		Sound sound = manager.get(filename, Sound.class);
+		soundbank.put(filename, sound);
+
+		// System.out.println(soundbank.get(filename));
 	}
 
 	/**
@@ -232,61 +217,25 @@ public class SoundController {
 	}
 
 	/// Sound Management
-	/**
-	 * Uses the asset manager to allocate a sound
-	 * 
-	 * All sound assets are managed internally by the controller.  Do not try 
-	 * to access the sound directly.  Use the play and stop methods instead.
-	 * 
-	 * @param manager  A reference to the asset manager loading the sound
-	 * @param filename The filename for the sound asset
-	 */
-	public void allocate(AssetManager manager, String filename) {
-		Sound sound = manager.get(filename,Sound.class);
-		soundbank.put(filename,sound);
-	}
 
 	/**
 	 * Plays the an instance of the given sound
-	 * 
+	 *
 	 * A sound is identified by its filename.  You can have multiple instances of the
 	 * same sound playing.  You use the key to identify a sound instance.  You can only
 	 * have one key playing at a time.  If a key is in use, the existing sound may
 	 * be garbage collected to allow you to reuse it, depending on the settings.
-	 * 
+	 *
 	 * However, it is also possible that the key use may fail.  In the latter case,
 	 * this method returns false.  In addition, if the sound is currently looping,
 	 * then this method will return true but will not stop and restart the sound.
-	 * 
-	 * 
-	 * @param key		The identifier for this sound instance
-	 * @param filename	The filename of the sound asset
-	 * @param loop		Whether to loop the sound
-	 * 
-	 * @return True if the sound was successfully played
-	 */
-	public boolean play(String key, String filename, boolean loop) {
-		return play(key,filename,loop,1.0f);
-	}
-
-	/**
-	 * Plays the an instance of the given sound
-	 * 
-	 * A sound is identified by its filename.  You can have multiple instances of the
-	 * same sound playing.  You use the key to identify a sound instance.  You can only
-	 * have one key playing at a time.  If a key is in use, the existing sound may
-	 * be garbage collected to allow you to reuse it, depending on the settings.
-	 * 
-	 * However, it is also possible that the key use may fail.  In the latter case,
-	 * this method returns false.  In addition, if the sound is currently looping,
-	 * then this method will return true but will not stop and restart the sound.
-	 * 
-	 * 
-	 * @param key		The identifier for this sound instance
-	 * @param filename	The filename of the sound asset
-	 * @param loop		Whether to loop the sound
-	 * @param volume	The sound volume in the range [0,1]
-	 * 
+	 *
+	 *
+	 * @param key        The identifier for this sound instance
+	 * @param filename    The filename of the sound asset
+	 * @param loop        Whether to loop the sound
+	 * @param volume    The sound volume in the range [0,1]
+	 *
 	 * @return True if the sound was successfully played
 	 */
 	public boolean play(String key, String filename, boolean loop, float volume) {
@@ -302,12 +251,12 @@ public class SoundController {
 			if (!snd.loop && snd.lifespan > cooldown) {
 				// This is a workaround for the OS X sound bug
 				//snd.sound.stop(snd.id);
-				snd.sound.setVolume(snd.id, 0.0f); 
+				snd.sound.setVolume(snd.id, 0.0f);
 			} else {
 				return true;
 			}
 		}
-		
+
 		// Play the new sound and add it
 		long id = sound.play(volume);
 		if (id == -1) {
@@ -315,21 +264,66 @@ public class SoundController {
 		} else if (loop) {
 			sound.setLooping(id, true);
 		}
-		
-		actives.put(key,new ActiveSound(sound,id,loop));
+
+		actives.put(key, new ActiveSound(sound, id, loop));
 		current++;
 		return true;
 	}
-	
+
+	/**
+	 * Plays the an instance of the given sound
+	 * <p>
+	 * A sound is identified by its filename.  You can have multiple instances of the
+	 * same sound playing.  You use the key to identify a sound instance.  You can only
+	 * have one key playing at a time.  If a key is in use, the existing sound may
+	 * be garbage collected to allow you to reuse it, depending on the settings.
+	 * <p>
+	 * However, it is also possible that the key use may fail.  In the latter case,
+	 * this method returns false.  In addition, if the sound is currently looping,
+	 * then this method will return true but will not stop and restart the sound.
+	 *
+	 * @param key      The identifier for this sound instance
+	 * @param filename The filename of the sound asset
+	 * @param loop     Whether to loop the sound
+	 * @return True if the sound was successfully played
+	 */
+	public boolean play(String key, String filename, boolean loop) {
+		return play(key, filename, loop, 1.0f);
+	}
+
+	/**
+	 * Updates the current frame of the sound controller.
+	 * <p>
+	 * This method serves two purposes.  First, it allows us to limit the number
+	 * of sounds per animation frame.  In addition it allows us some primitive
+	 * garbage collection.
+	 */
+	public void update() {
+		for (String key : actives.keySet()) {
+			ActiveSound snd = actives.get(key);
+			snd.lifespan++;
+			if (snd.lifespan > timeLimit) {
+				collection.add(key);
+				snd.sound.setLooping(snd.id, false); // Will eventually garbage collect
+				snd.sound.setVolume(snd.id, 0.0f);
+			}
+		}
+		for (String key : collection) {
+			actives.remove(key);
+		}
+		collection.clear();
+		current = 0;
+	}
+
 	/**
 	 * Stops the sound, allowing its key to be reused.
-	 * 
+	 *
 	 * This is the only way to stop a sound on a loop.  Otherwise it will
 	 * play forever.
-	 * 
+	 *
 	 * If there is no sound instance for the key, this method does nothing.
-	 * 
-	 * @param key	The sound instance to stop.
+	 *
+	 * @param key    The sound instance to stop.
 	 */
 	public void stop(String key) {
 		// Get the active sound for the key
@@ -345,6 +339,19 @@ public class SoundController {
 		snd.sound.setVolume(snd.id, 0.0f); 
 		actives.remove(key);
 	}
+
+	public void stopAll() {
+		for (String key : actives.keySet()) {
+			ActiveSound snd = actives.get(key);
+
+			// This is a workaround for the OS X sound bug
+			//snd.sound.stop(snd.id);
+			snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
+			snd.sound.setVolume(snd.id, 0.0f);
+		}
+
+		actives.clear();
+	}
 	
 	/**
 	 * Returns true if the sound instance is currently active
@@ -356,29 +363,39 @@ public class SoundController {
 	public boolean isActive(String key) {
 		return actives.containsKey(key);
 	}
-	
+
 	/**
-	 * Updates the current frame of the sound controller.
-	 * 
-	 * This method serves two purposes.  First, it allows us to limit the number
-	 * of sounds per animation frame.  In addition it allows us some primitive
-	 * garbage collection.
+	 * Inner class to track and active sound instance
+	 * <p>
+	 * A sound instance is a Sound object and a number.  That is because
+	 * a single Sound object may have multiple instances.  We do not
+	 * know when a sound ends.  Therefore, we simply let the sound go
+	 * and we garbage collect when the lifespace is greater than the
+	 * sound limit.
 	 */
-	public void update() {
-		for(String key : actives.keys()) {
-			ActiveSound snd = actives.get(key);
-			snd.lifespan++;
-			if (snd.lifespan > timeLimit) {
-				collection.add(key);
-				snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
-				snd.sound.setVolume(snd.id, 0.0f); 
-			}
+	private static class ActiveSound {
+		/** Reference to the sound resource */
+		public Sound sound;
+		/** The id number representing the sound instance */
+		public long id;
+		/** Is the sound looping (so no garbage collection) */
+		public boolean loop;
+		/** How long this sound has been running */
+		public long lifespan;
+
+		/**
+		 * Creates a new active sound with the given values
+		 *
+		 * @param s    Reference to the sound resource
+		 * @param n The id number representing the sound instance
+		 * @param b Is the sound looping (so no garbage collection)
+		 */
+		public ActiveSound(Sound s, long n, boolean b) {
+			sound = s;
+			id = n;
+			loop = b;
+			lifespan = 0;
 		}
-		for(String key : collection) {
-			actives.remove(key);
-		}
-		collection.clear();
-		current = 0;
 	}
 
 }

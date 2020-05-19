@@ -14,16 +14,16 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
+import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
 import edu.cornell.gdiac.util.PooledList;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class WorldModel {
     /** World width in Box2D units */
@@ -65,7 +65,8 @@ public class WorldModel {
     /** List of players */
     private ArrayList<PlayerModel> players;
 
-    private PooledList<EnemyModel> enemies;
+    private PooledList<HumanoidModel> enemies;
+    private PooledList<CrowdModel> crowds;
 
     /** List of items */
     private ArrayList<ItemModel> items;
@@ -73,6 +74,7 @@ public class WorldModel {
     private ArrayList<Boolean> overlapItem = new ArrayList<>();
     /** List of firecrackers */
     private PooledList<FirecrackerModel> firecrackers;
+    private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
     private PooledList<OilModel> oils;
     /** Objects that don't move during updates */
@@ -87,11 +89,10 @@ public class WorldModel {
     private Sprite[][] lantern = new Sprite[20][12];
 
     private AILattice aiLattice;
-
-    // Level exit codes
-    private int LEVEL_EXIT_CODE;
     public int LEVEL_COMPLETED = 0;
     public int LEVEL_TIME_OUT = 1;
+    // Level exit codes
+    private int LEVEL_EXIT_CODE;
 
     // TODO: REMOVE
     public Debug debug;
@@ -108,6 +109,7 @@ public class WorldModel {
         firecrackers = new PooledList<>();
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
+        crowds = new PooledList<>();
         oils = new PooledList<>();
 
         // TODO: REMOVE
@@ -186,9 +188,9 @@ public class WorldModel {
         }
         complete = true;
         if (passedLevel) {
-            LEVEL_EXIT_CODE = LEVEL_COMPLETED;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_PASS;
         } else {
-            LEVEL_EXIT_CODE = LEVEL_TIME_OUT;
+            LEVEL_EXIT_CODE = ExitCodes.LEVEL_FAIL;
         }
     }
 
@@ -206,26 +208,54 @@ public class WorldModel {
      * @return Combined iterable of all obstacles in the world
      */
     public Iterable<Obstacle> getObjects() {
+        class comp implements Comparator<Obstacle> {
+            @Override
+            public int compare(Obstacle obstacle, Obstacle t1) {
+                return (int) Math.signum((- obstacle.getBottom() + t1.getBottom()));
+            }
+        }
 
         // Overkill, but I'm bored. Also this will probably help like a lot.
         class objectIterable implements Iterator<Obstacle> {
             // Raw iterator. I love unsafe code.
             // Make sure each of the iterators inside iters extend Obstacle.
             // Please.
-            Iterator<?>[] iters = {
-                    staticObjects.iterator(),
-                    oils.iterator(),
-                    items.iterator(),
-                    players.iterator(),
-                    enemies.iterator(),
-                    firecrackers.iterator(),
+            final List<?>[] objs = {
+                    staticObjects,
+                    oils,
+                    items,
+                    players,
+                    enemies,
+                    firecrackers,
             };
+
+            final Obstacle[] peek = new Obstacle[objs.length];
+
+            final Iterator<?>[] iters = new Iterator<?>[objs.length];
+
+            final Comparator<Obstacle> comp = new comp();
+
+            public objectIterable() {
+                for (List o : objs) {
+                    o.sort(comp);
+                }
+                for (int i = 0; i < objs.length; i ++) {
+                    iters[i] = objs[i].iterator();
+                }
+                for (int i = 0; i < objs.length; i ++) {
+                    try{
+                        peek[i] = (Obstacle) iters[i].next();
+                    } catch (NoSuchElementException e) {
+                        peek[i] = null;
+                    }
+                }
+            }
 
             // TODO: Do i want to make this more efficient?
             @Override
             public boolean hasNext() {
-                for (Iterator<?> iter : iters) {
-                    if (iter.hasNext()) {
+                for (Obstacle o : peek) {
+                    if (o != null) {
                         return true;
                     }
                 }
@@ -234,12 +264,41 @@ public class WorldModel {
 
             @Override
             public Obstacle next() {
-                for (Iterator<?> iter : iters) {
-                    if (iter.hasNext()) {
-                        return (Obstacle) iter.next();
+                Obstacle min = null;
+                int m = -1;
+                for (int i = 0; i < iters.length; i ++) {
+                    if (min == null) {
+                        min = peek[i];
+                        m = i;
+                        continue;
+                    }
+
+                    if (peek[i] == null) {
+                        continue;
+                    }
+
+                    if (peek[i].getBottom() > min.getBottom()) {
+                        min = peek[i];
+                        m = i;
+                        continue;
                     }
                 }
-                throw new NoSuchElementException();
+
+                if (min == null) {
+                    throw new NoSuchElementException();
+                } try {
+                    peek[m] = (Obstacle) iters[m].next();
+                } catch (NoSuchElementException e) {
+                    peek[m] = null;
+                }
+                return min;
+
+                // for (Iterator<?> iter : iters) {
+                //     if (iter.hasNext()) {
+                //         return (Obstacle) iter.next();
+                //     }
+                // }
+                // throw new NoSuchElementException();
             }
 
             @Override
@@ -299,7 +358,9 @@ public class WorldModel {
         return players;
     }
 
-    public PooledList<EnemyModel> getEnemies() { return enemies; }
+    public PooledList<HumanoidModel> getEnemies() { return enemies; }
+
+    public PooledList<CrowdModel> getCrowds() { return crowds; }
 
     public Vector2 getScale() {
         return scale;
@@ -379,9 +440,17 @@ public class WorldModel {
         overlapItem.add(false);
     }
 
-    public void addEnemy(EnemyModel enemy) {
+    public void addEnemy(HumanoidModel enemy) {
         initializeObject(enemy);
         enemies.add(enemy);
+    }
+
+    public void addCrowd(CrowdModel crowd) {
+        for (CrowdUnitModel crowdUnit: crowd.getCrowdUnitList()) {
+            initializeObject(crowdUnit);
+            enemies.add(crowdUnit);
+        }
+        crowds.add(crowd);
     }
 
     public void initializeAI() {
@@ -477,7 +546,7 @@ public class WorldModel {
         Filter f = new Filter();
         f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
         point.setContactFilter(f);
-        point.setActive(false); // TURN ON LATER
+        point.setActive(true);
         lights.add(point);
         return point;
     }
@@ -510,6 +579,7 @@ public class WorldModel {
 
         aiLattice.clearDynamic();
         aiLattice.populateDynamic(downcastIterable(players));
+        aiLattice.populateDynamic(downcastIterable(enemies));
         // aiLattice.populateDynamic(downcastIterable(enemies));
 
         // TODO: REMOVE
@@ -517,12 +587,12 @@ public class WorldModel {
 
     }
 
-    private Iterable<Obstacle> downcastIterable(Iterable iter) {
+    private Iterable<Obstacle> downcastIterable(Iterable<?> iter) {
         // AGAIN, unsafe
         class ObsIterator implements Iterator<Obstacle> {
-            Iterator iterator;
+            Iterator<?> iterator;
 
-            public ObsIterator(Iterator iter) {
+            public ObsIterator(Iterator<?> iter) {
                 iterator = iter;
             }
 
@@ -583,6 +653,12 @@ public class WorldModel {
         lantern[x][y] = sprite;
     }
 
+    public void setHoleEdge(Sprite sprite, int x, int y) {
+        // Kinda jank because it assumes that the tail object from staticObjects
+        // is the hole object for the corresponding tile coordinate
+        ((HoleModel) staticObjects.getTail()).addHoleEdge(sprite);
+    }
+
     public void setPixelBounds() {
         // TODO: Optimizations; only perform this calculation if the canvas size has changed or something
 
@@ -633,7 +709,7 @@ public class WorldModel {
                 Sprite sprite;
                 if (isbrick) {
                     sprite = brick[i][j];
-                } else {
+                } else  {
                     sprite = lantern[i][j];
                 }
 

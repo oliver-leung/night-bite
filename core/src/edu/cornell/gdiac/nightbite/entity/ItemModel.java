@@ -11,8 +11,8 @@ public class ItemModel extends BoxObstacle {
     /**
      * item-player
      */
-    public PlayerModel holdingPlayer;
-    public PlayerModel lastTouch;
+    public HumanoidModel holdingPlayer;
+    public HumanoidModel lastTouch;
 
     /**
      * item parameters
@@ -40,6 +40,8 @@ public class ItemModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
+    public Vector2 getItemInitPosition() { return item_init_position; }
+
     public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
         super(x, y, 1, 1);
         setTexture(itemTexture);
@@ -62,7 +64,6 @@ public class ItemModel extends BoxObstacle {
 
     public void update(float dt) {
         super.update(dt);
-
         respawn -= 1;
         if (respawn == 0) {
             addItem(item_init_position);
@@ -90,7 +91,7 @@ public class ItemModel extends BoxObstacle {
 
     /** item held */
 
-    public void setHeld(PlayerModel p) {
+    public void setHeld(HumanoidModel p) {
         p.holdItem(this);
         holdingPlayer = p;
         lastTouch = p;
@@ -104,6 +105,12 @@ public class ItemModel extends BoxObstacle {
     public void throwItem(Vector2 playerPosition, Vector2 impulse) {
         setPosition(playerPosition);
         getBody().applyLinearImpulse(impulse.scl(THROW_FORCE), getPosition(), true);
+        holdingPlayer = null;
+    }
+
+    public void throwItem(Vector2 playerPosition, Vector2 impulse, float force) {
+        setPosition(playerPosition);
+        getBody().applyLinearImpulse(impulse.scl(force), getPosition(), true);
         holdingPlayer = null;
     }
 
@@ -121,4 +128,14 @@ public class ItemModel extends BoxObstacle {
         return true;
     }
 
+    public boolean isDead() {
+        return respawn > 0;
+    }
+
+    public float getBottom() {
+        if (isHeld()) {
+            return holdingPlayer.getBottom();
+        }
+        return super.getBottom();
+    }
 }
