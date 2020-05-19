@@ -14,10 +14,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
@@ -551,6 +549,31 @@ public class WorldModel {
         return point;
     }
 
+    /**
+     * Make a point light that is static and unmoving.
+     *
+     * @param color
+     * @param dist
+     * @param x
+     * @param y
+     * @return
+     */
+    public PointSource createStaticPointLight(float[] color, float dist, float x, float y) {
+        // ALL HARDCODED!
+        PointSource point = new PointSource(rayhandler, 512, Color.WHITE, dist, x + 0.5f, y + 0.5f);
+        point.setColor(color[0], color[1], color[2], color[3]);
+        point.setSoft(true);
+
+        // Create a filter to exclude see through items
+        Filter f = new Filter();
+        f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
+        point.setContactFilter(f);
+        point.setActive(true);
+        point.setStaticLight(true);
+        lights.add(point);
+        return point;
+    }
+
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
@@ -745,24 +768,5 @@ public class WorldModel {
 
     public void setOverlapItem(int itemId, boolean b) {
         overlapItem.set(itemId, b);
-    }
-
-    /** Create a small physics body to attach a white light to */
-    public void addLightBody(int x, int y) {
-        PolygonObstacle body = new PolygonObstacle(
-                new float[]{
-                        0.1f, 0.1f,
-                        -0.1f, 0.1f,
-                        -0.1f, -0.1f,
-                        0.1f, -0.1f},
-                x, y);
-        body.setSensor(true);
-        body.setActive(true);
-        transformTileToWorld(body);
-        body.activatePhysics(world);
-
-        PointSource light = createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
-        light.setStaticLight(true);
-        light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }
