@@ -129,3 +129,6 @@ Thumbs.db
 
 # Debugging
 log.txt
+
+# Packr
+packr/out/*
