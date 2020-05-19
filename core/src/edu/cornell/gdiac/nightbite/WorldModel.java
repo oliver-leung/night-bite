@@ -758,6 +758,7 @@ public class WorldModel {
         body.activatePhysics(world);
 
         PointSource light = createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+        light.setStaticLight(true);
         light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }
