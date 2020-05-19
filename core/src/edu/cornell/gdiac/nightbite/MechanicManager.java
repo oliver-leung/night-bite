@@ -99,4 +99,8 @@ public class MechanicManager {
         }
         return false;
     }
+
+    public boolean isWhack() {
+        return controllers[0].isWhack;
+    }
 }

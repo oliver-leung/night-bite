@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input.Keys;
 /** Honestly please get rid of this class when we have json/toml whatever support
  *  like actually this is kind of disgusting **/
 public class KeyboardMap {
+    public static boolean mouse = true;
+
     public static class Player {
         public final int UP;
         public final int DOWN;
@@ -15,8 +17,10 @@ public class KeyboardMap {
         public final int DEBUG;
         public final int RESET;
         public final int PAUSE;
+        public final int WHACK;
 
-        public Player(int up, int down, int left, int right, int dash, int grab, int debug, int reset, int pause) {
+        public Player(int up, int down, int left, int right, int dash, int grab,
+                      int debug, int reset, int pause, int whack) {
             UP = up;
             DOWN = down;
             LEFT = left;
@@ -26,6 +30,7 @@ public class KeyboardMap {
             DEBUG = debug;
             RESET = reset;
             PAUSE = pause;
+            WHACK = whack;
         }
     }
 
@@ -38,18 +43,8 @@ public class KeyboardMap {
             Keys.SPACE,
             Keys.BACKSPACE,
             Keys.R,
-            Keys.ESCAPE);
+            Keys.ESCAPE,
+            Keys.F);
 
-    private static Player PLAYER1 = new Player(
-            Keys.valueOf("Up"),
-            Keys.DOWN,
-            Keys.LEFT,
-            Keys.RIGHT,
-            Keys.SLASH,
-            Keys.PERIOD,
-            Keys.UNKNOWN,
-            Keys.UNKNOWN,
-            Keys.UNKNOWN);
-
-    public static Player[] players = {PLAYER0, PLAYER1};
+    public static Player[] players = {PLAYER0};
 }

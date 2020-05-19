@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.KeyboardMap;
+import edu.cornell.gdiac.nightbite.MechanicManager;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
@@ -77,6 +79,8 @@ public class PlayerModel extends HumanoidModel {
     private float REFLECT_RANGE = 2f;
     private HomeModel home;
 
+    private Vector2 cache;
+
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(
                 x, y, width, height,
@@ -107,6 +111,8 @@ public class PlayerModel extends HumanoidModel {
         arrow = Assets.getTextureRegion("character/arrow.png");
         swingCooldown = 0;
         alternateShadow = false;
+
+        cache = new Vector2();
 
         setHoldTexture(Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png"));
     }
@@ -316,22 +322,34 @@ public class PlayerModel extends HumanoidModel {
 
     public void updateWokDirection(Vector2 pointWokDir) {
         // TODO why is getPos lower than player drawn
-        Vector2 playerPos = getPosition();
-        playerPos.y -= 0.8f;
+        if (KeyboardMap.mouse) {
+            Vector2 playerPos = getPosition();
+            playerPos.y -= 0.8f;
 
-        pointWokDir.sub(playerPos);
-        pointWokDir.scl(-1);
-        float wokAngle = pointWokDir.angleRad();
-        prevAngleOffset = angleOffset;
-        angleOffset = wokAngle;
-
-        if ((prevAngleOffset < (float) Math.PI/2 && prevAngleOffset > (float) - Math.PI/2 && (angleOffset <= (float) - Math.PI/2 || angleOffset >= (float) Math.PI/2)) || (angleOffset < (float) Math.PI/2 && angleOffset > (float) - Math.PI/2 && (prevAngleOffset <= (float) - Math.PI/2 || prevAngleOffset >= (float) Math.PI/2))) {
-            flipTexture();
-            if (getPrevHoriDir() == 1) {
-                setPrevHoriDir(-1);
-            } else {
-                setPrevHoriDir(1);
+            pointWokDir.sub(playerPos);
+            pointWokDir.scl(-1);
+            float wokAngle = pointWokDir.angleRad();
+            prevAngleOffset = angleOffset;
+            angleOffset = wokAngle;
+            if ((prevAngleOffset < (float) Math.PI/2 && prevAngleOffset > (float) - Math.PI/2 && (angleOffset <= (float) - Math.PI/2 || angleOffset >= (float) Math.PI/2)) || (angleOffset < (float) Math.PI/2 && angleOffset > (float) - Math.PI/2 && (prevAngleOffset <= (float) - Math.PI/2 || prevAngleOffset >= (float) Math.PI/2))) {
+                flipTexture();
+                if (getPrevHoriDir() == 1) {
+                    setPrevHoriDir(-1);
+                } else {
+                    setPrevHoriDir(1);
+                }
             }
+        } else {
+            if (getVX() > 0 && getPrevHoriDir() == -1) {
+                flipTexture();
+                setPrevHoriDir(1);
+            } else if (getVX() < 0 && getPrevHoriDir() == 1) {
+                flipTexture();
+                setPrevHoriDir(-1);
+            }
+
+            cache.set(getPrevHoriDir(), MechanicManager.getInstance().getVelY(0));
+            angleOffset = cache.angleRad();
         }
     }
 
