@@ -656,7 +656,11 @@ public class WorldModel {
     public void setHoleEdge(Sprite sprite, int x, int y) {
         // Kinda jank because it assumes that the tail object from staticObjects
         // is the hole object for the corresponding tile coordinate
-        ((HoleModel) staticObjects.getTail()).addHoleEdge(sprite);
+        try {
+            ((HoleModel) staticObjects.getTail()).addHoleEdge(sprite);
+        } catch (Exception e) {
+            return;
+        }
     }
 
     public void setPixelBounds() {
