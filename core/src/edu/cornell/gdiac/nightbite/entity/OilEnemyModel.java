@@ -33,7 +33,7 @@ public class OilEnemyModel extends EnemyModel {
             Vector2 targetPosition = p.getPosition();
             Vector2 enemyPosition = getPosition();
             float distance = Vector2.dst(targetPosition.x, targetPosition.y, enemyPosition.x, enemyPosition.y);
-            if (distance <= DROP_DIST && OilModel.canAdd()) {
+            if (distance <= DROP_DIST && worldModel.canAddOil()) {
                 worldModel.addOil(enemyPosition.x, enemyPosition.y);
                 dropCooldown = DROP_COOLDOWN;
                 SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME * 6f);
