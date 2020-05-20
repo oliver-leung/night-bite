@@ -36,8 +36,9 @@ public class LevelController {
      *
      * @param world      WorldModel to be populated
      * @param level_file Level specification
+     * @return time      Level timer limit
      */
-    public void populate(WorldModel world, String level_file, String levelItemName) {
+    public int populate(WorldModel world, String level_file, String levelItemName) {
         this.world = world;
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
@@ -124,6 +125,8 @@ public class LevelController {
             y++;
             x = 0;
         }
+
+        return levelFormat.has("timeLimit") ? levelFormat.getInt("timeLimit") : 120;
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
