@@ -24,7 +24,7 @@ public class ThiefEnemyModel extends EnemyModel {
 
     public ThiefEnemyModel(float x, float y, WorldModel world) {
         super(
-                x, y,
+                x+0.5f, y+0.5f,
                 Assets.getFilmStrip("character/Enemies/E3_64_Walk_FS_8.png"),
                 Assets.getFilmStrip("character/Enemies/E3_64_Falling_FS_5.png"),
                 world

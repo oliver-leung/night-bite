@@ -4,7 +4,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.util.LightSource;
+
+import java.util.ArrayList;
 
 public class ItemModel extends BoxObstacle {
 
@@ -17,13 +21,14 @@ public class ItemModel extends BoxObstacle {
     /**
      * item parameters
      */
-    private Vector2 item_init_position;
+    private ArrayList<Vector2> itemInitPositions; // Array of item respawn positions
+    private int mostRecentItemPositionInd; // Index of most recently used respawn position in itemInitPositions
 
     /**
      * item respawn
      */
     private float respawn;
-    private int RESPAWN_TIME = 150;
+    private int RESPAWN_TIME = 80;
 
     /**
      * throwing configs
@@ -33,6 +38,7 @@ public class ItemModel extends BoxObstacle {
     /**
      * item identification
      */
+
     private int id;
 
     // TODO temp
@@ -40,7 +46,16 @@ public class ItemModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
-    public Vector2 getItemInitPosition() { return item_init_position; }
+    public Vector2 getItemInitPosition() { return itemInitPositions.get(mostRecentItemPositionInd); }
+    public void addItemInitPosition(float x, float y) { itemInitPositions.add(new Vector2(x+0.5f,y+0.5f)); }
+    public Vector2 generateNewItemPosition() {
+        int ind;
+        do { // Make sure new coordinate is different from previous one
+            ind = (int)(Math.random() * itemInitPositions.size());
+        } while (ind == mostRecentItemPositionInd);
+        mostRecentItemPositionInd = ind;
+        return itemInitPositions.get(mostRecentItemPositionInd);
+    }
 
     public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
         super(x, y, 1, 1);
@@ -55,7 +70,8 @@ public class ItemModel extends BoxObstacle {
         setBullet(true);
         setName("item");
 
-        item_init_position = new Vector2(x + 0.5f, y + 0.5f);  // this is mad sus
+        itemInitPositions = new ArrayList<Vector2>();
+        addItemInitPosition(x, y);
         id = itemId;
 
         maskBits = 0x0002 | 0x0008;
@@ -66,7 +82,9 @@ public class ItemModel extends BoxObstacle {
         super.update(dt);
         respawn -= 1;
         if (respawn == 0) {
-            addItem(item_init_position);
+            setVX(0f);
+            setVY(0f);
+            addItem(generateNewItemPosition());
         }
     }
 
