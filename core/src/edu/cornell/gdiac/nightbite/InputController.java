@@ -19,6 +19,7 @@ public class InputController extends MechanicController {
     private boolean prevDebug;
     private boolean prevPaused;
     private boolean prevReset;
+    private boolean prevPause;
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
@@ -43,6 +44,7 @@ public class InputController extends MechanicController {
             isDebug = false;
             isReset = false;
             isPaused = false;
+            isEnter = false;
             return;
         }
 
@@ -106,6 +108,8 @@ public class InputController extends MechanicController {
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
 
+        isEnter = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+
         // Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             Assets.changeMute();
@@ -116,6 +120,10 @@ public class InputController extends MechanicController {
 
     private boolean isKeyPressed(int key) {
         return Gdx.input.isKeyPressed(key);
+    }
+
+    public boolean isEnterPressed() {
+        return isKeyPressed(66);
     }
 
     private void resetPrev() {

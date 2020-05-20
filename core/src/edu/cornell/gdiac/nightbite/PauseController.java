@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
@@ -82,6 +83,7 @@ public class PauseController implements Screen, InputProcessor {
     private FilmStrip mTexture;
     private FilmStrip rTexture;
 
+    private boolean escapeButton = false;
 
     /** How fast we change frames (one frame per 5 calls to update */
     private static final float ANIMATION_SPEED = 0.2f;
@@ -144,6 +146,7 @@ public class PauseController implements Screen, InputProcessor {
 
     /** Updates and sets filmstrip frames */
     private void update(float delta) {
+
         frame += ANIMATION_SPEED;
         if (frame >= MAX_FRAMES) {
             frame = 0f;
@@ -168,7 +171,7 @@ public class PauseController implements Screen, InputProcessor {
 
         // Draw buttons
         Color tintMenu = (pressStateMenu == 1 ? Color.GRAY: Color.WHITE);
-        Color tintResume = (pressStateResume == 1 ? Color.GRAY: Color.WHITE);
+        Color tintResume = (pressStateResume == 1 && escapeButton == false ? Color.GRAY: Color.WHITE);
         canvas.draw(pauseTexture, Color.WHITE,Assets.getTextureCenterX(pauseTexture), Assets.getTextureCenterY(pauseTexture),
                     posTitle[0], posTitle[1], 0, scale, scale);
         canvas.draw(menuTexture, tintMenu, 0, 0, posMenu[0], posMenu[1], 0, scale, scale);
@@ -339,11 +342,22 @@ public class PauseController implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (pressStateMenu == 2 || pressStateResume == 2) return true;
+        else if (keycode == Input.Keys.ESCAPE) {
+            pressStateResume = 1;
+            escapeButton = true;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        if (pressStateResume == 1) {
+            pressStateResume = 2;
+            escapeButton = false;
+            return true;
+        }
         return false;
     }
 
