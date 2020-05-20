@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -196,15 +197,14 @@ public class LevelSelectController implements Screen, InputProcessor {
         // TODO only controlled by player one
         MechanicManager manager = MechanicManager.getInstance();
         manager.update();
-        int playerHorizontal = (int) manager.getVelX(0);
         boolean playerDidEnter = manager.didEnter();
+        int playerHorizontal = dirPressed();
 
         // move selection
         updateMoveCooldown();
         if (playerHorizontal != 0) {
             if (!((playerHorizontal == -1 && levelChoiceindex == 0) || (playerHorizontal == 1 && levelChoiceindex == (levelJSONList.length-1))) && canMove()) {
                 levelChoiceindex += playerHorizontal;
-                startMoveCooldown();
 
                 // update player direction
                 if (playerHorizontal != prevDir) {
@@ -217,6 +217,16 @@ public class LevelSelectController implements Screen, InputProcessor {
         // choose selection
         if (playerDidEnter) {
             startGame = true;
+        }
+    }
+
+    private int dirPressed() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            return -1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 

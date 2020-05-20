@@ -71,6 +71,7 @@ public class WorldController implements Screen, InputProcessor {
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
     private String levelItemName;
+    private Vector2 pointWokDir;
 
     public float screenWidth;
     public float screenHeight;
@@ -86,6 +87,7 @@ public class WorldController implements Screen, InputProcessor {
         worldModel = new WorldModel();
         debug = false;
         active = false;
+        pointWokDir = new Vector2();
         resetTimer();
     }
 
@@ -432,8 +434,18 @@ public class WorldController implements Screen, InputProcessor {
 
             p.setSlideDirection(playerHorizontal, playerVertical);
 
+            if (!KeyboardMap.mouse && manager.isWhack() && !p.hasItem()) {
+                // This is also a side effect of the prevHoriDir and how it can't be set to 0
+                float x = p.getX() + p.getPrevHoriDir();
+                if (p.getVX() > -1 && p.getVX() < 1) {
+                    x = p.getX();
+                }
+                p.swingWok(new Vector2(x, p.getY() + p.getPrevVertDir()),
+                        worldModel.getFirecrackers(), worldModel.getEnemies());
+            }
+
             // player updates (for respawn and dash cool down)
-            Vector2 pointWokDir = new Vector2(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            pointWokDir.set(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
             p.update(pointWokDir);
 
             p.playWalkSound();
@@ -638,6 +650,7 @@ public class WorldController implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!KeyboardMap.mouse) return true;
         float clickX = screenX * worldModel.getWidth() / screenWidth;
         float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
         // Swing wok only if player doesn't have an item
