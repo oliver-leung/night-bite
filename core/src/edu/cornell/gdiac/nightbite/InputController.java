@@ -15,7 +15,6 @@ public class InputController extends MechanicController {
 
     private boolean prevDash;
     private boolean prevThrow;
-
     private boolean prevDebug;
     private boolean prevPaused;
     private boolean prevReset;
@@ -90,29 +89,13 @@ public class InputController extends MechanicController {
             velY = temp2 ? -1.0f : velY;
         }
 
-        temp1 = isKeyPressed(keybinds.DASH);
-        isDashing = isDashing || (!prevDash && temp1);
-
-        temp1 = isKeyPressed(keybinds.GRAB);
-        isThrowing = isThrowing || (!prevThrow && temp1);
-
-        if (!sudo) {
-            return;
-        }
-
-        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
-        isDebug = isDebug || (!prevDebug && temp1);
-
-        temp1 = Gdx.input.isKeyPressed(keybinds.PAUSE);
-        isPaused = isPaused || (!prevPaused && temp1);
-
-        temp1 = isKeyPressed(keybinds.RESET);
-        isReset = isReset || (!prevReset && temp1);
-
+        isDashing = Gdx.input.isKeyJustPressed(keybinds.DASH);
+        isThrowing = Gdx.input.isKeyJustPressed(keybinds.GRAB);
+        isDebug = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
+        isPaused = Gdx.input.isKeyJustPressed(keybinds.PAUSE);
+        isReset = Gdx.input.isKeyJustPressed(keybinds.RESET);
         isEnter = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
-
-        temp1 = Gdx.input.isKeyPressed(keybinds.WHACK);
-        isWhack = isWhack || (!prevWhack && temp1);
+        isWhack = Gdx.input.isKeyJustPressed(keybinds.WHACK);
 
         // Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
@@ -126,19 +109,6 @@ public class InputController extends MechanicController {
 
     private boolean isKeyPressed(int key) {
         return Gdx.input.isKeyPressed(key);
-    }
-
-    public boolean isEnterPressed() {
-        return isKeyPressed(Input.Keys.ENTER);
-    }
-
-    private void resetPrev() {
-        prevDash = isDashing;
-        prevThrow = isThrowing;
-        prevDebug = isDebug;
-        prevReset = isReset;
-        prevPaused = isPaused;
-        prevWhack = isWhack;
     }
 
     public void poll() {

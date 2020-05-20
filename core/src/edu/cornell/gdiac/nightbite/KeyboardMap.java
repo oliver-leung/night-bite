@@ -44,7 +44,7 @@ public class KeyboardMap {
             Keys.BACKSPACE,
             Keys.R,
             Keys.ESCAPE,
-            Keys.F);
+            Keys.ENTER);
 
     public static Player[] players = {PLAYER0};
 }
