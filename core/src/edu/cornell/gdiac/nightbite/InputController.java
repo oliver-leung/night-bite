@@ -44,6 +44,7 @@ public class InputController extends MechanicController {
             isDebug = false;
             isReset = false;
             isPaused = false;
+            isEnter = false;
             isWhack = false;
             return;
         }
@@ -108,6 +109,8 @@ public class InputController extends MechanicController {
         temp1 = isKeyPressed(keybinds.RESET);
         isReset = isReset || (!prevReset && temp1);
 
+        isEnter = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+
         temp1 = Gdx.input.isKeyPressed(keybinds.WHACK);
         isWhack = isWhack || (!prevWhack && temp1);
 
@@ -123,6 +126,10 @@ public class InputController extends MechanicController {
 
     private boolean isKeyPressed(int key) {
         return Gdx.input.isKeyPressed(key);
+    }
+
+    public boolean isEnterPressed() {
+        return isKeyPressed(Input.Keys.ENTER);
     }
 
     private void resetPrev() {

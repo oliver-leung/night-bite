@@ -466,7 +466,7 @@ public class WorldController implements Screen, InputProcessor {
                     e.flipTexture();
                 }
 
-                if (dir.epsilonEquals(Vector2.Zero)) {
+                if (e.getLinearVelocity().epsilonEquals(Vector2.Zero, 0.2f)) {
                     e.setStaticTexture();
                 } else {
                     e.setWalkTexture();

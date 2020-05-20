@@ -100,6 +100,13 @@ public class MechanicManager {
         return false;
     }
 
+    public boolean didEnter() {
+        for (MechanicController controller : controllers) {
+            if (controller.isEnter()) return true;
+        }
+        return false;
+    }
+
     public boolean isWhack() {
         return controllers[0].isWhack;
     }
