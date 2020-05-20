@@ -75,7 +75,7 @@ public class WorldController implements Screen, InputProcessor {
     public float screenWidth;
     public float screenHeight;
 
-    private static int GAME_DURATION = 180;  // in seconds
+    private static int GAME_DURATION = 120;  // in seconds
     private long timerStart;  // in nanoseconds
     private long timerEnd;
     private long timeElapsed;
@@ -165,7 +165,7 @@ public class WorldController implements Screen, InputProcessor {
         displayFont = Assets.getFont();
         scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 304, 110);
         timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
-        LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
+        GAME_DURATION = LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
     }
 
