@@ -79,21 +79,6 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int prevDir;
     private int levelChoiceindex = 0;
 
-//    private String[] levelJSONList = new String[]{
-//            "jsons/01_golden_tutorial_basic.json",
-//            "jsons/02_golden_tutorial_firecracker.json",
-//            "jsons/03_golden_tutorial_oil.json",
-//            "jsons/04_golden_spiral.json",
-//            "jsons/05_golden_moat.json",
-//            "jsons/06_golden_doublehole.json",
-//            "jsons/07_golden_holegrid.json",
-//            "jsons/08_golden_hard_nothief.json",
-//            "jsons/09_golden_zigzag.json",
-//            "jsons/10_golden_diagonalhole.json",
-//            "jsons/11_golden_medium.json",
-//            "jsons/12_golden_messy.json"
-//    };
-
     private String[] levelJSONList = new String[]{
             "jsons/01_showcase_tutorial_basic.json",
             "jsons/02_showcase_tutorial_firecracker.json",
@@ -423,15 +408,15 @@ public class LevelSelectController implements Screen, InputProcessor {
         float halfWidthStall = bokchoiStallTexture.getRegionWidth() / 2.0f * scale;
         float halfHeightStall = bokchoiStallTexture.getRegionHeight() / 3.0f;
 
-        if (screenX < xpos1 + halfWidthStall && screenX > xpos1 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+        if (screenX < xpos1 + halfWidthStall && screenX > xpos1 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
             levelChoiceindex = 0 + getPage() * 3;
             startGame = true;
         }
-        else if (screenX < xpos2 + halfWidthStall && screenX > xpos2 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+        else if (screenX < xpos2 + halfWidthStall && screenX > xpos2 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
             levelChoiceindex = 1 + getPage() * 3;
             startGame = true;
         }
-        else if (screenX < xpos3 + halfWidthStall && screenX > xpos3 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposStall - halfHeightStall) {
+        else if (screenX < xpos3 + halfWidthStall && screenX > xpos3 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
             levelChoiceindex = 2 + getPage() * 3;
             startGame = true;
         }
