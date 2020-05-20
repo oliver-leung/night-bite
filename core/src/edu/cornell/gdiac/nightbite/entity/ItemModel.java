@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.util.LightSource;
 
 import java.util.ArrayList;
 
@@ -36,6 +38,7 @@ public class ItemModel extends BoxObstacle {
     /**
      * item identification
      */
+
     private int id;
 
     // TODO temp

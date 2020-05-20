@@ -215,11 +215,7 @@ public class LevelController {
         } else { // On subsequent calls, add respawn positions to existing item
             item = world.getItem(0);
             item.addItemInitPosition(x, y);
-        }
-
-        // TODO: Adjust light colors if needed
-        if (itemJson.getBoolean("light")) {
-            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            LightSource light = this.world.createPointLight(new float[]{0f, 0.02f, 0f, 0.8f}, 3.0f);
             light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
@@ -270,12 +266,12 @@ public class LevelController {
 
         // TODO: Adjust light colors if needed
         if (enemyJson.getBoolean("light")) {
-            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 0.8f}, 4.0f);
             light.attachToBody(enemy.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
 
-    private void createCrowd (int x, int y) {
+    private void createCrowd(int x, int y) {
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
         float pHeight = texture.getRegionHeight() / world.getScale().y;
