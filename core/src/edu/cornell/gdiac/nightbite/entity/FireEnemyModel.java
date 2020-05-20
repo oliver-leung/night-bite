@@ -10,7 +10,7 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.LightSource;
 
 public class FireEnemyModel extends EnemyModel {
-    private static final int MAX_THROW_COOLDOWN = 3*60;
+    private static final int MAX_THROW_COOLDOWN = 2*60;
     private static final int MIN_THROW_COOLDOWN = 1*60;
     private static final float THROW_DIST = 5;
     private static final float STOP_DIST = 2.5f;
