@@ -58,7 +58,6 @@ public class WorldController implements Screen, InputProcessor {
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
     /** Textures for in-game UI */
-    protected FilmStrip scoreTexture;
     protected TextureRegion timerTexture;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -165,7 +164,6 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        scoreTexture = Assets.getFilmStrip("ui/PlayerScore_FS.png", 304, 110);
         timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
         LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
@@ -193,17 +191,8 @@ public class WorldController implements Screen, InputProcessor {
         for (Obstacle obj : worldModel.getObjects()) {
             if (obj.draw) {
                 obj.draw(canvas);
-
-                // Add player scores
-                if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
-                    scoreTexture.setFrame(((HomeModel) obj).getScore());  // score texture represents items retrieved
-                }
             }
         }
-
-        // Draw player scores
-        // Hardcoded coordinates!
-        canvas.draw(scoreTexture, Color.WHITE, 0, 0, 25f, canvas.getHeight()-125f, scoreTexture.getRegionWidth(), scoreTexture.getRegionHeight());
 
         // Draw timer
         // TODO create another font!!! jesus
