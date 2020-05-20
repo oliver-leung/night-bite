@@ -70,6 +70,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     /** The previous horizontal direction of the humanoid */
     protected float prevHoriDir;
+    private float prevVertDir;
 
     /** Textures */
     public FilmStrip defaultTexture;
@@ -103,15 +104,32 @@ public abstract class HumanoidModel extends SimpleObstacle {
     }
 
     /** Gets previous horizontal direction */
-    public float getPrevHoriDir() { return prevHoriDir; }
+    public float getPrevHoriDir() {
+        return prevHoriDir;
+    }
+
     /** Sets previous horizontal direction */
-    public void setPrevHoriDir(float dir) { prevHoriDir = dir; }
+    public void setPrevHoriDir(float dir) {
+        prevHoriDir = dir;
+    }
+
+    /** Gets previous horizontal direction */
+    public float getPrevVertDir() {
+        return prevVertDir;
+    }
+
+    /** Sets previous horizontal direction */
+    public void setPrevVertDir(float dir) {
+        prevVertDir = dir;
+    }
 
     /**
      * Sets the current texture of this humanoid
      */
     public void setCurrentTexture(FilmStrip texture) {
-        if (defaultTexture == null) { defaultTexture = texture; }
+        if (defaultTexture == null) {
+            defaultTexture = texture;
+        }
         setTexture(texture);
     }
 

@@ -435,7 +435,12 @@ public class WorldController implements Screen, InputProcessor {
             p.setSlideDirection(playerHorizontal, playerVertical);
 
             if (!KeyboardMap.mouse && manager.isWhack() && !p.hasItem()) {
-                p.swingWok(new Vector2(p.getPosition().x + p.getPrevHoriDir(), p.getY()),
+                // This is also a side effect of the prevHoriDir and how it can't be set to 0
+                float x = p.getX() + p.getPrevHoriDir();
+                if (p.getVX() > -1 && p.getVX() < 1) {
+                    x = p.getX();
+                }
+                p.swingWok(new Vector2(x, p.getY() + p.getPrevVertDir()),
                         worldModel.getFirecrackers(), worldModel.getEnemies());
             }
 

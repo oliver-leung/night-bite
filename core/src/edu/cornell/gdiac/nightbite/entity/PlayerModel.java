@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.KeyboardMap;
-import edu.cornell.gdiac.nightbite.MechanicManager;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
@@ -348,7 +347,22 @@ public class PlayerModel extends HumanoidModel {
                 setPrevHoriDir(-1);
             }
 
-            cache.set(getPrevHoriDir(), MechanicManager.getInstance().getVelY(0));
+            if (getVY() > 0.5) {
+                setPrevVertDir(1);
+            } else if (getVY() < -0.5) {
+                setPrevVertDir(-1);
+            } else {
+                setPrevVertDir(0);
+            }
+
+            cache.set(getPrevHoriDir(), getPrevVertDir());
+
+            // A bandage to override in the case when you're just hitting straight up or down. This is because
+            // prevHoriDir is not made to handle when it's 0. -Oliver
+            if (getVX() > -1 && getVX() < 1) {
+                cache.set(0, getPrevVertDir());
+            }
+
             angleOffset = cache.scl(-1).angleRad();
         }
     }

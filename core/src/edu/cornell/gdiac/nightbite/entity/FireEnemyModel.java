@@ -120,7 +120,7 @@ public class FireEnemyModel extends EnemyModel {
 
     @Override
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
-        System.out.println(walkCounter);
+//        System.out.println(walkCounter);
         if (getPosition().sub(targetPos).len() < STOP_DIST && aiController.canTarget(getPosition(), targetPos, STOP_DIST)) {
             return Vector2.Zero;
         }
