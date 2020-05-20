@@ -79,6 +79,8 @@ public class ItemModel extends BoxObstacle {
         super.update(dt);
         respawn -= 1;
         if (respawn == 0) {
+            setVX(0f);
+            setVY(0f);
             addItem(generateNewItemPosition());
         }
     }
