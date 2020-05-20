@@ -75,6 +75,7 @@ public class WorldModel {
     private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
     private PooledList<OilModel> oils;
+    private static final int MAX_OIL = 5;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -490,6 +491,10 @@ public class WorldModel {
         oil.activatePhysics(world);
         oils.add(oil);
         return oil;
+    }
+
+    public boolean canAddOil() {
+        return oils.size() < MAX_OIL;
     }
 
     public PooledList<FirecrackerModel> getFirecrackers() {
