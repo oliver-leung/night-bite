@@ -349,7 +349,7 @@ public class PlayerModel extends HumanoidModel {
             }
 
             cache.set(getPrevHoriDir(), MechanicManager.getInstance().getVelY(0));
-            angleOffset = cache.angleRad();
+            angleOffset = cache.scl(-1).angleRad();
         }
     }
 
