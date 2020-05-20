@@ -78,34 +78,19 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int prevDir;
     private int levelChoiceindex = 0;
 
-//    private String[] levelJSONList = new String[]{
-//            "jsons/01_golden_tutorial_basic.json",
-//            "jsons/02_golden_tutorial_firecracker.json",
-//            "jsons/03_golden_tutorial_oil.json",
-//            "jsons/04_golden_spiral.json",
-//            "jsons/05_golden_moat.json",
-//            "jsons/06_golden_doublehole.json",
-//            "jsons/07_golden_holegrid.json",
-//            "jsons/08_golden_hard_nothief.json",
-//            "jsons/09_golden_zigzag.json",
-//            "jsons/10_golden_diagonalhole.json",
-//            "jsons/11_golden_medium.json",
-//            "jsons/12_golden_messy.json"
-//    };
-
     private String[] levelJSONList = new String[]{
-            "jsons/01_showcase_tutorial_basic.json",
-            "jsons/02_showcase_tutorial_firecracker.json",
-            "jsons/03_golden_tutorial_oil.json",
-            "jsons/04_showcase_spiral_v2.json",
-            "jsons/05_showcase_semimoat_v2.json",
-            "jsons/06_showcase_doublehole_v2.json",
-            "jsons/07_showcase_holegrid.json",
-            "jsons/08_showcase_longmoats.json",
-            "jsons/09_showcase_zigzag.json",
-            "jsons/10_showcase_diagonalhole.json",
-            "jsons/11_showcase_medium.json",
-            "jsons/12_showcase_messy.json"
+        "jsons/01_showcase_tutorial_basic_v2.json",
+        "jsons/02_showcase_tutorial_firecracker_v2.json",
+        "jsons/03_showcase_tutorial_oil_v2.json",
+        "jsons/04_showcase_spiral_v2.json",
+        "jsons/05_showcase_semimoat_v2.json",
+        "jsons/06_showcase_doublehole_v2.json",
+        "jsons/07_showcase_holegrid_v2.json",
+        "jsons/08_showcase_longmoats_v2.json",
+        "jsons/09_showcase_zigzag_v2.json",
+        "jsons/10_showcase_diagonalhole_v2.json",
+        "jsons/11_showcase_medium_v2.json",
+        "jsons/12_showcase_messy_v2.json",
     };
     private int[] xposList;
 

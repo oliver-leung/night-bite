@@ -26,7 +26,7 @@ public class ItemModel extends BoxObstacle {
      * item respawn
      */
     private float respawn;
-    private int RESPAWN_TIME = 150;
+    private int RESPAWN_TIME = 80;
 
     /**
      * throwing configs
