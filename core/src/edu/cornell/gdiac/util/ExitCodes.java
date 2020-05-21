@@ -7,6 +7,7 @@ public class ExitCodes {
     public static final int LEVEL = 3;    // starts a level
     public static final int PAUSE = 4;    // resumes a level
     public static final int NEXT = 5;     // next level from current level
+    public static final int TUTORIAL = 6; // tutorial screen
 
     public static final int LEVEL_PASS = 98;  // when a level is successfully completed
     public static final int LEVEL_FAIL = 99;  // when a level is failed
