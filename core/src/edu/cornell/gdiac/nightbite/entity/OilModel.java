@@ -28,6 +28,12 @@ public class OilModel extends ImmovableModel {
         super.setTexture(texture);
     }
 
+    // Ugly, and also being done in HoleModel so that it draws below everything else
+    @Override
+    public float getBottom() {
+        return Float.POSITIVE_INFINITY - 1;
+    }
+
     public boolean isSpilled() {
         return spillingAge == 0;
     }

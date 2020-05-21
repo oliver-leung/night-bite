@@ -36,6 +36,13 @@ public class PlayerModel extends HumanoidModel {
     private static int GRAB_COOLDOWN_PERIOD = 15;
     private static int SHADOW_BLINK_FREQUENCY = 15;
 
+    /* How fast we change frames (one frame per 8 calls to update */
+    private static final float ANIMATION_SPEED = 0.125f;
+    /* The number of animation frames in our falling filmstrip */
+    private static final float NUM_FRAMES_FALL = 6;
+    /* Keeps track of the sliding animation frame */
+    private float slidingFrame = 0f;
+
     public MoveState state;
     // TODO
     private int NUM_ITEMS = 1;
@@ -155,6 +162,16 @@ public class PlayerModel extends HumanoidModel {
         walkCounter++;
     }
 
+    public void updateSlidingTexture() {
+        slidingFrame += ANIMATION_SPEED;
+        if (slidingFrame >= NUM_FRAMES_FALL) { slidingFrame -= NUM_FRAMES_FALL; }
+
+        ((FilmStrip) texture).setFrame((int) slidingFrame);
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+    }
+
     /** player movement */
 
     public Vector2 getImpulse() {
@@ -220,6 +237,7 @@ public class PlayerModel extends HumanoidModel {
     public void setSlide() {
         state = MoveState.SLIDE;
         sliding = SLIDE_FRAMES;
+        setCurrentTexture(fallTexture);
     }
 
     public void setSlideDirection(float horizontal, float vertical) {
@@ -249,6 +267,10 @@ public class PlayerModel extends HumanoidModel {
         if (!swinging) {
 //            System.out.println(pointWokDir);
             updateWokDirection(pointWokDir);
+        }
+
+        if (sliding - 1 == 0) { // If player is going to stop sliding on next frame, change texture to walk texture
+            setCurrentTexture(defaultTexture);
         }
         sliding = Math.max(0, sliding - 1);
     }
@@ -451,7 +473,7 @@ public class PlayerModel extends HumanoidModel {
 
         super.draw(canvas);
 
-        if (isAlive && !hasItem()) {
+        if (isAlive && !hasItem() && !isSliding()) {
             float originX;
             float originY;
             float ox;
