@@ -164,14 +164,14 @@ public class LevelController {
         WallModel wall;
         // TODO: Use four walls rather than n X m
         for (int i = -1; i < width; i++) {
-            wall = new WallModel(i, -1, 0);
+            wall = new WallModel(i, -1, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(i, height, 0);
+            wall = new WallModel(i, height, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -179,14 +179,14 @@ public class LevelController {
             world.addStaticObject(wall);
         }
         for (int i = -1; i < height; i++) {
-            wall = new WallModel(-1, i, 0);
+            wall = new WallModel(-1, i, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(width, i, 0);
+            wall = new WallModel(width, i, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -293,11 +293,11 @@ public class LevelController {
     }
 
     private void createWall(JsonValue wallJson, int x, int y) {
-        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"));
+        String texture = wallJson.getString("texture");
+        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"), texture.contains("StallItem1_64"));
         wall.setDrawScale(world.getScale());
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
-        String texture = wallJson.getString("texture");
         if (texture.contains("StallItem1_64")) { // item stall
             wall.setTexture(Assets.getTextureRegion(itemStallFile));
         } else {
