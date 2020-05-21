@@ -44,6 +44,14 @@ public class OilEnemyModel extends EnemyModel {
     }
 
     @Override
+    public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
+        if (getPosition().sub(targetPos).len() < STOP_DIST) {
+            return Vector2.Zero;
+        }
+        return super.move(targetPos, targetDims, aiLattice);
+    }
+
+    @Override
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
         if (state == State.ATTACK && (dropCooldown / 15) % 2 == 0) {

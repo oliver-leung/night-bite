@@ -43,7 +43,7 @@ public abstract class EnemyModel extends HumanoidModel {
     private static float WALK_THRUST = 7f;
     protected int walkCooldown;
 
-    private static float STOP_DIST = 2;
+    protected static float STOP_DIST = 2;
 
     public void setStopDist(float stopDist) {
         STOP_DIST = stopDist;
