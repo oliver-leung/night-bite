@@ -74,7 +74,8 @@ public class WorldModel {
     private PooledList<FirecrackerModel> firecrackers;
     private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
-    private PooledList<OilModel> oils;
+    private HashMap<Integer, OilModel> oils;
+    private int oilIndCounter = 0;
     private static final int MAX_OIL = 5;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
@@ -109,7 +110,7 @@ public class WorldModel {
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
         crowds = new PooledList<>();
-        oils = new PooledList<>();
+        oils = new HashMap<>();
 
         // TODO: REMOVE
         debug = new Debug();
@@ -221,7 +222,7 @@ public class WorldModel {
             // Please.
             final List<?>[] objs = {
                     staticObjects,
-                    oils,
+                    new ArrayList<OilModel>(oils.values()),
                     items,
                     players,
                     enemies,
@@ -489,7 +490,12 @@ public class WorldModel {
         oil.setDrawScale(getScale());
         oil.setActualScale(getActualScale());
         oil.activatePhysics(world);
-        oils.add(oil);
+        if (oils.size() >= MAX_OIL) { // If there are already 5 oils dropped, overwrite oldest one
+            OilModel oldOil = oils.get(oilIndCounter);
+            oldOil.deactivatePhysics(world);
+        }
+        oils.put(oilIndCounter, oil);
+        oilIndCounter = (oilIndCounter + 1) % MAX_OIL;
         return oil;
     }
 
@@ -499,10 +505,6 @@ public class WorldModel {
 
     public PooledList<FirecrackerModel> getFirecrackers() {
         return firecrackers;
-    }
-
-    public PooledList<OilModel> getOils() {
-        return oils;
     }
 
     /**
@@ -582,7 +584,7 @@ public class WorldModel {
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator(), firecrackers.entryIterator(), oils.entryIterator()};
+        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator(), firecrackers.entryIterator()};
         Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
 
         for (Iterator<?> iterator : cullAndUpdate) {
@@ -597,6 +599,10 @@ public class WorldModel {
                     obj.update(dt);
                 }
             }
+        }
+
+        for (OilModel oil : oils.values()) {
+            oil.update(dt);
         }
 
         for (Iterator<?> iterator : updateOnly) {
