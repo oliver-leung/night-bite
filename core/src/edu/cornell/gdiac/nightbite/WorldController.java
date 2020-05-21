@@ -57,6 +57,7 @@ public class WorldController implements Screen, InputProcessor {
     protected PooledList<Obstacle> addQueue = new PooledList<>();
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected BitmapFont timerFont;
     /** Textures for in-game UI */
     protected TextureRegion timerTexture;
     /** Listener that will update the player mode when we are done */
@@ -164,7 +165,10 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
+        timerFont = new BitmapFont(displayFont.getData(), displayFont.getRegion(), displayFont.usesIntegerPositions());
+        timerFont.setColor(Color.BLACK);
+        timerFont.getData().setScale(0.8f);
+        timerTexture = Assets.getTextureRegion("ui/TimerNew.png");
         GAME_DURATION = LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
     }
@@ -196,8 +200,8 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw timer
         // TODO create another font!!! jesus
-        canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
-        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-55f);
+        canvas.draw(timerTexture, Color.WHITE, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), timerFont, 76f, canvas.getHeight()-49f);
 
         if (worldModel.isComplete()) {
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
