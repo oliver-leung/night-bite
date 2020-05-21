@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
-import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
-import edu.cornell.gdiac.util.LightSource;
 
 import java.util.ArrayList;
 
@@ -81,10 +79,14 @@ public class ItemModel extends BoxObstacle {
     public void update(float dt) {
         super.update(dt);
         respawn -= 1;
-        if (respawn == 0) {
+        // Jank, but just respawn the item right before you can pick it up
+        if (respawn == 2) {
             setVX(0f);
             setVY(0f);
             addItem(generateNewItemPosition());
+        }
+        if (respawn == 0) {
+            setActive(true);
         }
     }
 
