@@ -47,22 +47,17 @@ public class CrowdUnitModel extends HumanoidModel{
     }
 
     @Override
+    public void update(float delta) {
+        int hori = (int) Math.signum(getVX());
+
+        // update horizontal direction
+        if (hori != getPrevHoriDir()) {
+            setPrevHoriDir(hori);
+        }
+    }
+
+    @Override
     public void setWalkTexture(float dt) {
-//        if (walkCounter <= 0) {
-//            walkCounter = 20; // TODO
-//            int currFrame = ((FilmStrip) texture).getFrame();
-//            currFrame++;
-//            if (currFrame == ((FilmStrip) texture).getSize()) {
-//                ((FilmStrip) texture).setFrame(0);
-//            } else {
-//                ((FilmStrip) texture).setFrame(currFrame);
-//            }
-//            if (getPrevHoriDir() == 1) {
-//                texture.flip(true, false);
-//            }
-//        } else {
-//            walkCounter--;
-//        }
         FilmStrip filmStrip = (FilmStrip) this.texture;
         filmStrip.setFrame((int) ((walkCounter * 60 / 8) % filmStrip.getSize()));
         if (prevHoriDir == 1) {
@@ -74,6 +69,9 @@ public class CrowdUnitModel extends HumanoidModel{
     public void setStaticTexture() {
         FilmStrip filmStrip = (FilmStrip) this.texture;
         filmStrip.setFrame(filmStrip.getFrame());
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
     }
 
     public Vector2 getDir() {

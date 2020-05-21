@@ -84,6 +84,7 @@ public class CrowdModel {
                 float distanceFromTarget;
                 for (int i = 0; i < getCrowdUnitList().size(); i++) {
                     getCrowdUnitList().get(i).setWalkTexture(dt);
+                    getCrowdUnitList().get(i).update(dt);
                     if (i == leaderIndex) { // leader
                         getCrowdUnitList().get(leaderIndex).move(targetPos, getCrowdUnitList().get(leaderIndex).getDimension(), worldModel.getAILattice());
                         distanceFromTarget = getCrowdUnitList().get(leaderIndex).getPosition().dst(targetPos);
