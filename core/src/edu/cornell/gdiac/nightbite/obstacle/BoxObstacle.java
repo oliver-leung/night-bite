@@ -36,7 +36,7 @@ public class BoxObstacle extends SimpleObstacle {
 	/** A cache value for the fixture (for resizing) */
 	public Fixture geometry;
 	/** Cache of the polygon vertices (for resizing) */
-	private float[] vertices;
+	protected float[] vertices;
 
 	protected short maskBits;
 	protected short categoryBits = 0xfff;
@@ -163,7 +163,7 @@ public class BoxObstacle extends SimpleObstacle {
 	/**
 	 * Reset the polygon vertices in the shape to match the dimension.
 	 */
-	private void resize(float width, float height) {
+	protected void resize(float width, float height) {
 		// Make the box with the center in the center
 		vertices[0] = -width/2.0f;
 		vertices[1] = -height/2.0f;

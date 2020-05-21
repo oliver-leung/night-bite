@@ -311,7 +311,7 @@ public class PlayerModel extends HumanoidModel {
                 enemyVector.sub(getPosition());
                 if (enemyVector.angleRad(clickVector) < SWING_RADIUS && enemyVector.angleRad(clickVector) > -SWING_RADIUS && enemyVector.len() < REFLECT_RANGE) {
                     Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
-                    enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
+                    enemy.getBody().applyLinearImpulse(reflectDirection.scl(125f), getPosition(), true);
                     if (enemy instanceof EnemyModel) {
                         ((EnemyModel) enemy).forceReplan();
                     }
