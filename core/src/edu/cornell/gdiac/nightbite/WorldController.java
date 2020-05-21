@@ -355,6 +355,9 @@ public class WorldController implements Screen, InputProcessor {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
                     p.setWalk();
+                    if (p.hasItem()) {
+                        p.setHoldTexture();
+                    }
                     p.updateDirectionState(playerVertical, playerHorizontal);
                 } else {
                     p.setStatic();
@@ -411,16 +414,6 @@ public class WorldController implements Screen, InputProcessor {
                     offset += 0.6;
                 }
             }
-
-            /* IF PLAYER THROWS ITEM */
-//            if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
-//                for (ItemModel heldItem : p.getItems()) {
-//                    heldItem.throwItem(p.getPosition(), p.getImpulse());
-//                }
-//                p.clearInventory();
-//                p.startgrabCooldown();
-//                p.resetTexture();
-//            }
 
             p.setSlideDirection(playerHorizontal, playerVertical);
 

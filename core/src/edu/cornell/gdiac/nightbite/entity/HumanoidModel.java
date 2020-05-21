@@ -262,7 +262,13 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     public void holdItem(ItemModel i) {
         item.add(i);
-        setCurrentTexture(holdTexture);
+        setHoldTexture();
+    }
+
+    public void setHoldTexture() {
+        if (holdTexture != null) {
+            setCurrentTexture(holdTexture);
+        }
     }
 
     /**
