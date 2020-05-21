@@ -46,12 +46,12 @@ public class CrowdModel {
         return crowdUnitList;
     }
 
-    public void update() {
+    public void update(float dt) {
         switch (state) {
             case IDLE:
                 if (new Random().nextInt(SPAWN_TO_ROAM_RATE) == 0) {
-                    targetPos.x = new Random().nextInt(ROAM_RADIUS*2) - ROAM_RADIUS + crowdUnitList.get(0).getHomePosition().x;
-                    targetPos.y = new Random().nextInt(ROAM_RADIUS*2) - ROAM_RADIUS + crowdUnitList.get(0).getHomePosition().y;
+                    targetPos.x = new Random().nextInt(ROAM_RADIUS * 2) - ROAM_RADIUS + crowdUnitList.get(0).getHomePosition().x;
+                    targetPos.y = new Random().nextInt(ROAM_RADIUS * 2) - ROAM_RADIUS + crowdUnitList.get(0).getHomePosition().y;
 
                     // bounding to screen lmfao
                     targetPos.x = Math.min(worldModel.getWidth(), targetPos.x);
@@ -83,7 +83,7 @@ public class CrowdModel {
                 updateChangeLeader();
                 float distanceFromTarget;
                 for (int i = 0; i < getCrowdUnitList().size(); i++) {
-                    getCrowdUnitList().get(i).setWalkTexture();
+                    getCrowdUnitList().get(i).setWalkTexture(dt);
                     if (i == leaderIndex) { // leader
                         getCrowdUnitList().get(leaderIndex).move(targetPos, getCrowdUnitList().get(leaderIndex).getDimension(), worldModel.getAILattice());
                         distanceFromTarget = getCrowdUnitList().get(leaderIndex).getPosition().dst(targetPos);

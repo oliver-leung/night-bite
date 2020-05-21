@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.*;
 import edu.cornell.gdiac.util.FilmStrip;
 
-import java.util.Random;
-
 public class CrowdUnitModel extends HumanoidModel{
 
     private static final float WALK_THRUST = 3f;
@@ -49,26 +47,33 @@ public class CrowdUnitModel extends HumanoidModel{
     }
 
     @Override
-    public void setWalkTexture() {
-        if (walkCounter <= 0) {
-            walkCounter = 20; // TODO
-            int currFrame = ((FilmStrip) texture).getFrame();
-            currFrame++;
-            if (currFrame == ((FilmStrip) texture).getSize()) {
-                ((FilmStrip) texture).setFrame(0);
-            } else {
-                ((FilmStrip) texture).setFrame(currFrame);
-            }
-            if (getPrevHoriDir() == 1) {
-                texture.flip(true, false);
-            }
-        } else {
-            walkCounter--;
+    public void setWalkTexture(float dt) {
+//        if (walkCounter <= 0) {
+//            walkCounter = 20; // TODO
+//            int currFrame = ((FilmStrip) texture).getFrame();
+//            currFrame++;
+//            if (currFrame == ((FilmStrip) texture).getSize()) {
+//                ((FilmStrip) texture).setFrame(0);
+//            } else {
+//                ((FilmStrip) texture).setFrame(currFrame);
+//            }
+//            if (getPrevHoriDir() == 1) {
+//                texture.flip(true, false);
+//            }
+//        } else {
+//            walkCounter--;
+//        }
+        FilmStrip filmStrip = (FilmStrip) this.texture;
+        filmStrip.setFrame((int) ((walkCounter * 60 / 8) % filmStrip.getSize()));
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
         }
+        walkCounter += dt;
     }
 
     public void setStaticTexture() {
-        ((FilmStrip) texture).setFrame(0);
+        FilmStrip filmStrip = (FilmStrip) this.texture;
+        filmStrip.setFrame(filmStrip.getFrame());
     }
 
     public Vector2 getDir() {
