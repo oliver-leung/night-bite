@@ -2,7 +2,6 @@ package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Music;
 import edu.cornell.gdiac.util.XBox360Controller;
 
 public class InputController extends MechanicController {
@@ -16,9 +15,10 @@ public class InputController extends MechanicController {
 
     private boolean prevDash;
     private boolean prevThrow;
-
     private boolean prevDebug;
+    private boolean prevPaused;
     private boolean prevReset;
+    private boolean prevWhack;
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
@@ -26,9 +26,9 @@ public class InputController extends MechanicController {
         this.keyboard = keyboard;
     }
 
-    public InputController(int xbox, int keyboard) {
-        this(xbox, keyboard,false);
-    }
+//    public InputController(int xbox, int keyboard) {
+//        this(xbox, keyboard,false);
+//    }
 
     private boolean notDeadZoned(float vert, float hori) {
         return Math.abs(vert) > DEADZONE || Math.abs(hori) > DEADZONE;
@@ -42,6 +42,9 @@ public class InputController extends MechanicController {
             isThrowing = false;
             isDebug = false;
             isReset = false;
+            isPaused = false;
+            isEnter = false;
+            isWhack = false;
             return;
         }
 
@@ -86,44 +89,26 @@ public class InputController extends MechanicController {
             velY = temp2 ? -1.0f : velY;
         }
 
-        temp1 = isKeyPressed(keybinds.DASH);
-        isDashing = isDashing || (!prevDash && temp1);
-
-        temp1 = isKeyPressed(keybinds.GRAB);
-        isThrowing = isThrowing || (!prevThrow && temp1);
-
-        if (!sudo) {
-            return;
-        }
-
-        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
-        isDebug = isDebug || (!prevDebug && temp1);
-
-        temp1 = isKeyPressed(keybinds.RESET);
-        isReset = isReset || (!prevReset && temp1);
+        isDashing = Gdx.input.isKeyJustPressed(keybinds.DASH);
+        isThrowing = Gdx.input.isKeyJustPressed(keybinds.GRAB);
+        isDebug = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
+        isPaused = Gdx.input.isKeyJustPressed(keybinds.PAUSE);
+        isReset = Gdx.input.isKeyJustPressed(keybinds.RESET);
+        isEnter = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+        isWhack = Gdx.input.isKeyJustPressed(keybinds.WHACK);
 
         // Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            Music music = Assets.getMusic();
-            if (music.getVolume() > 0) {
-                Assets.EFFECT_VOLUME = 0;
-                music.setVolume(Assets.EFFECT_VOLUME);
-            } else {
-                Assets.EFFECT_VOLUME = 0.1f;
-                music.setVolume(Assets.EFFECT_VOLUME);
-            }
+            Assets.changeMute();
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) KeyboardMap.mouse = !KeyboardMap.mouse;
+
+        // TODO we need so set some stuff around here re: prevPaused
     }
 
     private boolean isKeyPressed(int key) {
         return Gdx.input.isKeyPressed(key);
-    }
-
-    private void resetPrev() {
-        prevDash = isDashing;
-        prevThrow = isThrowing;
-        prevDebug = isDebug;
-        prevReset = isReset;
     }
 
     public void poll() {

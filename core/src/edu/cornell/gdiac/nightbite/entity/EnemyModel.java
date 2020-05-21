@@ -1,20 +1,36 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import edu.cornell.gdiac.nightbite.AIController;
-import edu.cornell.gdiac.nightbite.AILattice;
-import edu.cornell.gdiac.nightbite.GameCanvas;
-import edu.cornell.gdiac.nightbite.WorldModel;
+import edu.cornell.gdiac.nightbite.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
 
 public abstract class EnemyModel extends HumanoidModel {
-    private enum State {
-        IDLE,
-        ATTACK,
-        RETURN
+    protected final TextureRegion EXCLAMATION = Assets.getTextureRegion("character/Enemies/exclamation_64.png");
+
+    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
+        super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
+        setPosition(x, y);
+        setHomePosition(new Vector2(x+0.5f, y+0.5f));  // TODO
+
+        super.DEFAULT_RESPAWN_COOLDOWN = 6 * 60;
+
+        path = new PooledList<>();
+        aiController = new AIController(worldModel, this);
+        this.worldModel = worldModel;
+        walkCooldown = WALK_COOLDOWN;
+        setRespawnCooldown(6 * 60);
+
+        aiClass = 1;
     }
+
+    @Override
+    public int getAiClass() {
+        return aiClass;
+    }
+
     public State state = State.IDLE;
 
     private float previousDistanceFromHome;
@@ -23,24 +39,41 @@ public abstract class EnemyModel extends HumanoidModel {
     public AIController aiController;
     public WorldModel worldModel;
 
-    private static final int WALK_COOLDOWN = 10;
-    private static final float WALK_THRUST = 10f;
-    private int walkCooldown;
+    protected static final int WALK_COOLDOWN = 10;
+    private static float WALK_THRUST = 7f;
+    protected int walkCooldown;
 
-    public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
-        super(x, y, 0.6f, 1f, walk, fall, , ); // TODO: DONT HARDCODE
-        setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
+    private static float STOP_DIST = 2;
 
-        path = new PooledList<>();
-        aiController = new AIController(worldModel, this);
-        this.worldModel = worldModel;
-        walkCooldown = WALK_COOLDOWN;
-        setRespawnCooldown(120);
+    public void setStopDist(float stopDist) {
+        STOP_DIST = stopDist;
+    }
+    public void setWalkThrust(float thrust) { WALK_THRUST = thrust; }
+
+    // Only relevant for thief enemy
+    public boolean isDoneAttacking = true;
+
+    public void setIsDoneAttacking(boolean bool) {
+        isDoneAttacking = bool;
     }
 
-    public abstract void attack(PlayerModel p);
+    protected enum State {
+        IDLE,
+        ATTACK,
+        RETURN
+    }
 
+    public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
+
+    @Override
+    public void setWalkTexture() {
+        FilmStrip filmStrip = (FilmStrip) this.texture;
+        filmStrip.setFrame((walkCounter / 8) % filmStrip.getSize());
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
+        walkCounter++;
+    }
 
     public Vector2 update(PlayerModel p) {
         Vector2 homePos = getHomePosition();
@@ -53,9 +86,8 @@ public abstract class EnemyModel extends HumanoidModel {
                 }
                 break;
             case ATTACK:
-                dir = move(p.getPosition(), p.getDimension(), worldModel.getAILattice());
-                attack(p);
-                if (!aiController.canDetectPlayer()) { // Player not within detection radius - return to origin
+                dir = attack(p, worldModel.getAILattice());
+                if (isDoneAttacking && !aiController.canChasePlayer()) { // Player not within chase radius - return to origin
                     state = State.RETURN;
                     aiController.forceReplan();
                 }
@@ -67,7 +99,7 @@ public abstract class EnemyModel extends HumanoidModel {
                     previousDistanceFromHome = 0f; // Reset
                     state = State.IDLE;
                     break;
-                } else if (aiController.canDetectPlayer()) { // Player is within detection radius - attack
+                } else if (aiController.canChasePlayer()) { // Player is within chase radius - attack
                     previousDistanceFromHome = 0f; // Reset
                     state = State.ATTACK;
                     aiController.forceReplan();
@@ -84,9 +116,14 @@ public abstract class EnemyModel extends HumanoidModel {
     public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
 //        body.setLinearVelocity(Vector2.Zero);
 
+        if (getPosition().sub(targetPos).len() < STOP_DIST &&
+                aiController.canTarget(getPosition(), targetPos, STOP_DIST)) {
+            return Vector2.Zero;
+        }
+
         if (walkCooldown > 0) {
             walkCooldown --;
-            return new Vector2(0,0);
+            return Vector2.Zero;
         }
 
         aiController.clearTarget();
@@ -101,8 +138,9 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(rx, by);
         aiController.addTarget(lx, by);
 
-        aiController.updateAI(aiLattice, getFeetPosition());
-        Vector2 dir = aiController.vectorToNode(getFeetPosition()).cpy().nor();
+        aiController.updateAI(aiLattice, getFeetPosition(), getAiClass());
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, getAiClass(),
+                getPosition().sub(targetPos).len() < STOP_DIST).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
@@ -114,6 +152,7 @@ public abstract class EnemyModel extends HumanoidModel {
     public void respawn() {
         super.respawn();
         aiController.forceReplan();
+        resetState();
     }
 
     public void drawDebug(GameCanvas canvas) {
@@ -121,5 +160,17 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.drawDebug(canvas, drawScale);
     }
 
+    public void resetState() {
+        state = State.IDLE;
+    }
+
+    public void playerTakesItem() {
+        if (hasItem()) { // Player takes the item
+            for (ItemModel item_obj : getItems()) {
+                item_obj.setHeld(worldModel.getPlayers().get(0));
+            }
+            clearInventory();
+        }
+    }
     public void setDetectionRadius(float radius) { aiController.setDetectionRadius(radius); }
 }

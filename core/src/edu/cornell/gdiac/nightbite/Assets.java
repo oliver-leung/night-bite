@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
@@ -27,15 +26,19 @@ import java.util.Map;
 
 public class Assets {
     /** Sound effect volume */
-    public static float EFFECT_VOLUME = 0.1f;
+    public static float VOLUME = 0.1f;
     /** Asset Manager */
     private static AssetManager manager;
     /** Mapping from file names to in-game film strip assets */
     private static Map<String, FilmStrip> filmStrips = new HashMap<>();
     /** Mapping from file names to in-game texture assets */
     private static Map<String, TextureRegion> textureRegions = new HashMap<>();
-    /** In-game music asset */
+    /** In-game music assets */
     private static Map<String, Music> musics = new HashMap<>();
+    /** Currently played music */
+    private static Music activeMusic;
+    /** Whether sound effects/music are muted */
+    private static boolean isMuted = false;
     /** In-game font asset */
     private static BitmapFont font;
     /** Reference to the sound effect controller */
@@ -81,6 +84,22 @@ public class Assets {
     }
 
     /**
+     * Get the FilmStrip dimensions of a TextureRegion (if it were a FilmStrip)
+     *
+     * @param textureRegion Raw texture region
+     * @param width         The width of one frame
+     * @param height        The height of one frame
+     * @return [rows, cols, size]
+     */
+    private static int[] getFilmStripDimensions(TextureRegion textureRegion, int width, int height) {
+        int rows = textureRegion.getRegionHeight() / height;
+        int cols = textureRegion.getRegionWidth() / width;
+        int size = rows * cols;
+
+        return new int[]{rows, cols, size};
+    }
+
+    /**
      * Get the FilmStrip associated with this filename, assuming that each frame is 64 x 64 pixels
      *
      * @param fileName File name of FilmStrip
@@ -106,28 +125,21 @@ public class Assets {
         return new FilmStrip(filmStrips.get(fileName));
     }
 
-    private static int getFrameDuration(String filename) {
-        // Uses a quirk of the ASCII table to turn a numerical char to an int
-        return filename.charAt(filename.length() - 5) - '0';
-    }
-
-    public static Animation<TextureRegion> getAnimation(String filename) {
-        return getAnimation(filename, 64, getFrameDuration(filename));
-    }
-
-    public static Animation<TextureRegion> getAnimation(String filename, int pixels, int frameDuration) {
-        FilmStrip filmStrip = getFilmStrip(filename, pixels);
-        Array<TextureRegion> frames = new Array<>();
-
-        for (int i = 0; i < filmStrip.getSize(); i++) {
-            filmStrip.setFrame(i);
-            frames.add(new TextureRegion(filmStrip));
+    /**
+     * Get the FilmStrip associated with this filename
+     *
+     * @param fileName File name of FilmStrip
+     * @param width    The width of one frame
+     * @param height   The height of one frame
+     * @return Associated FilmStrip
+     */
+    public static FilmStrip getFilmStrip(String fileName, int width, int height) {
+        if (filmStrips.get(fileName) == null) {
+            TextureRegion rawTexture = textureRegions.get(fileName);
+            int[] dims = getFilmStripDimensions(rawTexture, width, height);
+            filmStrips.put(fileName, createFilmStrip(manager, fileName, dims[0], dims[1], dims[2]));
         }
-        return new Animation<>(frameDuration, frames, Animation.PlayMode.LOOP);
-    }
-
-    public static Music getMusic() {
-        return musics.get("audio/Night_Bite_(Theme)_v2.mp3");
+        return new FilmStrip(filmStrips.get(fileName));
     }
 
     public static Music getMusic(String filename) {
@@ -171,6 +183,10 @@ public class Assets {
         return null;
     }
 
+    public static Music getActiveMusic() {
+        return activeMusic;
+    }
+
     /**
      * Returns the file extension in a file name. If it doesn't have one, return an empty string.
      *
@@ -204,6 +220,7 @@ public class Assets {
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = fontPath;
         size2Params.fontParameters.size = fontSize;
+
         manager.load(fontPath, BitmapFont.class, size2Params);
         assets.add(fontPath);
     }
@@ -222,7 +239,7 @@ public class Assets {
                     loadSound(fileName);
                     break;
                 case "ttf":
-                    loadFont(fileName, 12); // TODO: Let's make this a more reasonable size
+                    loadFont(fileName, 36); // TODO: Let's make this a more reasonable size
                     break;
             }
         }
@@ -256,16 +273,61 @@ public class Assets {
                     break;
             }
         }
-        playMusic();
         isLoaded = true;
     }
 
-    // TODO: Potentially refactor this out to another class
-    private void playMusic() {
-        Music music = getMusic();
-        music.setLooping(true);
-        music.play();
-        music.setVolume(0.1f);
+    public static void playMusic(String fileName, boolean loop) {
+        if (activeMusic != null) {
+            stopMusic();
+        }
+
+        activeMusic = getMusic(fileName);
+        activeMusic.setOnCompletionListener(music -> System.out.print(""));
+        activeMusic.setLooping(loop);
+        // activeMusic.setVolume(0);
+        activeMusic.setVolume(VOLUME * 0.7f);
+        activeMusic.play();
+        // activeMusic.setVolume(0);
+        // activeMusic.setVolume(VOLUME * 0.7f);
+    }
+
+    public static void pauseMusic() {
+        if (activeMusic != null) {
+            activeMusic.pause();
+
+        }
+    }
+
+    public static void resumeMusic() {
+        if (activeMusic != null) {
+            activeMusic.play();
+
+        }
+    }
+
+    public static void stopMusic() {
+        if (activeMusic != null) {
+            activeMusic.stop();
+        }
+        activeMusic = null;
+    }
+
+    public static void changeMute() {
+        if (!isMuted) {
+            isMuted = true;
+            VOLUME = 0;
+        } else {
+            isMuted = false;
+            VOLUME = 0.1f;
+        }
+        changeMusicVolume();
+    }
+
+    private static void changeMusicVolume() {
+        if (activeMusic != null) {
+//            System.out.println("vol");
+            activeMusic.setVolume(VOLUME * 0.7f);
+        }
     }
 
     /** Unloads the assets for this game. */
@@ -277,4 +339,23 @@ public class Assets {
         }
         this.isLoaded = false;
     }
+
+    /**
+     * Retrieves a texture's center (x coordinate) as an int
+     * @param texture
+     * @return Center x coordinate
+     */
+    public static int getTextureCenterX (TextureRegion texture) {
+        return texture.getRegionWidth() / 2;
+    }
+
+    /**
+     * Retrieves a texture's center (y coordinate) as an int
+     * @param texture
+     * @return Center y coordinate
+     */
+    public static int getTextureCenterY (TextureRegion texture) {
+        return texture.getRegionHeight() / 2;
+    }
+
 }

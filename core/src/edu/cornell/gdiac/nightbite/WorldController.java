@@ -22,13 +22,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.LightSource;
-import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.SoundController;
+import edu.cornell.gdiac.util.*;
 
 /**
  * Base class for a world-specific controller.
@@ -45,11 +43,6 @@ import edu.cornell.gdiac.util.SoundController;
  * place nicely with the static assets.
  */
 public class WorldController implements Screen, InputProcessor {
-    /** Exit code for quitting the game */
-    public static final int EXIT_QUIT = 0;
-    /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
-
     /** The amount of time for a physics engine step. */
     public static final float WORLD_STEP = 1 / 60.0f;
     /** Number of velocity iterations for the constrain solvers. */
@@ -64,6 +57,8 @@ public class WorldController implements Screen, InputProcessor {
     protected PooledList<Obstacle> addQueue = new PooledList<>();
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    /** Textures for in-game UI */
+    protected TextureRegion timerTexture;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Reference to custom Box2D physics world */
@@ -74,12 +69,16 @@ public class WorldController implements Screen, InputProcessor {
     private boolean debug;
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
+    private String levelItemName;
+    private Vector2 pointWokDir;
 
-    private float screenWidth;
-    private float screenHeight;
+    public float screenWidth;
+    public float screenHeight;
 
-    private static int GAME_DURATION = 150;
-    private float gameTimeElapsed;
+    private static int GAME_DURATION = 120;  // in seconds
+    private long timerStart;  // in nanoseconds
+    private long timerEnd;
+    private long timeElapsed;
 
     /** Create a new game world */
     protected WorldController() {
@@ -87,15 +86,25 @@ public class WorldController implements Screen, InputProcessor {
         worldModel = new WorldModel();
         debug = false;
         active = false;
+        pointWokDir = new Vector2();
         resetTimer();
     }
 
     public void resetTimer() {
-        gameTimeElapsed = System.nanoTime();
+        timerStart = System.nanoTime();
+        timerEnd = System.nanoTime();
+        timeElapsed = timerEnd - timerStart;
+    }
+
+    /** ??? Adds some time to the timeElapsed? This is so freaking jank */
+    public void accumTimer() {
+        timerEnd = System.nanoTime();
+        timeElapsed += timerEnd - timerStart;
+        timerStart = timerEnd;
     }
 
     public void checkTimeOut() {
-        if ((System.nanoTime() - gameTimeElapsed) / 1000000000 > GAME_DURATION) {
+        if (timeElapsed / 1000000000 > GAME_DURATION) {
             worldModel.completeLevel(false);
         }
     }
@@ -145,8 +154,9 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.setPixelBounds();
     }
 
-    public void setLevel(String selectedLevelJSON) {
+    public void setLevel(String selectedLevelJSON, String itemName) {
         this.selectedLevelJSON = selectedLevelJSON;
+        this.levelItemName = itemName;
     }
 
     private FireEnemyModel enemy;
@@ -154,15 +164,9 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        LevelController.getInstance().populate(worldModel, selectedLevelJSON);
-//        enemy = new TestEnemy(2.5f, 2.5f, 0.6f, 1f, worldModel);
-//        enemy.setDrawScale(worldModel.scale);
-//        enemy.setName("wtf");
-//        enemy.setActualScale(worldModel.getActualScale());
-//        enemy.setFixedRotation(true);
-//        worldModel.addEnemy(enemy);
+        timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
+        GAME_DURATION = LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
-        // worldModel.addFirecracker(3, 5); // TODO
     }
 
     /**
@@ -180,36 +184,30 @@ public class WorldController implements Screen, InputProcessor {
 
         // Draw background -> brick decorations -> lantern decorations
         worldModel.drawBackground();
-        worldModel.drawDecorations(true, false);
-        worldModel.drawDecorations(false, true);
-
-        StringBuilder message1 = new StringBuilder("Player 1 score: ");
+        worldModel.drawDecorations(true);
+        worldModel.drawDecorations(false);
 
         // Draw objects
         for (Obstacle obj : worldModel.getObjects()) {
             if (obj.draw) {
                 obj.draw(canvas);
-
-                // Add player scores
-                if (obj instanceof HomeModel && obj.getName().equals("teamA")) {
-                    message1.append(((HomeModel) obj).getScore());
-                }
             }
         }
 
-        // Draw hole edges on top of holes
-        worldModel.drawDecorations(false, false);
-
-        // Draw player scores
-        canvas.drawText(message1.toString(), displayFont, 50.0f, canvas.getHeight() - 6 * 5.0f);
+        // Draw timer
+        // TODO create another font!!! jesus
+        canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-55f);
 
         if (worldModel.isComplete()) {
-            displayFont.setColor(Color.YELLOW);
-            if (worldModel.getLevelExitCode() == worldModel.LEVEL_COMPLETED) {
-                canvas.drawTextCentered(worldModel.winner + "VICTORY!", displayFont, 0.0f);
+            if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
+                listener.exitScreen(this, ExitCodes.LEVEL_PASS);
             } else {
-                canvas.drawTextCentered("Sorry, but you ran out of time. You lose!", displayFont, 0.0f);
+                listener.exitScreen(this, ExitCodes.LEVEL_FAIL);
             }
+        }
+        if (debug) {
+            canvas.drawText(String.format("fps: %f", 1/delta), displayFont, 800f, canvas.getHeight() - 6 * 5f);
         }
         canvas.end();
 
@@ -250,6 +248,7 @@ public class WorldController implements Screen, InputProcessor {
         addQueue.clear();
         addQueue = null;
         canvas = null;
+        resetTimer();
     }
 
     public void reset() {
@@ -295,22 +294,27 @@ public class WorldController implements Screen, InputProcessor {
 
         // Handle resets
         if (input.didReset()) {
-//            reset();
-            listener.exitScreen(this, EXIT_NEXT);
+            listener.exitScreen(this, ExitCodes.SELECT);
+            return false;
+        }
+
+        if (input.didPause()) {
+            listener.exitScreen(this, ExitCodes.PAUSE);
             return false;
         }
 
         if (input.didExit()) {
-            listener.exitScreen(this, EXIT_QUIT);
+            listener.exitScreen(this, ExitCodes.QUIT);
 			return false;
 		} else if (worldModel.isDone()) {
-			listener.exitScreen(this, EXIT_NEXT);
+			listener.exitScreen(this, ExitCodes.SELECT);
 			return false;
 		}
 		return true;
     }
 
     public void update(float dt) {
+        accumTimer();
         checkTimeOut();
         // TODO: Refactor all player movement
 
@@ -340,24 +344,29 @@ public class WorldController implements Screen, InputProcessor {
 
             // if player is sliding, disregard user input
             if (p.isSliding()) {
+                p.updateSlidingTexture();
                 slideDirection = p.getSlideDirection();
                 p.setIX(slideDirection.x);
                 p.setIY(slideDirection.y);
                 playerDidBoost = false;
                 playerDidThrow = false;
+                SoundController.getInstance().play("audio/sliding.wav", "audio/sliding.wav", false, Assets.VOLUME);
             } else {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
                     p.setWalk();
+                    if (p.hasItem()) {
+                        p.setHoldTexture();
+                    }
                     p.updateDirectionState(playerVertical, playerHorizontal);
                 } else {
                     p.setStatic();
                 }
 
                 // handle player facing left-right
-                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
-                    p.flipTexture();
-                }
+//                if (playerHorizontal != 0 && playerHorizontal != p.getPrevHoriDir()) {
+//                    p.flipTexture();
+//                }
 
                 // Set player movement impulse
                 p.setIX(playerHorizontal);
@@ -367,6 +376,11 @@ public class WorldController implements Screen, InputProcessor {
                     p.setBoostImpulse(playerHorizontal, playerVertical);
                 }
             }
+
+            // update horizontal direction
+//            if (playerHorizontal != 0) {
+//                p.setPrevHoriDir(playerHorizontal);
+//            }
 
             // Move player
             p.applyImpulse();
@@ -384,10 +398,10 @@ public class WorldController implements Screen, InputProcessor {
             /* IF PLAYER GRABS ITEM */
             for (int j = 0; j < worldModel.getNumItems(); j++) {
                 ItemModel item = worldModel.getItem(j);
-                if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+                if (!item.isHeld() && worldModel.getOverlapItem(j) && !item.isDead()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
-                    SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.EFFECT_VOLUME);
+                    SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.VOLUME);
                 }
                 j++;
             }
@@ -401,24 +415,23 @@ public class WorldController implements Screen, InputProcessor {
                 }
             }
 
-            /* IF PLAYER THROWS ITEM */
-            if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
-                for (ItemModel heldItem : p.getItems()) {
-                    heldItem.throwItem(p.getPosition(), p.getImpulse());
-                }
-                p.clearInventory();
-                p.startgrabCooldown();
-                p.resetTexture();
-            }
-
-            // update horizontal direction
-            if (playerHorizontal != 0) {
-                p.setPrevHoriDir(playerHorizontal);
-            }
             p.setSlideDirection(playerHorizontal, playerVertical);
 
+            if (!KeyboardMap.mouse && manager.isWhack() && !p.hasItem()) {
+                // This is also a side effect of the prevHoriDir and how it can't be set to 0
+                float x = p.getX() + p.getPrevHoriDir();
+                if (p.getVX() > -1 && p.getVX() < 1) {
+                    x = p.getX();
+                }
+                p.swingWok(new Vector2(x, p.getY() + p.getPrevVertDir()),
+                        worldModel.getFirecrackers(), worldModel.getEnemies());
+            }
+
             // player updates (for respawn and dash cool down)
-            p.update();
+            pointWokDir.set(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            p.update(pointWokDir);
+
+            p.playWalkSound();
 
             // Must always update sound controller!
             SoundController.getInstance().update();
@@ -429,16 +442,32 @@ public class WorldController implements Screen, InputProcessor {
         for (HumanoidModel e : worldModel.getEnemies()) {
             p = worldModel.getPlayers().get(0);
             if (p.isAlive()) {
-                if (e instanceof FireEnemyModel) {
-                    dir = ((FireEnemyModel)e).update(p);
-                } else if (e instanceof OilEnemyModel) {
-                    dir = ((OilEnemyModel)e).update(p);
+                if (e instanceof EnemyModel) {
+                    dir = ((EnemyModel) e).update(p);
+                } else if (e instanceof CrowdUnitModel) {
+                    dir = ((CrowdUnitModel) e).getDir();
                 }
 
-                int enemyHorizontal = Integer.signum((int)dir.x);
+                int enemyHorizontal = (int) Math.signum(dir.x);
                 // handle enemy facing left-right
                 if (enemyHorizontal != 0 && enemyHorizontal != e.getPrevHoriDir()) {
                     e.flipTexture();
+                }
+
+                if (e.getLinearVelocity().epsilonEquals(Vector2.Zero, 0.2f)) {
+                    e.setStaticTexture();
+                } else {
+                    e.setWalkTexture();
+                }
+
+
+                /* IF ITEM IN ENEMY HANDS */
+                if (e.hasItem()) {
+                    float offset = 1;
+                    for (ItemModel heldItem : e.getItems()) {
+                        heldItem.setPosition(e.getX(), e.getY() + offset);
+                        offset += 0.6;
+                    }
                 }
 
                 // update horizontal direction
@@ -454,6 +483,10 @@ public class WorldController implements Screen, InputProcessor {
 
                 e.setActive(e.isAlive());
             }
+        }
+
+        for (CrowdModel crowd : worldModel.getCrowds()) {
+            crowd.update();
         }
     }
 
@@ -479,6 +512,9 @@ public class WorldController implements Screen, InputProcessor {
             rayhandler.update();
         }
 
+        Assets.changeMute();
+        Assets.changeMute();
+
         // Turn the physics engine crank.
         worldModel.worldStep(WORLD_STEP, WORLD_VELOC, WORLD_POSIT);
 
@@ -487,6 +523,22 @@ public class WorldController implements Screen, InputProcessor {
         // This is O(n) without copying.
         // Also update all objects lol
         worldModel.updateAndCullObjects(dt);
+    }
+
+    /**
+     * Converts the number of seconds remaining to the following String format:
+     * M:SS
+     */
+    public String secondsToStringTime(int seconds) {
+        StringBuilder time = new StringBuilder();
+
+        int min = seconds / 60;
+        int sec = seconds % 60;
+
+        time.append(min).append(":");
+        if (sec < 10) time.append(0);
+        time.append(sec);
+        return time.toString();
     }
 
 
@@ -581,9 +633,12 @@ public class WorldController implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!KeyboardMap.mouse) return true;
         float clickX = screenX * worldModel.getWidth() / screenWidth;
         float clickY = worldModel.getHeight() - (screenY * worldModel.getHeight() / screenHeight);
-        worldModel.getPlayers().get(0).swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers(), worldModel.getEnemies());
+        // Swing wok only if player doesn't have an item
+        PlayerModel player = worldModel.getPlayers().get(0);
+        if (!player.hasItem()) player.swingWok(new Vector2(clickX, clickY), worldModel.getFirecrackers(), worldModel.getEnemies());
         return true;
     }
 

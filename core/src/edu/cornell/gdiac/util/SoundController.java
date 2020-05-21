@@ -23,6 +23,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A singleton class for controlling sound effects in LibGDX
@@ -107,7 +108,7 @@ public class SoundController {
 		Sound sound = manager.get(filename, Sound.class);
 		soundbank.put(filename, sound);
 
-		System.out.println(soundbank.get(filename));
+		// System.out.println(soundbank.get(filename));
 	}
 
 	/**
@@ -337,6 +338,19 @@ public class SoundController {
 		snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
 		snd.sound.setVolume(snd.id, 0.0f); 
 		actives.remove(key);
+	}
+
+	public void stopAll() {
+		for (String key : actives.keySet()) {
+			ActiveSound snd = actives.get(key);
+
+			// This is a workaround for the OS X sound bug
+			//snd.sound.stop(snd.id);
+			snd.sound.setLooping(snd.id,false); // Will eventually garbage collect
+			snd.sound.setVolume(snd.id, 0.0f);
+		}
+
+		actives.clear();
 	}
 	
 	/**
