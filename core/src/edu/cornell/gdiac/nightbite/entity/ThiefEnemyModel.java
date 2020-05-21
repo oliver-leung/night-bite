@@ -8,7 +8,7 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class ThiefEnemyModel extends EnemyModel {
     /** Cooldown after attempting an attack */
-    private static final int ATTACK_COOLDOWN = 70;
+    private static final int ATTACK_COOLDOWN = 20;
     private int attackCooldown = 0;
 
     /** Cooldown after an exchange happens between player & thief

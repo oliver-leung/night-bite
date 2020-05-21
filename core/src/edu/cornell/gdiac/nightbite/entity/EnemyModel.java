@@ -163,5 +163,13 @@ public abstract class EnemyModel extends HumanoidModel {
         state = State.IDLE;
     }
 
+    public void playerTakesItem() {
+        if (hasItem()) { // Player takes the item
+            for (ItemModel item_obj : getItems()) {
+                item_obj.setHeld(worldModel.getPlayers().get(0));
+            }
+            clearInventory();
+        }
+    }
     public void setDetectionRadius(float radius) { aiController.setDetectionRadius(radius); }
 }
