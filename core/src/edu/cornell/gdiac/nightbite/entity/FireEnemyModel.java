@@ -15,7 +15,7 @@ public class FireEnemyModel extends EnemyModel {
     private static final float THROW_DIST = 5;
     private static final float STOP_DIST = 2.5f;
     private static final float THROW_FORCE = 2f;
-    private static final float THROW_TIME = 0.9f; // fudged in seconds
+    private static final float THROW_TIME = 0.7f; // fudged in seconds
     private static final float MIN_DIST_DEV = 0.4f;
     private static final float MAX_DIST_DEV = 1.4f;
     private static final float MAX_DEVIATION = 20f;
