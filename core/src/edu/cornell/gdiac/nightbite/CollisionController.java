@@ -14,6 +14,7 @@ public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
     public static final int ITEMS_TO_WIN = 3;
+    public static final String STEAL_SOUND = "audio/steal.wav";
     private final String FX_FALL_FILE = "audio/whistle.wav";
 
     private WorldModel worldModel;
@@ -141,6 +142,7 @@ public class CollisionController implements ContactListener {
                     item_obj.setHeld(thief);
                 }
                 player.clearInventory();
+                SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             } else if (thief.hasItem()) {
                 // Player takes the item
                 for (ItemModel item_obj : thief.getItems()) {
@@ -149,6 +151,7 @@ public class CollisionController implements ContactListener {
                 thief.clearInventory();
 
                 thief.resetThief(); // Reset attack status
+                SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             }
             thief.resetContactcooldown();
 
