@@ -23,6 +23,7 @@ public class LevelController {
     private String itemFile;
     private String homeStallFile;
     private String itemStallFile;
+    private String crateFile;
 
     public static LevelController getInstance() {
         if (instance == null) {
@@ -50,31 +51,37 @@ public class LevelController {
                 itemFile = "item/food2_64.png";
                 homeStallFile = "environment/StallIHome_bokchoi_fs.png";
                 itemStallFile = "environment/StallItem1_64_fs.png";
+                crateFile = "environment/Crate2_64.png";
                 break;
             case "carrot":
                 itemFile = "item/food3_64.png";
                 homeStallFile = "environment/StallIHome_carrot_fs.png";
                 itemStallFile = "environment/StallItem2_64_fs.png";
+                crateFile = "environment/Crate3_64.png";
                 break;
             case "egg":
                 itemFile = "item/food1_64.png";
                 homeStallFile = "environment/StallIHome_egg_fs.png";
                 itemStallFile = "environment/StallItem3_64_fs.png";
+                crateFile = "environment/Crate1_64.png";
                 break;
             case "fish":
                 itemFile = "item/food6_64.png";
                 homeStallFile = "environment/StallIHome_fish_fs.png";
                 itemStallFile = "environment/StallItem6_64_fs.png";
+                crateFile = "environment/Crate6_64.png";
                 break;
             case "greenonion":
                 itemFile = "item/food4_64.png";
                 homeStallFile = "environment/StallIHome_greenonion_fs.png";
                 itemStallFile = "environment/StallItem4_64_fs.png";
+                crateFile = "environment/Crate4_64.png";
                 break;
             case "milk":
                 itemFile = "item/food5_64.png";
                 homeStallFile = "environment/StallIHome_milk_fs.png";
                 itemStallFile = "environment/StallItem5_64_fs.png";
+                crateFile = "environment/Crate5_64.png";
                 break;
             default:
                 break;
@@ -131,7 +138,7 @@ public class LevelController {
 
     private void createDecoration(JsonValue asset, int x, int y) {
         String texture = asset.getString("texture");
-        Sprite sprite = new Sprite(Assets.getTextureRegion(asset.getString("texture")));
+        Sprite sprite = new Sprite(Assets.getTextureRegion(texture));
 
         int rotate = asset.getInt("rotate") % 4;
         sprite.rotate((float) rotate * -90f);
@@ -300,6 +307,8 @@ public class LevelController {
         wall.setName(wallJson.getString("name"));
         if (texture.contains("StallItem1_64")) { // item stall
             wall.setTexture(Assets.getTextureRegion(itemStallFile));
+        } else if (texture.contains("Crate")) {
+            wall.setTexture(Assets.getTextureRegion(crateFile));
         } else {
             wall.setTexture(Assets.getTextureRegion(texture));
         }
