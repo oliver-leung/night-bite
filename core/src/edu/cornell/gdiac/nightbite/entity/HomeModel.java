@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.WorldModel;
-import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.SoundController;
 
@@ -16,7 +15,7 @@ public class HomeModel extends ImmovableModel {
     private int score;
 
     private FilmStrip flagFilmstrip = Assets.getFilmStrip("environment/flag_filmstrip_64.png", 44, 64);
-    private int flagTicks = 0;
+    private float flagTicks = 0;
 
     /**
      * @param x          X position of the home
@@ -70,13 +69,17 @@ public class HomeModel extends ImmovableModel {
     }
 
     @Override
+    public void update(float delta) {
+        flagTicks += delta;
+        flagFilmstrip.setFrame((int) ((flagTicks * 60 / 6) % flagFilmstrip.getSize()));
+    }
+
+    @Override
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
         canvas.draw(
                 flagFilmstrip,
                 (int) (getPosition().x + 1) * worldModel.getScale().x,
                 (int) getPosition().y * worldModel.getScale().y);
-        flagTicks++;
-        flagFilmstrip.setFrame((flagTicks / 6) % flagFilmstrip.getSize());
     }
 }
