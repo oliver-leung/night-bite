@@ -394,7 +394,7 @@ public class WorldController implements Screen, InputProcessor {
             /* IF PLAYER GRABS ITEM */
             for (int j = 0; j < worldModel.getNumItems(); j++) {
                 ItemModel item = worldModel.getItem(j);
-                if (!item.isHeld() && worldModel.getOverlapItem(j) && playerDidThrow && p.grabCooldownOver()) {
+                if (!item.isHeld() && worldModel.getOverlapItem(j) && !item.isDead()) {
                     item.setHeld(p);
                     p.startgrabCooldown();
                     SoundController.getInstance().play(FX_PICKUP_FILE, FX_PICKUP_FILE, false, Assets.VOLUME);
@@ -412,14 +412,14 @@ public class WorldController implements Screen, InputProcessor {
             }
 
             /* IF PLAYER THROWS ITEM */
-            if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
-                for (ItemModel heldItem : p.getItems()) {
-                    heldItem.throwItem(p.getPosition(), p.getImpulse());
-                }
-                p.clearInventory();
-                p.startgrabCooldown();
-                p.resetTexture();
-            }
+//            if (playerDidThrow && (playerHorizontal != 0 || playerVertical != 0) && p.hasItem() && p.grabCooldownOver()) {
+//                for (ItemModel heldItem : p.getItems()) {
+//                    heldItem.throwItem(p.getPosition(), p.getImpulse());
+//                }
+//                p.clearInventory();
+//                p.startgrabCooldown();
+//                p.resetTexture();
+//            }
 
             p.setSlideDirection(playerHorizontal, playerVertical);
 

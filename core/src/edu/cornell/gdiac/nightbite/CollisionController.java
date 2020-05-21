@@ -171,7 +171,6 @@ public class CollisionController implements ContactListener {
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
 
         } else if (object instanceof ItemModel) {
-
             // Player-Item
             if (! ((ItemModel) object).isDead()) {
                 int id = ((ItemModel) object).getId();
@@ -191,6 +190,7 @@ public class CollisionController implements ContactListener {
                 }
                 player.clearInventory();
                 player.resetTexture();
+                player.startgrabCooldown();
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -225,20 +225,6 @@ public class CollisionController implements ContactListener {
                 item.startRespawn();
                 // SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
-
-        } else if (object instanceof HomeModel && item.lastTouch instanceof PlayerModel) {
-                PlayerModel lastTouchedPlayer = (PlayerModel) item.lastTouch;
-                PlayerModel p = (PlayerModel) item.holdingPlayer;
-
-                if (p == null && lastTouchedPlayer.getTeam().equals(((HomeModel) object).getTeam())) {
-                    item.startRespawn();
-                    // add score
-                    HomeModel homeObject = (HomeModel) object;
-                    homeObject.incrementScore(1);
-
-                    // check win condition
-                    checkWinCondition(homeObject);
-                }
         }
     }
 

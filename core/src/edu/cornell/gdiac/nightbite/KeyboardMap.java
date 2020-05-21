@@ -40,7 +40,7 @@ public class KeyboardMap {
             Keys.A,
             Keys.D,
             Keys.UNKNOWN,
-            Keys.SPACE,
+            Keys.UNKNOWN,
             Keys.BACKSPACE,
             Keys.R,
             Keys.ESCAPE,
