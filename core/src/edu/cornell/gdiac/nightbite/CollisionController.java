@@ -46,9 +46,9 @@ public class CollisionController implements ContactListener {
 
         // Enemy-Object Contact
         if (a instanceof EnemyModel) { // || a instanceof CrowdUnitModel
-            handleEnemyToObjectContact((HumanoidModel) a, b);
+            handleEnemyToObjectContact((EnemyModel) a, b);
         } else if (b instanceof EnemyModel) { // || b instanceof CrowdUnitModel
-            handleEnemyToObjectContact((HumanoidModel) b, a);
+            handleEnemyToObjectContact((EnemyModel) b, a);
         }
 
         // Item-Object Contact
@@ -144,12 +144,7 @@ public class CollisionController implements ContactListener {
                 player.clearInventory();
                 SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             } else if (thief.hasItem()) {
-                // Player takes the item
-                for (ItemModel item_obj : thief.getItems()) {
-                    item_obj.setHeld(player);
-                }
-                thief.clearInventory();
-
+                thief.playerTakesItem(); // Player takes the item
                 thief.resetThief(); // Reset attack status
                 SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             }
@@ -207,16 +202,11 @@ public class CollisionController implements ContactListener {
         }
     }
 
-    public void handleEnemyToObjectContact(HumanoidModel enemy, Object object) {
+    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
-            if (enemy.hasItem()) {
-                for (ItemModel item_obj : enemy.getItems()) {
-                    item_obj.startRespawn();
-                }
-                enemy.clearInventory();
-            }
+            enemy.playerTakesItem();
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
         }
     }

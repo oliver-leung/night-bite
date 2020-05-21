@@ -314,6 +314,7 @@ public class PlayerModel extends HumanoidModel {
                     enemy.getBody().applyLinearImpulse(reflectDirection.scl(125f), getPosition(), true);
                     if (enemy instanceof EnemyModel) {
                         ((EnemyModel) enemy).forceReplan();
+                        ((EnemyModel) enemy).playerTakesItem();
                     }
                 }
                 SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
