@@ -81,18 +81,18 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int levelChoiceindex = 0;
 
     private String[] levelJSONList = new String[]{
-        "jsons/01_showcase_tutorial_basic_v2.json",
-        "jsons/02_showcase_tutorial_firecracker_v2.json",
-        "jsons/03_showcase_tutorial_oil_v2.json",
-        "jsons/04_showcase_spiral_v2.json",
-        "jsons/05_showcase_semimoat_v2.json",
-        "jsons/06_showcase_doublehole_v2.json",
-        "jsons/07_showcase_holegrid_v2.json",
-        "jsons/08_showcase_longmoats_v2.json",
-        "jsons/09_showcase_zigzag_v2.json",
-        "jsons/10_showcase_diagonalhole_v2.json",
-        "jsons/11_showcase_medium_v2.json",
-        "jsons/12_showcase_messy_v2.json",
+        "jsons/01_showcase_tutorial_basic_v3.json",
+        "jsons/02_showcase_tutorial_firecracker_v3.json",
+        "jsons/03_showcase_tutorial_oil_v3.json",
+        "jsons/04_showcase_spiral_v3.json",
+        "jsons/05_showcase_semimoat_v3.json",
+        "jsons/06_showcase_doublehole_v3.json",
+        "jsons/07_showcase_holegrid_v3.json",
+        "jsons/08_showcase_longmoats_v3.json",
+        "jsons/09_showcase_zigzag_v3.json",
+        "jsons/10_showcase_diagonalhole_v3.json",
+        "jsons/11_showcase_medium_v3.json",
+        "jsons/12_showcase_messy_v3.json",
     };
     private int[] xposList;
 
