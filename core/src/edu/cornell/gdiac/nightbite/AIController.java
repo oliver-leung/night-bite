@@ -255,12 +255,19 @@ public class AIController {
         return val >= min && val < max;
     }
 
-
     public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass) {
+        return vectorToNode(feet, aiLattice, aiClass, false);
+    }
+
+    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass, boolean replan) {
         if (targetPath.isEmpty()) {
-            forceReplan();
-            updateAI(aiLattice, feet, aiClass);
-            if (targetPath.isEmpty()) {
+            if (replan) {
+                forceReplan();
+                updateAI(aiLattice, feet, aiClass);
+                if (targetPath.isEmpty()) {
+                    return Vector2.Zero;
+                }
+            } else {
                 return Vector2.Zero;
             }
         }

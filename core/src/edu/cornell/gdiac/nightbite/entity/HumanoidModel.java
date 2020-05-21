@@ -20,7 +20,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
     /**
      * Movable object parameters
      */
-    private final float DENSITY = 10f;
+    private final float DENSITY = 7f;
     private final float FRICTION = 0.1f;
     private final float RESTITUTION = 0.4f;
     private static float SEAM_EPSILON = 0.01f;

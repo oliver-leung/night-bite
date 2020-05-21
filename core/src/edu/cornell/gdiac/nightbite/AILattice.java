@@ -10,7 +10,7 @@ import edu.cornell.gdiac.util.PooledList;
 
 
 public class AILattice {
-    private static final int NUM_CLASSES = 3;
+    private static final int NUM_CLASSES = 5;
 
     private boolean[][] staticMap;
     private boolean[][][] dynamicMap;

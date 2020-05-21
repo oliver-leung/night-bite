@@ -42,6 +42,7 @@ public class FireEnemyModel extends EnemyModel {
         setPosition(x, y + 0.1f); // this is moved up so they dont spawn and die
         setHomePosition(new Vector2(x + 0.5f, y + 0.6f));
 
+        aiClass = 1;
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {
