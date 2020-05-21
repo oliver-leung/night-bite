@@ -24,6 +24,7 @@ public class PlayerModel extends HumanoidModel {
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
     private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
+    private static final float DENSITY = 10f;
 
     public enum MoveState {
         WALK,
@@ -87,6 +88,7 @@ public class PlayerModel extends HumanoidModel {
                 Assets.getFilmStrip("character/P1_Falling_5.png")
         );
         setBullet(true);
+        setDensity(DENSITY);
 
         impulse = new Vector2();
         boost = new Vector2();

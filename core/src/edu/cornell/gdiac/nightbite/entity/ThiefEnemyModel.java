@@ -31,6 +31,7 @@ public class ThiefEnemyModel extends EnemyModel {
         );
         setHoldTexture(Assets.getFilmStrip("character/Enemies/E3_64_holdfilmstrip.png"));
         setStopDist(0);
+        aiClass = 4;
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {

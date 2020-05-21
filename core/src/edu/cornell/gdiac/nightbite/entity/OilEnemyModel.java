@@ -20,6 +20,7 @@ public class OilEnemyModel extends EnemyModel {
                 Assets.getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png"),
                 world
         );
+        aiClass = 3;
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {

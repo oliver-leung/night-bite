@@ -26,6 +26,11 @@ public abstract class EnemyModel extends HumanoidModel {
         aiClass = 1;
     }
 
+    @Override
+    public int getAiClass() {
+        return aiClass;
+    }
+
     public State state = State.IDLE;
 
     private float previousDistanceFromHome;
@@ -35,7 +40,7 @@ public abstract class EnemyModel extends HumanoidModel {
     public WorldModel worldModel;
 
     protected static final int WALK_COOLDOWN = 10;
-    private static final float WALK_THRUST = 10f;
+    private static final float WALK_THRUST = 7f;
     protected int walkCooldown;
 
     private static float STOP_DIST = 2;
@@ -132,8 +137,9 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(rx, by);
         aiController.addTarget(lx, by);
 
-        aiController.updateAI(aiLattice, getFeetPosition(), aiClass);
-        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, aiClass).cpy().nor();
+        aiController.updateAI(aiLattice, getFeetPosition(), getAiClass());
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, getAiClass(),
+                getPosition().sub(targetPos).len() < STOP_DIST).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
