@@ -50,19 +50,14 @@ public class PauseController implements Screen, InputProcessor {
     private int[] posWASD = new int[]{0, 0};
     private int[] posWhackSprite = new int[]{0, 0};
     private int[] posMouse = new int[]{0, 0};
-    private int[] posPickupSprite = new int[]{0, 0};
-    private int[] posSpace = new int[]{0, 0};
     private int[] posEsc = new int[]{0, 0};
     private int[] posM = new int[]{0, 0};
-    private int[] posR = new int[]{0, 0};
 
     private int[] posControlsText = new int[]{0, 0};
     private int[] posMoveText = new int[]{0, 0};
     private int[] posEscText = new int[]{0, 0};
     private int[] posWhackText = new int[]{0, 0};
     private int[] posMuteText = new int[]{0, 0};
-    private int[] posPickupText = new int[]{0, 0};
-    private int[] posRestartText = new int[]{0, 0};
 
     /** Display font */
     private BitmapFont displayFont;
@@ -77,11 +72,8 @@ public class PauseController implements Screen, InputProcessor {
     private FilmStrip wasdTexture;
     private FilmStrip whackSpriteTexture;
     private FilmStrip mouseTexture;
-    private FilmStrip spaceTexture;
-    private FilmStrip pickupSpriteTexture;
     private FilmStrip escTexture;
     private FilmStrip mTexture;
-    private FilmStrip rTexture;
 
     private boolean escapeButton = false;
 
@@ -96,11 +88,8 @@ public class PauseController implements Screen, InputProcessor {
     private int NUM_FRAMES_WASD;
     private int NUM_FRAMES_WHACKSPRITE;
     private int NUM_FRAMES_MOUSE;
-    private int NUM_FRAMES_PICKUPSPRITE;
-    private int NUM_FRAMES_SPACE;
     private int NUM_FRAMES_ESC;
     private int NUM_FRAMES_M;
-    private int NUM_FRAMES_R;
 
 
     public PauseController(GameCanvas canvas) {
@@ -126,16 +115,10 @@ public class PauseController implements Screen, InputProcessor {
         NUM_FRAMES_MOUSE = mouseTexture.getSize();
         whackSpriteTexture = Assets.getFilmStrip("pause/Whack_FS_5.png", 152, 96);
         NUM_FRAMES_WHACKSPRITE = whackSpriteTexture.getSize();
-        pickupSpriteTexture = Assets.getFilmStrip("pause/PickUpThrow_FS_5.png", 128, 128);
-        NUM_FRAMES_PICKUPSPRITE = pickupSpriteTexture.getSize();
-        spaceTexture = Assets.getFilmStrip("pause/Space_FS_5.png", 246, 55);
-        NUM_FRAMES_SPACE = spaceTexture.getSize();
         escTexture = Assets.getFilmStrip("pause/esc_FS.png", 48, 53);
         NUM_FRAMES_ESC = escTexture.getSize();
         mTexture = Assets.getFilmStrip("pause/M_FS.png", 48, 53);
         NUM_FRAMES_M = mTexture.getSize();
-        rTexture = Assets.getFilmStrip("pause/R_FS.png", 48, 53);
-        NUM_FRAMES_R = rTexture.getSize();
     }
 
     /** Sets this controller's screen listener */
@@ -156,11 +139,8 @@ public class PauseController implements Screen, InputProcessor {
         wasdSpriteTexture.setFrame(((int) frame) % NUM_FRAMES_WASDSPRITE);
         mouseTexture.setFrame(((int) frame) % NUM_FRAMES_MOUSE);
         whackSpriteTexture.setFrame(((int) frame) % NUM_FRAMES_WHACKSPRITE);
-        pickupSpriteTexture.setFrame(((int) frame) % NUM_FRAMES_PICKUPSPRITE);
-        spaceTexture.setFrame(((int) frame) % NUM_FRAMES_SPACE);
         escTexture.setFrame(((int) frame) % NUM_FRAMES_ESC);
         mTexture.setFrame(((int) frame) % NUM_FRAMES_M);
-        rTexture.setFrame(((int) frame) % NUM_FRAMES_R);
     }
 
     /** Draw UI assets */
@@ -171,7 +151,7 @@ public class PauseController implements Screen, InputProcessor {
 
         // Draw buttons
         Color tintMenu = (pressStateMenu == 1 ? Color.GRAY: Color.WHITE);
-        Color tintResume = (pressStateResume == 1 && escapeButton == false ? Color.GRAY: Color.WHITE);
+        Color tintResume = (pressStateResume == 1 && !escapeButton ? Color.GRAY: Color.WHITE);
         canvas.draw(pauseTexture, Color.WHITE,Assets.getTextureCenterX(pauseTexture), Assets.getTextureCenterY(pauseTexture),
                     posTitle[0], posTitle[1], 0, scale, scale);
         canvas.draw(menuTexture, tintMenu, 0, 0, posMenu[0], posMenu[1], 0, scale, scale);
@@ -187,26 +167,17 @@ public class PauseController implements Screen, InputProcessor {
                     posMouse[0], posMouse[1], 0, scale, scale);
         canvas.draw(whackSpriteTexture, Color.WHITE, Assets.getTextureCenterX(whackSpriteTexture), Assets.getTextureCenterY(whackSpriteTexture),
                     posWhackSprite[0], posWhackSprite[1], 0, scale, scale);
-        canvas.draw(pickupSpriteTexture, Color.WHITE, Assets.getTextureCenterX(pickupSpriteTexture), Assets.getTextureCenterY(pickupSpriteTexture),
-                    posPickupSprite[0], posPickupSprite[1], 0, scale, scale);
-        canvas.draw(spaceTexture, Color.WHITE, Assets.getTextureCenterX(spaceTexture), Assets.getTextureCenterY(spaceTexture),
-                    posSpace[0], posSpace[1], 0, scale, scale);
         canvas.draw(escTexture, Color.WHITE, Assets.getTextureCenterX(escTexture), escTexture.getRegionHeight()-15,  // hardcode origin to almost top left
                     posEsc[0], posEsc[1], 0, scale, scale);
         canvas.draw(mTexture, Color.WHITE, Assets.getTextureCenterX(mTexture), mTexture.getRegionHeight()-15,
                     posM[0], posM[1], 0, scale, scale);
-        canvas.draw(rTexture, Color.WHITE, Assets.getTextureCenterX(rTexture), rTexture.getRegionHeight()-15,
-                    posR[0], posR[1], 0, scale, scale);
 
         // Draw text
         canvas.drawTextCentered("Controls", displayFont, posControlsText[1]);
         canvas.drawText("Move", displayFont, posMoveText[0], posMoveText[1]);
         canvas.drawText("Pause", displayFont, posEscText[0], posEscText[1]);
         canvas.drawText("Whack", displayFont, posWhackText[0], posWhackText[1]);
-        canvas.drawText("Pick Up /", displayFont, posPickupText[0], posPickupText[1]);
-        canvas.drawText("Throw", displayFont, posPickupText[0], posPickupText[1]-40);  // draw below pick up
         canvas.drawText("Mute", displayFont, posMuteText[0], posMuteText[1]);
-        canvas.drawText("Restart Level", displayFont, posRestartText[0], posRestartText[1]);
 
         canvas.end();
     }
@@ -278,15 +249,14 @@ public class PauseController implements Screen, InputProcessor {
         scale = Math.max(sx, sy);
         heightY = height;
 
-        int row1 = height * 10/16;
-        int row2 = height * 8/16;
-        int row3 = height * 6/16;
+        int row1 = height * 9/16;
+        int row2 = height * 6/16;
 
-        int col1 = width * 4/32;
-        int col2 = width * 9/32;
+        int col1 = width * 6/32;
+        int col2 = width * 10/32;
         int col3 = width * 13/32;
         int col4 = width * 21/32;
-        int col5 = width * 23/32;
+        int col5 = width * 45/64;
 
         // Top left corner
         posMenu[0] = width / 16;
@@ -299,7 +269,7 @@ public class PauseController implements Screen, InputProcessor {
         // Top center
         posTitle[0] = width / 2;
         posTitle[1] = height * 7/8;
-        posControlsText[1] = height * 7/32; // offset from center y
+        posControlsText[1] = height * 6/32; // offset from center y
 
         // Row 1, left to right
         posWASDSprite[0] = col1;
@@ -325,17 +295,6 @@ public class PauseController implements Screen, InputProcessor {
         posMuteText[0] = col5;
         posMuteText[1] = row2;
 
-        // Row 3, left to right
-        posPickupSprite[0] = col1;
-        posPickupSprite[1] = row3;
-        posSpace[0] = col2;
-        posSpace[1] = row3;
-        posPickupText[0] = col3;
-        posPickupText[1] = row3;
-        posR[0] = col4;
-        posR[1] = row3;
-        posRestartText[0] = col5;
-        posRestartText[1] = row3;
     }
 
     /** Default stubs */
