@@ -198,9 +198,13 @@ public class WorldController implements Screen, InputProcessor {
             }
         }
 
-        // Draw timer
-        // TODO create another font!!! jesus
-        canvas.draw(timerTexture, Color.WHITE, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        // Draw timer red if one fourth time left
+        if (timeElapsed / 1000000000 > GAME_DURATION * 3/4) {
+            canvas.draw(timerTexture, Color.RED, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        } else {
+            canvas.draw(timerTexture, Color.WHITE, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        }
+
         canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), timerFont, 76f, canvas.getHeight()-49f);
 
         if (worldModel.isComplete()) {
@@ -547,6 +551,7 @@ public class WorldController implements Screen, InputProcessor {
 
         time.append(min).append(":");
         if (sec < 10) time.append(0);
+        if (sec < 0 && min == 0) sec = 0;
         time.append(sec);
         return time.toString();
     }
