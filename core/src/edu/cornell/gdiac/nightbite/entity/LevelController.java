@@ -318,7 +318,7 @@ public class LevelController {
         int width = wall.getTexture().getRegionWidth();
         int height = wall.getTexture().getRegionHeight();
         if (width > 64 || height > 64) {
-            int widthFactor = width / 64;
+            int widthFactor = (width + 1) / 64;
             int heightFactor = height / 64;
             Vector2 pos = wall.getPosition();
             pos.x +=  0.5f * (widthFactor-1);
