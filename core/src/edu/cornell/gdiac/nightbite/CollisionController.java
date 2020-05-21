@@ -202,7 +202,7 @@ public class CollisionController implements ContactListener {
             // Player slides only when oil is completely spilled
             if (((OilModel) object).isSpilled()) {
                 player.setSlide();
-                ((OilModel) object).markRemoved(true);
+                worldModel.removeOil((OilModel) object);
             }
         }
     }

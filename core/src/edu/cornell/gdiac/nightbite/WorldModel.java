@@ -75,6 +75,7 @@ public class WorldModel {
     private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
     private HashMap<Integer, OilModel> oils;
+    private ArrayList<OilModel> removedOils = new ArrayList<>();
     private int oilIndCounter = 0;
     private static final int MAX_OIL = 5;
     /** Objects that don't move during updates */
@@ -503,6 +504,27 @@ public class WorldModel {
         return oils.size() < MAX_OIL;
     }
 
+    public void removeOil(OilModel oil) { // Reorder existing oils to ensure FIFO removal
+        int removedInd = -1;
+        for (Map.Entry<Integer, OilModel> entry : oils.entrySet()) {
+            if (Objects.equals(oil, entry.getValue())) {
+                removedInd = entry.getKey();
+            }
+        }
+
+        for (int i = removedInd < oilIndCounter ? removedInd+MAX_OIL : removedInd; i > oilIndCounter; i--) {
+            int ind1 = i % MAX_OIL;
+            int ind2 = (i-1) % MAX_OIL;
+            if (oils.get(ind2) != null) {
+                oils.put(ind1, oils.get(ind2));
+            } else {
+                oils.remove(ind1);
+            }
+        }
+        removedOils.add(oil);
+        oils.remove(oilIndCounter % MAX_OIL);
+    }
+
     public PooledList<FirecrackerModel> getFirecrackers() {
         return firecrackers;
     }
@@ -601,9 +623,13 @@ public class WorldModel {
             }
         }
 
-        for (OilModel oil : oils.values()) {
+        for (OilModel oil : oils.values()) { // Update spilled oils
             oil.update(dt);
         }
+        for (OilModel oil : removedOils) { // Deactivate removed oils
+            oil.deactivatePhysics(world);
+        }
+        removedOils.clear();
 
         for (Iterator<?> iterator : updateOnly) {
             while (iterator.hasNext()) {
