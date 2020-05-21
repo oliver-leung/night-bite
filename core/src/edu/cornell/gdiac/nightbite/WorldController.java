@@ -344,6 +344,7 @@ public class WorldController implements Screen, InputProcessor {
 
             // if player is sliding, disregard user input
             if (p.isSliding()) {
+                p.updateSlidingTexture();
                 slideDirection = p.getSlideDirection();
                 p.setIX(slideDirection.x);
                 p.setIY(slideDirection.y);
