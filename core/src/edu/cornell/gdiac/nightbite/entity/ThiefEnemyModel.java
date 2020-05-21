@@ -31,6 +31,7 @@ public class ThiefEnemyModel extends EnemyModel {
         );
         setHoldTexture(Assets.getFilmStrip("character/Enemies/E3_64_holdfilmstrip.png"));
         setStopDist(0);
+        setWalkThrust(8f);
         aiClass = 4;
     }
 

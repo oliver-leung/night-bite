@@ -40,7 +40,7 @@ public abstract class EnemyModel extends HumanoidModel {
     public WorldModel worldModel;
 
     protected static final int WALK_COOLDOWN = 10;
-    private static final float WALK_THRUST = 7f;
+    private static float WALK_THRUST = 7f;
     protected int walkCooldown;
 
     private static float STOP_DIST = 2;
@@ -48,6 +48,7 @@ public abstract class EnemyModel extends HumanoidModel {
     public void setStopDist(float stopDist) {
         STOP_DIST = stopDist;
     }
+    public void setWalkThrust(float thrust) { WALK_THRUST = thrust; }
 
     // Only relevant for thief enemy
     public boolean isDoneAttacking = true;
