@@ -282,6 +282,7 @@
         "jsons/01_showcase_tutorial_basic_v3.json",
         "jsons/02_showcase_tutorial_firecracker_v3.json",
         "jsons/03_showcase_tutorial_oil_v3.json",
+        "jsons/03_showcase_tutorial_thief_v3.json",
         "jsons/04_showcase_spiral_v3.json",
         "jsons/05_showcase_semimoat_v3.json",
         "jsons/06_showcase_doublehole_v3.json",
@@ -291,6 +292,9 @@
         "jsons/10_showcase_diagonalhole_v4.json",
         "jsons/11_showcase_medium_v4.json",
         "jsons/12_showcase_messy_v4.json",
+        "jsons/showcase_Chole.json",
+        "jsons/showcase_cornermoats.json",
+        "jsons/showcase_crossholes.json",
         "environment/StallIHome_bokchoi_fs.png",
         "environment/StallIHome_carrot_fs.png",
         "environment/StallIHome_egg_fs.png",
@@ -308,6 +312,10 @@
         "item/food3_64.png",
         "item/food4_64.png",
         "item/food5_64.png",
-        "item/food6_64.png"
+        "item/food6_64.png",
+        "tutorial/Tutorial1_FS_full.png",
+        "tutorial/PanTutorial_FS_5_v3.png",
+        "tutorial/OilTutorial_FS_5.png",
+        "tutorial/ThiefTutorial_FS_5.png"
     ]
 }

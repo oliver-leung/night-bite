@@ -25,6 +25,10 @@ public class LevelSelectController implements Screen, InputProcessor {
     private TextureRegion tile10Texture;
     private TextureRegion tile11Texture;
     private TextureRegion tile12Texture;
+    private TextureRegion tile13Texture;
+    private TextureRegion tile14Texture;
+    private TextureRegion tile15Texture;
+
     private TextureRegion store1Texture;
     private TextureRegion store2Texture;
     private TextureRegion store3Texture;
@@ -84,6 +88,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         "jsons/01_showcase_tutorial_basic_v3.json",
         "jsons/02_showcase_tutorial_firecracker_v3.json",
         "jsons/03_showcase_tutorial_oil_v3.json",
+        "jsons/03_showcase_tutorial_thief_v3.json",
         "jsons/04_showcase_spiral_v3.json",
         "jsons/05_showcase_semimoat_v3.json",
         "jsons/06_showcase_doublehole_v3.json",
@@ -91,8 +96,10 @@ public class LevelSelectController implements Screen, InputProcessor {
         "jsons/08_showcase_longmoats_v4.json",
         "jsons/09_showcase_zigzag_v4.json",
         "jsons/10_showcase_diagonalhole_v4.json",
-        "jsons/11_showcase_medium_v4.json",
         "jsons/12_showcase_messy_v4.json",
+        "jsons/showcase_Chole.json",
+        "jsons/showcase_cornermoats.json",
+        "jsons/showcase_crossholes.json",
     };
     private int[] xposList;
 
@@ -127,6 +134,9 @@ public class LevelSelectController implements Screen, InputProcessor {
         tile10Texture = Assets.getTextureRegion("level_select/#10.png");
         tile11Texture = Assets.getTextureRegion("level_select/#11.png");
         tile12Texture = Assets.getTextureRegion("level_select/#12.png");
+        tile13Texture = Assets.getTextureRegion("level_select/#12.png");
+        tile14Texture = Assets.getTextureRegion("level_select/#12.png");
+        tile15Texture = Assets.getTextureRegion("level_select/#12.png");
 
         store1Texture = Assets.getTextureRegion("level_select/LVL1_Stall.png");
         store2Texture = Assets.getTextureRegion("level_select/LVL2_Stall.png");
@@ -147,19 +157,26 @@ public class LevelSelectController implements Screen, InputProcessor {
         return levelJSONList[levelChoiceindex];
     }
 
+    public int getLevelChoiceindex() {
+        return levelChoiceindex;
+    }
+
     public String getItemTheme () {
         String itemName;
         switch(levelChoiceindex) {
             case 0:
             case 6:
+            case 12:
                 itemName = "bokchoi";
                 break;
             case 1:
             case 7:
+            case 13:
                 itemName = "carrot";
                 break;
             case 2:
             case 8:
+            case 14:
                 itemName = "egg";
                 break;
             case 3:
@@ -296,10 +313,20 @@ public class LevelSelectController implements Screen, InputProcessor {
             canvas.draw(tile10Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
             canvas.draw(tile11Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
             canvas.draw(tile12Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, arrowOx, arrowOy, xRightEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
 
             canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
+        } else if (getPage() == 4) {
+            canvas.draw(arrowTextureFlipped, Color.WHITE, arrowOx, arrowOy, xLeftEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile13Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile14Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile15Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+
+            canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         }
 
         canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
@@ -434,7 +461,7 @@ public class LevelSelectController implements Screen, InputProcessor {
         // changing pages
         float halfWidthArrow = arrowTexture.getRegionWidth() / 2.0f * scale;
         float halfHeightArrow = arrowTexture.getRegionHeight() / 2.0f * scale;
-        if (getPage() < 3 && screenX < xRightEnd + halfWidthArrow && screenX > xRightEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
+        if (getPage() < 4 && screenX < xRightEnd + halfWidthArrow && screenX > xRightEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
             levelChoiceindex += 3;
         }
         else if (getPage() > 0 && screenX < xLeftEnd + halfWidthArrow && screenX > xLeftEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
