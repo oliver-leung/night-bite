@@ -333,7 +333,6 @@ public class WorldController implements Screen, InputProcessor {
 
     public void update(float dt) {
         accumTimer(dt);
-        System.out.println(timeElapsed);
         checkTimeOut();
         // TODO: Refactor all player movement
 
@@ -549,7 +548,6 @@ public class WorldController implements Screen, InputProcessor {
      * M:SS
      */
     public String secondsToStringTime(int seconds) {
-        System.out.println(seconds);
         StringBuilder time = new StringBuilder();
 
         int min = seconds / 60;

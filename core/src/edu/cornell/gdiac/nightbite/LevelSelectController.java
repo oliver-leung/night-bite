@@ -461,11 +461,12 @@ public class LevelSelectController implements Screen, InputProcessor {
         // changing pages
         float halfWidthArrow = arrowTexture.getRegionWidth() / 2.0f * scale;
         float halfHeightArrow = arrowTexture.getRegionHeight() / 2.0f * scale;
+
         if (getPage() < 4 && screenX < xRightEnd + halfWidthArrow && screenX > xRightEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
-            levelChoiceindex += 3;
+            levelChoiceindex += 1;
         }
         else if (getPage() > 0 && screenX < xLeftEnd + halfWidthArrow && screenX > xLeftEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
-            levelChoiceindex -= 3;
+            levelChoiceindex -= 1;
         }
 
         return false;
