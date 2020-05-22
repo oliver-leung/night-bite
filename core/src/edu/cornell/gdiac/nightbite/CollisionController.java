@@ -160,6 +160,7 @@ public class CollisionController implements ContactListener {
             if (player.hasItem()) { // TODO fix jank implementation
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
+                    item_obj.setItemRespawnHome(false);
                 }
                 player.clearInventory();
             }
@@ -184,6 +185,7 @@ public class CollisionController implements ContactListener {
 
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
+                    item_obj.setItemRespawnHome(true);
                 }
                 player.clearInventory();
                 player.resetTexture();
@@ -215,6 +217,7 @@ public class CollisionController implements ContactListener {
             HumanoidModel p = item.holdingPlayer;
             if (p == null && (item.getVX()!=0f || item.getVY()!=0)) {
                 item.startRespawn();
+                item.setItemRespawnHome(false);
                 // SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
         }

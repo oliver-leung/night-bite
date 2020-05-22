@@ -30,6 +30,8 @@ public class ItemModel extends BoxObstacle {
      */
     private float respawn;
     private int RESPAWN_TIME = 80;
+    private boolean itemRespawnHome = false; // Indication that item respawn is caused because item was retrieved to home stall (not because of hole)
+    public void setItemRespawnHome(boolean itemRespawnHome) { this.itemRespawnHome = itemRespawnHome; }
 
     /**
      * throwing configs
@@ -90,10 +92,15 @@ public class ItemModel extends BoxObstacle {
         super.update(dt);
         if (respawn > 0) {
             respawn -= 1;
-            tint.sub(0,0,0, 0.02f); // Fade-out effect
-            if (respawn == 20) { // Make light disappear when player light disappears
-                light.setColor(new Color(0f, 0.02f, 0f, 0f));
+            if (itemRespawnHome) { // Item - Home : immediately stop drawing
                 draw = false;
+                light.setColor(new Color(0f, 0.02f, 0f, 0f));
+            } else { // Item - Hole : fade out effect
+                tint.sub(0,0,0, 0.02f); // Fade-out effect
+                if (respawn == 20) { // Make light disappear when player light disappears
+                    light.setColor(new Color(0f, 0.02f, 0f, 0f));
+                    draw = false;
+                }
             }
         }
 
