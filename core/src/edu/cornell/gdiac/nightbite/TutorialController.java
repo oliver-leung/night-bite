@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import edu.cornell.gdiac.util.ExitCodes;
@@ -40,10 +41,16 @@ public class TutorialController implements Screen, InputProcessor {
     private float scale;
     private int pressState;
 
+    private TextureRegion overlay;
+    private Color tint;
+
     // TODO jank
     private WorldController game;
 
     public TutorialController(GameCanvas canvas) {
+        overlay = new TextureRegion(new Texture("background/blue/Blue_Hole.png"));
+        tint = new Color(1,1,1,0.5f);
+
         this.canvas = canvas;
         active = true;
         slowFrames = false;
@@ -78,6 +85,7 @@ public class TutorialController implements Screen, InputProcessor {
 //        canvas.clear();
         canvas.begin();
 //        canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+        canvas.draw(overlay, tint, 0, 0, 0, 0, 0, screenWidth, screenHeight);
         canvas.drawTextCentered("Press any key to continue!", displayFont, - screenHeight*3/8);
         canvas.draw(popup, Color.WHITE, POPUP_WIDTH/2, POPUP_HEIGHT/2,
                 screenWidth/2, screenHeight/2,  0, scale, scale);
