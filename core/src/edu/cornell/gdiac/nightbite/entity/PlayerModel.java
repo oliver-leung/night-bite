@@ -350,7 +350,7 @@ public class PlayerModel extends HumanoidModel {
         // TODO why is getPos lower than player drawn
         if (KeyboardMap.mouse) {
             Vector2 playerPos = getPosition();
-            playerPos.y -= 0.8f;
+//            playerPos.y -= 0.8f;
 
             pointWokDir.sub(playerPos);
             pointWokDir.scl(-1);

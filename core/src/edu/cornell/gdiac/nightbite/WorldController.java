@@ -74,6 +74,7 @@ public class WorldController implements Screen, InputProcessor {
     /** Path to the level JSON that is currently loaded */
     private String selectedLevelJSON;
     private String levelItemName;
+    private int selectedLevelIndex;
     private Vector2 pointWokDir;
 
     public float screenWidth;
@@ -83,6 +84,8 @@ public class WorldController implements Screen, InputProcessor {
     private long timerStart;  // in nanoseconds
     private long timerEnd;
     private float timeElapsed;
+
+    private boolean tutorialPopup;
 
     /** Create a new game world */
     protected WorldController() {
@@ -154,9 +157,10 @@ public class WorldController implements Screen, InputProcessor {
         worldModel.setPixelBounds();
     }
 
-    public void setLevel(String selectedLevelJSON, String itemName) {
+    public void setLevel(String selectedLevelJSON, String itemName, int selectedLevelIndex) {
         this.selectedLevelJSON = selectedLevelJSON;
         this.levelItemName = itemName;
+        this.selectedLevelIndex = selectedLevelIndex;
     }
 
     private FireEnemyModel enemy;
@@ -273,6 +277,8 @@ public class WorldController implements Screen, InputProcessor {
         for (LightSource l : worldModel.getLights()) {
             l.setActive(true);
         }
+        // TODO not hardcode this
+        tutorialPopup = selectedLevelIndex >= 0 && selectedLevelIndex <= 3;
     }
 
     /**
@@ -292,6 +298,11 @@ public class WorldController implements Screen, InputProcessor {
         // TODO: use listener properly? maybe?
         if (listener == null) {
             return true;
+        }
+        if (tutorialPopup) {
+            tutorialPopup = false;
+            listener.exitScreen(this, ExitCodes.TUTORIAL);
+            return false;
         }
 
         // Toggle debug
