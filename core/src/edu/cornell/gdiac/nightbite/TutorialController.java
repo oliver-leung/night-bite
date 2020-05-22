@@ -36,6 +36,9 @@ public class TutorialController implements Screen, InputProcessor {
     private float scale;
     private int pressState;
 
+    // TODO jank
+    private WorldController game;
+
     public TutorialController(GameCanvas canvas) {
         this.canvas = canvas;
         active = true;
@@ -60,17 +63,19 @@ public class TutorialController implements Screen, InputProcessor {
         popup.setFrame(((int) frame) % NUM_FRAMES);
     }
 
-    public void draw() {
-        canvas.clear();
+    public void draw(float delta) {
+        game.draw(delta);
+//        canvas.clear();
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+//        canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
         canvas.drawTextCentered("Press any key to continue!", displayFont, - screenHeight*3/8);
         canvas.draw(popup, Color.WHITE, POPUP_WIDTH/2, POPUP_HEIGHT/2,
                 screenWidth/2, screenHeight/2,  0, scale, scale);
         canvas.end();
     }
 
-    public void setLevel(int levelSelectChoiceIndex) {
+    public void setLevel(int levelSelectChoiceIndex, WorldController game) {
+        this.game = game;
         switch (levelSelectChoiceIndex) {
             case 0:
                 popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
@@ -161,7 +166,7 @@ public class TutorialController implements Screen, InputProcessor {
     public void render(float delta) {
         if (active) {
             update();
-            draw();
+            draw(delta);
         }
         if (pressState == 2 && listener != null) {
             listener.exitScreen(this, ExitCodes.LEVEL);

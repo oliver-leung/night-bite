@@ -273,7 +273,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (exitCode == ExitCodes.TUTORIAL) {
 			Gdx.input.setInputProcessor(null);
-			tutorial.setLevel(levelSelect.getLevelChoiceindex());
+			tutorial.setLevel(levelSelect.getLevelChoiceindex(), game);
 			tutorial.setScreenListener(this);
 			setScreen(tutorial);
 			Assets.pauseMusic();
