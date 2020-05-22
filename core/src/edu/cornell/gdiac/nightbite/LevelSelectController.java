@@ -96,8 +96,8 @@ public class LevelSelectController implements Screen, InputProcessor {
         "jsons/08_showcase_longmoats_v4.json",
         "jsons/09_showcase_zigzag_v4.json",
         "jsons/10_showcase_diagonalhole_v4.json",
-        "jsons/11_showcase_medium_v4.json",
         "jsons/12_showcase_messy_v4.json",
+        "jsons/showcase_Chole.json",
         "jsons/showcase_cornermoats.json",
         "jsons/showcase_crossholes.json",
     };
