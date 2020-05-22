@@ -28,8 +28,8 @@ public class TutorialController implements Screen, InputProcessor {
 
     private static final float ANIMATION_SPEED = 0.2f;
     private static final float MAX_FRAMES = 120f;
-    private static int POPUP_WIDTH = 640;
-    private static int POPUP_HEIGHT = 512;
+    private int POPUP_WIDTH;
+    private int POPUP_HEIGHT;
 
     private boolean active;
     private float frame;
@@ -78,27 +78,33 @@ public class TutorialController implements Screen, InputProcessor {
         this.game = game;
         switch (levelSelectChoiceIndex) {
             case 0:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 560;
+                POPUP_HEIGHT = 384;
+                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_5_part1v2.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
             case 1:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 560;
+                POPUP_HEIGHT = 384;
+                popup = Assets.getFilmStrip("tutorial/PanTutorial_FS_5_v3.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
             case 2:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 560;
+                POPUP_HEIGHT = 384;
+                popup = Assets.getFilmStrip("tutorial/OilTutorial_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
             case 3:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
-                NUM_FRAMES = popup.getSize();
-                break;
-            case 4:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 560;
+                POPUP_HEIGHT = 448;
+                popup = Assets.getFilmStrip("tutorial/ThiefTutorial_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
             default:
-                popup = Assets.getFilmStrip("tutorial/Tutorial1v1_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 560;
+                POPUP_HEIGHT = 384;
+                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_5_part1v2.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
         }

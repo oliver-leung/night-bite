@@ -271,7 +271,7 @@ public class WorldController implements Screen, InputProcessor {
             l.setActive(true);
         }
         // TODO not hardcode this
-        tutorialPopup = selectedLevelIndex >= 0 && selectedLevelIndex <= 4;
+        tutorialPopup = selectedLevelIndex >= 0 && selectedLevelIndex <= 3;
     }
 
     /**
