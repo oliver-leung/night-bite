@@ -222,11 +222,13 @@ public class LevelController {
             item.setDrawScale(world.getScale());
             item.setActualScale(world.getActualScale());
             world.addItem(item);
+
+            LightSource light = this.world.createPointLight(new float[]{0f, 0.02f, 0f, 0.8f}, 3.0f);
+            light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
+            item.setLightSource(light);
         } else { // On subsequent calls, add respawn positions to existing item
             item = world.getItem(0);
             item.addItemInitPosition(x, y);
-            LightSource light = this.world.createPointLight(new float[]{0.01f, 0.02f, 0f, 0.8f}, 3.0f);
-            light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
 

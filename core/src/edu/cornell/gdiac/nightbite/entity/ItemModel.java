@@ -1,10 +1,13 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.util.LightSource;
 
 import java.util.ArrayList;
 
@@ -37,6 +40,13 @@ public class ItemModel extends BoxObstacle {
      * item identification
      */
 
+    /** Texture tint */
+    public Color tint;
+
+    /** Texture light */
+    private LightSource light;
+    public void setLightSource(LightSource light) { this.light = light; }
+
     private int id;
 
     // TODO temp
@@ -58,6 +68,7 @@ public class ItemModel extends BoxObstacle {
     public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
         super(x, y, 1, 1);
         setTexture(itemTexture);
+        tint = new Color(Color.WHITE);
 
         setDensity(MOVABLE_OBJECT_DENSITY);
         setFriction(MOVABLE_OBJECT_FRICTION);
@@ -77,7 +88,15 @@ public class ItemModel extends BoxObstacle {
 
     public void update(float dt) {
         super.update(dt);
-        respawn -= 1;
+        if (respawn > 0) {
+            respawn -= 1;
+            tint.sub(0,0,0, 0.02f); // Fade-out effect
+            if (respawn == 20) { // Make light disappear when player light disappears
+                light.setColor(new Color(0f, 0.02f, 0f, 0f));
+                draw = false;
+            }
+        }
+
         // Jank, but just respawn the item right before you can pick it up
         if (respawn == 2) {
             setVX(0f);
@@ -86,6 +105,9 @@ public class ItemModel extends BoxObstacle {
         }
         if (respawn == 0) {
             setActive(true);
+            draw = true;
+            tint = new Color(Color.WHITE);
+            light.setColor(new Color(0f, 0.02f, 0f, 0.8f));
         }
     }
 
@@ -97,7 +119,6 @@ public class ItemModel extends BoxObstacle {
     /** respawn */
 
     public void startRespawn() {
-        draw = false;
         holdingPlayer = null;
         respawn = RESPAWN_TIME;
     }
@@ -156,5 +177,13 @@ public class ItemModel extends BoxObstacle {
             return holdingPlayer.getBottom();
         }
         return super.getBottom();
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
     }
 }
