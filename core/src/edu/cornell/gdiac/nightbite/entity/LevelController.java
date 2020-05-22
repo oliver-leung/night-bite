@@ -222,11 +222,13 @@ public class LevelController {
             item.setDrawScale(world.getScale());
             item.setActualScale(world.getActualScale());
             world.addItem(item);
+
+            LightSource light = this.world.createPointLight(new float[]{0f, 0.02f, 0f, 0.8f}, 3.0f);
+            light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
+            item.setLightSource(light);
         } else { // On subsequent calls, add respawn positions to existing item
             item = world.getItem(0);
             item.addItemInitPosition(x, y);
-            LightSource light = this.world.createPointLight(new float[]{0.01f, 0.02f, 0f, 0.8f}, 3.0f);
-            light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
 
@@ -236,6 +238,7 @@ public class LevelController {
         HomeModel home = new HomeModel(x, y, teamName, homeStallFile, world);
         home.setDrawScale(world.getScale());
         home.setActualScale(world.getActualScale());
+        world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x+0.8f, y-0.5f);
 
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
