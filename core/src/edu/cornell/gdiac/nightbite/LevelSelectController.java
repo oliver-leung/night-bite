@@ -85,21 +85,21 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int levelChoiceindex = 0;
 
     private String[] levelJSONList = new String[]{
-        "jsons/01_showcase_tutorial_basic_v3.json",
-        "jsons/02_showcase_tutorial_firecracker_v3.json",
-        "jsons/03_showcase_tutorial_oil_v3.json",
-        "jsons/03_showcase_tutorial_thief_v3.json",
-        "jsons/04_showcase_spiral_v3.json",
-        "jsons/05_showcase_semimoat_v3.json",
-        "jsons/06_showcase_doublehole_v3.json",
-        "jsons/07_showcase_holegrid_v4.json",
-        "jsons/08_showcase_longmoats_v4.json",
-        "jsons/09_showcase_zigzag_v4.json",
-        "jsons/10_showcase_diagonalhole_v4.json",
-        "jsons/12_showcase_messy_v4.json",
-        "jsons/showcase_Chole.json",
-        "jsons/showcase_cornermoats.json",
-        "jsons/showcase_crossholes.json",
+        "jsons/01_showcase_tutorial_basic.json",
+        "jsons/02_showcase_tutorial_firecracker.json",
+        "jsons/03_showcase_tutorial_oil.json",
+        "jsons/04_showcase_tutorial_thief.json",
+        "jsons/05_showcase_cornermoats.json",
+        "jsons/06_showcase_chole.json",
+        "jsons/07_showcase_crossholes.json",
+        "jsons/08_showcase_doublehole.json",
+        "jsons/09_showcase_longmoats.json",
+        "jsons/10_showcase_holegrid.json",
+        "jsons/11_showcase_zigzag.json",
+        "jsons/12_showcase_semimoat.json",
+        "jsons/13_showcase_spiral.json",
+        "jsons/14_showcase_diagonalhole.json",
+        "jsons/15_showcase_messy.json",
     };
     private int[] xposList;
 
@@ -134,9 +134,9 @@ public class LevelSelectController implements Screen, InputProcessor {
         tile10Texture = Assets.getTextureRegion("level_select/#10.png");
         tile11Texture = Assets.getTextureRegion("level_select/#11.png");
         tile12Texture = Assets.getTextureRegion("level_select/#12.png");
-        tile13Texture = Assets.getTextureRegion("level_select/#12.png");
-        tile14Texture = Assets.getTextureRegion("level_select/#12.png");
-        tile15Texture = Assets.getTextureRegion("level_select/#12.png");
+        tile13Texture = Assets.getTextureRegion("level_select/#13.png");
+        tile14Texture = Assets.getTextureRegion("level_select/#14.png");
+        tile15Texture = Assets.getTextureRegion("level_select/#15.png");
 
         store1Texture = Assets.getTextureRegion("level_select/LVL1_Stall.png");
         store2Texture = Assets.getTextureRegion("level_select/LVL2_Stall.png");
