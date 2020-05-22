@@ -39,6 +39,8 @@ public class PauseController implements Screen, InputProcessor {
     private int pressStateMenu;
     /** The current state of the resume button */
     private int pressStateResume;
+    /** The current state of the resume button */
+    private int pressStateControls;
 
     /** Coordinate variables */
     private int heightY = 0;
@@ -77,7 +79,8 @@ public class PauseController implements Screen, InputProcessor {
     private TextureRegion enterActiveTexture;
     private TextureRegion enterDisabledTexture;
 
-
+    /** Controls whether the controls are mouse or not */
+    private boolean isMouseControls = true;
     private boolean escapeButton = false;
 
     public PauseController(GameCanvas canvas) {
@@ -131,8 +134,13 @@ public class PauseController implements Screen, InputProcessor {
         canvas.draw(resumeTexture, tintResume, Assets.getTextureCenterX(resumeTexture), Assets.getTextureCenterY(resumeTexture),
                     posResume[0], posResume[1], 0, scale, scale);
 
-        canvas.draw(mouseActiveTexture, Color.WHITE, 0, 0, posMouse[0], posMouse[1], 0, scale, scale);
-        canvas.draw(enterDisabledTexture, Color.WHITE, 0, 0, posEnter[0], posEnter[1], 0, scale, scale);
+        if (isMouseControls) {
+            canvas.draw(mouseActiveTexture, Color.WHITE, 0, 0, posMouse[0], posMouse[1], 0, scale, scale);
+            canvas.draw(enterDisabledTexture, Color.WHITE, 0, 0, posEnter[0], posEnter[1], 0, scale, scale);
+        } else {
+            canvas.draw(mouseDisabledTexture, Color.WHITE, 0, 0, posMouse[0], posMouse[1], 0, scale, scale);
+            canvas.draw(enterActiveTexture, Color.WHITE, 0, 0, posEnter[0], posEnter[1], 0, scale, scale);
+        }
 
         // Draw filmstrips
         canvas.draw(wasdTexture, Color.WHITE, Assets.getTextureCenterX(wasdTexture), Assets.getTextureCenterY(wasdTexture),
@@ -154,7 +162,7 @@ public class PauseController implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressStateMenu == 2 || pressStateResume == 2) return true;
+        if (pressStateMenu == 2 || pressStateResume == 2 || pressStateControls == 2) return true;
 
         // flip to match graphics coordinates, origin on bottom left
         screenY = heightY - screenY;
@@ -179,6 +187,29 @@ public class PauseController implements Screen, InputProcessor {
             pressStateResume = 1;
         }
 
+        // change mouse/keyboard control state
+        float halfWidthMouse = mouseDisabledTexture.getRegionWidth() / 2f;
+        float halfHeightMouse = mouseDisabledTexture.getRegionHeight() / 2f;
+        float halfWidthEnter = enterDisabledTexture.getRegionWidth() / 2f;
+        float halfHeightEnter = enterDisabledTexture.getRegionHeight() / 2f;
+
+        boolean inBoundXMouse = screenX >= posMouse[0]-halfWidthMouse && screenX <= posMouse[0]+halfWidthMouse;
+        boolean inBoundYMouse = screenY >= posResume[1]-halfHeightMouse && screenY <= posMouse[1]+halfHeightMouse;
+        boolean inBoundXEnter = screenX >= posEnter[0]-halfWidthEnter && screenX <= posEnter[0]+halfWidthEnter;
+        boolean inBoundYEnter = screenY >= posEnter[1]-halfHeightEnter && screenY <= posEnter[1]+halfHeightEnter;
+
+        if (inBoundXMouse && inBoundYMouse) {
+            pressStateControls = 1;
+            if (!isMouseControls) {
+                isMouseControls = true;
+            }
+        } else if (inBoundXEnter && inBoundYEnter) {
+            pressStateControls = 1;
+            if (isMouseControls) {
+                isMouseControls = false;
+            }
+        }
+
         return false;
     }
 
@@ -192,6 +223,10 @@ public class PauseController implements Screen, InputProcessor {
             pressStateResume = 2;
             return true;
         }
+        if (pressStateControls == 1) {
+            pressStateControls = 2;
+            return true;
+        }
         return false;
     }
 
@@ -200,6 +235,11 @@ public class PauseController implements Screen, InputProcessor {
         if (active) {
             update(delta);
             draw();
+
+            if (pressStateControls == 2) {
+                KeyboardMap.mouse = isMouseControls;
+                pressStateControls = 0;
+            }
 
             if (pressStateResume == 2 && listener != null) {
                 listener.exitScreen(this, ExitCodes.LEVEL);
@@ -251,7 +291,7 @@ public class PauseController implements Screen, InputProcessor {
         posMouse[0] = width * 6/32 - 30;
         posMouse[1] = row4 - 50;
         posEnter[0] = width * 10/32 - 30;
-        posEnter[1] = row4 - 45;
+        posEnter[1] = row4 - 50;
 
         // Col 2, up to down
         posEscText[0] = col2;
@@ -269,7 +309,7 @@ public class PauseController implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (pressStateMenu == 2 || pressStateResume == 2) return true;
+        if (pressStateMenu == 2 || pressStateResume == 2 | pressStateControls == 2) return true;
         else if (keycode == Input.Keys.ESCAPE) {
             pressStateResume = 1;
             escapeButton = true;
@@ -318,5 +358,6 @@ public class PauseController implements Screen, InputProcessor {
     public void dispose() {
         pressStateMenu = 0;
         pressStateResume = 0;
+        pressStateControls = 0;
     }
 }
