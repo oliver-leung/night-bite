@@ -436,7 +436,11 @@ public class WorldController implements Screen, InputProcessor {
             }
 
             // player updates (for respawn and dash cool down)
-            pointWokDir.set(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            if (KeyboardMap.mouse) {
+                pointWokDir.set(Gdx.input.getX() * worldModel.getWidth() / screenWidth, (screenHeight - Gdx.input.getY()) * worldModel.getHeight() / screenHeight);
+            } else {
+                pointWokDir.set(playerHorizontal, playerVertical);
+            }
             p.update(pointWokDir);
 
             p.playWalkSound();
