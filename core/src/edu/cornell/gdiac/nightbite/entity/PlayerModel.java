@@ -366,29 +366,36 @@ public class PlayerModel extends HumanoidModel {
                 }
             }
         } else {
-            if (getVX() > 0 && getPrevHoriDir() == -1) {
+            if (pointWokDir.x > 0 && getPrevHoriDir() == -1) {
                 flipTexture();
                 setPrevHoriDir(1);
-            } else if (getVX() < 0 && getPrevHoriDir() == 1) {
+            } else if (pointWokDir.x < 0 && getPrevHoriDir() == 1) {
                 flipTexture();
                 setPrevHoriDir(-1);
             }
 
-            if (getVY() > 0.5) {
-                setPrevVertDir(1);
-            } else if (getVY() < -0.5) {
-                setPrevVertDir(-1);
-            } else {
-                setPrevVertDir(0);
+            // if (pointWokDir.y > 0) {
+            //     setPrevVertDir(1);
+            // } else if (pointWokDir.y < -0) {
+            //     setPrevVertDir(-1);
+            // } else {
+            //     setPrevVertDir(0);
+            // }
+
+            cache.set(pointWokDir.x, pointWokDir.y);
+            if (cache.epsilonEquals(0, 0)) {
+                cache.set(getPrevHoriDir(), 0);
             }
 
-            cache.set(getPrevHoriDir(), getPrevVertDir());
+            // // A bandage to override in the case when you're just hitting straight up or down. This is because
+            // // prevHoriDir is not made to handle when it's 0. -Oliver
+            // if (getVX() > -1 && getVX() < 1) {
+            //     cache.set(0, getPrevVertDir());
+            // }
 
-            // A bandage to override in the case when you're just hitting straight up or down. This is because
-            // prevHoriDir is not made to handle when it's 0. -Oliver
-            if (getVX() > -1 && getVX() < 1) {
-                cache.set(0, getPrevVertDir());
-            }
+            // if (pointWokDir.x > 0) {
+            //     cache.scl(-1);
+            // }
 
             angleOffset = cache.scl(-1).angleRad();
         }
