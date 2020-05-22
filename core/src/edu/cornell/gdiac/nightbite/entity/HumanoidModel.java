@@ -99,7 +99,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
-        System.out.println("fall texture set");
+//        System.out.println("fall texture set");
         setCurrentTexture(fallTexture);
         setAlive(false);
     }
