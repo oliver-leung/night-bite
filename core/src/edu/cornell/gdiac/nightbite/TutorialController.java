@@ -16,7 +16,6 @@ public class TutorialController implements Screen, InputProcessor {
     private ScreenListener listener;
 
     private FilmStrip popup;
-    private TextureRegion background;
     private BitmapFont displayFont;
     private int NUM_FRAMES;
 
@@ -27,7 +26,12 @@ public class TutorialController implements Screen, InputProcessor {
     private static int STANDARD_HEIGHT = 960;
 
     private static final float ANIMATION_SPEED = 0.2f;
+    private static final float SLOW_ANIMATION_SPEED = 0.05f;
     private static final float MAX_FRAMES = 120f;
+
+    // jank stuff for timer to be slower
+    private boolean slowFrames;
+
     private int POPUP_WIDTH;
     private int POPUP_HEIGHT;
 
@@ -42,11 +46,11 @@ public class TutorialController implements Screen, InputProcessor {
     public TutorialController(GameCanvas canvas) {
         this.canvas = canvas;
         active = true;
+        slowFrames = false;
     }
 
     public void loadContent() {
         displayFont = Assets.getFont();
-        background = Assets.getTextureRegion("pause/Background.png");
     }
 
     public void setScreenListener(ScreenListener listener) {
@@ -55,12 +59,18 @@ public class TutorialController implements Screen, InputProcessor {
     }
 
     private void update() {
-        frame += ANIMATION_SPEED;
+        frame += (slowFrames ? SLOW_ANIMATION_SPEED : ANIMATION_SPEED);
         if (frame >= MAX_FRAMES) {
             frame = 0f;
         }
-
-        popup.setFrame(((int) frame) % NUM_FRAMES);
+        int frameIdx = ((int) frame) % NUM_FRAMES;
+        if (frameIdx > 40) {
+            slowFrames = true;
+        }
+        if (frameIdx == 0) {
+            slowFrames = false;
+        }
+        popup.setFrame(frameIdx);
     }
 
     public void draw(float delta) {
@@ -78,9 +88,9 @@ public class TutorialController implements Screen, InputProcessor {
         this.game = game;
         switch (levelSelectChoiceIndex) {
             case 0:
-                POPUP_WIDTH = 560;
-                POPUP_HEIGHT = 384;
-                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_5_part1v2.png", POPUP_WIDTH, POPUP_HEIGHT);
+                POPUP_WIDTH = 640;
+                POPUP_HEIGHT = 512;
+                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_full.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
             case 1:
@@ -104,7 +114,7 @@ public class TutorialController implements Screen, InputProcessor {
             default:
                 POPUP_WIDTH = 560;
                 POPUP_HEIGHT = 384;
-                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_5_part1v2.png", POPUP_WIDTH, POPUP_HEIGHT);
+                popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_full.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
                 break;
         }
@@ -206,5 +216,6 @@ public class TutorialController implements Screen, InputProcessor {
     @Override
     public void dispose() {
         pressState = 0;
+        frame = 0;
     }
 }
