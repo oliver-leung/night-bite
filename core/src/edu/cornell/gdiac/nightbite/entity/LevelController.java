@@ -11,6 +11,7 @@ import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.LightSource;
+import org.w3c.dom.Text;
 
 public class LevelController {
     private static LevelController instance;
@@ -304,23 +305,24 @@ public class LevelController {
 
     private void createWall(JsonValue wallJson, int x, int y) {
         String texture = wallJson.getString("texture");
-        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"), texture.contains("StallItem1_64"));
+        TextureRegion textureRegion;
+        if (texture.contains("Crate")) {
+            textureRegion = Assets.getTextureRegion(crateFile);
+        } else {
+            textureRegion = Assets.getTextureRegion(texture);
+        }
+        int width = textureRegion.getRegionWidth();
+        int height = textureRegion.getRegionHeight();
+        boolean big = height > 64;
+        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"), big);
         wall.setDrawScale(world.getScale());
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
-        if (texture.contains("StallItem1_64")) { // item stall
-            wall.setTexture(Assets.getTextureRegion(itemStallFile));
-        } else if (texture.contains("Crate")) {
-            wall.setTexture(Assets.getTextureRegion(crateFile));
-        } else {
-            wall.setTexture(Assets.getTextureRegion(texture));
-        }
+        wall.setTexture(textureRegion);
 //        FilmStrip wallTexture = Assets.getFilmStrip(texture, 128);
 //        wallTexture.setFrame(3);
 
-        int width = wall.getTexture().getRegionWidth();
-        int height = wall.getTexture().getRegionHeight();
-        if (width > 64 || height > 64) {
+        if (big || width > 64) {
             int widthFactor = (width + 1) / 64;
             int heightFactor = height / 64;
             Vector2 pos = wall.getPosition();

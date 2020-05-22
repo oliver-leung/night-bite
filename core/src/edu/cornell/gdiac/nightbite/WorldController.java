@@ -463,7 +463,7 @@ public class WorldController implements Screen, InputProcessor {
 
         for (HumanoidModel e : worldModel.getEnemies()) {
             p = worldModel.getPlayers().get(0);
-            if (p.isAlive()) {
+            // if (p.isAlive()) {
                 if (e instanceof EnemyModel) {
                     dir = ((EnemyModel) e).update(p);
                 } else if (e instanceof CrowdUnitModel) {
@@ -505,7 +505,7 @@ public class WorldController implements Screen, InputProcessor {
 
                 e.setActive(e.isAlive());
             }
-        }
+        // }
 
         for (CrowdModel crowd : worldModel.getCrowds()) {
             crowd.update(dt);
