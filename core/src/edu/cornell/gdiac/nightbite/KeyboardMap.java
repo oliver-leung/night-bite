@@ -41,8 +41,8 @@ public class KeyboardMap {
             Keys.D,
             Keys.UNKNOWN,
             Keys.UNKNOWN,
-            Keys.BACKSPACE,
-            Keys.R,
+            Keys.UNKNOWN,
+            Keys.UNKNOWN,
             Keys.ESCAPE,
             Keys.ENTER);
 
