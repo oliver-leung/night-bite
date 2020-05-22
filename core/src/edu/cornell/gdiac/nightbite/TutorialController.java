@@ -22,6 +22,8 @@ public class TutorialController implements Screen, InputProcessor {
     public float screenWidth;
     public float screenHeight;
 
+    private boolean needDisclaimer = false;
+
     private static int STANDARD_WIDTH = 1920;
     private static int STANDARD_HEIGHT = 960;
 
@@ -78,6 +80,9 @@ public class TutorialController implements Screen, InputProcessor {
 //        canvas.clear();
         canvas.begin();
 //        canvas.draw(background, Color.WHITE, 0, 0, 0, 0, 0, scale, scale);
+        if (needDisclaimer) {
+            canvas.drawTextCentered("Best played with a mouse!", displayFont, screenHeight*3/8);
+        }
         canvas.drawTextCentered("Press any key to continue!", displayFont, - screenHeight*3/8);
         canvas.draw(popup, Color.WHITE, POPUP_WIDTH/2, POPUP_HEIGHT/2,
                 screenWidth/2, screenHeight/2,  0, scale, scale);
@@ -92,30 +97,35 @@ public class TutorialController implements Screen, InputProcessor {
                 POPUP_HEIGHT = 512;
                 popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_full.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
+                needDisclaimer = true;
                 break;
             case 1:
                 POPUP_WIDTH = 560;
                 POPUP_HEIGHT = 384;
                 popup = Assets.getFilmStrip("tutorial/PanTutorial_FS_5_v3.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
+                needDisclaimer = false;
                 break;
             case 2:
                 POPUP_WIDTH = 560;
                 POPUP_HEIGHT = 384;
                 popup = Assets.getFilmStrip("tutorial/OilTutorial_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
+                needDisclaimer = false;
                 break;
             case 3:
                 POPUP_WIDTH = 560;
                 POPUP_HEIGHT = 448;
                 popup = Assets.getFilmStrip("tutorial/ThiefTutorial_FS_5.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
+                needDisclaimer = false;
                 break;
             default:
                 POPUP_WIDTH = 560;
                 POPUP_HEIGHT = 384;
                 popup = Assets.getFilmStrip("tutorial/Tutorial1_FS_full.png", POPUP_WIDTH, POPUP_HEIGHT);
                 NUM_FRAMES = popup.getSize();
+                needDisclaimer = false;
                 break;
         }
     }
