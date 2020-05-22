@@ -64,9 +64,9 @@ public abstract class HumanoidModel extends SimpleObstacle {
     private float fallFrame;
 
     /** Steps between switching walk animation frames */
-    public int walkCounter;
+    public float walkCounter;
     /** Steps between switching falling animation frames */
-    public int fallCounter;
+    public float fallCounter;
 
     /** The previous horizontal direction of the humanoid */
     protected float prevHoriDir;
@@ -99,6 +99,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     /** Kill this humanoid and set its texture to falling */
     public void setDead() {
+        System.out.println("fall texture set");
         setCurrentTexture(fallTexture);
         setAlive(false);
     }
@@ -135,21 +136,10 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     /**
      * Sets the current texture to walking. Changes frames every 10 steps.
+     *
+     * @param dt
      */
-    public void setWalkTexture() {
-        if (walkCounter % 20 == 0) {
-            ((FilmStrip) texture).setFrame(1);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        } else if (walkCounter % 20 == 10) {
-            ((FilmStrip) texture).setFrame(0);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        }
-        walkCounter++;
-    }
+    public abstract void setWalkTexture(float dt);
 
     public void setHoldTexture(FilmStrip holdTexture) { this.holdTexture = holdTexture; }
 
@@ -335,8 +325,8 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
         float feetWidth = width * 0.2f;
         float feetHeight = height * 0.1f;
-        x = -feetWidth/2;
-        y = - height/2;
+        x = -feetWidth / 2;
+        y = -height/2;
 
         vertices[0] = x;
         vertices[1] = y;
@@ -463,6 +453,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
         if (texture != null) {
             canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
                     getAngle(),actualScale.x,actualScale.y);
+//            System.out.println(texture.);
         }
     }
 

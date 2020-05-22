@@ -239,7 +239,7 @@ public class Assets {
                     loadSound(fileName);
                     break;
                 case "ttf":
-                    loadFont(fileName, 36); // TODO: Let's make this a more reasonable size
+                    loadFont(fileName, 36);
                     break;
             }
         }

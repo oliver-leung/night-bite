@@ -12,10 +12,10 @@ import edu.cornell.gdiac.util.LightSource;
 public class FireEnemyModel extends EnemyModel {
     private static final int MAX_THROW_COOLDOWN = 2*60;
     private static final int MIN_THROW_COOLDOWN = 1*60;
-    private static final float THROW_DIST = 5;
+    private static final float THROW_DIST = 4;
     private static final float STOP_DIST = 2.5f;
     private static final float THROW_FORCE = 2f;
-    private static final float THROW_TIME = 0.9f; // fudged in seconds
+    private static final float THROW_TIME = 0.7f; // fudged in seconds
     private static final float MIN_DIST_DEV = 0.4f;
     private static final float MAX_DIST_DEV = 1.4f;
     private static final float MAX_DEVIATION = 20f;
@@ -114,7 +114,11 @@ public class FireEnemyModel extends EnemyModel {
         if (aiController.canSee(getPosition(), targetPos)
                 && getPosition().sub(targetPos).len() < THROW_DIST) {
             resetThrowCooldown();
-            return targetPos.cpy().sub(getPosition());
+            cache.set(targetPos).sub(getPosition());
+            if (cache.len() < TOO_CLOSE_DIST) {
+                cache.nor().scl(TOO_CLOSE_DIST).scl(TOO_CLOSE_DIST).cpy();
+            }
+            return cache.cpy();
         }
         return null;
     }

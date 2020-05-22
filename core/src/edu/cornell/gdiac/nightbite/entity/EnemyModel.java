@@ -43,7 +43,7 @@ public abstract class EnemyModel extends HumanoidModel {
     private static float WALK_THRUST = 7f;
     protected int walkCooldown;
 
-    private static float STOP_DIST = 2;
+    protected static float STOP_DIST = 2;
 
     public void setStopDist(float stopDist) {
         STOP_DIST = stopDist;
@@ -66,13 +66,13 @@ public abstract class EnemyModel extends HumanoidModel {
     public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
 
     @Override
-    public void setWalkTexture() {
+    public void setWalkTexture(float dt) {
         FilmStrip filmStrip = (FilmStrip) this.texture;
-        filmStrip.setFrame((walkCounter / 8) % filmStrip.getSize());
+        filmStrip.setFrame((int) ((walkCounter * 60 / 8) % filmStrip.getSize()));
         if (prevHoriDir == 1) {
             texture.flip(true, false);
         }
-        walkCounter++;
+        walkCounter += dt;
     }
 
     public Vector2 update(PlayerModel p) {

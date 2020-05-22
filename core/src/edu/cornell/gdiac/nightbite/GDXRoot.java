@@ -20,6 +20,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
@@ -113,6 +116,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		loading.setScreenListener(this);
 		setScreen(loading);
+
+		// Set custom cursor
+		Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor_32.png"));
+		Cursor cursor = Gdx.graphics.newCursor(pixmap, 11, 10);
+		Gdx.graphics.setCursor(cursor);
 
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());

@@ -28,6 +28,9 @@ import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
 import edu.cornell.gdiac.util.*;
 
+// import java.time.Duration;
+// import java.time.Instant;
+
 /**
  * Base class for a world-specific controller.
  * <p>
@@ -57,6 +60,7 @@ public class WorldController implements Screen, InputProcessor {
     protected PooledList<Obstacle> addQueue = new PooledList<>();
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected BitmapFont timerFont;
     /** Textures for in-game UI */
     protected TextureRegion timerTexture;
     /** Listener that will update the player mode when we are done */
@@ -79,7 +83,7 @@ public class WorldController implements Screen, InputProcessor {
     private static int GAME_DURATION = 120;  // in seconds
     private long timerStart;  // in nanoseconds
     private long timerEnd;
-    private long timeElapsed;
+    private float timeElapsed;
 
     private boolean tutorialPopup;
 
@@ -94,20 +98,16 @@ public class WorldController implements Screen, InputProcessor {
     }
 
     public void resetTimer() {
-        timerStart = System.nanoTime();
-        timerEnd = System.nanoTime();
-        timeElapsed = timerEnd - timerStart;
+        timeElapsed = 0;
     }
 
     /** ??? Adds some time to the timeElapsed? This is so freaking jank */
-    public void accumTimer() {
-        timerEnd = System.nanoTime();
-        timeElapsed += timerEnd - timerStart;
-        timerStart = timerEnd;
+    public void accumTimer(float delta) {
+        timeElapsed += delta;
     }
 
     public void checkTimeOut() {
-        if (timeElapsed / 1000000000 > GAME_DURATION) {
+        if (timeElapsed > GAME_DURATION) {
             worldModel.completeLevel(false);
         }
     }
@@ -168,7 +168,10 @@ public class WorldController implements Screen, InputProcessor {
     public void populateLevel() {
         // TODO: Add this to the Assets HashMap
         displayFont = Assets.getFont();
-        timerTexture = Assets.getTextureRegion("ui/TimerTall.png");
+        timerFont = new BitmapFont(displayFont.getData(), displayFont.getRegion(), displayFont.usesIntegerPositions());
+        timerFont.setColor(Color.BLACK);
+        timerFont.getData().setScale(0.8f);
+        timerTexture = Assets.getTextureRegion("ui/TimerNew.png");
         GAME_DURATION = LevelController.getInstance().populate(worldModel, selectedLevelJSON, levelItemName);
         worldModel.initializeAI();
     }
@@ -198,10 +201,14 @@ public class WorldController implements Screen, InputProcessor {
             }
         }
 
-        // Draw timer
-        // TODO create another font!!! jesus
-        canvas.draw(timerTexture, Color.WHITE, 0, 0, canvas.getWidth()-190f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
-        canvas.drawText(secondsToStringTime(GAME_DURATION - (int) (timeElapsed / 1000000000)), displayFont, canvas.getWidth()-145f, canvas.getHeight()-55f);
+        // Draw timer red if one fourth time left
+        if (timeElapsed > GAME_DURATION * 3/4) {
+            canvas.draw(timerTexture, Color.RED, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        } else {
+            canvas.draw(timerTexture, Color.WHITE, 0, 0, 20f, canvas.getHeight()-120f, timerTexture.getRegionWidth(), timerTexture.getRegionHeight());
+        }
+
+        canvas.drawText(secondsToStringTime((int) (GAME_DURATION - timeElapsed)), timerFont, 76f, canvas.getHeight()-49f);
 
         if (worldModel.isComplete()) {
             if (worldModel.getLevelExitCode() == ExitCodes.LEVEL_PASS) {
@@ -325,7 +332,8 @@ public class WorldController implements Screen, InputProcessor {
     }
 
     public void update(float dt) {
-        accumTimer();
+        accumTimer(dt);
+        System.out.println(timeElapsed);
         checkTimeOut();
         // TODO: Refactor all player movement
 
@@ -365,7 +373,7 @@ public class WorldController implements Screen, InputProcessor {
             } else {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
-                    p.setWalk();
+                    p.setWalk(dt);
                     if (p.hasItem()) {
                         p.setHoldTexture();
                     }
@@ -468,7 +476,7 @@ public class WorldController implements Screen, InputProcessor {
                 if (e.getLinearVelocity().epsilonEquals(Vector2.Zero, 0.2f)) {
                     e.setStaticTexture();
                 } else {
-                    e.setWalkTexture();
+                    e.setWalkTexture(dt);
                 }
 
 
@@ -497,7 +505,7 @@ public class WorldController implements Screen, InputProcessor {
         }
 
         for (CrowdModel crowd : worldModel.getCrowds()) {
-            crowd.update();
+            crowd.update(dt);
         }
     }
 
@@ -541,6 +549,7 @@ public class WorldController implements Screen, InputProcessor {
      * M:SS
      */
     public String secondsToStringTime(int seconds) {
+        System.out.println(seconds);
         StringBuilder time = new StringBuilder();
 
         int min = seconds / 60;
@@ -548,6 +557,7 @@ public class WorldController implements Screen, InputProcessor {
 
         time.append(min).append(":");
         if (sec < 10) time.append(0);
+        if (sec < 0 && min == 0) sec = 0;
         time.append(sec);
         return time.toString();
     }
@@ -577,6 +587,7 @@ public class WorldController implements Screen, InputProcessor {
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
+        // Instant start = Instant.now();
         if (active) {
             if (preUpdate(delta)) {
                 update(delta);
@@ -584,6 +595,7 @@ public class WorldController implements Screen, InputProcessor {
             }
             draw(delta);
         }
+        // timeElapsed += (double) Duration.between(start, Instant.now()).toNanos() / 1000000000;
     }
 
     /**

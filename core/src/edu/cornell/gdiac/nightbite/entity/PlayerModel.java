@@ -153,13 +153,13 @@ public class PlayerModel extends HumanoidModel {
     }
 
     @Override
-    public void setWalkTexture() {
+    public void setWalkTexture(float dt) {
         FilmStrip filmStrip = (FilmStrip) this.texture;
-        filmStrip.setFrame((walkCounter / 5) % filmStrip.getSize());
+        filmStrip.setFrame((int) ((walkCounter * 60 / 5) % filmStrip.getSize()));
         if (prevHoriDir == 1) {
             texture.flip(true, false);
         }
-        walkCounter++;
+        walkCounter += dt;
     }
 
     public void updateSlidingTexture() {
@@ -217,10 +217,12 @@ public class PlayerModel extends HumanoidModel {
         ticks = 0;
     }
 
-    public void setWalk() {
-        if (boosting > 0 || sliding > 0) { return; }
+    public void setWalk(float dt) {
+        if (boosting > 0 || sliding > 0) {
+            return;
+        }
         state = MoveState.WALK;
-        setWalkTexture();
+        setWalkTexture(dt);
     }
 
     public void setStatic() {

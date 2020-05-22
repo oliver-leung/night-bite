@@ -225,7 +225,7 @@ public class LevelController {
         } else { // On subsequent calls, add respawn positions to existing item
             item = world.getItem(0);
             item.addItemInitPosition(x, y);
-            LightSource light = this.world.createPointLight(new float[]{0f, 0.02f, 0f, 0.8f}, 3.0f);
+            LightSource light = this.world.createPointLight(new float[]{0.01f, 0.02f, 0f, 0.8f}, 3.0f);
             light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
@@ -318,7 +318,7 @@ public class LevelController {
         int width = wall.getTexture().getRegionWidth();
         int height = wall.getTexture().getRegionHeight();
         if (width > 64 || height > 64) {
-            int widthFactor = width / 64;
+            int widthFactor = (width + 1) / 64;
             int heightFactor = height / 64;
             Vector2 pos = wall.getPosition();
             pos.x +=  0.5f * (widthFactor-1);
@@ -329,7 +329,7 @@ public class LevelController {
         }
 
         if (wallJson.getBoolean("light")) {
-            world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x, y);
+            world.createStaticPointLight(new float[]{0.15f, 0.03f, 0f, 0.5f}, 4.0f, x, y);
         }
 
         world.addStaticObject(wall);
