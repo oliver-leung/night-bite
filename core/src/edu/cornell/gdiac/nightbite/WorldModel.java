@@ -224,6 +224,7 @@ public class WorldModel {
             final List<?>[] objs = {
                     staticObjects,
                     new ArrayList<OilModel>(oils.values()),
+                    removedOils,
                     items,
                     players,
                     enemies,
@@ -522,6 +523,7 @@ public class WorldModel {
             }
         }
         removedOils.add(oil);
+        oil.markRemoved(true);
         oils.remove(oilIndCounter % MAX_OIL);
     }
 
@@ -626,10 +628,17 @@ public class WorldModel {
         for (OilModel oil : oils.values()) { // Update spilled oils
             oil.update(dt);
         }
+        ArrayList<OilModel> doneDissolving = new ArrayList<>();
         for (OilModel oil : removedOils) { // Deactivate removed oils
             oil.deactivatePhysics(world);
+            oil.update(dt);
+            if (oil.isDissolved()) {
+                doneDissolving.add(oil);
+            }
         }
-        removedOils.clear();
+        for(OilModel oil : doneDissolving) {
+            removedOils.remove(oil);
+        }
 
         for (Iterator<?> iterator : updateOnly) {
             while (iterator.hasNext()) {
