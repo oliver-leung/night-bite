@@ -157,14 +157,13 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
 
             // Player-Hole collision
-            player.setDead();
-
             if (player.hasItem()) { // TODO fix jank implementation
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
                 }
                 player.clearInventory();
             }
+            player.setDead();
 
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
 

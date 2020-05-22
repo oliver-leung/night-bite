@@ -362,7 +362,7 @@ public class WorldController implements Screen, InputProcessor {
             } else {
                 // update player state
                 if (playerVertical != 0 || playerHorizontal != 0) {
-                    p.setWalk();
+                    p.setWalk(dt);
                     if (p.hasItem()) {
                         p.setHoldTexture();
                     }
@@ -465,7 +465,7 @@ public class WorldController implements Screen, InputProcessor {
                 if (e.getLinearVelocity().epsilonEquals(Vector2.Zero, 0.2f)) {
                     e.setStaticTexture();
                 } else {
-                    e.setWalkTexture();
+                    e.setWalkTexture(dt);
                 }
 
 
@@ -494,7 +494,7 @@ public class WorldController implements Screen, InputProcessor {
         }
 
         for (CrowdModel crowd : worldModel.getCrowds()) {
-            crowd.update();
+            crowd.update(dt);
         }
     }
 
