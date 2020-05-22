@@ -59,12 +59,11 @@ public class ItemModel extends BoxObstacle {
         super(x, y, 1, 1);
         setTexture(itemTexture);
 
-        setTexture(itemTexture);
         setDensity(MOVABLE_OBJECT_DENSITY);
         setFriction(MOVABLE_OBJECT_FRICTION);
         setRestitution(MOVABLE_OBJECT_RESTITUTION);
 
-        setSensor(false);
+        setSensor(true);
         setBullet(true);
         setName("item");
 
