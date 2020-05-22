@@ -87,12 +87,12 @@ public class LevelSelectController implements Screen, InputProcessor {
         "jsons/04_showcase_spiral_v3.json",
         "jsons/05_showcase_semimoat_v3.json",
         "jsons/06_showcase_doublehole_v3.json",
-        "jsons/07_showcase_holegrid_v3.json",
-        "jsons/08_showcase_longmoats_v3.json",
-        "jsons/09_showcase_zigzag_v3.json",
-        "jsons/10_showcase_diagonalhole_v3.json",
-        "jsons/11_showcase_medium_v3.json",
-        "jsons/12_showcase_messy_v3.json",
+        "jsons/07_showcase_holegrid_v4.json",
+        "jsons/08_showcase_longmoats_v4.json",
+        "jsons/09_showcase_zigzag_v4.json",
+        "jsons/10_showcase_diagonalhole_v4.json",
+        "jsons/11_showcase_medium_v4.json",
+        "jsons/12_showcase_messy_v4.json",
     };
     private int[] xposList;
 
