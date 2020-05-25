@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import edu.cornell.gdiac.nightbite.Assets;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class OilModel extends ImmovableModel {
@@ -12,9 +14,10 @@ public class OilModel extends ImmovableModel {
     private float frame;
     /* Expected timestep age of oil spilling */
     private int spillingAge = 170;
-
-    private static final int MAX_OIL = 5;
-    private static int oilCount = 0;
+    /* texture tint */
+    private Color tint;
+    /* Age for fading out oil that is stepped on */
+    private int dissolvingAge = 60;
 
     private FilmStrip defaultTexture;
 
@@ -22,7 +25,7 @@ public class OilModel extends ImmovableModel {
         super(x, y, 0);
         setSensor(true);
         setTexture(Assets.getFilmStrip("item/oil_64_filmstrip.png"));
-        oilCount ++;
+        tint = new Color(Color.WHITE);
     }
 
     public void setTexture(FilmStrip texture) {
@@ -32,12 +35,28 @@ public class OilModel extends ImmovableModel {
         super.setTexture(texture);
     }
 
+    // Ugly, and also being done in HoleModel so that it draws below everything else
+    @Override
+    public float getBottom() {
+        return Float.POSITIVE_INFINITY - 1;
+    }
+
     public boolean isSpilled() {
         return spillingAge == 0;
     }
 
+    public boolean isDissolved() {
+        return dissolvingAge <= 0;
+    }
+
     public void update(float delta) {
         super.update(delta);
+
+        if (isRemoved()) {
+            dissolvingAge--;
+            tint.sub(0,0,0, 0.03f); // Fade-out effect
+            return;
+        }
 
         if (spillingAge == 0) {// Done with spilling animation
             setTexture(Assets.getFilmStrip("item/oiltile_64.png"));
@@ -50,18 +69,10 @@ public class OilModel extends ImmovableModel {
     }
 
     @Override
-    public void markRemoved(boolean value) {
-        if (value && !isRemoved()) {
-            oilCount --;
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
         }
-        if (!value && isRemoved()) {
-            // Please never trigger this
-            oilCount ++;
-        }
-        super.markRemoved(value);
-    }
-
-    public static boolean canAdd() {
-        return oilCount < MAX_OIL;
     }
 }

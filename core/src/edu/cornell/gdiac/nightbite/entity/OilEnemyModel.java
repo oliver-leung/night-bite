@@ -20,6 +20,7 @@ public class OilEnemyModel extends EnemyModel {
                 Assets.getFilmStrip("character/Enemies/E2_64_Falling_FS_5.png"),
                 world
         );
+        aiClass = 3;
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {
@@ -33,13 +34,21 @@ public class OilEnemyModel extends EnemyModel {
             Vector2 targetPosition = p.getPosition();
             Vector2 enemyPosition = getPosition();
             float distance = Vector2.dst(targetPosition.x, targetPosition.y, enemyPosition.x, enemyPosition.y);
-            if (distance <= DROP_DIST && OilModel.canAdd()) {
+            if (distance <= DROP_DIST) {
                 worldModel.addOil(enemyPosition.x, enemyPosition.y);
                 dropCooldown = DROP_COOLDOWN;
                 SoundController.getInstance().play("audio/oildrip.wav", "audio/oildrip.wav", false, Assets.VOLUME * 6f);
             }
         }
         return dir;
+    }
+
+    @Override
+    public Vector2 move(Vector2 targetPos, Vector2 targetDims, AILattice aiLattice) {
+        if (getPosition().sub(targetPos).len() < STOP_DIST) {
+            return Vector2.Zero;
+        }
+        return super.move(targetPos, targetDims, aiLattice);
     }
 
     @Override

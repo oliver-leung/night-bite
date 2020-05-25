@@ -8,7 +8,7 @@ import edu.cornell.gdiac.nightbite.WorldModel;
 
 public class ThiefEnemyModel extends EnemyModel {
     /** Cooldown after attempting an attack */
-    private static final int ATTACK_COOLDOWN = 70;
+    private static final int ATTACK_COOLDOWN = 20;
     private int attackCooldown = 0;
 
     /** Cooldown after an exchange happens between player & thief
@@ -24,13 +24,15 @@ public class ThiefEnemyModel extends EnemyModel {
 
     public ThiefEnemyModel(float x, float y, WorldModel world) {
         super(
-                x+0.5f, y+0.5f,
+                x, y+0.05f,
                 Assets.getFilmStrip("character/Enemies/E3_64_Walk_FS_8.png"),
                 Assets.getFilmStrip("character/Enemies/E3_64_Falling_FS_5.png"),
                 world
         );
         setHoldTexture(Assets.getFilmStrip("character/Enemies/E3_64_holdfilmstrip.png"));
         setStopDist(0);
+        setWalkThrust(8f);
+        aiClass = 4;
     }
 
     public Vector2 attack(PlayerModel p, AILattice aiLattice) {
@@ -87,11 +89,11 @@ public class ThiefEnemyModel extends EnemyModel {
     @Override
     public void draw(GameCanvas canvas) {
         super.draw(canvas);
-        if (state == State.ATTACK && (flashCooldown / 15) % 2 == 0) {
-            canvas.draw(EXCLAMATION,
-                    (getPosition().x - 0.5f) * worldModel.getScale().x,
-                    (getPosition().y + 0.5f) * worldModel.getScale().y);
-        }
+//        if (state == State.ATTACK && (flashCooldown / 15) % 2 == 0) {
+//            canvas.draw(EXCLAMATION,
+//                    (getPosition().x - 0.5f) * worldModel.getScale().x,
+//                    (getPosition().y + 0.5f) * worldModel.getScale().y);
+//        }
         flashCooldown++;
     }
 }

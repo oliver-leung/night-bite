@@ -5,10 +5,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import edu.cornell.gdiac.nightbite.entity.HoleModel;
-import edu.cornell.gdiac.nightbite.entity.HumanoidModel;
-import edu.cornell.gdiac.nightbite.entity.ImmovableModel;
-import edu.cornell.gdiac.nightbite.entity.PlayerModel;
+import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.util.PooledList;
 
 import java.util.ArrayList;
@@ -149,6 +146,8 @@ public class AIController {
             if (fixture.isSensor()) return 1;
             // Continue the ray through Holes
             if (fixture.getBody().getUserData() instanceof HoleModel) return 1;
+            if (fixture.getBody().getUserData() instanceof OilModel) return 1;
+            if (fixture.getBody().getUserData() instanceof HumanoidModel) return 1;
 
             // Stop the ray and record the position of the body with which it impacted
             seenBodies.add(fixture.getBody());
@@ -255,12 +254,19 @@ public class AIController {
         return val >= min && val < max;
     }
 
-
     public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass) {
+        return vectorToNode(feet, aiLattice, aiClass, false);
+    }
+
+    public Vector2 vectorToNode(Vector2 feet, AILattice aiLattice, int aiClass, boolean replan) {
         if (targetPath.isEmpty()) {
-            forceReplan();
-            updateAI(aiLattice, feet, aiClass);
-            if (targetPath.isEmpty()) {
+            if (replan) {
+                forceReplan();
+                updateAI(aiLattice, feet, aiClass);
+                if (targetPath.isEmpty()) {
+                    return Vector2.Zero;
+                }
+            } else {
                 return Vector2.Zero;
             }
         }

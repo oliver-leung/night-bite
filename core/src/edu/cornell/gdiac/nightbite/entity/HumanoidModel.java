@@ -20,7 +20,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
     /**
      * Movable object parameters
      */
-    private final float DENSITY = 10f;
+    private final float DENSITY = 7f;
     private final float FRICTION = 0.1f;
     private final float RESTITUTION = 0.4f;
     private static float SEAM_EPSILON = 0.01f;
@@ -64,12 +64,13 @@ public abstract class HumanoidModel extends SimpleObstacle {
     private float fallFrame;
 
     /** Steps between switching walk animation frames */
-    public int walkCounter;
+    public float walkCounter;
     /** Steps between switching falling animation frames */
-    public int fallCounter;
+    public float fallCounter;
 
     /** The previous horizontal direction of the humanoid */
     protected float prevHoriDir;
+    private float prevVertDir;
 
     /** Textures */
     public FilmStrip defaultTexture;
@@ -103,35 +104,41 @@ public abstract class HumanoidModel extends SimpleObstacle {
     }
 
     /** Gets previous horizontal direction */
-    public float getPrevHoriDir() { return prevHoriDir; }
+    public float getPrevHoriDir() {
+        return prevHoriDir;
+    }
+
     /** Sets previous horizontal direction */
-    public void setPrevHoriDir(float dir) { prevHoriDir = dir; }
+    public void setPrevHoriDir(float dir) {
+        prevHoriDir = dir;
+    }
+
+    /** Gets previous horizontal direction */
+    public float getPrevVertDir() {
+        return prevVertDir;
+    }
+
+    /** Sets previous horizontal direction */
+    public void setPrevVertDir(float dir) {
+        prevVertDir = dir;
+    }
 
     /**
      * Sets the current texture of this humanoid
      */
     public void setCurrentTexture(FilmStrip texture) {
-        if (defaultTexture == null) { defaultTexture = texture; }
+        if (defaultTexture == null) {
+            defaultTexture = texture;
+        }
         setTexture(texture);
     }
 
     /**
      * Sets the current texture to walking. Changes frames every 10 steps.
+     *
+     * @param dt
      */
-    public void setWalkTexture() {
-        if (walkCounter % 20 == 0) {
-            ((FilmStrip) texture).setFrame(1);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        } else if (walkCounter % 20 == 10) {
-            ((FilmStrip) texture).setFrame(0);
-            if (prevHoriDir == 1) {
-                texture.flip(true, false);
-            }
-        }
-        walkCounter++;
-    }
+    public abstract void setWalkTexture(float dt);
 
     public void setHoldTexture(FilmStrip holdTexture) { this.holdTexture = holdTexture; }
 
@@ -139,9 +146,6 @@ public abstract class HumanoidModel extends SimpleObstacle {
      * If the humanoid is not moving, set the texture to one frame of the walk texture.
      */
     public void setStaticTexture() {
-        if (walkCounter % 20 != 0) {
-            return;
-        }
         walkCounter = 0;
         ((FilmStrip) texture).setFrame(0);
         if (prevHoriDir == 1) {
@@ -247,7 +251,13 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
     public void holdItem(ItemModel i) {
         item.add(i);
-        setCurrentTexture(holdTexture);
+        setHoldTexture();
+    }
+
+    public void setHoldTexture() {
+        if (holdTexture != null) {
+            setCurrentTexture(holdTexture);
+        }
     }
 
     /**
@@ -314,8 +324,8 @@ public abstract class HumanoidModel extends SimpleObstacle {
 
         float feetWidth = width * 0.2f;
         float feetHeight = height * 0.1f;
-        x = -feetWidth/2;
-        y = - height/2;
+        x = -feetWidth / 2;
+        y = -height/2;
 
         vertices[0] = x;
         vertices[1] = y;
@@ -442,6 +452,7 @@ public abstract class HumanoidModel extends SimpleObstacle {
         if (texture != null) {
             canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
                     getAngle(),actualScale.x,actualScale.y);
+//            System.out.println(texture.);
         }
     }
 

@@ -20,6 +20,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
@@ -65,6 +68,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * Player mode for the pause screen (CONTROLLER CLASS)
 	 */
 	private PauseController pause;
+	private TutorialController tutorial;
 	/**
 	 * Private mode for the level end (win/fail) screen (CONTROLLER CLASS)
 	 */
@@ -104,6 +108,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadController(canvas, manager, 1);
 		levelSelect = new LevelSelectController(canvas);
 		pause = new PauseController(canvas);
+		tutorial = new TutorialController(canvas);
 		levelEnded = new LevelEndedController(canvas);
 
 		assets = new Assets(manager);
@@ -111,6 +116,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		loading.setScreenListener(this);
 		setScreen(loading);
+
+		// Set custom cursor
+		Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor_32.png"));
+		Cursor cursor = Gdx.graphics.newCursor(pixmap, 11, 10);
+		Gdx.graphics.setCursor(cursor);
 
 		// Create logger
 		Gdx.app.setApplicationLogger(new Logger());
@@ -165,6 +175,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (!loaded) {
 				assets.loadContent(manager);
 				pause.loadContent();
+				tutorial.loadContent();
 				levelSelect.loadContent();
 				levelEnded.loadContent();
 				loaded = true;
@@ -181,7 +192,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme(), levelSelect.getLevelChoiceindex());
 //				System.out.println(levelSelect.getItemTheme());
 				game.reset();
 				setScreen(game);
@@ -206,18 +217,28 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme(), levelSelect.getLevelChoiceindex());
 				setScreen(game);
 				Assets.resumeMusic();
 			}
 			pause.dispose();
 
+		} else if (screen == tutorial) {
+			if (exitCode == ExitCodes.LEVEL) {
+				Gdx.input.setInputProcessor(null);
+				game.setScreenListener(this);
+				game.setCanvas(canvas);
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme(), levelSelect.getLevelChoiceindex());
+				setScreen(game);
+				Assets.resumeMusic();
+			}
+			tutorial.dispose();
 		} else if (screen == levelEnded) {
 			if (exitCode == ExitCodes.LEVEL) {        // restart level
 				Gdx.input.setInputProcessor(null);
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
-				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme(), levelSelect.getLevelChoiceindex());
 				game.reset();
 				setScreen(game);
 				Assets.playMusic(LEVEL_MUSIC_FILE, true);
@@ -227,7 +248,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				game.setScreenListener(this);
 				game.setCanvas(canvas);
 				levelSelect.incrSelectedLevelJSON();
-				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme());
+				game.setLevel(levelSelect.getSelectedLevelJSON(), levelSelect.getItemTheme(), levelSelect.getLevelChoiceindex());
 				game.reset();
 				setScreen(game);
 				Assets.playMusic(LEVEL_MUSIC_FILE, true);
@@ -237,7 +258,6 @@ public class GDXRoot extends Game implements ScreenListener {
 				levelSelect.setScreenListener(this);
 				setScreen(levelSelect);
 				Assets.playMusic(THEME_MUSIC_FILE, true);
-
 			}
 			levelEnded.dispose();
 		}
@@ -257,6 +277,13 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.input.setInputProcessor(null);
 			pause.setScreenListener(this);
 			setScreen(pause);
+			Assets.pauseMusic();
+
+		} else if (exitCode == ExitCodes.TUTORIAL) {
+			Gdx.input.setInputProcessor(null);
+			tutorial.setLevel(levelSelect.getLevelChoiceindex(), game);
+			tutorial.setScreenListener(this);
+			setScreen(tutorial);
 			Assets.pauseMusic();
 
 		} else if (exitCode == ExitCodes.LEVEL_PASS) {

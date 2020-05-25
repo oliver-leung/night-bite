@@ -1,10 +1,15 @@
 package edu.cornell.gdiac.nightbite.entity;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.nightbite.GameCanvas;
 import edu.cornell.gdiac.nightbite.obstacle.BoxObstacle;
+import edu.cornell.gdiac.util.LightSource;
+
+import java.util.ArrayList;
 
 public class ItemModel extends BoxObstacle {
 
@@ -17,13 +22,16 @@ public class ItemModel extends BoxObstacle {
     /**
      * item parameters
      */
-    private Vector2 item_init_position;
+    private ArrayList<Vector2> itemInitPositions; // Array of item respawn positions
+    private int mostRecentItemPositionInd; // Index of most recently used respawn position in itemInitPositions
 
     /**
      * item respawn
      */
     private float respawn;
-    private int RESPAWN_TIME = 150;
+    private int RESPAWN_TIME = 80;
+    private boolean itemRespawnHome = false; // Indication that item respawn is caused because item was retrieved to home stall (not because of hole)
+    public void setItemRespawnHome(boolean itemRespawnHome) { this.itemRespawnHome = itemRespawnHome; }
 
     /**
      * throwing configs
@@ -33,6 +41,14 @@ public class ItemModel extends BoxObstacle {
     /**
      * item identification
      */
+
+    /** Texture tint */
+    public Color tint;
+
+    /** Texture light */
+    private LightSource light;
+    public void setLightSource(LightSource light) { this.light = light; }
+
     private int id;
 
     // TODO temp
@@ -40,22 +56,32 @@ public class ItemModel extends BoxObstacle {
     private static final float MOVABLE_OBJECT_FRICTION = 0.1f;
     private static final float MOVABLE_OBJECT_RESTITUTION = 0.4f;
 
-    public Vector2 getItemInitPosition() { return item_init_position; }
+    public Vector2 getItemInitPosition() { return itemInitPositions.get(mostRecentItemPositionInd); }
+    public void addItemInitPosition(float x, float y) { itemInitPositions.add(new Vector2(x+0.5f,y+0.5f)); }
+    public Vector2 generateNewItemPosition() {
+        int ind;
+        do { // Make sure new coordinate is different from previous one
+            ind = (int)(Math.random() * itemInitPositions.size());
+        } while (ind == mostRecentItemPositionInd);
+        mostRecentItemPositionInd = ind;
+        return itemInitPositions.get(mostRecentItemPositionInd);
+    }
 
     public ItemModel(float x, float y, int itemId, TextureRegion itemTexture) {
         super(x, y, 1, 1);
         setTexture(itemTexture);
+        tint = new Color(Color.WHITE);
 
-        setTexture(itemTexture);
         setDensity(MOVABLE_OBJECT_DENSITY);
         setFriction(MOVABLE_OBJECT_FRICTION);
         setRestitution(MOVABLE_OBJECT_RESTITUTION);
 
-        setSensor(false);
+        setSensor(true);
         setBullet(true);
         setName("item");
 
-        item_init_position = new Vector2(x + 0.5f, y + 0.5f);  // this is mad sus
+        itemInitPositions = new ArrayList<Vector2>();
+        addItemInitPosition(x, y);
         id = itemId;
 
         maskBits = 0x0002 | 0x0008;
@@ -64,9 +90,31 @@ public class ItemModel extends BoxObstacle {
 
     public void update(float dt) {
         super.update(dt);
-        respawn -= 1;
+        if (respawn > 0) {
+            respawn -= 1;
+            if (itemRespawnHome) { // Item - Home : immediately stop drawing
+                draw = false;
+                light.setColor(new Color(0f, 0.02f, 0f, 0f));
+            } else { // Item - Hole : fade out effect
+                tint.sub(0,0,0, 0.02f); // Fade-out effect
+                if (respawn == 20) { // Make light disappear when player light disappears
+                    light.setColor(new Color(0f, 0.02f, 0f, 0f));
+                    draw = false;
+                }
+            }
+        }
+
+        // Jank, but just respawn the item right before you can pick it up
+        if (respawn == 2) {
+            setVX(0f);
+            setVY(0f);
+            addItem(generateNewItemPosition());
+        }
         if (respawn == 0) {
-            addItem(item_init_position);
+            setActive(true);
+            draw = true;
+            tint = new Color(Color.WHITE);
+            light.setColor(new Color(0f, 0.02f, 0f, 0.8f));
         }
     }
 
@@ -78,7 +126,6 @@ public class ItemModel extends BoxObstacle {
     /** respawn */
 
     public void startRespawn() {
-        draw = false;
         holdingPlayer = null;
         respawn = RESPAWN_TIME;
     }
@@ -137,5 +184,13 @@ public class ItemModel extends BoxObstacle {
             return holdingPlayer.getBottom();
         }
         return super.getBottom();
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        if (texture != null) {
+            canvas.draw(texture,tint,origin.x,origin.y,getX() * drawScale.x, getY() * drawScale.y,
+                    getAngle(),actualScale.x,actualScale.y);
+        }
     }
 }

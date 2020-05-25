@@ -10,8 +10,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.WorldModel;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.LightSource;
+import org.w3c.dom.Text;
 
 public class LevelController {
     private static LevelController instance;
@@ -24,6 +24,7 @@ public class LevelController {
     private String itemFile;
     private String homeStallFile;
     private String itemStallFile;
+    private String crateFile;
 
     public static LevelController getInstance() {
         if (instance == null) {
@@ -37,8 +38,9 @@ public class LevelController {
      *
      * @param world      WorldModel to be populated
      * @param level_file Level specification
+     * @return time      Level timer limit
      */
-    public void populate(WorldModel world, String level_file, String levelItemName) {
+    public int populate(WorldModel world, String level_file, String levelItemName) {
         this.world = world;
         createBounds();
         JsonValue levelFormat = jsonReader.parse(Gdx.files.internal(level_file));
@@ -50,31 +52,37 @@ public class LevelController {
                 itemFile = "item/food2_64.png";
                 homeStallFile = "environment/StallIHome_bokchoi_fs.png";
                 itemStallFile = "environment/StallItem1_64_fs.png";
+                crateFile = "environment/Crate2_64.png";
                 break;
             case "carrot":
                 itemFile = "item/food3_64.png";
                 homeStallFile = "environment/StallIHome_carrot_fs.png";
                 itemStallFile = "environment/StallItem2_64_fs.png";
+                crateFile = "environment/Crate3_64.png";
                 break;
             case "egg":
                 itemFile = "item/food1_64.png";
                 homeStallFile = "environment/StallIHome_egg_fs.png";
                 itemStallFile = "environment/StallItem3_64_fs.png";
+                crateFile = "environment/Crate1_64.png";
                 break;
             case "fish":
                 itemFile = "item/food6_64.png";
                 homeStallFile = "environment/StallIHome_fish_fs.png";
-                itemStallFile = "environment/StallItem4_64_fs.png";
+                itemStallFile = "environment/StallItem6_64_fs.png";
+                crateFile = "environment/Crate6_64.png";
                 break;
             case "greenonion":
                 itemFile = "item/food4_64.png";
                 homeStallFile = "environment/StallIHome_greenonion_fs.png";
-                itemStallFile = "environment/StallItem5_64_fs.png";
+                itemStallFile = "environment/StallItem4_64_fs.png";
+                crateFile = "environment/Crate4_64.png";
                 break;
             case "milk":
                 itemFile = "item/food5_64.png";
                 homeStallFile = "environment/StallIHome_milk_fs.png";
-                itemStallFile = "environment/StallItem6_64_fs.png";
+                itemStallFile = "environment/StallItem5_64_fs.png";
+                crateFile = "environment/Crate5_64.png";
                 break;
             default:
                 break;
@@ -125,11 +133,13 @@ public class LevelController {
             y++;
             x = 0;
         }
+
+        return levelFormat.has("timeLimit") ? levelFormat.getInt("timeLimit") : 120;
     }
 
     private void createDecoration(JsonValue asset, int x, int y) {
         String texture = asset.getString("texture");
-        Sprite sprite = new Sprite(Assets.getTextureRegion(asset.getString("texture")));
+        Sprite sprite = new Sprite(Assets.getTextureRegion(texture));
 
         int rotate = asset.getInt("rotate") % 4;
         sprite.rotate((float) rotate * -90f);
@@ -152,7 +162,7 @@ public class LevelController {
         }
 
         if (asset.getBoolean("light")) {
-            world.addLightBody(x, y);
+            world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x, y);
         }
     }
 
@@ -162,14 +172,14 @@ public class LevelController {
         WallModel wall;
         // TODO: Use four walls rather than n X m
         for (int i = -1; i < width; i++) {
-            wall = new WallModel(i, -1, 0);
+            wall = new WallModel(i, -1, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(i, height, 0);
+            wall = new WallModel(i, height, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -177,14 +187,14 @@ public class LevelController {
             world.addStaticObject(wall);
         }
         for (int i = -1; i < height; i++) {
-            wall = new WallModel(-1, i, 0);
+            wall = new WallModel(-1, i, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
             wall.setFilterData(makeBoundsFilter());
             world.addStaticObject(wall);
 
-            wall = new WallModel(width, i, 0);
+            wall = new WallModel(width, i, 0, false);
             wall.setDrawScale(world.getScale());
             wall.setActualScale(world.getActualScale());
             wall.setName("bound");
@@ -202,20 +212,24 @@ public class LevelController {
     }
 
     private void createItem(JsonValue itemJson, int x, int y) {
-        ItemModel item = new ItemModel(
-                x, y, itemNum,
-                Assets.getTextureRegion(itemFile)
-        );
+        ItemModel item;
+        if (world.getNumItems()==0) { // Create item on first call
+            item = new ItemModel(
+                    x, y, itemNum,
+                    Assets.getTextureRegion(itemFile)
+            );
 
-        item.setName("item" + itemNum);
-        item.setDrawScale(world.getScale());
-        item.setActualScale(world.getActualScale());
-        world.addItem(item);
+            item.setName("item" + itemNum);
+            item.setDrawScale(world.getScale());
+            item.setActualScale(world.getActualScale());
+            world.addItem(item);
 
-        // TODO: Adjust light colors if needed
-        if (itemJson.getBoolean("light")) {
-            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            LightSource light = this.world.createPointLight(new float[]{0f, 0.02f, 0f, 0.8f}, 3.0f);
             light.attachToBody(item.getBody(), light.getX(), light.getY(), light.getDirection());
+            item.setLightSource(light);
+        } else { // On subsequent calls, add respawn positions to existing item
+            item = world.getItem(0);
+            item.addItemInitPosition(x, y);
         }
     }
 
@@ -225,6 +239,7 @@ public class LevelController {
         HomeModel home = new HomeModel(x, y, teamName, homeStallFile, world);
         home.setDrawScale(world.getScale());
         home.setActualScale(world.getActualScale());
+        world.createStaticPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f, x+0.8f, y-0.5f);
 
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
@@ -265,12 +280,12 @@ public class LevelController {
 
         // TODO: Adjust light colors if needed
         if (enemyJson.getBoolean("light")) {
-            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
+            LightSource light = world.createPointLight(new float[]{0.15f, 0.05f, 0f, 0.8f}, 4.0f);
             light.attachToBody(enemy.getBody(), light.getX(), light.getY(), light.getDirection());
         }
     }
 
-    private void createCrowd (int x, int y) {
+    private void createCrowd(int x, int y) {
         TextureRegion texture = Assets.getFilmStrip("character/Filmstrip/NPC1_Walk_8.png");
         float pWidth = (texture.getRegionWidth() - 30f) / world.getScale().x;
         float pHeight = texture.getRegionHeight() / world.getScale().y;
@@ -289,19 +304,26 @@ public class LevelController {
     }
 
     private void createWall(JsonValue wallJson, int x, int y) {
-        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"));
+        String texture = wallJson.getString("texture");
+        TextureRegion textureRegion;
+        if (texture.contains("Crate")) {
+            textureRegion = Assets.getTextureRegion(crateFile);
+        } else {
+            textureRegion = Assets.getTextureRegion(texture);
+        }
+        int width = textureRegion.getRegionWidth();
+        int height = textureRegion.getRegionHeight();
+        boolean big = height > 64;
+        WallModel wall = new WallModel(x, y, wallJson.getInt("rotate"), big);
         wall.setDrawScale(world.getScale());
         wall.setActualScale(world.getActualScale());
         wall.setName(wallJson.getString("name"));
-        String texture = wallJson.getString("texture");
+        wall.setTexture(textureRegion);
 //        FilmStrip wallTexture = Assets.getFilmStrip(texture, 128);
 //        wallTexture.setFrame(3);
-        wall.setTexture(Assets.getTextureRegion(texture));
 
-        int width = wall.getTexture().getRegionWidth();
-        int height = wall.getTexture().getRegionHeight();
-        if (width > 64 || height > 64) {
-            int widthFactor = width / 64;
+        if (big || width > 64) {
+            int widthFactor = (width + 1) / 64;
             int heightFactor = height / 64;
             Vector2 pos = wall.getPosition();
             pos.x +=  0.5f * (widthFactor-1);
@@ -312,7 +334,7 @@ public class LevelController {
         }
 
         if (wallJson.getBoolean("light")) {
-            world.addLightBody(x, y);
+            world.createStaticPointLight(new float[]{0.15f, 0.03f, 0f, 0.5f}, 4.0f, x, y);
         }
 
         world.addStaticObject(wall);

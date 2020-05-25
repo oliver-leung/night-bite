@@ -14,10 +14,8 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 import edu.cornell.gdiac.nightbite.entity.*;
 import edu.cornell.gdiac.nightbite.obstacle.Obstacle;
-import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.ExitCodes;
 import edu.cornell.gdiac.util.LightSource;
 import edu.cornell.gdiac.util.PointSource;
@@ -76,7 +74,10 @@ public class WorldModel {
     private PooledList<FirecrackerModel> firecrackers;
     private PooledList<FirecrackerModel> crowdUnits;
     /** List of oils */
-    private PooledList<OilModel> oils;
+    private HashMap<Integer, OilModel> oils;
+    private ArrayList<OilModel> removedOils = new ArrayList<>();
+    private int oilIndCounter = 0;
+    private static final int MAX_OIL = 5;
     /** Objects that don't move during updates */
     private PooledList<Obstacle> staticObjects;
     /** All of the lights that we loaded from the JSON file */
@@ -110,7 +111,7 @@ public class WorldModel {
         staticObjects = new PooledList<>();
         enemies = new PooledList<>();
         crowds = new PooledList<>();
-        oils = new PooledList<>();
+        oils = new HashMap<>();
 
         // TODO: REMOVE
         debug = new Debug();
@@ -222,7 +223,8 @@ public class WorldModel {
             // Please.
             final List<?>[] objs = {
                     staticObjects,
-                    oils,
+                    new ArrayList<OilModel>(oils.values()),
+                    removedOils,
                     items,
                     players,
                     enemies,
@@ -490,16 +492,43 @@ public class WorldModel {
         oil.setDrawScale(getScale());
         oil.setActualScale(getActualScale());
         oil.activatePhysics(world);
-        oils.add(oil);
+        if (oils.size() >= MAX_OIL) { // If there are already 5 oils dropped, overwrite oldest one
+            OilModel oldOil = oils.get(oilIndCounter);
+            oldOil.deactivatePhysics(world);
+        }
+        oils.put(oilIndCounter, oil);
+        oilIndCounter = (oilIndCounter + 1) % MAX_OIL;
         return oil;
+    }
+
+    public boolean canAddOil() {
+        return oils.size() < MAX_OIL;
+    }
+
+    public void removeOil(OilModel oil) { // Reorder existing oils to ensure FIFO removal
+        int removedInd = -1;
+        for (Map.Entry<Integer, OilModel> entry : oils.entrySet()) {
+            if (Objects.equals(oil, entry.getValue())) {
+                removedInd = entry.getKey();
+            }
+        }
+
+        for (int i = removedInd < oilIndCounter ? removedInd+MAX_OIL : removedInd; i > oilIndCounter; i--) {
+            int ind1 = i % MAX_OIL;
+            int ind2 = (i-1) % MAX_OIL;
+            if (oils.get(ind2) != null) {
+                oils.put(ind1, oils.get(ind2));
+            } else {
+                oils.remove(ind1);
+            }
+        }
+        removedOils.add(oil);
+        oil.markRemoved(true);
+        oils.remove(oilIndCounter % MAX_OIL);
     }
 
     public PooledList<FirecrackerModel> getFirecrackers() {
         return firecrackers;
-    }
-
-    public PooledList<OilModel> getOils() {
-        return oils;
     }
 
     /**
@@ -551,10 +580,35 @@ public class WorldModel {
         return point;
     }
 
+    /**
+     * Make a point light that is static and unmoving.
+     *
+     * @param color
+     * @param dist
+     * @param x
+     * @param y
+     * @return
+     */
+    public PointSource createStaticPointLight(float[] color, float dist, float x, float y) {
+        // ALL HARDCODED!
+        PointSource point = new PointSource(rayhandler, 512, Color.WHITE, dist, x + 0.5f, y + 0.5f);
+        point.setColor(color[0], color[1], color[2], color[3]);
+        point.setSoft(true);
+
+        // Create a filter to exclude see through items
+        Filter f = new Filter();
+        f.maskBits = bitStringToComplement("1111"); // controls collision/cast shadows
+        point.setContactFilter(f);
+        point.setActive(true);
+        point.setStaticLight(true);
+        lights.add(point);
+        return point;
+    }
+
     public void updateAndCullObjects(float dt) {
         // TODO: Do we need to cull staticObjects?
         // TODO: This is also unsafe
-        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator(), firecrackers.entryIterator(), oils.entryIterator()};
+        Iterator<?>[] cullAndUpdate = {staticObjects.entryIterator(), firecrackers.entryIterator()};
         Iterator<?>[] updateOnly = {players.iterator(), items.iterator()};
 
         for (Iterator<?> iterator : cullAndUpdate) {
@@ -569,6 +623,21 @@ public class WorldModel {
                     obj.update(dt);
                 }
             }
+        }
+
+        for (OilModel oil : oils.values()) { // Update spilled oils
+            oil.update(dt);
+        }
+        ArrayList<OilModel> doneDissolving = new ArrayList<>();
+        for (OilModel oil : removedOils) { // Deactivate removed oils
+            oil.deactivatePhysics(world);
+            oil.update(dt);
+            if (oil.isDissolved()) {
+                doneDissolving.add(oil);
+            }
+        }
+        for(OilModel oil : doneDissolving) {
+            removedOils.remove(oil);
         }
 
         for (Iterator<?> iterator : updateOnly) {
@@ -656,7 +725,11 @@ public class WorldModel {
     public void setHoleEdge(Sprite sprite, int x, int y) {
         // Kinda jank because it assumes that the tail object from staticObjects
         // is the hole object for the corresponding tile coordinate
-        ((HoleModel) staticObjects.getTail()).addHoleEdge(sprite);
+        try {
+            ((HoleModel) staticObjects.getTail()).addHoleEdge(sprite);
+        } catch (Exception e) {
+            return;
+        }
     }
 
     public void setPixelBounds() {
@@ -741,23 +814,5 @@ public class WorldModel {
 
     public void setOverlapItem(int itemId, boolean b) {
         overlapItem.set(itemId, b);
-    }
-
-    /** Create a small physics body to attach a white light to */
-    public void addLightBody(int x, int y) {
-        PolygonObstacle body = new PolygonObstacle(
-                new float[]{
-                        0.1f, 0.1f,
-                        -0.1f, 0.1f,
-                        -0.1f, -0.1f,
-                        0.1f, -0.1f},
-                x, y);
-        body.setSensor(true);
-        body.setActive(true);
-        transformTileToWorld(body);
-        body.activatePhysics(world);
-
-        PointSource light = createPointLight(new float[]{0.15f, 0.05f, 0f, 1.0f}, 4.0f);
-        light.attachToBody(body.getBody(), light.getX(), light.getY(), light.getDirection());
     }
 }

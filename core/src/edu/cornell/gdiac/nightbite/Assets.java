@@ -239,7 +239,7 @@ public class Assets {
                     loadSound(fileName);
                     break;
                 case "ttf":
-                    loadFont(fileName, 36); // TODO: Let's make this a more reasonable size
+                    loadFont(fileName, 36);
                     break;
             }
         }
@@ -282,7 +282,7 @@ public class Assets {
         }
 
         activeMusic = getMusic(fileName);
-        activeMusic.setOnCompletionListener(music -> {System.out.println("done");});
+        activeMusic.setOnCompletionListener(music -> System.out.print(""));
         activeMusic.setLooping(loop);
         // activeMusic.setVolume(0);
         activeMusic.setVolume(VOLUME * 0.7f);

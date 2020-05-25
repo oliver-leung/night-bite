@@ -13,17 +13,22 @@ public abstract class EnemyModel extends HumanoidModel {
     public EnemyModel(float x, float y, FilmStrip walk, FilmStrip fall, WorldModel worldModel) {
         super(x, y, 0.6f, 1f, walk, fall); // TODO: DONT HARDCODE
         setPosition(x, y);
-        setHomePosition(new Vector2(x, y));
+        setHomePosition(new Vector2(x+0.5f, y+0.5f));  // TODO
 
-        super.DEFAULT_RESPAWN_COOLDOWN = 4 * 60;
+        super.DEFAULT_RESPAWN_COOLDOWN = 6 * 60;
 
         path = new PooledList<>();
         aiController = new AIController(worldModel, this);
         this.worldModel = worldModel;
         walkCooldown = WALK_COOLDOWN;
-        setRespawnCooldown(4 * 60);
+        setRespawnCooldown(6 * 60);
 
         aiClass = 1;
+    }
+
+    @Override
+    public int getAiClass() {
+        return aiClass;
     }
 
     public State state = State.IDLE;
@@ -35,14 +40,15 @@ public abstract class EnemyModel extends HumanoidModel {
     public WorldModel worldModel;
 
     protected static final int WALK_COOLDOWN = 10;
-    private static final float WALK_THRUST = 10f;
+    private static float WALK_THRUST = 7f;
     protected int walkCooldown;
 
-    private static float STOP_DIST = 2;
+    protected static float STOP_DIST = 2;
 
     public void setStopDist(float stopDist) {
         STOP_DIST = stopDist;
     }
+    public void setWalkThrust(float thrust) { WALK_THRUST = thrust; }
 
     // Only relevant for thief enemy
     public boolean isDoneAttacking = true;
@@ -60,13 +66,13 @@ public abstract class EnemyModel extends HumanoidModel {
     public abstract Vector2 attack(PlayerModel p, AILattice aiLattice);
 
     @Override
-    public void setWalkTexture() {
+    public void setWalkTexture(float dt) {
         FilmStrip filmStrip = (FilmStrip) this.texture;
-        filmStrip.setFrame((walkCounter / 8) % filmStrip.getSize());
+        filmStrip.setFrame((int) ((walkCounter * 60 / 8) % filmStrip.getSize()));
         if (prevHoriDir == 1) {
             texture.flip(true, false);
         }
-        walkCounter++;
+        walkCounter += dt;
     }
 
     public Vector2 update(PlayerModel p) {
@@ -132,8 +138,9 @@ public abstract class EnemyModel extends HumanoidModel {
         aiController.addTarget(rx, by);
         aiController.addTarget(lx, by);
 
-        aiController.updateAI(aiLattice, getFeetPosition(), aiClass);
-        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, aiClass).cpy().nor();
+        aiController.updateAI(aiLattice, getFeetPosition(), getAiClass());
+        Vector2 dir = aiController.vectorToNode(getFeetPosition(), aiLattice, getAiClass(),
+                getPosition().sub(targetPos).len() < STOP_DIST).cpy().nor();
         body.applyLinearImpulse(dir.scl(WALK_THRUST), getPosition(), true);
         return dir;
     }
@@ -157,5 +164,13 @@ public abstract class EnemyModel extends HumanoidModel {
         state = State.IDLE;
     }
 
+    public void playerTakesItem() {
+        if (hasItem()) { // Player takes the item
+            for (ItemModel item_obj : getItems()) {
+                item_obj.setHeld(worldModel.getPlayers().get(0));
+            }
+            clearInventory();
+        }
+    }
     public void setDetectionRadius(float radius) { aiController.setDetectionRadius(radius); }
 }

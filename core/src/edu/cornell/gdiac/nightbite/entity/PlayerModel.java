@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.nightbite.Assets;
 import edu.cornell.gdiac.nightbite.GameCanvas;
+import edu.cornell.gdiac.nightbite.KeyboardMap;
 import edu.cornell.gdiac.nightbite.obstacle.PolygonObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.PooledList;
@@ -23,6 +24,7 @@ public class PlayerModel extends HumanoidModel {
     private static final int BOOST_FRAMES = 20;
     private static final int COOLDOWN_FRAMES = 70;
     private static final int SLIDE_FRAMES = 50; // Slide through about 3-4 tiles
+    private static final float DENSITY = 10f;
 
     public enum MoveState {
         WALK,
@@ -33,6 +35,13 @@ public class PlayerModel extends HumanoidModel {
 
     private static int GRAB_COOLDOWN_PERIOD = 15;
     private static int SHADOW_BLINK_FREQUENCY = 15;
+
+    /* How fast we change frames (one frame per 8 calls to update */
+    private static final float ANIMATION_SPEED = 0.125f;
+    /* The number of animation frames in our falling filmstrip */
+    private static final float NUM_FRAMES_FALL = 6;
+    /* Keeps track of the sliding animation frame */
+    private float slidingFrame = 0f;
 
     public MoveState state;
     // TODO
@@ -77,6 +86,8 @@ public class PlayerModel extends HumanoidModel {
     private float REFLECT_RANGE = 2f;
     private HomeModel home;
 
+    private Vector2 cache;
+
     public PlayerModel(float x, float y, float width, float height, World world, String playerTeam, HomeModel home) {
         super(
                 x, y, width, height,
@@ -84,6 +95,7 @@ public class PlayerModel extends HumanoidModel {
                 Assets.getFilmStrip("character/P1_Falling_5.png")
         );
         setBullet(true);
+        setDensity(DENSITY);
 
         impulse = new Vector2();
         boost = new Vector2();
@@ -107,6 +119,8 @@ public class PlayerModel extends HumanoidModel {
         arrow = Assets.getTextureRegion("character/arrow.png");
         swingCooldown = 0;
         alternateShadow = false;
+
+        cache = new Vector2();
 
         setHoldTexture(Assets.getFilmStrip("character/Filmstrip/Player_1/P1_Holding_8.png"));
     }
@@ -139,13 +153,23 @@ public class PlayerModel extends HumanoidModel {
     }
 
     @Override
-    public void setWalkTexture() {
+    public void setWalkTexture(float dt) {
         FilmStrip filmStrip = (FilmStrip) this.texture;
-        filmStrip.setFrame((walkCounter / 5) % filmStrip.getSize());
+        filmStrip.setFrame((int) ((walkCounter * 60 / 5) % filmStrip.getSize()));
         if (prevHoriDir == 1) {
             texture.flip(true, false);
         }
-        walkCounter++;
+        walkCounter += dt;
+    }
+
+    public void updateSlidingTexture() {
+        slidingFrame += ANIMATION_SPEED;
+        if (slidingFrame >= NUM_FRAMES_FALL) { slidingFrame -= NUM_FRAMES_FALL; }
+
+        ((FilmStrip) texture).setFrame((int) slidingFrame);
+        if (prevHoriDir == 1) {
+            texture.flip(true, false);
+        }
     }
 
     /** player movement */
@@ -193,10 +217,12 @@ public class PlayerModel extends HumanoidModel {
         ticks = 0;
     }
 
-    public void setWalk() {
-        if (boosting > 0 || sliding > 0) { return; }
+    public void setWalk(float dt) {
+        if (boosting > 0 || sliding > 0) {
+            return;
+        }
         state = MoveState.WALK;
-        setWalkTexture();
+        setWalkTexture(dt);
     }
 
     public void setStatic() {
@@ -213,6 +239,7 @@ public class PlayerModel extends HumanoidModel {
     public void setSlide() {
         state = MoveState.SLIDE;
         sliding = SLIDE_FRAMES;
+        setCurrentTexture(fallTexture);
     }
 
     public void setSlideDirection(float horizontal, float vertical) {
@@ -242,6 +269,10 @@ public class PlayerModel extends HumanoidModel {
         if (!swinging) {
 //            System.out.println(pointWokDir);
             updateWokDirection(pointWokDir);
+        }
+
+        if (sliding - 1 == 0) { // If player is going to stop sliding on next frame, change texture to walk texture
+            setCurrentTexture(defaultTexture);
         }
         sliding = Math.max(0, sliding - 1);
     }
@@ -304,9 +335,10 @@ public class PlayerModel extends HumanoidModel {
                 enemyVector.sub(getPosition());
                 if (enemyVector.angleRad(clickVector) < SWING_RADIUS && enemyVector.angleRad(clickVector) > -SWING_RADIUS && enemyVector.len() < REFLECT_RANGE) {
                     Vector2 reflectDirection = new Vector2(enemyVector.nor().scl(PLAYER_REFLECT_DIST));
-                    enemy.getBody().applyLinearImpulse(reflectDirection.scl(200f), getPosition(), true);
+                    enemy.getBody().applyLinearImpulse(reflectDirection.scl(125f), getPosition(), true);
                     if (enemy instanceof EnemyModel) {
                         ((EnemyModel) enemy).forceReplan();
+                        ((EnemyModel) enemy).playerTakesItem();
                     }
                 }
                 SoundController.getInstance().play("audio/whack4.wav", "audio/whack4.wav", false, Assets.VOLUME * 1.8f);
@@ -316,22 +348,56 @@ public class PlayerModel extends HumanoidModel {
 
     public void updateWokDirection(Vector2 pointWokDir) {
         // TODO why is getPos lower than player drawn
-        Vector2 playerPos = getPosition();
-        playerPos.y -= 0.8f;
+        if (KeyboardMap.mouse) {
+            Vector2 playerPos = getPosition();
+//            playerPos.y -= 0.8f;
 
-        pointWokDir.sub(playerPos);
-        pointWokDir.scl(-1);
-        float wokAngle = pointWokDir.angleRad();
-        prevAngleOffset = angleOffset;
-        angleOffset = wokAngle;
-
-        if ((prevAngleOffset < (float) Math.PI/2 && prevAngleOffset > (float) - Math.PI/2 && (angleOffset <= (float) - Math.PI/2 || angleOffset >= (float) Math.PI/2)) || (angleOffset < (float) Math.PI/2 && angleOffset > (float) - Math.PI/2 && (prevAngleOffset <= (float) - Math.PI/2 || prevAngleOffset >= (float) Math.PI/2))) {
-            flipTexture();
-            if (getPrevHoriDir() == 1) {
-                setPrevHoriDir(-1);
-            } else {
-                setPrevHoriDir(1);
+            pointWokDir.sub(playerPos);
+            pointWokDir.scl(-1);
+            float wokAngle = pointWokDir.angleRad();
+            prevAngleOffset = angleOffset;
+            angleOffset = wokAngle;
+            if ((prevAngleOffset < (float) Math.PI/2 && prevAngleOffset > (float) - Math.PI/2 && (angleOffset <= (float) - Math.PI/2 || angleOffset >= (float) Math.PI/2)) || (angleOffset < (float) Math.PI/2 && angleOffset > (float) - Math.PI/2 && (prevAngleOffset <= (float) - Math.PI/2 || prevAngleOffset >= (float) Math.PI/2))) {
+                flipTexture();
+                if (getPrevHoriDir() == 1) {
+                    setPrevHoriDir(-1);
+                } else {
+                    setPrevHoriDir(1);
+                }
             }
+        } else {
+            if (pointWokDir.x > 0 && getPrevHoriDir() == -1) {
+                flipTexture();
+                setPrevHoriDir(1);
+            } else if (pointWokDir.x < 0 && getPrevHoriDir() == 1) {
+                flipTexture();
+                setPrevHoriDir(-1);
+            }
+
+            // if (pointWokDir.y > 0) {
+            //     setPrevVertDir(1);
+            // } else if (pointWokDir.y < -0) {
+            //     setPrevVertDir(-1);
+            // } else {
+            //     setPrevVertDir(0);
+            // }
+
+            cache.set(pointWokDir.x, pointWokDir.y);
+            if (cache.epsilonEquals(0, 0)) {
+                cache.set(getPrevHoriDir(), 0);
+            }
+
+            // // A bandage to override in the case when you're just hitting straight up or down. This is because
+            // // prevHoriDir is not made to handle when it's 0. -Oliver
+            // if (getVX() > -1 && getVX() < 1) {
+            //     cache.set(0, getPrevVertDir());
+            // }
+
+            // if (pointWokDir.x > 0) {
+            //     cache.scl(-1);
+            // }
+
+            angleOffset = cache.scl(-1).angleRad();
         }
     }
 
@@ -416,7 +482,7 @@ public class PlayerModel extends HumanoidModel {
 
         super.draw(canvas);
 
-        if (isAlive && !hasItem()) {
+        if (isAlive && !hasItem() && !isSliding()) {
             float originX;
             float originY;
             float ox;

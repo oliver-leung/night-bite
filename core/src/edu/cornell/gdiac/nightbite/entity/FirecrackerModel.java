@@ -19,7 +19,7 @@ public class FirecrackerModel extends BoxObstacle {
     /* Expected timestep age of firecracker before detonating */
     private static final int LIT_AGE = 43;
     /* Expected timestep age of firecracker before becoming destroyed */
-    private static final int DETONATING_AGE = 80;
+    private static final int DETONATING_AGE = 40;
     /* Expected timestep age of firecracker in which players will be pushed */
     private static final int DETONATING_TIME = 10;
 
@@ -36,6 +36,7 @@ public class FirecrackerModel extends BoxObstacle {
 
     /* How fast we change frames (one frame per 16 calls to update */
     private static final float ANIMATION_SPEED = 0.0625f;
+    private static final float DETON_ANIMATION_SPEED = 0.125f;
     /* The number of animation frames in our fuse filmstrip */
     private static final float NUM_FRAMES_LIT = 5;
     /* The number of animation frames in our detonating filmstrip */
@@ -297,7 +298,7 @@ public class FirecrackerModel extends BoxObstacle {
                 markRemoved(true);
                 deactivateLight();
             } else {
-                frame += ANIMATION_SPEED;
+                frame += DETON_ANIMATION_SPEED;
                 if (frame >= NUM_FRAMES_DET) {
                     frame -= NUM_FRAMES_DET;
                 }

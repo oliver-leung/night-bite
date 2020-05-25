@@ -1,6 +1,7 @@
 package edu.cornell.gdiac.nightbite;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -24,6 +25,10 @@ public class LevelSelectController implements Screen, InputProcessor {
     private TextureRegion tile10Texture;
     private TextureRegion tile11Texture;
     private TextureRegion tile12Texture;
+    private TextureRegion tile13Texture;
+    private TextureRegion tile14Texture;
+    private TextureRegion tile15Texture;
+
     private TextureRegion store1Texture;
     private TextureRegion store2Texture;
     private TextureRegion store3Texture;
@@ -45,6 +50,7 @@ public class LevelSelectController implements Screen, InputProcessor {
     private static int STANDARD_WIDTH = 1920;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 960;
+    private static int ARROW_OFFSET = 35; // jank
     /** Positioning stats */
     private int xpos1 = 0;
     private int xpos2 = 0;
@@ -79,18 +85,21 @@ public class LevelSelectController implements Screen, InputProcessor {
     private int levelChoiceindex = 0;
 
     private String[] levelJSONList = new String[]{
-            "jsons/01_golden_tutorial_basic.json",
-            "jsons/02_golden_tutorial_firecracker.json",
-            "jsons/03_golden_tutorial_oil.json",
-            "jsons/04_golden_spiral.json",
-            "jsons/05_golden_moat.json",
-            "jsons/06_golden_doublehole.json",
-            "jsons/07_golden_holegrid.json",
-            "jsons/08_golden_hard_nothief.json",
-            "jsons/09_golden_zigzag.json",
-            "jsons/10_golden_diagonalhole.json",
-            "jsons/11_golden_medium.json",
-            "jsons/12_golden_messy.json"
+        "jsons/01_showcase_tutorial_basic.json",
+        "jsons/02_showcase_tutorial_firecracker.json",
+        "jsons/03_showcase_tutorial_oil.json",
+        "jsons/04_showcase_tutorial_thief.json",
+        "jsons/05_showcase_cornermoats.json",
+        "jsons/06_showcase_chole.json",
+        "jsons/07_showcase_crossholes.json",
+        "jsons/08_showcase_doublehole.json",
+        "jsons/09_showcase_longmoats.json",
+        "jsons/10_showcase_holegrid.json",
+        "jsons/11_showcase_zigzag.json",
+        "jsons/12_showcase_semimoat.json",
+        "jsons/13_showcase_spiral.json",
+        "jsons/14_showcase_diagonalhole.json",
+        "jsons/15_showcase_messy.json",
     };
     private int[] xposList;
 
@@ -125,6 +134,9 @@ public class LevelSelectController implements Screen, InputProcessor {
         tile10Texture = Assets.getTextureRegion("level_select/#10.png");
         tile11Texture = Assets.getTextureRegion("level_select/#11.png");
         tile12Texture = Assets.getTextureRegion("level_select/#12.png");
+        tile13Texture = Assets.getTextureRegion("level_select/#13.png");
+        tile14Texture = Assets.getTextureRegion("level_select/#14.png");
+        tile15Texture = Assets.getTextureRegion("level_select/#15.png");
 
         store1Texture = Assets.getTextureRegion("level_select/LVL1_Stall.png");
         store2Texture = Assets.getTextureRegion("level_select/LVL2_Stall.png");
@@ -145,19 +157,26 @@ public class LevelSelectController implements Screen, InputProcessor {
         return levelJSONList[levelChoiceindex];
     }
 
+    public int getLevelChoiceindex() {
+        return levelChoiceindex;
+    }
+
     public String getItemTheme () {
         String itemName;
         switch(levelChoiceindex) {
             case 0:
             case 6:
+            case 12:
                 itemName = "bokchoi";
                 break;
             case 1:
             case 7:
+            case 13:
                 itemName = "carrot";
                 break;
             case 2:
             case 8:
+            case 14:
                 itemName = "egg";
                 break;
             case 3:
@@ -195,15 +214,14 @@ public class LevelSelectController implements Screen, InputProcessor {
         // TODO only controlled by player one
         MechanicManager manager = MechanicManager.getInstance();
         manager.update();
-        int playerHorizontal = (int) manager.getVelX(0);
-        boolean playerDidThrow = manager.isThrowing(0);
+        boolean playerDidEnter = manager.didEnter();
+        int playerHorizontal = dirPressed();
 
         // move selection
         updateMoveCooldown();
         if (playerHorizontal != 0) {
             if (!((playerHorizontal == -1 && levelChoiceindex == 0) || (playerHorizontal == 1 && levelChoiceindex == (levelJSONList.length-1))) && canMove()) {
                 levelChoiceindex += playerHorizontal;
-                startMoveCooldown();
 
                 // update player direction
                 if (playerHorizontal != prevDir) {
@@ -214,8 +232,18 @@ public class LevelSelectController implements Screen, InputProcessor {
         }
 
         // choose selection
-        if (playerDidThrow) {
+        if (playerDidEnter) {
             startGame = true;
+        }
+    }
+
+    private int dirPressed() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            return -1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -244,50 +272,64 @@ public class LevelSelectController implements Screen, InputProcessor {
         canvas.draw(headerTexture, Color.WHITE, headerTexture.getRegionWidth() / 2.0f, headerTexture.getRegionHeight() / 2.0f, xpos2, yposHeader, 0, scale, scale);
         canvas.draw(backTexture, Color.WHITE, 0, 0, xLeftEnd, yposTop, 0, scale, scale);
 
-        float storeOx = store1Texture.getRegionWidth() / 2.0f - tile1Texture.getRegionWidth() / 2.0f;
-        float storeOy = store1Texture.getRegionHeight() / 2.0f - 10;
+        float storeOx = store1Texture.getRegionWidth() / 2.0f;
+        float storeOy = store1Texture.getRegionHeight() / 2.0f;
+        float numberOx = tile1Texture.getRegionWidth() / 2.0f;
+        float numberOy = 0;
+        float arrowOx = arrowTexture.getRegionWidth() / 2.0f;
+        float arrowOy = arrowTexture.getRegionHeight() / 2.0f;
 
         if (getPage() == 0) {
-            canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile1Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile2Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile3Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, arrowOx, arrowOy, xRightEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile1Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile2Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile3Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
 
             canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 1) {
-            canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile4Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile5Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile6Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
-            canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
+            canvas.draw(arrowTextureFlipped, Color.WHITE, arrowOx, arrowOy, xLeftEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile4Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile5Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile6Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, arrowOx, arrowOy, xRightEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
 
             canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 2) {
-            canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile7Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile8Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile9Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
-            canvas.draw(arrowTexture, Color.WHITE, 0, 0, xRightEnd, yposTile + 5, 0, scale, scale);
+            canvas.draw(arrowTextureFlipped, Color.WHITE, arrowOx, arrowOy, xLeftEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile7Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile8Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile9Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, arrowOx, arrowOy, xRightEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
 
             canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         } else if (getPage() == 3) {
-            canvas.draw(arrowTextureFlipped, Color.WHITE, 0, 0, xLeftEnd, yposTile + 5, 0, scale, scale);
-            canvas.draw(tile10Texture, Color.WHITE, 0, 0, xpos1, yposTile, 0, scale, scale);
-            canvas.draw(tile11Texture, Color.WHITE, 0, 0, xpos2, yposTile, 0, scale, scale);
-            canvas.draw(tile12Texture, Color.WHITE, 0, 0, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTextureFlipped, Color.WHITE, arrowOx, arrowOy, xLeftEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile10Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile11Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile12Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+            canvas.draw(arrowTexture, Color.WHITE, arrowOx, arrowOy, xRightEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
 
             canvas.draw(fishStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
             canvas.draw(greenOnionStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
             canvas.draw(milkStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
+        } else if (getPage() == 4) {
+            canvas.draw(arrowTextureFlipped, Color.WHITE, arrowOx, arrowOy, xLeftEnd, yposTile + ARROW_OFFSET, 0, scale, scale);
+            canvas.draw(tile13Texture, Color.WHITE, numberOx, numberOy, xpos1, yposTile, 0, scale, scale);
+            canvas.draw(tile14Texture, Color.WHITE, numberOx, numberOy, xpos2, yposTile, 0, scale, scale);
+            canvas.draw(tile15Texture, Color.WHITE, numberOx, numberOy, xpos3, yposTile, 0, scale, scale);
+
+            canvas.draw(bokchoiStallTexture, Color.WHITE, storeOx, storeOy, xpos1, yposStall, 0, scale, scale);
+            canvas.draw(carrotStallTexture, Color.WHITE, storeOx, storeOy, xpos2, yposStall, 0, scale, scale);
+            canvas.draw(eggStallTexture, Color.WHITE, storeOx, storeOy, xpos3, yposStall, 0, scale, scale);
         }
 
-        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f - tile1Texture.getRegionHeight() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
+        canvas.draw(playerTexture, Color.WHITE, playerTexture.getRegionWidth() / 2.0f, -playerTexture.getRegionHeight() / 4.0f, xposList[(levelChoiceindex % 3)], yposTile, 0, scale, scale);
 
         canvas.end();
     }
@@ -392,11 +434,41 @@ public class LevelSelectController implements Screen, InputProcessor {
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
 
+        // back to intro screen
         float radius = backTexture.getRegionWidth()/2.0f;
         float dist = (screenX-xLeftEnd)*(screenX-xLeftEnd)+(screenY-yposTop)*(screenY-yposTop);
         if (dist < radius*radius) {
             pressState = 1;
         }
+
+        // choosing levels
+        float halfWidthStall = bokchoiStallTexture.getRegionWidth() / 2.0f * scale;
+        float halfHeightStall = bokchoiStallTexture.getRegionHeight() / 3.0f;
+
+        if (screenX < xpos1 + halfWidthStall && screenX > xpos1 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
+            levelChoiceindex = 0 + getPage() * 3;
+            startGame = true;
+        }
+        else if (screenX < xpos2 + halfWidthStall && screenX > xpos2 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
+            levelChoiceindex = 1 + getPage() * 3;
+            startGame = true;
+        }
+        else if (screenX < xpos3 + halfWidthStall && screenX > xpos3 - halfWidthStall && screenY < yposStall + halfHeightStall && screenY > yposTile) {
+            levelChoiceindex = 2 + getPage() * 3;
+            startGame = true;
+        }
+
+        // changing pages
+        float halfWidthArrow = arrowTexture.getRegionWidth() / 2.0f * scale;
+        float halfHeightArrow = arrowTexture.getRegionHeight() / 2.0f * scale;
+
+        if (getPage() < 4 && screenX < xRightEnd + halfWidthArrow && screenX > xRightEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
+            levelChoiceindex += 1;
+        }
+        else if (getPage() > 0 && screenX < xLeftEnd + halfWidthArrow && screenX > xLeftEnd - halfWidthArrow && screenY < yposTile + ARROW_OFFSET + halfHeightArrow && screenY > yposTile + ARROW_OFFSET - halfHeightArrow) {
+            levelChoiceindex -= 1;
+        }
+
         return false;
     }
 

@@ -14,6 +14,7 @@ public class CollisionController implements ContactListener {
     protected static final float PUSH_IMPULSE = 200f;
 
     public static final int ITEMS_TO_WIN = 3;
+    public static final String STEAL_SOUND = "audio/steal.wav";
     private final String FX_FALL_FILE = "audio/whistle.wav";
 
     private WorldModel worldModel;
@@ -45,9 +46,9 @@ public class CollisionController implements ContactListener {
 
         // Enemy-Object Contact
         if (a instanceof EnemyModel) { // || a instanceof CrowdUnitModel
-            handleEnemyToObjectContact((HumanoidModel) a, b);
+            handleEnemyToObjectContact((EnemyModel) a, b);
         } else if (b instanceof EnemyModel) { // || b instanceof CrowdUnitModel
-            handleEnemyToObjectContact((HumanoidModel) b, a);
+            handleEnemyToObjectContact((EnemyModel) b, a);
         }
 
         // Item-Object Contact
@@ -141,14 +142,11 @@ public class CollisionController implements ContactListener {
                     item_obj.setHeld(thief);
                 }
                 player.clearInventory();
+                SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             } else if (thief.hasItem()) {
-                // Player takes the item
-                for (ItemModel item_obj : thief.getItems()) {
-                    item_obj.setHeld(player);
-                }
-                thief.clearInventory();
-
+                thief.playerTakesItem(); // Player takes the item
                 thief.resetThief(); // Reset attack status
+                SoundController.getInstance().play(STEAL_SOUND, STEAL_SOUND, false, Assets.VOLUME);
             }
             thief.resetContactcooldown();
 
@@ -159,19 +157,18 @@ public class CollisionController implements ContactListener {
         if (object instanceof HoleModel) {
 
             // Player-Hole collision
-            player.setDead();
-
             if (player.hasItem()) { // TODO fix jank implementation
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
+                    item_obj.setItemRespawnHome(false);
                 }
                 player.clearInventory();
             }
+            player.setDead();
 
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
 
         } else if (object instanceof ItemModel) {
-
             // Player-Item
             if (! ((ItemModel) object).isDead()) {
                 int id = ((ItemModel) object).getId();
@@ -188,9 +185,11 @@ public class CollisionController implements ContactListener {
 
                 for (ItemModel item_obj : player.getItems()) {
                     item_obj.startRespawn();
+                    item_obj.setItemRespawnHome(true);
                 }
                 player.clearInventory();
                 player.resetTexture();
+                player.startgrabCooldown();
 
                 // win condition
                 checkWinCondition(homeObject);
@@ -199,21 +198,16 @@ public class CollisionController implements ContactListener {
             // Player slides only when oil is completely spilled
             if (((OilModel) object).isSpilled()) {
                 player.setSlide();
-                ((OilModel) object).markRemoved(true);
+                worldModel.removeOil((OilModel) object);
             }
         }
     }
 
-    public void handleEnemyToObjectContact(HumanoidModel enemy, Object object) {
+    public void handleEnemyToObjectContact(EnemyModel enemy, Object object) {
         if (object instanceof HoleModel) {
             // Enemy-Hole collision
             enemy.setDead();
-            if (enemy.hasItem()) {
-                for (ItemModel item_obj : enemy.getItems()) {
-                    item_obj.startRespawn();
-                }
-                enemy.clearInventory();
-            }
+            enemy.playerTakesItem();
             SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
         }
     }
@@ -221,24 +215,11 @@ public class CollisionController implements ContactListener {
     public void handleItemToObjectContact(ItemModel item, Object object) {
         if (object instanceof HoleModel) {
             HumanoidModel p = item.holdingPlayer;
-            if (p == null) {
+            if (p == null && (item.getVX()!=0f || item.getVY()!=0)) {
                 item.startRespawn();
-                SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
+                item.setItemRespawnHome(false);
+                // SoundController.getInstance().play(FX_FALL_FILE, FX_FALL_FILE, false, Assets.VOLUME);
             }
-
-        } else if (object instanceof HomeModel && item.lastTouch instanceof PlayerModel) {
-                PlayerModel lastTouchedPlayer = (PlayerModel) item.lastTouch;
-                PlayerModel p = (PlayerModel) item.holdingPlayer;
-
-                if (p == null && lastTouchedPlayer.getTeam().equals(((HomeModel) object).getTeam())) {
-                    item.startRespawn();
-                    // add score
-                    HomeModel homeObject = (HomeModel) object;
-                    homeObject.incrementScore(1);
-
-                    // check win condition
-                    checkWinCondition(homeObject);
-                }
         }
     }
 

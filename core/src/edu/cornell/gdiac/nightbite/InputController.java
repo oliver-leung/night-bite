@@ -15,10 +15,10 @@ public class InputController extends MechanicController {
 
     private boolean prevDash;
     private boolean prevThrow;
-
     private boolean prevDebug;
     private boolean prevPaused;
     private boolean prevReset;
+    private boolean prevWhack;
 
     public InputController(int xbox, int keyboard, boolean debug) {
         sudo = debug;
@@ -43,6 +43,8 @@ public class InputController extends MechanicController {
             isDebug = false;
             isReset = false;
             isPaused = false;
+            isEnter = false;
+            isWhack = false;
             return;
         }
 
@@ -87,43 +89,26 @@ public class InputController extends MechanicController {
             velY = temp2 ? -1.0f : velY;
         }
 
-        temp1 = isKeyPressed(keybinds.DASH);
-        isDashing = isDashing || (!prevDash && temp1);
-
-        temp1 = isKeyPressed(keybinds.GRAB);
-        isThrowing = isThrowing || (!prevThrow && temp1);
-
-        if (!sudo) {
-            return;
-        }
-
-        temp1 = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
-        isDebug = isDebug || (!prevDebug && temp1);
-
-        temp1 = Gdx.input.isKeyPressed(keybinds.PAUSE);
-        isPaused = isPaused || (!prevPaused && temp1);
-
-        temp1 = isKeyPressed(keybinds.RESET);
-        isReset = isReset || (!prevReset && temp1);
+        isDashing = Gdx.input.isKeyJustPressed(keybinds.DASH);
+        isThrowing = Gdx.input.isKeyJustPressed(keybinds.GRAB);
+        isDebug = Gdx.input.isKeyJustPressed(keybinds.DEBUG);
+        isPaused = Gdx.input.isKeyJustPressed(keybinds.PAUSE);
+        isReset = Gdx.input.isKeyJustPressed(keybinds.RESET);
+        isEnter = Gdx.input.isKeyJustPressed(Input.Keys.ENTER);
+        isWhack = Gdx.input.isKeyJustPressed(keybinds.WHACK);
 
         // Music
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             Assets.changeMute();
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) KeyboardMap.mouse = !KeyboardMap.mouse;
+
         // TODO we need so set some stuff around here re: prevPaused
     }
 
     private boolean isKeyPressed(int key) {
         return Gdx.input.isKeyPressed(key);
-    }
-
-    private void resetPrev() {
-        prevDash = isDashing;
-        prevThrow = isThrowing;
-        prevDebug = isDebug;
-        prevReset = isReset;
-        prevPaused = isPaused;
     }
 
     public void poll() {
